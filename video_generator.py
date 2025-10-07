@@ -51,7 +51,7 @@ class VideoGenerator:
             self.duration = min(preset_durations.get(duration_mode, self.audio_data['duration']), self.audio_data['duration'])
         
         self.visual_style = settings.get('visual_style', 'modern')
-        self.effects = settings.get('effects', ['waveform', 'particles'])
+        self.effects = settings.get('effects', ['waveform'])
         
         # Enhanced rendering settings with 3D geometry support per C02 guidelines
         self.anti_aliasing = settings.get('anti_aliasing', True)
@@ -292,43 +292,48 @@ class VideoGenerator:
                         else:
                             cv2.line(frame, pt1, pt2, glow_color, thickness)
         
-        # Add perfect depth particles for maximum visual appeal
-        self.add_perfect_depth_particles(frame, t, energy, scale_factor)
+        # Add horizontal beats visualization
+        self.draw_horizontal_beats(frame, t, energy, beat_strength, scale_factor)
     
-    def add_perfect_depth_particles(self, frame, t, energy, scale_factor):
-        """Add perfect depth particles for maximum visual appeal"""
-        num_particles = 25  # Perfect number for visual depth
+    def draw_horizontal_beats(self, frame, t, energy, beat_strength, scale_factor):
+        """Draw horizontal beats visualization"""
+        center_x = self.width * scale_factor // 2
+        beat_width = int(beat_strength * self.width * scale_factor * 0.3)
         
-        for i in range(num_particles):
-            # Perfect particle positioning with natural distribution
-            x = int((i * 37 + t * 40) % (self.width * scale_factor))
-            y = int((i * 23 + t * 25) % (self.height * scale_factor))
+        # Draw horizontal beat bars at different vertical positions
+        positions = [0.2, 0.35, 0.5, 0.65, 0.8]  # Horizontal lines at different heights
+        
+        for i, pos in enumerate(positions):
+            y = int(self.height * scale_factor * pos)
             
-            # Perfect floating motion for natural feel
-            float_x = x + math.sin(t * 0.4 + i * 0.08) * 25
-            float_y = y + math.cos(t * 0.3 + i * 0.12) * 18
+            # Calculate beat intensity for this bar
+            bar_intensity = energy * (1 + beat_strength * 2) * (0.8 + i * 0.1)
+            bar_length = int(beat_width * bar_intensity)
             
-            # Keep particles in bounds
-            float_x = max(0, min(self.width * scale_factor - 1, float_x))
-            float_y = max(0, min(self.height * scale_factor - 1, float_y))
+            # Choose color based on position
+            color_idx = i % len(self.glow_colors)
+            base_color = self.glow_colors[color_idx]
+            beat_color = tuple(int(c * bar_intensity * 0.8) for c in base_color)
             
-            # Perfect particle properties
-            size = max(1, int(2 + energy * 3))
-            alpha = 0.4 + energy * 0.4
+            # Draw horizontal beat bar centered
+            start_x = max(0, center_x - bar_length // 2)
+            end_x = min(self.width * scale_factor, center_x + bar_length // 2)
             
-            # Choose perfect particle color
-            color = self.glow_colors[random.randint(0, len(self.glow_colors) - 1)]
-            particle_color = tuple(int(c * alpha) for c in color)
-            
-            # Draw particle with perfect anti-aliasing
-            center = (int(float_x), int(float_y))
-            if self.anti_aliasing:
-                self.draw_anti_aliased_circle(frame, center, size, particle_color, -1)
-                # Add glow ring
-                self.draw_anti_aliased_circle(frame, center, size + 1, particle_color, 1)
-            else:
-                cv2.circle(frame, center, size, particle_color, -1)
-                cv2.circle(frame, center, size + 1, particle_color, 1)
+            if start_x < end_x and 0 <= y < self.height * scale_factor:
+                # Draw main bar
+                thickness = max(1, int(4 + beat_strength * 6))
+                if self.anti_aliasing:
+                    self.draw_anti_aliased_line(frame, (start_x, y), (end_x, y), beat_color, thickness)
+                else:
+                    cv2.line(frame, (start_x, y), (end_x, y), beat_color, thickness)
+                
+                # Add glow effect
+                glow_color = tuple(int(c * 0.5) for c in beat_color)
+                glow_thickness = max(1, thickness + 2)
+                if self.anti_aliasing:
+                    self.draw_anti_aliased_line(frame, (start_x, y), (end_x, y), glow_color, glow_thickness)
+                else:
+                    cv2.line(frame, (start_x, y), (end_x, y), glow_color, glow_thickness)
     
     def draw_ultra_smooth_waveform(self, frame, t, energy, beat_strength, scale_factor):
         """Draw ultra-smooth waveform with multiple glowing layers"""
