@@ -19,8 +19,8 @@ class AudioAnalyzer {
         
         // Audio processing settings
         this.settings = {
-            sensitivity: 50,
-            smoothing: 80,
+            sensitivity: 75,
+            smoothing: 60,
             minDecibels: -90,
             maxDecibels: -10,
             fftSize: 2048
@@ -68,12 +68,15 @@ class AudioAnalyzer {
         
         this.analyser.getByteFrequencyData(this.dataArray);
         
-        // Apply sensitivity scaling
-        const sensitivity = this.settings.sensitivity / 50;
+        // Apply sensitivity scaling with better curve
+        const sensitivity = Math.max(0.1, this.settings.sensitivity / 50);
         const scaledData = new Uint8Array(this.dataArray.length);
         
         for (let i = 0; i < this.dataArray.length; i++) {
-            scaledData[i] = Math.min(255, this.dataArray[i] * sensitivity);
+            // Apply sensitivity with exponential scaling for better responsiveness
+            let value = this.dataArray[i] * sensitivity;
+            value = Math.pow(value / 255, 0.7) * 255; // Slight compression curve
+            scaledData[i] = Math.min(255, Math.max(0, value));
         }
         
         return scaledData;

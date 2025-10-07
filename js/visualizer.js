@@ -531,12 +531,34 @@ class Visualizer {
     }
     
     updateSettings(newSettings) {
+        const oldType = this.settings.type;
         this.settings = { ...this.settings, ...newSettings };
         
         // Clear particles when switching visualization types
-        if (newSettings.type && newSettings.type !== this.settings.type) {
+        if (newSettings.type && newSettings.type !== oldType) {
             this.particles = [];
+            console.log(`Switched visualization from ${oldType} to ${newSettings.type}`);
         }
+        
+        // Update rotation speed based on settings
+        if (newSettings.type === 'circular') {
+            this.rotationSpeed = 0.005 + (this.settings.sensitivity / 1000);
+        }
+        
+        // Adjust particle count based on effects setting
+        if (newSettings.particlesEffect !== undefined) {
+            if (newSettings.particlesEffect) {
+                this.maxParticles = 300;
+            } else {
+                this.maxParticles = 100;
+                // Remove excess particles
+                if (this.particles.length > this.maxParticles) {
+                    this.particles = this.particles.slice(0, this.maxParticles);
+                }
+            }
+        }
+        
+        console.log('Visualizer settings updated:', this.settings);
     }
     
     darkenColor(color, factor) {

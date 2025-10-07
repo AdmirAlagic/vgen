@@ -317,22 +317,35 @@ class AudioVisualizerApp {
     
     updateAnalyzerSettings() {
         if (this.audioAnalyzer) {
+            const sensitivity = parseInt(this.elements.sensitivity.value);
+            const smoothing = parseInt(this.elements.smoothing.value);
+            
             this.audioAnalyzer.updateSettings({
-                sensitivity: parseInt(this.elements.sensitivity.value),
-                smoothing: parseInt(this.elements.smoothing.value)
+                sensitivity: sensitivity,
+                smoothing: smoothing
             });
+            
+            console.log('Updated analyzer settings:', { sensitivity, smoothing });
         }
     }
     
     updateVisualizationSettings() {
         if (this.visualizer) {
-            this.visualizer.updateSettings({
+            const settings = {
                 type: this.elements.vizType.value,
                 colorScheme: this.elements.colorScheme.value,
+                sensitivity: parseInt(this.elements.sensitivity.value),
+                smoothing: parseInt(this.elements.smoothing.value),
                 glowEffect: this.elements.glowEffect.checked,
                 blurEffect: this.elements.blurEffect.checked,
                 particlesEffect: this.elements.particlesEffect.checked
-            });
+            };
+            
+            this.visualizer.updateSettings(settings);
+            console.log('Updated visualization settings:', settings);
+            
+            // Show immediate feedback
+            this.showNotification(`Switched to ${settings.type} with ${settings.colorScheme} colors`, 'info');
         }
     }
     
