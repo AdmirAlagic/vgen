@@ -1,18 +1,18 @@
-# 🌊 Watercolor Wave Audio Visualizer
+# 🌊 Flowing Ribbon Audio Visualizer
 
-Create stunning, high-quality audio visualizations with beautiful watercolor wave effects that react to your music in real-time.
+Create stunning, high-quality audio visualizations with beautiful flowing wave ribbons and dynamic blue-to-pink gradients that react to your music in real-time.
 
 ![Visualization Preview](https://via.placeholder.com/800x400/FF69B4/FFFFFF?text=🌊+Beautiful+Watercolor+Wave+Visualization)
 
 ## ✨ Features
 
 ### 🎨 Visual Excellence
-- **Fan-like Radial Patterns**: Beautiful radiating waves from the center
-- **Smooth Gradient Transitions**: Pink-to-purple-to-blue color gradients
-- **Multi-layer Rendering**: Multiple depth layers for richness
-- **Anti-aliased Graphics**: Smooth, professional-quality lines
-- **Floating Particles**: Dynamic particle systems
-- **Connecting Webs**: Complex interconnected patterns
+- **Flowing Wave Ribbons**: Smooth horizontal flowing ribbons across the screen
+- **Blue-to-Pink Gradients**: Beautiful color transitions from blue through purple to pink
+- **Multi-layer Depth**: Multiple ribbon layers at different heights for 3D depth
+- **Professional Glow Effects**: Soft glowing edges with transparency blending
+- **Organic Curves**: Natural, flowing mathematical curves with harmonics
+- **Flowing Particles**: Dynamic particles that follow the ribbon flow
 
 ### 🎵 Audio Reactivity
 - **Real-time Analysis**: Responds to beats, energy, and spectral content
@@ -89,20 +89,22 @@ Open your browser and go to: `http://localhost:8080`
 
 ## 🎨 Visual Style Details
 
-The watercolor wave visualization creates a beautiful fan-like pattern that radiates from the center of the screen:
+The flowing ribbon visualization creates beautiful horizontal wave ribbons that flow smoothly across the screen:
 
 ### Color Scheme
-- **Center**: Bright pinkish-red core
-- **Middle**: Purple-pink transition zone
-- **Outer**: Deep purple to blue-purple edges
-- **Particles**: Complementary purple and pink tones
+- **Left Side**: Deep blue ribbons with subtle glow
+- **Center**: Purple transition zones with rich depth
+- **Right Side**: Bright pink/magenta flowing edges
+- **Background**: Subtle dark gradient for professional depth
+- **Particles**: Color-matched flowing elements
 
 ### Animation Elements
-- **Radiating Rays**: Smooth waves that flow outward
-- **Organic Movement**: Natural, fluid motion patterns
-- **Beat Pulses**: Visual intensity spikes with musical beats
-- **Spectral Response**: High frequencies create more detail
-- **Energy Scaling**: Louder sections create more dramatic effects
+- **Horizontal Flow**: Smooth left-to-right wave motion
+- **Multi-layer Ribbons**: 5 layers at different heights for depth
+- **Organic Curves**: Natural mathematical harmonics create flowing shapes
+- **Beat Reactions**: Ribbon amplitude increases with musical beats
+- **Gradient Flow**: Colors shift and pulse with audio energy
+- **Glow Effects**: Professional soft-edge rendering with transparency
 
 ## 🎵 Audio Analysis
 

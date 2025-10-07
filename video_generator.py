@@ -208,8 +208,22 @@ class VideoGenerator:
             if int(progress) % 10 == 0:  # Show progress every 10%
                 print(f"Rendering progress: {progress:.1f}%")
             
-            # Create professional waveform frame with black background
+            # Create professional waveform frame with enhanced background
             frame = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+            
+            # Add subtle dark background for flowing wave style
+            if self.visual_style == 'watercolor_wave':
+                # Create subtle gradient background
+                gradient_overlay = np.zeros_like(frame)
+                
+                # Vertical gradient from dark blue to black
+                for y in range(self.height):
+                    gradient_factor = y / self.height
+                    blue_intensity = int(25 * (1 - gradient_factor))  # Fade from 25 to 0
+                    gradient_overlay[y, :] = (blue_intensity, 0, 0)  # Dark blue in BGR
+                
+                # Blend with frame
+                frame = cv2.addWeighted(frame, 0.8, gradient_overlay, 0.2, 0)
             
             # Get audio data
             frame_idx = int(t * self.fps)
@@ -3719,9 +3733,7 @@ class VideoGenerator:
         return high_res_frame
     
     def draw_watercolor_wave(self, frame, t, energy, beat_strength):
-        """Draw ultra-high-quality watercolor wave matching the reference image"""
-        center_x, center_y = self.width // 2, self.height // 2
-        
+        """Draw ultra-high-quality flowing wave ribbons matching the reference image"""
         # Get frame synchronized audio data for better reactivity
         frame_idx = int(t * self.fps)
         if frame_idx < len(self.sync_data['rms_energy_frames']):
@@ -3731,208 +3743,192 @@ class VideoGenerator:
             current_energy = energy
             spectral_centroid = 0.5
         
-        # Enhanced parameters for ultra-high quality
-        base_num_rays = int(100 + current_energy * 150)  # More rays for finer detail
-        max_radius = min(self.width, self.height) * 0.45  # Optimal radius
+        center_y = self.height // 2
         
-        # Create multiple layers for depth and richness
-        layers = [
-            {'rays': base_num_rays, 'alpha': 0.9, 'thickness': 1, 'glow': True},
-            {'rays': base_num_rays // 2, 'alpha': 0.7, 'thickness': 2, 'glow': True},
-            {'rays': base_num_rays // 3, 'alpha': 0.5, 'thickness': 3, 'glow': False}
+        # Create multiple flowing ribbon layers with different properties
+        ribbon_layers = [
+            {
+                'y_offset': 0, 'amplitude': 80 + current_energy * 120, 'frequency': 0.008, 
+                'speed': 1.2, 'thickness': 3, 'alpha': 0.9, 'glow_radius': 8
+            },
+            {
+                'y_offset': -40, 'amplitude': 60 + current_energy * 90, 'frequency': 0.012, 
+                'speed': 0.8, 'thickness': 2, 'alpha': 0.7, 'glow_radius': 6
+            },
+            {
+                'y_offset': 40, 'amplitude': 60 + current_energy * 90, 'frequency': 0.012, 
+                'speed': 0.8, 'thickness': 2, 'alpha': 0.7, 'glow_radius': 6
+            },
+            {
+                'y_offset': -80, 'amplitude': 40 + current_energy * 60, 'frequency': 0.015, 
+                'speed': 0.6, 'thickness': 1, 'alpha': 0.5, 'glow_radius': 4
+            },
+            {
+                'y_offset': 80, 'amplitude': 40 + current_energy * 60, 'frequency': 0.015, 
+                'speed': 0.6, 'thickness': 1, 'alpha': 0.5, 'glow_radius': 4
+            },
         ]
         
-        for layer_idx, layer in enumerate(layers):
-            num_rays = layer['rays']
+        # Draw each ribbon layer
+        for layer_idx, layer in enumerate(ribbon_layers):
+            # Generate smooth flowing ribbon points
+            ribbon_points_top = []
+            ribbon_points_bottom = []
             
-            for ray in range(num_rays):
-                # Enhanced angle calculation with audio reactivity
-                base_angle = (ray / num_rays) * 2 * math.pi
+            # Optimized resolution for smooth curves and performance
+            num_points = min(self.width + 100, 2000)  # Cap for performance while maintaining quality
+            
+            for i in range(num_points):
+                x = i - 50  # Start before screen for smooth entry
                 
-                # Audio-reactive angle variation
-                angle_variation = (
-                    math.sin(t * 1.5 + ray * 0.08) * 0.15 * current_energy +
-                    math.cos(t * 2.3 + ray * 0.12) * 0.08 * spectral_centroid +
-                    beat_strength * 0.2 * math.sin(ray * 0.1)
+                # Complex wave calculation with multiple frequencies for organic flow
+                primary_wave = math.sin(x * layer['frequency'] + t * layer['speed']) * layer['amplitude']
+                
+                # Add harmonics for complexity
+                harmonic1 = math.sin(x * layer['frequency'] * 1.618 + t * layer['speed'] * 0.7) * layer['amplitude'] * 0.3
+                harmonic2 = math.cos(x * layer['frequency'] * 2.414 + t * layer['speed'] * 1.3) * layer['amplitude'] * 0.2
+                harmonic3 = math.sin(x * layer['frequency'] * 0.618 + t * layer['speed'] * 0.4) * layer['amplitude'] * 0.4
+                
+                # Audio reactivity
+                audio_modifier = (
+                    math.sin(x * 0.02 + t * 2) * current_energy * 30 +
+                    math.cos(x * 0.03 + t * 1.5) * spectral_centroid * 20 +
+                    beat_strength * 40 * math.sin(x * 0.01 + t * 3)
                 )
-                angle = base_angle + angle_variation
                 
-                # Create smoother, more organic ray points
-                ray_points = []
-                num_points = int(50 + current_energy * 40)
+                # Combine all wave components
+                wave_y = primary_wave + harmonic1 + harmonic2 + harmonic3 + audio_modifier
+                base_y = center_y + layer['y_offset'] + wave_y
                 
-                for point_idx in range(num_points):
-                    progress = point_idx / (num_points - 1)
-                    
-                    # Enhanced curve generation for more organic shapes
-                    curve_base = math.sin(progress * math.pi) * 0.4
-                    curve_variation = (
-                        math.sin(progress * 6 + t * 2 + ray * 0.1) * 0.2 * current_energy +
-                        math.cos(progress * 8 + t * 1.5 + ray * 0.15) * 0.15 * spectral_centroid
-                    )
-                    curve_factor = curve_base + curve_variation
-                    
-                    # Radius with multiple wave components
-                    base_radius = progress * max_radius
-                    radius_modifier = (
-                        curve_factor * current_energy +
-                        math.sin(progress * 10 + t * 4 + ray * 0.3) * (10 + current_energy * 20) +
-                        math.cos(progress * 12 + t * 3 + ray * 0.2) * (8 + spectral_centroid * 15)
-                    )
-                    
-                    radius = base_radius + radius_modifier
-                    
-                    # Calculate position with sub-pixel precision
-                    x = center_x + radius * math.cos(angle)
-                    y = center_y + radius * math.sin(angle)
-                    
-                    # Keep in bounds with smooth clamping
-                    x = max(5, min(self.width - 5, x))
-                    y = max(5, min(self.height - 5, y))
-                    
-                    ray_points.append((x, y))
+                # Create ribbon thickness (top and bottom edges)
+                ribbon_thickness = 8 + current_energy * 12 + layer['thickness'] * 3
                 
-                # Enhanced color calculation based on reference image
-                if len(ray_points) > 1:
-                    # Distance-based color mixing
-                    ray_distance_factor = ray / num_rays
-                    angle_factor = (angle % (2 * math.pi)) / (2 * math.pi)
+                # Vary thickness along the ribbon for organic feel
+                thickness_variation = math.sin(x * 0.05 + t) * 0.3 + 0.7
+                current_thickness = ribbon_thickness * thickness_variation
+                
+                top_y = base_y - current_thickness
+                bottom_y = base_y + current_thickness
+                
+                # Keep in bounds
+                if 0 <= x < self.width:
+                    top_y = max(0, min(self.height - 1, top_y))
+                    bottom_y = max(0, min(self.height - 1, bottom_y))
                     
-                    # Create the signature gradient from the reference image
-                    if layer_idx == 0:  # Main layer
-                        # Center: bright pinkish-red
-                        if ray_distance_factor < 0.25:
-                            r, g, b = 255, 100, 140  # Bright pink-red
-                        # Middle: purple-pink transition
-                        elif ray_distance_factor < 0.5:
-                            r, g, b = 230, 80, 200  # Purple-pink
-                        # Mid-outer: deep purple
-                        elif ray_distance_factor < 0.75:
-                            r, g, b = 200, 60, 240  # Deep purple
-                        # Outer: blue-purple
-                        else:
-                            r, g, b = 140, 80, 255  # Blue-purple
-                    else:  # Secondary layers - more subtle
-                        base_r, base_g, base_b = 220, 120, 255
-                        r = int(base_r * (0.6 + ray_distance_factor * 0.4))
-                        g = int(base_g * (0.4 + spectral_centroid * 0.6))
-                        b = int(base_b * (0.7 + current_energy * 0.3))
+                    ribbon_points_top.append((x, int(top_y)))
+                    ribbon_points_bottom.append((x, int(bottom_y)))
+            
+            # Calculate color based on position and layer for blue-to-pink gradient
+            if len(ribbon_points_top) > 1 and len(ribbon_points_bottom) > 1:
+                # Create segments for gradient coloring (optimized)
+                segment_size = max(4, len(ribbon_points_top) // 15)  # Fewer segments for better performance
+                
+                for seg_start in range(0, len(ribbon_points_top) - segment_size, segment_size):
+                    seg_end = min(seg_start + segment_size, len(ribbon_points_top) - 1)
                     
-                    # Audio-reactive intensity modulation
-                    intensity = (0.8 + current_energy * 0.2) * layer['alpha']
-                    r = int(r * intensity)
-                    g = int(g * intensity)
-                    b = int(b * intensity)
+                    # Calculate gradient position (0 = left/blue, 1 = right/pink)
+                    gradient_pos = seg_start / (len(ribbon_points_top) - 1)
                     
-                    # Additional beat-reactive enhancement
-                    if beat_strength > 0.7:
-                        r = min(255, int(r * 1.3))
-                        b = min(255, int(b * 1.2))
+                    # Blue to Pink gradient matching reference image
+                    if gradient_pos < 0.3:  # Left side - Blue
+                        r, g, b = 80, 120, 255
+                    elif gradient_pos < 0.5:  # Blue to Purple transition
+                        mix_factor = (gradient_pos - 0.3) / 0.2
+                        r = int(80 + mix_factor * (160 - 80))      # 80 -> 160
+                        g = int(120 + mix_factor * (80 - 120))     # 120 -> 80
+                        b = int(255 + mix_factor * (200 - 255))    # 255 -> 200
+                    elif gradient_pos < 0.7:  # Purple
+                        r, g, b = 160, 80, 200
+                    else:  # Purple to Pink transition
+                        mix_factor = (gradient_pos - 0.7) / 0.3
+                        r = int(160 + mix_factor * (255 - 160))    # 160 -> 255
+                        g = int(80 + mix_factor * (120 - 80))      # 80 -> 120
+                        b = int(200 + mix_factor * (160 - 200))    # 200 -> 160
+                    
+                    # Apply layer alpha and energy modulation
+                    intensity = layer['alpha'] * (0.7 + current_energy * 0.3)
+                    
+                    # Beat reactive enhancement
+                    if beat_strength > 0.6:
+                        intensity *= (1.0 + beat_strength * 0.4)
+                    
+                    r = min(255, int(r * intensity))
+                    g = min(255, int(g * intensity))
+                    b = min(255, int(b * intensity))
                     
                     color = (b, g, r)  # BGR format
                     
-                    # Draw the ray with anti-aliasing
-                    thickness = layer['thickness']
-                    
-                    # Main ray
-                    for i in range(len(ray_points) - 1):
-                        pt1 = (int(ray_points[i][0]), int(ray_points[i][1]))
-                        pt2 = (int(ray_points[i + 1][0]), int(ray_points[i + 1][1]))
-                        cv2.line(frame, pt1, pt2, color, thickness, cv2.LINE_AA)
-                    
-                    # Add glow effect for enhanced quality
-                    if layer['glow'] and (ray % 3 == 0 or spectral_centroid > 0.6):
-                        glow_color = tuple(int(c * 0.5) for c in color)
-                        glow_thickness = thickness + 1
+                    # Create filled ribbon segment using polygon
+                    if seg_end < len(ribbon_points_top) and seg_end < len(ribbon_points_bottom):
+                        # Create polygon points for this segment
+                        poly_points = []
                         
-                        for i in range(len(ray_points) - 1):
-                            pt1 = (int(ray_points[i][0]), int(ray_points[i][1]))
-                            pt2 = (int(ray_points[i + 1][0]), int(ray_points[i + 1][1]))
-                            cv2.line(frame, pt1, pt2, glow_color, glow_thickness, cv2.LINE_AA)
+                        # Add top edge points (left to right)
+                        for i in range(seg_start, seg_end + 1):
+                            poly_points.append(ribbon_points_top[i])
+                        
+                        # Add bottom edge points (right to left)
+                        for i in range(seg_end, seg_start - 1, -1):
+                            poly_points.append(ribbon_points_bottom[i])
+                        
+                        if len(poly_points) >= 3:
+                            # Convert to numpy array for cv2.fillPoly
+                            pts = np.array(poly_points, dtype=np.int32)
+                            cv2.fillPoly(frame, [pts], color)
+                            
+                            # Add glow effect
+                            glow_color = tuple(int(c * 0.4) for c in color)
+                            
+                            # Glow layers for smooth effect
+                            for glow_layer in range(layer['glow_radius']):
+                                glow_thickness = glow_layer + 1
+                                glow_alpha = (layer['glow_radius'] - glow_layer) / layer['glow_radius'] * 0.3
+                                
+                                current_glow_color = tuple(int(c * glow_alpha) for c in glow_color)
+                                
+                                # Draw glow outline
+                                if len(ribbon_points_top) > 1:
+                                    # Top edge glow
+                                    for i in range(seg_start, min(seg_end, len(ribbon_points_top) - 1)):
+                                        cv2.line(frame, ribbon_points_top[i], ribbon_points_top[i + 1], 
+                                               current_glow_color, glow_thickness, cv2.LINE_AA)
+                                    
+                                    # Bottom edge glow
+                                    for i in range(seg_start, min(seg_end, len(ribbon_points_bottom) - 1)):
+                                        cv2.line(frame, ribbon_points_bottom[i], ribbon_points_bottom[i + 1], 
+                                               current_glow_color, glow_thickness, cv2.LINE_AA)
         
-        # Enhanced central core with gradient
-        core_size = int(30 + current_energy * 50 + beat_strength * 25)
-        
-        # Multi-layer core for depth
-        for core_layer in range(6):
-            layer_size = core_size - core_layer * 6
-            if layer_size > 0:
-                layer_alpha = 1.0 - (core_layer * 0.12)
-                core_color = (
-                    int(80 * layer_alpha),   # Blue
-                    int(120 * layer_alpha),  # Green
-                    int(255 * layer_alpha)   # Red -> creates bright pink
-                )
-                cv2.circle(frame, (center_x, center_y), layer_size, core_color, -1)
-        
-        # Add connecting web patterns for complexity
-        if current_energy > 0.4:
-            num_connections = int(25 + current_energy * 50)
-            connection_radius = max_radius * 0.7
-            
-            for i in range(num_connections):
-                # Create connection points on a circle
-                angle1 = (i / num_connections) * 2 * math.pi + t * 0.6
-                angle2 = ((i + 2) / num_connections) * 2 * math.pi + t * 0.6
-                
-                # Audio-reactive radius modulation
-                radius1 = connection_radius + math.sin(t * 3.5 + i * 0.4) * (25 + current_energy * 35)
-                radius2 = connection_radius + math.cos(t * 2.8 + i * 0.5) * (20 + current_energy * 30)
-                
-                x1 = int(center_x + radius1 * math.cos(angle1))
-                y1 = int(center_y + radius1 * math.sin(angle1))
-                x2 = int(center_x + radius2 * math.cos(angle2))
-                y2 = int(center_y + radius2 * math.sin(angle2))
-                
-                # Keep in bounds
-                x1 = max(0, min(self.width - 1, x1))
-                y1 = max(0, min(self.height - 1, y1))
-                x2 = max(0, min(self.width - 1, x2))
-                y2 = max(0, min(self.height - 1, y2))
-                
-                # Draw connection with gradient color
-                connection_intensity = spectral_centroid * current_energy
-                if connection_intensity > 0.3:
-                    connection_color = (
-                        int(180 * connection_intensity),  # Blue
-                        int(100 * connection_intensity),  # Green
-                        int(220 * connection_intensity)   # Red -> purple
-                    )
-                    cv2.line(frame, (x1, y1), (x2, y2), connection_color, 1, cv2.LINE_AA)
-        
-        # Enhanced floating particles with better distribution
-        num_particles = int(60 + current_energy * 100)
+        # Add flowing particles that follow the ribbons
+        num_particles = int(30 + current_energy * 60)
         for i in range(num_particles):
-            # Create particle clusters around energy peaks
-            if spectral_centroid > 0.2:  # Only show particles for significant activity
-                # Spiral distribution for better aesthetics
-                spiral_angle = i * 0.618 + t * 1.0  # Golden ratio for natural distribution
-                spiral_radius = (i * 4.2) % (max_radius * 0.95)
+            particle_x = (i * 47 + t * 150) % (self.width + 200) - 100
+            
+            if 0 <= particle_x < self.width:
+                # Calculate Y position based on the main ribbon flow
+                main_wave = math.sin(particle_x * 0.008 + t * 1.2) * (80 + current_energy * 120)
+                particle_y = center_y + main_wave
                 
-                # Add organic movement
-                movement_x = math.sin(t * 2.2 + i * 0.25) * (12 + current_energy * 20)
-                movement_y = math.cos(t * 1.9 + i * 0.3) * (10 + current_energy * 15)
+                # Add some randomness
+                particle_y += math.sin(i * 0.5 + t * 2) * 20
                 
-                particle_x = int(center_x + spiral_radius * math.cos(spiral_angle) + movement_x)
-                particle_y = int(center_y + spiral_radius * math.sin(spiral_angle) + movement_y)
+                particle_y = max(0, min(self.height - 1, int(particle_y)))
                 
-                # Keep in bounds
-                particle_x = max(0, min(self.width - 1, particle_x))
-                particle_y = max(0, min(self.height - 1, particle_y))
+                # Particle color based on gradient position
+                gradient_pos = particle_x / self.width
                 
-                # Enhanced particle colors matching the gradient
-                distance_from_center = spiral_radius / max_radius
-                if distance_from_center < 0.3:
-                    particle_color = (120, 100, 255)  # Pink
-                elif distance_from_center < 0.6:
-                    particle_color = (200, 80, 240)  # Purple
+                if gradient_pos < 0.5:
+                    particle_color = (255, 150, 100)  # Blue-ish
                 else:
-                    particle_color = (255, 120, 180)  # Blue-purple
+                    particle_color = (180, 100, 255)  # Pink-ish
                 
-                particle_size = int(1 + spectral_centroid * 4 + current_energy * 3)
+                particle_size = int(2 + current_energy * 3)
                 
                 # Draw particle with glow
-                cv2.circle(frame, (particle_x, particle_y), particle_size, particle_color, -1)
-                if particle_size > 1:
-                    glow_color = tuple(int(c * 0.6) for c in particle_color)
-                    cv2.circle(frame, (particle_x, particle_y), particle_size + 1, glow_color, 1)
+                cv2.circle(frame, (int(particle_x), particle_y), particle_size, particle_color, -1)
+                
+                # Particle glow
+                for glow in range(3):
+                    glow_size = particle_size + glow + 1
+                    glow_alpha = (3 - glow) / 3 * 0.5
+                    glow_color = tuple(int(c * glow_alpha) for c in particle_color)
+                    cv2.circle(frame, (int(particle_x), particle_y), glow_size, glow_color, 1)
