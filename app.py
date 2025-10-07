@@ -9,6 +9,9 @@ from audio_processor import AudioProcessor
 from video_generator import VideoGenerator
 from youtube_optimizer import YouTubeOptimizer
 
+# Enhanced video generator with watercolor wave visualization
+print("🎨 Enhanced Video Generator with Watercolor Wave visualization loaded!")
+
 app = Flask(__name__, static_folder='static', static_url_path='')
 CORS(app)
 
@@ -83,7 +86,9 @@ def generate_video():
         return jsonify({'error': 'File not found'}), 404
     
     try:
-        # Generate video
+        print("🎨 Using Enhanced Video Generator with beautiful Watercolor Wave visualization...")
+        
+        # Generate with enhanced watercolor wave visualization
         generator = VideoGenerator(file_path, settings)
         output_path = generator.generate()
         
@@ -98,6 +103,7 @@ def generate_video():
         })
     
     except Exception as e:
+        print(f"❌ Video generation failed: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/')

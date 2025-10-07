@@ -231,7 +231,7 @@ async function generateVideo() {
         file_id: currentFileId,
         resolution: document.getElementById('resolution').value,
         fps: parseInt(document.getElementById('fps').value),
-        visual_style: 'aaa_quality',  // Fixed AAA quality style
+        visual_style: 'watercolor_wave',  // Beautiful watercolor wave style matching reference image
         duration_mode: 'full',  // Always use full audio length
         effects: ['waveform', 'particles']  // Always include core effects
     };

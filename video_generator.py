@@ -708,6 +708,8 @@ class VideoGenerator:
                     self.draw_cinematic_3d_surface(frame, t, energy, beat_strength)
                 elif self.visual_style == 'holographic_spectrum':
                     self.draw_holographic_spectrum(frame, t, energy, beat_strength)
+                elif self.visual_style == 'watercolor_wave' or self.visual_style == 'aaa_quality':
+                    self.draw_watercolor_wave(frame, t, energy, beat_strength)
                 else:
                     # Fallback - draw a simple test pattern
                     cv2.rectangle(frame, (100, 100), (200, 200), (255, 0, 0), -1)
@@ -3715,3 +3717,222 @@ class VideoGenerator:
             return cv2.resize(high_res_frame, (self.width, self.height), 
                              interpolation=cv2.INTER_AREA)
         return high_res_frame
+    
+    def draw_watercolor_wave(self, frame, t, energy, beat_strength):
+        """Draw ultra-high-quality watercolor wave matching the reference image"""
+        center_x, center_y = self.width // 2, self.height // 2
+        
+        # Get frame synchronized audio data for better reactivity
+        frame_idx = int(t * self.fps)
+        if frame_idx < len(self.sync_data['rms_energy_frames']):
+            current_energy = self.sync_data['rms_energy_frames'][frame_idx]
+            spectral_centroid = self.sync_data['spectral_centroid_frames'][frame_idx] if frame_idx < len(self.sync_data['spectral_centroid_frames']) else 0.5
+        else:
+            current_energy = energy
+            spectral_centroid = 0.5
+        
+        # Enhanced parameters for ultra-high quality
+        base_num_rays = int(100 + current_energy * 150)  # More rays for finer detail
+        max_radius = min(self.width, self.height) * 0.45  # Optimal radius
+        
+        # Create multiple layers for depth and richness
+        layers = [
+            {'rays': base_num_rays, 'alpha': 0.9, 'thickness': 1, 'glow': True},
+            {'rays': base_num_rays // 2, 'alpha': 0.7, 'thickness': 2, 'glow': True},
+            {'rays': base_num_rays // 3, 'alpha': 0.5, 'thickness': 3, 'glow': False}
+        ]
+        
+        for layer_idx, layer in enumerate(layers):
+            num_rays = layer['rays']
+            
+            for ray in range(num_rays):
+                # Enhanced angle calculation with audio reactivity
+                base_angle = (ray / num_rays) * 2 * math.pi
+                
+                # Audio-reactive angle variation
+                angle_variation = (
+                    math.sin(t * 1.5 + ray * 0.08) * 0.15 * current_energy +
+                    math.cos(t * 2.3 + ray * 0.12) * 0.08 * spectral_centroid +
+                    beat_strength * 0.2 * math.sin(ray * 0.1)
+                )
+                angle = base_angle + angle_variation
+                
+                # Create smoother, more organic ray points
+                ray_points = []
+                num_points = int(50 + current_energy * 40)
+                
+                for point_idx in range(num_points):
+                    progress = point_idx / (num_points - 1)
+                    
+                    # Enhanced curve generation for more organic shapes
+                    curve_base = math.sin(progress * math.pi) * 0.4
+                    curve_variation = (
+                        math.sin(progress * 6 + t * 2 + ray * 0.1) * 0.2 * current_energy +
+                        math.cos(progress * 8 + t * 1.5 + ray * 0.15) * 0.15 * spectral_centroid
+                    )
+                    curve_factor = curve_base + curve_variation
+                    
+                    # Radius with multiple wave components
+                    base_radius = progress * max_radius
+                    radius_modifier = (
+                        curve_factor * current_energy +
+                        math.sin(progress * 10 + t * 4 + ray * 0.3) * (10 + current_energy * 20) +
+                        math.cos(progress * 12 + t * 3 + ray * 0.2) * (8 + spectral_centroid * 15)
+                    )
+                    
+                    radius = base_radius + radius_modifier
+                    
+                    # Calculate position with sub-pixel precision
+                    x = center_x + radius * math.cos(angle)
+                    y = center_y + radius * math.sin(angle)
+                    
+                    # Keep in bounds with smooth clamping
+                    x = max(5, min(self.width - 5, x))
+                    y = max(5, min(self.height - 5, y))
+                    
+                    ray_points.append((x, y))
+                
+                # Enhanced color calculation based on reference image
+                if len(ray_points) > 1:
+                    # Distance-based color mixing
+                    ray_distance_factor = ray / num_rays
+                    angle_factor = (angle % (2 * math.pi)) / (2 * math.pi)
+                    
+                    # Create the signature gradient from the reference image
+                    if layer_idx == 0:  # Main layer
+                        # Center: bright pinkish-red
+                        if ray_distance_factor < 0.25:
+                            r, g, b = 255, 100, 140  # Bright pink-red
+                        # Middle: purple-pink transition
+                        elif ray_distance_factor < 0.5:
+                            r, g, b = 230, 80, 200  # Purple-pink
+                        # Mid-outer: deep purple
+                        elif ray_distance_factor < 0.75:
+                            r, g, b = 200, 60, 240  # Deep purple
+                        # Outer: blue-purple
+                        else:
+                            r, g, b = 140, 80, 255  # Blue-purple
+                    else:  # Secondary layers - more subtle
+                        base_r, base_g, base_b = 220, 120, 255
+                        r = int(base_r * (0.6 + ray_distance_factor * 0.4))
+                        g = int(base_g * (0.4 + spectral_centroid * 0.6))
+                        b = int(base_b * (0.7 + current_energy * 0.3))
+                    
+                    # Audio-reactive intensity modulation
+                    intensity = (0.8 + current_energy * 0.2) * layer['alpha']
+                    r = int(r * intensity)
+                    g = int(g * intensity)
+                    b = int(b * intensity)
+                    
+                    # Additional beat-reactive enhancement
+                    if beat_strength > 0.7:
+                        r = min(255, int(r * 1.3))
+                        b = min(255, int(b * 1.2))
+                    
+                    color = (b, g, r)  # BGR format
+                    
+                    # Draw the ray with anti-aliasing
+                    thickness = layer['thickness']
+                    
+                    # Main ray
+                    for i in range(len(ray_points) - 1):
+                        pt1 = (int(ray_points[i][0]), int(ray_points[i][1]))
+                        pt2 = (int(ray_points[i + 1][0]), int(ray_points[i + 1][1]))
+                        cv2.line(frame, pt1, pt2, color, thickness, cv2.LINE_AA)
+                    
+                    # Add glow effect for enhanced quality
+                    if layer['glow'] and (ray % 3 == 0 or spectral_centroid > 0.6):
+                        glow_color = tuple(int(c * 0.5) for c in color)
+                        glow_thickness = thickness + 1
+                        
+                        for i in range(len(ray_points) - 1):
+                            pt1 = (int(ray_points[i][0]), int(ray_points[i][1]))
+                            pt2 = (int(ray_points[i + 1][0]), int(ray_points[i + 1][1]))
+                            cv2.line(frame, pt1, pt2, glow_color, glow_thickness, cv2.LINE_AA)
+        
+        # Enhanced central core with gradient
+        core_size = int(30 + current_energy * 50 + beat_strength * 25)
+        
+        # Multi-layer core for depth
+        for core_layer in range(6):
+            layer_size = core_size - core_layer * 6
+            if layer_size > 0:
+                layer_alpha = 1.0 - (core_layer * 0.12)
+                core_color = (
+                    int(80 * layer_alpha),   # Blue
+                    int(120 * layer_alpha),  # Green
+                    int(255 * layer_alpha)   # Red -> creates bright pink
+                )
+                cv2.circle(frame, (center_x, center_y), layer_size, core_color, -1)
+        
+        # Add connecting web patterns for complexity
+        if current_energy > 0.4:
+            num_connections = int(25 + current_energy * 50)
+            connection_radius = max_radius * 0.7
+            
+            for i in range(num_connections):
+                # Create connection points on a circle
+                angle1 = (i / num_connections) * 2 * math.pi + t * 0.6
+                angle2 = ((i + 2) / num_connections) * 2 * math.pi + t * 0.6
+                
+                # Audio-reactive radius modulation
+                radius1 = connection_radius + math.sin(t * 3.5 + i * 0.4) * (25 + current_energy * 35)
+                radius2 = connection_radius + math.cos(t * 2.8 + i * 0.5) * (20 + current_energy * 30)
+                
+                x1 = int(center_x + radius1 * math.cos(angle1))
+                y1 = int(center_y + radius1 * math.sin(angle1))
+                x2 = int(center_x + radius2 * math.cos(angle2))
+                y2 = int(center_y + radius2 * math.sin(angle2))
+                
+                # Keep in bounds
+                x1 = max(0, min(self.width - 1, x1))
+                y1 = max(0, min(self.height - 1, y1))
+                x2 = max(0, min(self.width - 1, x2))
+                y2 = max(0, min(self.height - 1, y2))
+                
+                # Draw connection with gradient color
+                connection_intensity = spectral_centroid * current_energy
+                if connection_intensity > 0.3:
+                    connection_color = (
+                        int(180 * connection_intensity),  # Blue
+                        int(100 * connection_intensity),  # Green
+                        int(220 * connection_intensity)   # Red -> purple
+                    )
+                    cv2.line(frame, (x1, y1), (x2, y2), connection_color, 1, cv2.LINE_AA)
+        
+        # Enhanced floating particles with better distribution
+        num_particles = int(60 + current_energy * 100)
+        for i in range(num_particles):
+            # Create particle clusters around energy peaks
+            if spectral_centroid > 0.2:  # Only show particles for significant activity
+                # Spiral distribution for better aesthetics
+                spiral_angle = i * 0.618 + t * 1.0  # Golden ratio for natural distribution
+                spiral_radius = (i * 4.2) % (max_radius * 0.95)
+                
+                # Add organic movement
+                movement_x = math.sin(t * 2.2 + i * 0.25) * (12 + current_energy * 20)
+                movement_y = math.cos(t * 1.9 + i * 0.3) * (10 + current_energy * 15)
+                
+                particle_x = int(center_x + spiral_radius * math.cos(spiral_angle) + movement_x)
+                particle_y = int(center_y + spiral_radius * math.sin(spiral_angle) + movement_y)
+                
+                # Keep in bounds
+                particle_x = max(0, min(self.width - 1, particle_x))
+                particle_y = max(0, min(self.height - 1, particle_y))
+                
+                # Enhanced particle colors matching the gradient
+                distance_from_center = spiral_radius / max_radius
+                if distance_from_center < 0.3:
+                    particle_color = (120, 100, 255)  # Pink
+                elif distance_from_center < 0.6:
+                    particle_color = (200, 80, 240)  # Purple
+                else:
+                    particle_color = (255, 120, 180)  # Blue-purple
+                
+                particle_size = int(1 + spectral_centroid * 4 + current_energy * 3)
+                
+                # Draw particle with glow
+                cv2.circle(frame, (particle_x, particle_y), particle_size, particle_color, -1)
+                if particle_size > 1:
+                    glow_color = tuple(int(c * 0.6) for c in particle_color)
+                    cv2.circle(frame, (particle_x, particle_y), particle_size + 1, glow_color, 1)
