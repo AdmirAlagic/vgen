@@ -1,0 +1,38 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+Always focus on quality over speed of process or filesize.
+Rule ID	Rule Description	Constraint/Parameter
+C01: Audio Processing	The code must perform Fast Fourier Transform (FFT) on the input audio to accurately extract frequency, amplitude, and phase data, enabling precise visualization.	Resolution: ≥1024 FFT bins. Framerate Synchronization: Process ≈ 
+FFT Bins
+Sample Rate
+​
+  FFT cycles per video frame.
+C02: 3D Geometry	The waveform visualization must be generated using 3D rendering libraries (e.g., Three.js, OpenGL, or a custom engine) where the Y-axis represents amplitude and the X and Z axes define the physical space.	Minimum Vertices: ≥500 vertices per frame for smooth 3D curves. Waveform Type: Must support parametric curves for a "wave" appearance, not just static bars.
+C03: Real-Time Sync	The animation framerate must be perfectly synchronized with the audio processing. Every video frame must correspond to an analyzed audio block to prevent visual stutter or drift.	Target Sync Rate: 1:1 match between video frames and audio analysis cycles. Tolerance: Animation lag must be virtually zero (≈0 ms).
+C04: Input Audio	The system must accept and decode high-quality audio formats before processing.	Supported Formats: .WAV (uncompressed preferred), .FLAC, or high-bitrate .MP3/.AAC. Sample Rate: Must handle up to 48 kHz.
+
+Export to Sheets
+II. Visual Quality & Effects Rules (3D/Shaders)
+Rule ID	Rule Description	Constraint/Parameter
+V01: Dynamic Shadows	The 3D waveform object must cast realistic, dynamic shadows onto the background plane. Shadows must change based on the virtual light source's position and the waveform's movement.	Shadow Technique: Use a performant technique like Variance Shadow Maps (VSM) or high-resolution Shadow Mapping (≥2048 resolution).
+V02: Volumetric Lighting	Implement a volumetric or ambient occlusion effect to enhance the 3D depth and define the shape of the waveform with realistic lighting and soft glow.	Effect: Must include an Ambient Occlusion (AO) or Bloom filter on the waveform edges. Light Source: Must support customizable 3D light position and color.
+V03: Reflection/Refraction	The waveform material must have customizable properties including reflectivity and material color/texture. Rule: A subtle ground reflection or self-reflection on the waveform surface is mandatory.	Shaders: PBR (Physically Based Rendering) pipeline recommended for materials. Surface: Must allow user control over Metallic and Roughness values.
+V04: Post-Processing	Apply a final cinematic look before export.	Required Filters: Anti-aliasing (e.g., TAA, FXAA), Depth of Field (DOF) for customizable focus, and a slight Color Grade/Vignette.
+
+Export to Sheets
+III. YouTube Optimization & Export Rules
+Rule ID	Rule Description	Constraint/Parameter
+Y01: Output Resolution	The final video must be exported to meet YouTube's high-definition standards.	Standard: 1920×1080 (1080p). Premium Option: 3840×2160 (4K UHD) as a maximum setting.
+Y02: Output Framerate	The rendering engine must target and maintain a high, stable framerate for buttery-smooth animation, which YouTube highly rewards.	Target Framerate: 60 Frames Per Second (FPS). Minimum Acceptable: 30 FPS.
+Y03: Encoding Parameters	Use YouTube's recommended encoding settings for maximum quality retention after re-encoding.	Codec: H.264. Container: MP4. Bitrate: User-selectable constant bitrate (CBR) or VBR with a high ceiling (e.g., ≥50 Mbps for 4K or ≥15 Mbps for 1080p).
+Y04: Audio Encoding	Encode the audio in the final video using the highest possible quality.	Audio Codec: AAC-LC. Bitrate: ≥384 kbps. Sample Rate: 48 kHz.
+
+Export to Sheets
+IV. User Customization Rules (Required for App UI)
+Rule ID	Rule Description	Constraint/Parameter
+U01: Waveform Geometry	Allow users to select the shape and responsiveness of the 3D object.	Required Shapes: Line, Bar Spectrum, Circular, and Mesh Surface (full 3D field). Responsiveness: Adjustable Decay, Attack, and Sensitivity settings.
+U02: Color Theming	Provide a full color picker for the waveform, background, and lighting.	Required Sliders: Waveform Color (RGB/HEX), Background Gradient (Start/End), and Shadow Color (adjustable tint/density).
+U03: Camera Control	Give the user control over the virtual camera's perspective.	Required Controls: X/Y/Z Position, Field of View (FOV), and Orbit/Pan controls for a dynamic

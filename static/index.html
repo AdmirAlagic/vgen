@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Video Generator - YouTube Optimized</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-video"></i> AAA Quality Video Generator</h1>
+            <p>Create stunning, high-end music visualizations with AAA video game quality graphics</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h3>Upload Your Audio File</h3>
+                        <p>Drag and drop your audio file here or click to browse</p>
+                        <p class="file-types">Supported: MP3, WAV, FLAC, AAC, M4A</p>
+                        <input type="file" id="audioFile" accept="audio/*" hidden>
+                        <button class="btn btn-primary">
+                            Choose File
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="progressText">Uploading...</p>
+                </div>
+            </div>
+
+            <!-- Audio Analysis -->
+            <div class="analysis-section" id="analysisSection" style="display: none;">
+                <h3><i class="fas fa-chart-line"></i> Audio Analysis</h3>
+                <div class="analysis-grid">
+                    <div class="analysis-card">
+                        <h4>Duration</h4>
+                        <span id="duration">-</span>
+                    </div>
+                    <div class="analysis-card">
+                        <h4>BPM</h4>
+                        <span id="bpm">-</span>
+                    </div>
+                    <div class="analysis-card">
+                        <h4>Dynamic Range</h4>
+                        <span id="dynamicRange">-</span>
+                    </div>
+                    <div class="analysis-card">
+                        <h4>Beats Detected</h4>
+                        <span id="beats">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="settings-section" id="settingsSection" style="display: none;">
+                <h3><i class="fas fa-cogs"></i> AAA Quality Settings</h3>
+                
+                <div class="settings-grid">
+                    <!-- Resolution -->
+                    <div class="setting-group">
+                        <label for="resolution">Resolution</label>
+                        <select id="resolution">
+                            <option value="1920x1080">1920x1080 (Full HD)</option>
+                            <option value="3840x2160">3840x2160 (4K Ultra HD)</option>
+                        </select>
+                    </div>
+
+                    <!-- FPS -->
+                    <div class="setting-group">
+                        <label for="fps">Frame Rate</label>
+                        <select id="fps">
+                            <option value="60">60 FPS (Smooth)</option>
+                            <option value="30">30 FPS (Standard)</option>
+                        </select>
+                    </div>
+
+                    <!-- Quality -->
+                    <div class="setting-group">
+                        <label>Quality Level</label>
+                        <div class="quality-info">
+                            <p><i class="fas fa-star"></i> AAA Video Game Quality Graphics</p>
+                            <ul>
+                                <li>Advanced HDR lighting effects</li>
+                                <li>Real-time bloom and glow</li>
+                                <li>Professional particle systems</li>
+                                <li>Cinematic depth of field</li>
+                                <li>Motion blur and anti-aliasing</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-generate" id="generateBtn">
+                    <i class="fas fa-magic"></i> Generate AAA Quality Video
+                </button>
+            </div>
+
+            <!-- Generation Progress -->
+            <div class="generation-section" id="generationSection" style="display: none;">
+                <h3><i class="fas fa-spinner fa-spin"></i> Generating Video</h3>
+                <div class="generation-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="generationProgress"></div>
+                    </div>
+                    <p id="generationText">Processing audio analysis...</p>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h3><i class="fas fa-check-circle"></i> Video Generated Successfully!</h3>
+                <div class="results-content">
+                    <div class="video-preview">
+                        <video id="previewVideo" controls>
+                            <source id="videoSource" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-info">
+                        <h4>Video Information</h4>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="label">Resolution:</span>
+                                <span id="videoResolution">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Duration:</span>
+                                <span id="videoDuration">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">File Size:</span>
+                                <span id="videoSize">-</span>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-download" id="downloadBtn">
+                                <i class="fas fa-download"></i> Download Video
+                            </button>
+                            <button class="btn btn-new" onclick="resetApp()">
+                                <i class="fas fa-plus"></i> Create New Video
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
