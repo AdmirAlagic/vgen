@@ -101,6 +101,12 @@ class VideoGenerator:
         self.prev_frame = None
         self.frame_buffer = []
         
+        # Spectrum bars smoothing variables for flicker-free animation
+        self.prev_spectrum_values = None
+        self.spectrum_smoothing_factor = 0.15  # Lower = smoother, higher = more responsive
+        self.num_spectrum_bars = 32  # More bars for smoother visualization
+        self.spectrum_history = []  # Keep track of recent values for better smoothing
+        
         # Professional rainbow gradient color schemes for stunning audio visualization
         self.rainbow_gradients = [
             # Blue to Purple gradient
@@ -597,25 +603,87 @@ class VideoGenerator:
             cv2.circle(frame, (int(particle['x']), int(particle['y'])), size, color_bgr, -1)
     
     def draw_spectrum_bars(self, frame, t, frame_idx):
-        """Draw frequency spectrum bars"""
-        bands = ['low', 'mid', 'high']
-        colors = self.color_schemes[self.visual_style]
+        """Draw smooth, non-flickering frequency spectrum bars with temporal smoothing"""
+        # Get frame-synchronized spectrum data for perfect audio sync
+        if frame_idx < len(self.sync_data['magnitude_frames']):
+            magnitude_frame = np.array(self.sync_data['magnitude_frames'][frame_idx])
+        else:
+            # Fallback to empty spectrum if no data
+            magnitude_frame = np.zeros(self.num_spectrum_bars)
         
-        bar_width = self.width // len(bands)
+        # Reduce spectrum to desired number of bars by averaging frequency bins
+        spectrum_size = len(magnitude_frame)
+        bins_per_bar = max(1, spectrum_size // self.num_spectrum_bars)
         
-        for i, band in enumerate(bands):
-            if frame_idx < len(self.audio_data['frequency_bands'][band]):
-                energy = self.audio_data['frequency_bands'][band][frame_idx]
-                bar_height = int(energy * self.height * 0.8)
+        current_spectrum = []
+        for i in range(self.num_spectrum_bars):
+            start_idx = i * bins_per_bar
+            end_idx = min((i + 1) * bins_per_bar, spectrum_size)
+            if end_idx > start_idx:
+                # Average the frequency bins for this bar
+                bar_energy = np.mean(magnitude_frame[start_idx:end_idx])
+                # Apply logarithmic scaling for better visual representation
+                bar_energy = math.log10(max(1e-6, bar_energy)) + 6  # Normalize to 0-6 range
+                bar_energy = max(0, min(1, bar_energy / 6))  # Clamp to 0-1
+            else:
+                bar_energy = 0
+            current_spectrum.append(bar_energy)
+        
+        # Initialize previous values if not set
+        if self.prev_spectrum_values is None:
+            self.prev_spectrum_values = current_spectrum.copy()
+        
+        # Apply temporal smoothing to prevent flickering
+        smoothed_spectrum = []
+        for i in range(len(current_spectrum)):
+            # Exponential moving average for smooth transitions
+            smoothed_value = (self.spectrum_smoothing_factor * current_spectrum[i] + 
+                            (1 - self.spectrum_smoothing_factor) * self.prev_spectrum_values[i])
+            smoothed_spectrum.append(smoothed_value)
+        
+        # Update previous values for next frame
+        self.prev_spectrum_values = smoothed_spectrum.copy()
+        
+        # Draw the spectrum bars
+        bar_width = self.width // self.num_spectrum_bars
+        max_bar_height = int(self.height * 0.8)
+        
+        for i, energy in enumerate(smoothed_spectrum):
+            # Calculate bar position and height
+            x1 = i * bar_width
+            x2 = (i + 1) * bar_width - 2  # Small gap between bars
+            
+            # Smooth bar height calculation with minimum height
+            bar_height = int(energy * max_bar_height)
+            bar_height = max(5, bar_height)  # Minimum height for visual consistency
+            
+            y1 = self.height - bar_height
+            y2 = self.height
+            
+            # Generate rainbow gradient color based on bar position and energy
+            hue = (i / self.num_spectrum_bars) * 360  # Spread across color spectrum
+            saturation = 0.8 + (energy * 0.2)  # Energy affects saturation
+            brightness = 0.6 + (energy * 0.4)  # Energy affects brightness
+            
+            color_bgr = self.hsv_to_bgr(hue, saturation, brightness)
+            
+            # Draw main bar
+            cv2.rectangle(frame, (x1, y1), (x2, y2), color_bgr, -1)
+            
+            # Add smooth glow effect for high-energy bars
+            if energy > 0.6:
+                glow_intensity = (energy - 0.6) * 2.5  # Scale glow with energy
+                glow_color = tuple(min(255, int(c * (1 + glow_intensity))) for c in color_bgr)
                 
-                color_bgr = tuple(int(colors[i % len(colors)][j:j+2], 16) for j in (5, 3, 1))
-                
-                x1 = i * bar_width
-                x2 = (i + 1) * bar_width
-                y1 = self.height - bar_height
-                y2 = self.height
-                
-                cv2.rectangle(frame, (x1, y1), (x2, y2), color_bgr, -1)
+                # Draw glow as slightly larger, transparent bar
+                glow_width = max(1, int(bar_width * 0.1))
+                cv2.rectangle(frame, (x1 - glow_width, y1 - 5), (x2 + glow_width, y2), glow_color, 1)
+            
+            # Add peak dots for visual enhancement
+            if energy > 0.4:
+                peak_y = max(10, y1 - 10)
+                peak_color = tuple(min(255, c + 50) for c in color_bgr)
+                cv2.circle(frame, (x1 + bar_width // 2, peak_y), 3, peak_color, -1)
     
     def draw_geometric_patterns(self, frame, t, centroid, energy):
         """Draw geometric patterns based on audio"""
