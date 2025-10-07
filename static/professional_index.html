@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Music Video Generator - YouTube Ready</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="professional_style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-video"></i>
+                    <h1>Professional Music Video Generator</h1>
+                </div>
+                <div class="tagline">
+                    <p>Create stunning YouTube-ready music videos with professional visualizations</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Step 1: Audio Upload -->
+            <section class="step-section" id="uploadSection">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <h2>Upload Your Audio</h2>
+                    <p>Upload high-quality audio files up to 500MB</p>
+                </div>
+                
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3>Drop your audio file here</h3>
+                        <p>or click to browse files</p>
+                        <div class="supported-formats">
+                            <span class="format-tag">MP3</span>
+                            <span class="format-tag">WAV</span>
+                            <span class="format-tag">FLAC</span>
+                            <span class="format-tag">AAC</span>
+                            <span class="format-tag">M4A</span>
+                        </div>
+                        <input type="file" id="audioFile" accept="audio/*" multiple="false">
+                        <button class="upload-btn" onclick="document.getElementById('audioFile').click()">
+                            <i class="fas fa-folder-open"></i>
+                            Choose Audio File
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload Progress -->
+                <div class="progress-container" id="uploadProgress" style="display: none;">
+                    <div class="progress-info">
+                        <span id="uploadFileName">Uploading...</span>
+                        <span id="uploadPercent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="uploadProgressFill"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 2: Audio Analysis Results -->
+            <section class="step-section" id="analysisSection" style="display: none;">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <h2>Audio Analysis Complete</h2>
+                    <p>Your audio has been analyzed for optimal visualization</p>
+                </div>
+                
+                <div class="analysis-results">
+                    <div class="analysis-card">
+                        <div class="analysis-icon">
+                            <i class="fas fa-music"></i>
+                        </div>
+                        <div class="analysis-info">
+                            <h4>Track Info</h4>
+                            <div class="info-row">
+                                <span class="label">Duration:</span>
+                                <span class="value" id="trackDuration">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Sample Rate:</span>
+                                <span class="value" id="sampleRate">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-card">
+                        <div class="analysis-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="analysis-info">
+                            <h4>Rhythm Analysis</h4>
+                            <div class="info-row">
+                                <span class="label">Tempo (BPM):</span>
+                                <span class="value" id="trackTempo">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Beats Detected:</span>
+                                <span class="value" id="beatsCount">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-card">
+                        <div class="analysis-icon">
+                            <i class="fas fa-file-audio"></i>
+                        </div>
+                        <div class="analysis-info">
+                            <h4>File Details</h4>
+                            <div class="info-row">
+                                <span class="label">File Size:</span>
+                                <span class="value" id="fileSize">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Quality:</span>
+                                <span class="value quality-badge" id="audioQuality">High</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3: Visualization Style Selection -->
+            <section class="step-section" id="styleSection" style="display: none;">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <h2>Choose Visualization Style</h2>
+                    <p>Select a professional preset or customize your own</p>
+                </div>
+                
+                <div class="presets-grid" id="presetsGrid">
+                    <!-- Presets will be loaded dynamically -->
+                </div>
+                
+                <!-- Advanced Settings -->
+                <div class="advanced-settings" id="advancedSettings" style="display: none;">
+                    <h3><i class="fas fa-sliders-h"></i> Advanced Settings</h3>
+                    
+                    <div class="settings-grid">
+                        <div class="setting-group">
+                            <label for="resolution">Resolution</label>
+                            <select id="resolution">
+                                <option value="1920x1080">1080p (Full HD)</option>
+                                <option value="3840x2160" selected>4K (Ultra HD)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="fps">Frame Rate</label>
+                            <select id="fps">
+                                <option value="30">30 FPS</option>
+                                <option value="60" selected>60 FPS (Recommended)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label for="colorPalette">Color Palette</label>
+                            <select id="colorPalette">
+                                <option value="neon">Neon</option>
+                                <option value="cyberpunk">Cyberpunk</option>
+                                <option value="aurora">Aurora</option>
+                                <option value="sunset">Sunset</option>
+                                <option value="ocean">Ocean</option>
+                                <option value="fire">Fire</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="hdrEnabled" checked>
+                                <span class="checkmark"></span>
+                                HDR Enhancement
+                            </label>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="motionBlur" checked>
+                                <span class="checkmark"></span>
+                                Motion Blur
+                            </label>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="antiAliasing" checked>
+                                <span class="checkmark"></span>
+                                Anti-Aliasing
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="toggle-btn" onclick="toggleAdvancedSettings(false)">
+                        <i class="fas fa-chevron-up"></i>
+                        Hide Advanced Settings
+                    </button>
+                </div>
+                
+                <button class="toggle-btn" id="showAdvancedBtn" onclick="toggleAdvancedSettings(true)">
+                    <i class="fas fa-cogs"></i>
+                    Show Advanced Settings
+                </button>
+            </section>
+
+            <!-- Step 4: Video Generation -->
+            <section class="step-section" id="generationSection" style="display: none;">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <h2>Generating Your Video</h2>
+                    <p>Creating professional visualization...</p>
+                </div>
+                
+                <div class="generation-progress">
+                    <div class="generation-status">
+                        <div class="status-icon">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <div class="status-info">
+                            <h3 id="generationStage">Initializing...</h3>
+                            <p id="generationMessage">Preparing video generation...</p>
+                            <div class="progress-details">
+                                <span id="generationPercent">0%</span>
+                                <span class="separator">•</span>
+                                <span id="estimatedTime">Calculating time...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar large">
+                        <div class="progress-fill" id="generationProgressFill"></div>
+                    </div>
+                </div>
+                
+                <!-- Generation Steps -->
+                <div class="generation-steps">
+                    <div class="gen-step" id="stepAnalyzing">
+                        <div class="gen-step-icon"><i class="fas fa-search"></i></div>
+                        <span>Analyzing Audio</span>
+                    </div>
+                    <div class="gen-step" id="stepGenerating">
+                        <div class="gen-step-icon"><i class="fas fa-paint-brush"></i></div>
+                        <span>Creating Visuals</span>
+                    </div>
+                    <div class="gen-step" id="stepEncoding">
+                        <div class="gen-step-icon"><i class="fas fa-video"></i></div>
+                        <span>Encoding Video</span>
+                    </div>
+                    <div class="gen-step" id="stepComplete">
+                        <div class="gen-step-icon"><i class="fas fa-check"></i></div>
+                        <span>Complete</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 5: Download Results -->
+            <section class="step-section" id="resultsSection" style="display: none;">
+                <div class="step-header">
+                    <div class="step-number">5</div>
+                    <h2>Video Ready!</h2>
+                    <p>Your professional music video has been generated</p>
+                </div>
+                
+                <div class="results-content">
+                    <div class="video-preview">
+                        <video id="previewVideo" controls poster="/static/video-placeholder.jpg">
+                            <source id="videoSource" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-overlay">
+                            <button class="play-btn" onclick="playPreview()">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="video-details">
+                        <h3>Video Information</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <i class="fas fa-film"></i>
+                                <span class="label">Format:</span>
+                                <span class="value">MP4 (H.264)</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span class="label">Resolution:</span>
+                                <span class="value" id="videoResolution">4K Ultra HD</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-clock"></i>
+                                <span class="label">Duration:</span>
+                                <span class="value" id="videoDuration">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-hdd"></i>
+                                <span class="label">File Size:</span>
+                                <span class="value" id="videoFileSize">-</span>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="download-btn primary" id="downloadBtn">
+                                <i class="fas fa-download"></i>
+                                Download Video
+                            </button>
+                            <button class="action-btn secondary" onclick="createNew()">
+                                <i class="fas fa-plus"></i>
+                                Create Another
+                            </button>
+                            <button class="action-btn secondary" onclick="shareVideo()">
+                                <i class="fas fa-share"></i>
+                                Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- YouTube Optimization Info -->
+                <div class="youtube-info">
+                    <div class="youtube-badge">
+                        <i class="fab fa-youtube"></i>
+                        <span>YouTube Optimized</span>
+                    </div>
+                    <div class="optimization-details">
+                        <div class="opt-item">
+                            <i class="fas fa-check"></i>
+                            <span>High bitrate encoding for maximum quality</span>
+                        </div>
+                        <div class="opt-item">
+                            <i class="fas fa-check"></i>
+                            <span>Optimized for YouTube compression algorithms</span>
+                        </div>
+                        <div class="opt-item">
+                            <i class="fas fa-check"></i>
+                            <span>Professional audio synchronization</span>
+                        </div>
+                        <div class="opt-item">
+                            <i class="fas fa-check"></i>
+                            <span>HDR-ready color grading</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generate Button -->
+            <div class="generate-container" id="generateContainer" style="display: none;">
+                <button class="generate-btn" id="generateBtn">
+                    <i class="fas fa-magic"></i>
+                    Generate Professional Video
+                </button>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Professional Music Video Generator. Create stunning visualizations for YouTube.</p>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <i class="fas fa-cog fa-spin"></i>
+            </div>
+            <h3>Processing...</h3>
+            <p>Please wait while we process your request</p>
+        </div>
+    </div>
+
+    <script src="professional_script.js"></script>
+</body>
+</html>

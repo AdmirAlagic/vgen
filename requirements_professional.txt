@@ -1,0 +1,65 @@
+# Professional YouTube Music Video Generator - Dependencies
+
+# Core Flask Application
+Flask==2.3.3
+Flask-CORS==4.0.0
+Werkzeug==2.3.7
+
+# Audio Processing
+librosa==0.10.1
+soundfile==0.12.1
+audioread==3.0.1
+
+# Video Processing & Computer Vision
+opencv-python==4.8.1.78
+moviepy==1.0.3
+imageio==2.31.5
+imageio-ffmpeg==0.4.9
+
+# Image Processing
+Pillow==10.0.1
+scikit-image==0.21.0
+
+# Mathematical & Scientific Computing
+numpy==1.24.4
+scipy==1.11.4
+matplotlib==3.7.2
+seaborn==0.12.2
+
+# Machine Learning (for advanced audio analysis)
+scikit-learn==1.3.2
+
+# Color Processing
+colorsys2==0.1.0
+
+# System Monitoring (optional, for system info endpoint)
+psutil==5.9.6
+GPUtil==1.4.0
+
+# Progress Tracking
+tqdm==4.66.1
+
+# File Handling
+pathlib2==2.3.7
+
+# Threading and Async Support
+concurrent-futures==3.1.1
+
+# Development Tools
+python-dotenv==1.0.0
+
+# Video Encoding Optimization
+ffmpeg-python==0.2.0
+
+# Additional Audio Formats Support
+pydub==0.25.1
+mutagen==1.47.0
+
+# Color Palette Generation
+webcolors==1.13
+
+# Math Extensions
+sympy==1.12
+
+# Fast Array Operations
+numba==0.58.1

@@ -6,8 +6,7 @@ High-quality geometric and abstract visualizations inspired by Artlist.io
 import numpy as np
 import cv2
 import librosa
-import moviepy.editor as mp
-from moviepy.video.fx import resize
+# moviepy removed for compatibility - using cv2 for video generation
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Polygon
 from matplotlib.collections import LineCollection
@@ -463,44 +462,49 @@ class ProfessionalVisualizer:
             raise e
 
     def _create_final_video(self, output_path):
-        """Create final video with audio and YouTube optimization"""
+        """Create final video with audio using ffmpeg"""
         print("Creating final video with audio...")
         
-        # Load video and audio
         temp_video_path = output_path.replace('.mp4', '_temp.mp4')
-        video = mp.VideoFileClip(temp_video_path)
-        audio = mp.AudioFileClip(self.audio_path)
         
-        # Combine video and audio
-        final_video = video.set_audio(audio)
+        try:
+            # Use ffmpeg command line to combine video and audio
+            import subprocess
+            
+            cmd = [
+                'ffmpeg', '-y',  # -y to overwrite output file
+                '-i', temp_video_path,  # Input video
+                '-i', self.audio_path,  # Input audio
+                '-c:v', 'libx264',  # Video codec
+                '-c:a', 'aac',      # Audio codec
+                '-b:v', '15000k' if self.width < 3000 else '50000k',  # Video bitrate
+                '-b:a', '320k',     # Audio bitrate
+                '-shortest',        # End when shortest input ends
+                output_path
+            ]
+            
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            if result.returncode == 0:
+                print(f"✅ Professional video generated: {output_path}")
+            else:
+                print(f"⚠️ FFmpeg warning: {result.stderr}")
+                # Fallback: just rename temp video (video only)
+                if os.path.exists(temp_video_path):
+                    os.rename(temp_video_path, output_path)
+                    print(f"📹 Video-only file created: {output_path}")
+                    print("Note: Install FFmpeg for audio integration")
+            
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print("⚠️ FFmpeg not found - creating video without audio")
+            # Fallback: just rename temp video
+            if os.path.exists(temp_video_path):
+                os.rename(temp_video_path, output_path)
+                print(f"📹 Video-only file created: {output_path}")
         
-        # High-quality encoding settings for YouTube
-        codec_settings = {
-            'codec': 'libx264',
-            'bitrate': '50000k' if '4K' in str(self.width) else '15000k',
-            'audio_codec': 'aac',
-            'audio_bitrate': '320k'
-        }
-        
-        # Write final video
-        final_video.write_videofile(
-            output_path,
-            fps=self.fps,
-            **codec_settings,
-            temp_audiofile='temp-audio.m4a',
-            remove_temp=True
-        )
-        
-        # Clean up
-        video.close()
-        audio.close()
-        final_video.close()
-        
-        # Remove temporary file
-        if os.path.exists(temp_video_path):
+        # Clean up temp file
+        if os.path.exists(temp_video_path) and temp_video_path != output_path:
             os.remove(temp_video_path)
-        
-        print(f"Professional video generated: {output_path}")
 
 def get_visualization_presets():
     """Get predefined visualization presets for different styles"""
