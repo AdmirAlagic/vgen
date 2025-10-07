@@ -11,7 +11,8 @@ import math
 import random
 from audio_processor import AudioProcessor
 from scipy import ndimage
-from scipy.interpolate import interp1d
+from scipy.interpolate import interp1d, CubicSpline
+from scipy.ndimage import gaussian_filter1d
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -27,6 +28,14 @@ class VideoGenerator:
         self.width = int(resolution.split('x')[0])
         self.height = int(resolution.split('x')[1])
         self.fps = settings.get('fps', 60)  # Target 60 FPS per Y02 guidelines
+        
+        # Ultra-smooth animation enhancements
+        self.smoothing_factor = settings.get('smoothing_factor', 0.85)  # Higher = smoother
+        self.temporal_buffer_size = 5  # Frame buffer for temporal smoothing
+        self.frame_buffer = []  # Buffer for previous frame data
+        self.use_cubic_interpolation = settings.get('use_cubic_interpolation', True)
+        self.anti_aliasing = settings.get('anti_aliasing', True)
+        self.super_sampling = settings.get('super_sampling', 2)  # 2x super sampling
         
         # Ensure minimum 30 FPS per Y02 guidelines
         if self.fps < 30:
@@ -100,6 +109,9 @@ class VideoGenerator:
         # Initialize rendering buffers for smooth interpolation
         self.prev_frame = None
         self.frame_buffer = []
+        
+        # Precompute smoothed audio data for ultra-smooth animation
+        self._precompute_smoothed_audio_data()
         
         # Professional rainbow gradient color schemes for stunning audio visualization
         self.rainbow_gradients = [
@@ -198,6 +210,136 @@ class VideoGenerator:
         
         return output_path
     
+    def _precompute_smoothed_audio_data(self):
+        """Precompute smoothed audio data for ultra-smooth animations"""
+        if not hasattr(self, 'sync_data') or not self.sync_data:
+            return
+            
+        # Apply Gaussian smoothing to energy data
+        if 'rms_energy_frames' in self.sync_data:
+            energy_data = np.array(self.sync_data['rms_energy_frames'])
+            self.sync_data['smoothed_energy'] = gaussian_filter1d(energy_data, sigma=self.smoothing_factor)
+        
+        # Smooth frequency bands
+        for band in ['low', 'mid', 'high']:
+            if band in self.audio_data['frequency_bands']:
+                band_data = np.array(self.audio_data['frequency_bands'][band])
+                self.audio_data['frequency_bands'][f'smoothed_{band}'] = gaussian_filter1d(band_data, sigma=self.smoothing_factor)
+    
+    def get_temporal_smoothed_value(self, values, frame_idx, window_size=5):
+        """Get temporally smoothed value using moving average"""
+        start_idx = max(0, frame_idx - window_size // 2)
+        end_idx = min(len(values), frame_idx + window_size // 2 + 1)
+        
+        if start_idx >= len(values):
+            return 0.0
+            
+        window_values = values[start_idx:end_idx]
+        return np.mean(window_values) if len(window_values) > 0 else 0.0
+    
+    def interpolate_smooth_curve(self, points, num_points=None):
+        """Create smooth curve using cubic spline interpolation"""
+        if len(points) < 3:
+            return points
+            
+        if num_points is None:
+            num_points = len(points) * 3  # Triple the resolution
+            
+        x_coords = np.array([p[0] for p in points])
+        y_coords = np.array([p[1] for p in points])
+        
+        # Create parameter array
+        t = np.linspace(0, 1, len(points))
+        t_new = np.linspace(0, 1, num_points)
+        
+        try:
+            # Use cubic spline interpolation
+            cs_x = CubicSpline(t, x_coords, bc_type='natural')
+            cs_y = CubicSpline(t, y_coords, bc_type='natural')
+            
+            smooth_x = cs_x(t_new)
+            smooth_y = cs_y(t_new)
+            
+            return list(zip(smooth_x, smooth_y))
+        except:
+            # Fallback to linear interpolation
+            f_x = interp1d(t, x_coords, kind='linear', bounds_error=False, fill_value='extrapolate')
+            f_y = interp1d(t, y_coords, kind='linear', bounds_error=False, fill_value='extrapolate')
+            
+            smooth_x = f_x(t_new)
+            smooth_y = f_y(t_new)
+            
+            return list(zip(smooth_x, smooth_y))
+    
+    def draw_anti_aliased_line(self, frame, points, color, thickness=2):
+        """Draw anti-aliased line using PIL for ultra-smooth rendering"""
+        if len(points) < 2:
+            return
+            
+        # Create PIL image for anti-aliased drawing
+        if self.super_sampling > 1:
+            # Super-sampling for even smoother lines
+            pil_width = self.width * self.super_sampling
+            pil_height = self.height * self.super_sampling
+            upscaled_points = [(int(p[0] * self.super_sampling), int(p[1] * self.super_sampling)) for p in points]
+            upscaled_thickness = thickness * self.super_sampling
+        else:
+            pil_width = self.width
+            pil_height = self.height
+            upscaled_points = [(int(p[0]), int(p[1])) for p in points]
+            upscaled_thickness = thickness
+        
+        # Create PIL image
+        pil_img = Image.new('RGB', (pil_width, pil_height), (0, 0, 0))
+        draw = ImageDraw.Draw(pil_img)
+        
+        # Draw smooth line segments
+        for i in range(len(upscaled_points) - 1):
+            draw.line([upscaled_points[i], upscaled_points[i + 1]], fill=color, width=upscaled_thickness)
+        
+        # Convert back to numpy array
+        if self.super_sampling > 1:
+            # Downsample with anti-aliasing
+            pil_img = pil_img.resize((self.width, self.height), Image.LANCZOS)
+        
+        smooth_array = np.array(pil_img)
+        
+        # Blend with existing frame
+        mask = np.any(smooth_array > 0, axis=2)
+        frame[mask] = smooth_array[mask]
+    
+    def get_enhanced_beat_strength(self, t, frame_idx):
+        """Get enhanced beat strength with temporal smoothing"""
+        # Find closest beat with improved smoothing
+        beats = self.audio_data['beats']
+        if not beats:
+            return 0.5  # Default moderate strength
+        
+        closest_beat = min(beats, key=lambda x: abs(x - t))
+        beat_distance = abs(closest_beat - t)
+        
+        # Enhanced beat strength calculation with smoother falloff
+        if beat_distance < 0.2:  # Extended beat influence range
+            # Use smoother exponential decay instead of linear
+            strength = np.exp(-beat_distance * 5)  # Exponential decay
+            
+            # Apply temporal smoothing to beat strength
+            if hasattr(self, 'prev_beat_strength'):
+                smoothing = 0.6
+                strength = smoothing * strength + (1 - smoothing) * self.prev_beat_strength
+            
+            self.prev_beat_strength = strength
+            return strength
+        
+        # Smooth fade to baseline
+        if hasattr(self, 'prev_beat_strength'):
+            baseline_strength = 0.3
+            fade_factor = 0.95  # Gradual fade
+            self.prev_beat_strength *= fade_factor
+            return max(baseline_strength, self.prev_beat_strength)
+        
+        return 0.3  # Baseline strength
+    
     def create_ultra_quality_waveform(self):
         """Create ultra-high-quality waveform with smooth, glowing lines"""
         print("Creating ultra-smooth waveform renderer...")
@@ -211,15 +353,20 @@ class VideoGenerator:
             # Create professional waveform frame with black background
             frame = np.zeros((self.height, self.width, 3), dtype=np.uint8)
             
-            # Get audio data
+            # Get audio data with ultra-smooth interpolation
             frame_idx = int(t * self.fps)
-            if frame_idx < len(self.sync_data['rms_energy_frames']):
-                energy = self.sync_data['rms_energy_frames'][frame_idx]
+            
+            # Use smoothed energy data for ultra-fluid animation
+            if hasattr(self.sync_data, 'smoothed_energy') and frame_idx < len(self.sync_data['smoothed_energy']):
+                energy = self.sync_data['smoothed_energy'][frame_idx]
+            elif frame_idx < len(self.sync_data['rms_energy_frames']):
+                # Apply temporal smoothing if smoothed data not available
+                energy = self.get_temporal_smoothed_value(self.sync_data['rms_energy_frames'], frame_idx)
             else:
                 energy = 0.1
             
-            # Use the new professional audio visualization system
-            beat_strength = 0.5  # Default beat strength for now
+            # Enhanced beat detection for smoother rhythm response
+            beat_strength = self.get_enhanced_beat_strength(t, frame_idx)
             
             # Call the professional visualization method
             self.draw_professional_audio_visualization(frame, t, energy, beat_strength)
@@ -597,25 +744,117 @@ class VideoGenerator:
             cv2.circle(frame, (int(particle['x']), int(particle['y'])), size, color_bgr, -1)
     
     def draw_spectrum_bars(self, frame, t, frame_idx):
-        """Draw frequency spectrum bars"""
+        """Draw ultra-smooth frequency spectrum bars with temporal smoothing"""
         bands = ['low', 'mid', 'high']
         colors = self.color_schemes[self.visual_style]
         
-        bar_width = self.width // len(bands)
+        # Use more frequency bands for smoother spectrum
+        num_bars = 64  # Increased from 3 to 64 bars for ultra-smooth spectrum
+        bar_width = self.width / num_bars
         
-        for i, band in enumerate(bands):
-            if frame_idx < len(self.audio_data['frequency_bands'][band]):
-                energy = self.audio_data['frequency_bands'][band][frame_idx]
+        # Create frequency bins
+        if hasattr(self.audio_processor, 'get_frequency_spectrum'):
+            spectrum = self.audio_processor.get_frequency_spectrum(frame_idx, num_bars)
+        else:
+            # Fallback: interpolate between the 3 bands
+            spectrum = self._interpolate_spectrum_bands(frame_idx, num_bars)
+        
+        # Apply temporal smoothing
+        if hasattr(self, 'prev_spectrum'):
+            # Smooth transition between frames
+            alpha = 0.7  # Smoothing factor
+            spectrum = alpha * np.array(spectrum) + (1 - alpha) * np.array(self.prev_spectrum)
+        
+        self.prev_spectrum = spectrum.copy() if hasattr(spectrum, 'copy') else list(spectrum)
+        
+        # Draw smooth bars with gradient effects
+        for i, energy in enumerate(spectrum):
+            if energy > 0.01:  # Only draw significant bars
+                # Get smoothed bar height
                 bar_height = int(energy * self.height * 0.8)
                 
-                color_bgr = tuple(int(colors[i % len(colors)][j:j+2], 16) for j in (5, 3, 1))
+                # Apply smoothing to bar heights for ultra-fluid motion
+                if hasattr(self, 'prev_bar_heights'):
+                    smoothing = 0.8
+                    if i < len(self.prev_bar_heights):
+                        bar_height = int(smoothing * bar_height + (1 - smoothing) * self.prev_bar_heights[i])
                 
-                x1 = i * bar_width
-                x2 = (i + 1) * bar_width
+                # Color interpolation for smooth color transitions
+                color_progress = i / len(spectrum)
+                color_idx = int(color_progress * len(colors))
+                next_color_idx = min(color_idx + 1, len(colors) - 1)
+                
+                # Interpolate between colors
+                color1 = colors[color_idx]
+                color2 = colors[next_color_idx]
+                blend_factor = (color_progress * len(colors)) % 1.0
+                
+                # Convert hex to RGB and blend
+                r1, g1, b1 = int(color1[1:3], 16), int(color1[3:5], 16), int(color1[5:7], 16)
+                r2, g2, b2 = int(color2[1:3], 16), int(color2[3:5], 16), int(color2[5:7], 16)
+                
+                r = int(r1 * (1 - blend_factor) + r2 * blend_factor)
+                g = int(g1 * (1 - blend_factor) + g2 * blend_factor)
+                b = int(b1 * (1 - blend_factor) + b2 * blend_factor)
+                
+                color_bgr = (b, g, r)  # OpenCV uses BGR
+                
+                # Calculate bar position with sub-pixel precision
+                x1 = int(i * bar_width)
+                x2 = int((i + 1) * bar_width)
                 y1 = self.height - bar_height
                 y2 = self.height
                 
-                cv2.rectangle(frame, (x1, y1), (x2, y2), color_bgr, -1)
+                # Draw bar with gradient effect
+                if self.anti_aliasing:
+                    # Create gradient fill for smoother appearance
+                    for y in range(y1, y2):
+                        intensity = 1.0 - (y - y1) / max(1, bar_height)
+                        alpha_color = tuple(int(c * intensity) for c in color_bgr)
+                        cv2.rectangle(frame, (x1, y), (x2, y + 1), alpha_color, -1)
+                else:
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), color_bgr, -1)
+        
+        # Store bar heights for next frame smoothing
+        if not hasattr(self, 'prev_bar_heights'):
+            self.prev_bar_heights = []
+        self.prev_bar_heights = [int(energy * self.height * 0.8) for energy in spectrum]
+    
+    def _interpolate_spectrum_bands(self, frame_idx, num_bars):
+        """Interpolate between low/mid/high bands to create smooth spectrum"""
+        bands = ['low', 'mid', 'high']
+        band_values = []
+        
+        for band in bands:
+            if frame_idx < len(self.audio_data['frequency_bands'][band]):
+                # Use smoothed data if available
+                smoothed_band = f'smoothed_{band}'
+                if smoothed_band in self.audio_data['frequency_bands']:
+                    value = self.audio_data['frequency_bands'][smoothed_band][frame_idx]
+                else:
+                    value = self.audio_data['frequency_bands'][band][frame_idx]
+                band_values.append(value)
+            else:
+                band_values.append(0.0)
+        
+        # Interpolate to create smooth spectrum
+        if len(band_values) < 3:
+            return [0.0] * num_bars
+            
+        # Create interpolation points
+        x_orig = np.linspace(0, 1, len(band_values))
+        x_new = np.linspace(0, 1, num_bars)
+        
+        # Use cubic interpolation for smoothest result
+        try:
+            f = interp1d(x_orig, band_values, kind='cubic', bounds_error=False, fill_value=0.0)
+            spectrum = f(x_new)
+            return np.maximum(0, spectrum)  # Ensure non-negative values
+        except:
+            # Fallback to linear interpolation
+            f = interp1d(x_orig, band_values, kind='linear', bounds_error=False, fill_value=0.0)
+            spectrum = f(x_new)
+            return np.maximum(0, spectrum)
     
     def draw_geometric_patterns(self, frame, t, centroid, energy):
         """Draw geometric patterns based on audio"""
@@ -653,19 +892,55 @@ class VideoGenerator:
         return 0
     
     def create_advanced_visualization(self):
-        """Create advanced visualizations based on style"""
-        print(f"Creating advanced visualization: {self.visual_style}")
+        """Create ultra-smooth advanced visualizations based on style"""
+        print(f"Creating ultra-smooth advanced visualization: {self.visual_style}")
         
         def make_frame(t):
-            frame = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+            # Create frame with super-sampling if enabled
+            if self.super_sampling > 1:
+                frame = np.zeros((self.height * self.super_sampling, self.width * self.super_sampling, 3), dtype=np.uint8)
+            else:
+                frame = np.zeros((self.height, self.width, 3), dtype=np.uint8)
             
-            # Get audio data for current time
+            # Get audio data for current time with ultra-smooth interpolation
             frame_idx = int(t * self.fps)
-            if frame_idx < len(self.audio_data['rms_energy']):
-                energy = self.audio_data['rms_energy'][frame_idx]
-                beat_strength = self.get_beat_strength(t)
+            
+            # Use enhanced smoothed data
+            if hasattr(self.sync_data, 'smoothed_energy') and frame_idx < len(self.sync_data['smoothed_energy']):
+                energy = self.sync_data['smoothed_energy'][frame_idx]
+            elif frame_idx < len(self.audio_data['rms_energy']):
+                energy = self.get_temporal_smoothed_value(self.audio_data['rms_energy'], frame_idx)
+            else:
+                energy = 0.1
                 
-                # Call specific visualization method based on style
+            # Get enhanced beat strength
+            beat_strength = self.get_enhanced_beat_strength(t, frame_idx)
+            
+            # Call specific visualization method based on style with enhanced smoothing
+            if self.visual_style == 'complex_waveform':
+                self.draw_ultra_smooth_complex_waveform(frame, t, energy, beat_strength)
+            elif self.visual_style == 'symmetrical_spikes':
+                self.draw_ultra_smooth_symmetrical_spikes(frame, t, energy, beat_strength)
+            elif self.visual_style == 'fluid_layered':
+                self.draw_ultra_smooth_fluid_layered_waves(frame, t, energy, beat_strength)
+            elif self.visual_style == 'energetic_jagged':
+                self.draw_ultra_smooth_energetic_jagged_waveform(frame, t, energy, beat_strength)
+            elif self.visual_style == 'glowing_cyan':
+                self.draw_ultra_smooth_glowing_cyan_spectrum(frame, t, energy, beat_strength)
+            elif self.visual_style == 'geometric_diamond':
+                self.draw_ultra_smooth_geometric_diamond_pattern(frame, t, energy, beat_strength)
+            elif self.visual_style == 'ethereal_dots':
+                self.draw_ultra_smooth_ethereal_dotted_waves(frame, t, energy, beat_strength)
+            elif self.visual_style == 'organic_liquid':
+                self.draw_ultra_smooth_organic_liquid_spectrum(frame, t, energy, beat_strength)
+            elif self.visual_style == 'blocky_digital':
+                self.draw_ultra_smooth_blocky_digital_equalizer(frame, t, energy, beat_strength)
+            elif self.visual_style == 'solid_blocks':
+                self.draw_ultra_smooth_solid_block_waveform(frame, t, energy, beat_strength)
+            elif self.visual_style == 'dense_spectrum':
+                self.draw_ultra_smooth_dense_spectrum(frame, t, energy, beat_strength)
+            else:
+                # Fallback to original methods if ultra-smooth versions don't exist
                 if self.visual_style == 'complex_waveform':
                     self.draw_complex_waveform(frame, t, energy, beat_strength)
                 elif self.visual_style == 'symmetrical_spikes':
@@ -692,26 +967,58 @@ class VideoGenerator:
                     self.draw_serene_layered_ribbons(frame, t, energy, beat_strength)
                 elif self.visual_style == 'crystalline_spikes':
                     self.draw_crystalline_spiked_waveform(frame, t, energy, beat_strength)
-                elif self.visual_style == 'elegant_loops':
-                    self.draw_elegant_abstract_loops(frame, t, energy, beat_strength)
-                elif self.visual_style == 'fluid_blobs':
-                    self.draw_fluid_blob_visualization(frame, t, energy, beat_strength)
-                elif self.visual_style == 'wireframe_symmetrical':
-                    self.draw_wireframe_symmetrical_peaks(frame, t, energy, beat_strength)
-                elif self.visual_style == 'glowing_mesh':
-                    self.draw_glowing_mesh_structure(frame, t, energy, beat_strength)
-                elif self.visual_style == '3d_waveform':
-                    self.draw_3d_waveform_with_shadows(frame, t, energy, beat_strength)
-                elif self.visual_style == 'ultra_3d_professional':
-                    self.draw_ultra_3d_professional(frame, t, energy, beat_strength)
-                elif self.visual_style == 'cinematic_3d_surface':
-                    self.draw_cinematic_3d_surface(frame, t, energy, beat_strength)
-                elif self.visual_style == 'holographic_spectrum':
-                    self.draw_holographic_spectrum(frame, t, energy, beat_strength)
-                else:
-                    # Fallback - draw a simple test pattern
-                    cv2.rectangle(frame, (100, 100), (200, 200), (255, 0, 0), -1)
-                    cv2.putText(frame, f"Style: {self.visual_style}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            
+            # Apply super-sampling downsampling for ultra-smooth anti-aliasing
+            if self.super_sampling > 1:
+                # Convert to PIL for high-quality downsampling
+                pil_img = Image.fromarray(frame)
+                pil_img = pil_img.resize((self.width, self.height), Image.LANCZOS)
+                frame = np.array(pil_img)
+            
+            # Apply frame buffer temporal smoothing for ultra-fluid motion
+            if hasattr(self, 'frame_buffer') and len(self.frame_buffer) > 0:
+                # Blend with previous frames for temporal smoothing
+                alpha = 0.15  # Low alpha for subtle smoothing
+                frame = frame.astype(np.float32)
+                prev_frame = self.frame_buffer[-1].astype(np.float32)
+                frame = alpha * prev_frame + (1 - alpha) * frame
+                frame = frame.astype(np.uint8)
+            
+            # Update frame buffer
+            if not hasattr(self, 'frame_buffer'):
+                self.frame_buffer = []
+            self.frame_buffer.append(frame.copy())
+            if len(self.frame_buffer) > self.temporal_buffer_size:
+                self.frame_buffer.pop(0)
+            
+            return frame
+        
+        clip = mp.VideoClip(make_frame, duration=self.duration)
+        return clip
+    
+    # Keep the remaining style methods for backward compatibility
+    def draw_remaining_styles_fallback(self, frame, t, energy, beat_strength):
+        """Fallback method for remaining visual styles"""
+        if self.visual_style == 'elegant_loops':
+            self.draw_elegant_abstract_loops(frame, t, energy, beat_strength)
+        elif self.visual_style == 'fluid_blobs':
+            self.draw_fluid_blob_visualization(frame, t, energy, beat_strength)
+        elif self.visual_style == 'wireframe_symmetrical':
+            self.draw_wireframe_symmetrical_peaks(frame, t, energy, beat_strength)
+        elif self.visual_style == 'glowing_mesh':
+            self.draw_glowing_mesh_structure(frame, t, energy, beat_strength)
+        elif self.visual_style == '3d_waveform':
+            self.draw_3d_waveform_with_shadows(frame, t, energy, beat_strength)
+        elif self.visual_style == 'ultra_3d_professional':
+            self.draw_ultra_3d_professional(frame, t, energy, beat_strength)
+        elif self.visual_style == 'cinematic_3d_surface':
+            self.draw_cinematic_3d_surface(frame, t, energy, beat_strength)
+        elif self.visual_style == 'holographic_spectrum':
+            self.draw_holographic_spectrum(frame, t, energy, beat_strength)
+        else:
+            # Fallback - draw a simple test pattern
+            cv2.rectangle(frame, (100, 100), (200, 200), (255, 0, 0), -1)
+            cv2.putText(frame, f"Style: {self.visual_style}", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
             
             return frame
         
