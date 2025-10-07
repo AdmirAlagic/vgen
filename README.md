@@ -22,12 +22,12 @@ A professional-grade web application for creating stunning audio visualizations 
 - **Particle System**: Dynamic particle effects synchronized to audio
 - **3D Bars**: Three-dimensional frequency bars with depth effects
 
-### 🎯 Video Recording
+### 🎯 Automatic Video Generation
+- **Smart Analysis**: Pre-analyzes entire audio file for perfect sync
+- **Programmatic Rendering**: Generates frames based on audio data, not screen recording  
 - **YouTube Optimized**: Pre-configured settings for YouTube uploads
-- **Multiple Qualities**: 720p, 1080p, 4K recording options
-- **Modern Codecs**: VP9/VP8 video with Opus/Vorbis audio
-- **High Frame Rate**: 60fps recording for smooth motion
-- **Efficient Encoding**: Hardware acceleration when available
+- **Multiple Qualities**: 720p, 1080p, 4K generation options
+- **High Quality Output**: 30fps with perfect audio synchronization
 
 ### 🎛️ Customization
 - **Color Schemes**: 6 professional color palettes (Neon, Fire, Ocean, Sunset, Monochrome, Rainbow)
@@ -77,9 +77,9 @@ A professional-grade web application for creating stunning audio visualizations 
 
 1. **Upload Audio**: Drag and drop an audio file or click to browse
 2. **Configure**: Adjust visualization type, colors, and effects in the control panel
-3. **Play**: Use the audio controls to play your track
-4. **Record**: Click "Start Recording" to capture your visualization
-5. **Download**: Save the generated video file
+3. **Preview**: Use the audio controls to preview your visualization in real-time
+4. **Generate**: Click "Generate Video" to create your visualization video
+5. **Download**: Save the generated video frames and info file
 
 ## 🎮 Controls & Shortcuts
 

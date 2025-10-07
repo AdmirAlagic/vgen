@@ -127,16 +127,19 @@ class Visualizer {
     }
     
     render() {
+        if (this.audioAnalyzer && this.audioAnalyzer.isInitialized) {
+            // Real-time rendering with live audio
+            this.renderLive();
+        }
+    }
+    
+    renderLive() {
         // Clear canvas with trail effect for motion blur
         if (this.settings.blurEffect) {
             this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
             this.ctx.fillRect(0, 0, this.width, this.height);
         } else {
             this.ctx.clearRect(0, 0, this.width, this.height);
-        }
-        
-        if (!this.audioAnalyzer || !this.audioAnalyzer.isInitialized) {
-            return;
         }
         
         // Get audio data
@@ -148,6 +151,28 @@ class Visualizer {
         // Update rotation
         this.rotation += this.rotationSpeed + (beat.intensity * 0.02);
         
+        // Render visualization
+        this.renderVisualization(frequencyData, timeDomainData, bands, beat);
+    }
+    
+    renderFrame(mockAnalyzer, currentTime) {
+        // Single frame rendering for video generation
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        
+        // Get data from mock analyzer
+        const frequencyData = mockAnalyzer.getFrequencyData();
+        const timeDomainData = mockAnalyzer.getTimeDomainData();
+        const bands = mockAnalyzer.getFrequencyBands();
+        const beat = mockAnalyzer.getBeatDetection();
+        
+        // Update rotation based on time
+        this.rotation = currentTime * this.rotationSpeed * 60; // 60fps equivalent
+        
+        // Render visualization
+        this.renderVisualization(frequencyData, timeDomainData, bands, beat);
+    }
+    
+    renderVisualization(frequencyData, timeDomainData, bands, beat) {
         // Render based on visualization type
         switch (this.settings.type) {
             case 'spectrum':

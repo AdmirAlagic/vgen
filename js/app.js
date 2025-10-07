@@ -2,10 +2,11 @@ class AudioVisualizerApp {
     constructor() {
         this.audioAnalyzer = null;
         this.visualizer = null;
-        this.videoRecorder = null;
+        this.videoGenerator = null;
         this.audioElement = null;
         this.currentAudioFile = null;
         this.isPlaying = false;
+        this.isGenerating = false;
         
         // DOM elements
         this.elements = {
@@ -36,16 +37,18 @@ class AudioVisualizerApp {
             blurEffect: document.getElementById('blur-effect'),
             particlesEffect: document.getElementById('particles-effect'),
             
-            // Recording
+            // Video Generation
             videoQuality: document.getElementById('video-quality'),
-            recordBtn: document.getElementById('record-btn'),
-            stopRecordBtn: document.getElementById('stop-record-btn'),
+            generateBtn: document.getElementById('generate-btn'),
             downloadBtn: document.getElementById('download-btn'),
+            generationProgress: document.getElementById('generation-progress'),
+            progressFill: document.getElementById('progress-fill'),
+            progressText: document.getElementById('progress-text'),
             
             // Info
             trackName: document.getElementById('track-name'),
             trackDuration: document.getElementById('track-duration'),
-            recordingIndicator: document.getElementById('recording-indicator'),
+            generationStatus: document.getElementById('generation-status'),
             
             // UI
             togglePanel: document.getElementById('toggle-panel'),
@@ -155,24 +158,20 @@ class AudioVisualizerApp {
             this.updateVisualizationSettings();
         });
         
-        // Recording controls
+        // Video generation controls
         this.elements.videoQuality.addEventListener('change', () => {
-            if (this.videoRecorder) {
-                this.videoRecorder.setQuality(this.elements.videoQuality.value);
+            if (this.videoGenerator) {
+                this.videoGenerator.setQuality(this.elements.videoQuality.value);
             }
         });
         
-        this.elements.recordBtn.addEventListener('click', () => {
-            this.startRecording();
-        });
-        
-        this.elements.stopRecordBtn.addEventListener('click', () => {
-            this.stopRecording();
+        this.elements.generateBtn.addEventListener('click', () => {
+            this.generateVideo();
         });
         
         this.elements.downloadBtn.addEventListener('click', () => {
-            if (this.videoRecorder) {
-                this.videoRecorder.downloadRecording();
+            if (this.videoGenerator) {
+                this.videoGenerator.downloadFrames();
             }
         });
         
@@ -224,12 +223,20 @@ class AudioVisualizerApp {
             this.audioAnalyzer = new AudioAnalyzer();
             await this.audioAnalyzer.initialize(this.audioElement);
             
-            // Initialize video recorder
-            this.videoRecorder = new VideoRecorder(this.elements.canvas, this.audioElement);
+            // Initialize video generator
+            this.videoGenerator = new VideoGenerator(this.elements.canvas, this.audioElement);
             
-            // Set up video recorder callbacks
-            this.videoRecorder.onRecordingComplete = (blob, url) => {
-                this.onRecordingComplete(blob, url);
+            // Set up video generator callbacks
+            this.videoGenerator.onProgress = (progress) => {
+                this.onGenerationProgress(progress);
+            };
+            
+            this.videoGenerator.onComplete = (videoPackage) => {
+                this.onGenerationComplete(videoPackage);
+            };
+            
+            this.videoGenerator.onError = (error) => {
+                this.onGenerationError(error);
             };
             
             // Update UI
@@ -292,9 +299,10 @@ class AudioVisualizerApp {
         this.elements.pauseBtn.style.display = 'none';
         this.elements.progressBar.value = 0;
         
-        // Stop recording if active
-        if (this.videoRecorder && this.videoRecorder.isRecording) {
-            this.stopRecording();
+        // Stop generation if active
+        if (this.isGenerating) {
+            this.isGenerating = false;
+            this.hideGenerationProgress();
         }
     }
     
@@ -349,57 +357,86 @@ class AudioVisualizerApp {
         }
     }
     
-    async startRecording() {
-        if (!this.videoRecorder) {
-            this.showNotification('Video recorder not initialized', 'error');
+    async generateVideo() {
+        if (!this.videoGenerator) {
+            this.showNotification('Video generator not initialized', 'error');
+            return;
+        }
+        
+        if (this.isGenerating) {
+            this.showNotification('Video generation already in progress', 'warning');
             return;
         }
         
         try {
-            // Set quality before recording
-            this.videoRecorder.setQuality(this.elements.videoQuality.value);
+            this.isGenerating = true;
             
-            await this.videoRecorder.startRecording();
+            // Set quality before generation
+            this.videoGenerator.setQuality(this.elements.videoQuality.value);
             
-            // Update UI
-            this.elements.recordBtn.style.display = 'none';
-            this.elements.stopRecordBtn.style.display = 'block';
-            this.elements.recordingIndicator.style.display = 'flex';
+            // Show progress UI
+            this.showGenerationProgress();
+            this.elements.generateBtn.style.display = 'none';
             
-            this.showNotification('Recording started!', 'success');
+            // Get current visualization settings
+            const settings = {
+                type: this.elements.vizType.value,
+                colorScheme: this.elements.colorScheme.value,
+                sensitivity: parseInt(this.elements.sensitivity.value),
+                smoothing: parseInt(this.elements.smoothing.value),
+                glowEffect: this.elements.glowEffect.checked,
+                blurEffect: this.elements.blurEffect.checked,
+                particlesEffect: this.elements.particlesEffect.checked
+            };
             
-            // Start playing audio if not already playing
-            if (!this.isPlaying) {
-                await this.playAudio();
-            }
+            this.showNotification('Starting video generation...', 'info');
+            
+            // Generate video
+            await this.videoGenerator.generateVideo(this.visualizer, settings);
             
         } catch (error) {
-            console.error('Failed to start recording:', error);
-            this.showNotification('Failed to start recording', 'error');
+            console.error('Failed to generate video:', error);
+            this.showNotification('Failed to generate video: ' + error.message, 'error');
+            this.onGenerationError(error);
         }
     }
     
-    stopRecording() {
-        if (this.videoRecorder) {
-            this.videoRecorder.stopRecording();
-            
-            // Update UI
-            this.elements.recordBtn.style.display = 'block';
-            this.elements.stopRecordBtn.style.display = 'none';
-            this.elements.recordingIndicator.style.display = 'none';
-            
-            this.showNotification('Recording stopped. Processing...', 'info');
-        }
+    showGenerationProgress() {
+        this.elements.generationProgress.style.display = 'block';
+        this.elements.generationStatus.style.display = 'flex';
+        this.updateProgress(0, 'Initializing...');
     }
     
-    onRecordingComplete(blob, url) {
+    hideGenerationProgress() {
+        this.elements.generationProgress.style.display = 'none';
+        this.elements.generationStatus.style.display = 'none';
+        this.elements.generateBtn.style.display = 'block';
+        this.isGenerating = false;
+    }
+    
+    updateProgress(percentage, message) {
+        this.elements.progressFill.style.width = `${percentage * 100}%`;
+        this.elements.progressText.textContent = message;
+    }
+    
+    onGenerationProgress(progress) {
+        this.updateProgress(progress.progress, progress.message);
+    }
+    
+    onGenerationComplete(videoPackage) {
+        this.hideGenerationProgress();
         this.elements.downloadBtn.style.display = 'block';
         
-        const stats = this.videoRecorder.getRecordingStats();
-        const message = `Recording complete! Quality: ${stats.quality}, Size: ${stats.fileSizeFormatted}`;
+        const stats = this.videoGenerator.getGenerationStats();
+        const message = `Video generated! ${stats.frames} frames at ${stats.fps}fps (${stats.quality})`;
         this.showNotification(message, 'success');
         
-        console.log('Recording stats:', stats);
+        console.log('Generation complete:', stats);
+    }
+    
+    onGenerationError(error) {
+        this.hideGenerationProgress();
+        console.error('Generation error:', error);
     }
     
     toggleFullscreen() {
@@ -423,17 +460,19 @@ class AudioVisualizerApp {
                     this.playAudio();
                 }
                 break;
-            case 'KeyR':
+            case 'KeyG':
                 if (e.ctrlKey) {
                     e.preventDefault();
-                    if (this.videoRecorder && !this.videoRecorder.isRecording) {
-                        this.startRecording();
+                    if (this.videoGenerator && !this.isGenerating) {
+                        this.generateVideo();
                     }
                 }
                 break;
             case 'Escape':
-                if (this.videoRecorder && this.videoRecorder.isRecording) {
-                    this.stopRecording();
+                if (this.isGenerating) {
+                    this.isGenerating = false;
+                    this.hideGenerationProgress();
+                    this.showNotification('Video generation cancelled', 'warning');
                 }
                 break;
             case 'F11':
