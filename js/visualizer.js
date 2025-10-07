@@ -175,35 +175,62 @@ class Visualizer {
     }
     
     renderSpectrum(frequencyData) {
-        const barWidth = this.width / frequencyData.length * 2.5;
+        // Use fewer bars for more dramatic effect and better performance
+        const barCount = Math.min(128, frequencyData.length);
+        const barWidth = (this.width / barCount) * 0.8;
+        const barSpacing = this.width / barCount;
         const colors = this.colorSchemes[this.settings.colorScheme].gradient;
         
         this.ctx.save();
         
         if (this.settings.glowEffect) {
-            this.ctx.shadowBlur = 20;
+            this.ctx.shadowBlur = 30;
         }
         
-        for (let i = 0; i < frequencyData.length; i++) {
-            const barHeight = (frequencyData[i] / 255) * this.height * 0.8;
-            const x = i * barWidth;
+        for (let i = 0; i < barCount; i++) {
+            // Sample frequency data with better distribution
+            const dataIndex = Math.floor((i / barCount) * frequencyData.length);
+            let amplitude = frequencyData[dataIndex] / 255;
+            
+            // Amplify the signal for more dramatic effect
+            amplitude = Math.pow(amplitude * 2, 1.5);
+            amplitude = Math.min(amplitude, 1);
+            
+            const barHeight = amplitude * this.height * 0.9;
+            const x = i * barSpacing + (barSpacing - barWidth) / 2;
             const y = this.height - barHeight;
             
-            // Create gradient for each bar
+            // Skip very small bars
+            if (barHeight < 5) continue;
+            
+            // Create more vibrant gradient
             const gradient = this.ctx.createLinearGradient(x, this.height, x, y);
-            const colorIndex = Math.floor((i / frequencyData.length) * colors.length);
+            const colorIndex = Math.floor((i / barCount) * colors.length);
             const nextColorIndex = (colorIndex + 1) % colors.length;
             
             gradient.addColorStop(0, colors[colorIndex]);
+            gradient.addColorStop(0.5, this.lightenColor(colors[colorIndex], 0.3));
             gradient.addColorStop(1, colors[nextColorIndex]);
             
             this.ctx.fillStyle = gradient;
             
             if (this.settings.glowEffect) {
                 this.ctx.shadowColor = colors[colorIndex];
+                this.ctx.shadowBlur = 25 + amplitude * 20;
             }
             
-            this.ctx.fillRect(x, y, barWidth - 2, barHeight);
+            // Draw main bar
+            this.ctx.fillRect(x, y, barWidth, barHeight);
+            
+            // Add reflection effect
+            if (barHeight > 20) {
+                const reflectionGradient = this.ctx.createLinearGradient(x, this.height, x, this.height + barHeight * 0.3);
+                reflectionGradient.addColorStop(0, this.addAlpha(colors[colorIndex], 0.3));
+                reflectionGradient.addColorStop(1, this.addAlpha(colors[colorIndex], 0));
+                
+                this.ctx.fillStyle = reflectionGradient;
+                this.ctx.fillRect(x, this.height, barWidth, barHeight * 0.3);
+            }
         }
         
         this.ctx.restore();
@@ -211,13 +238,16 @@ class Visualizer {
     
     renderWaveform(timeDomainData) {
         const colors = this.colorSchemes[this.settings.colorScheme];
+        const centerY = this.height / 2;
         
         this.ctx.save();
-        this.ctx.lineWidth = 3;
+        
+        // Main waveform
+        this.ctx.lineWidth = 4;
         this.ctx.strokeStyle = colors.primary;
         
         if (this.settings.glowEffect) {
-            this.ctx.shadowBlur = 15;
+            this.ctx.shadowBlur = 25;
             this.ctx.shadowColor = colors.primary;
         }
         
@@ -227,8 +257,10 @@ class Visualizer {
         let x = 0;
         
         for (let i = 0; i < timeDomainData.length; i++) {
-            const v = timeDomainData[i] / 128.0;
-            const y = v * this.height / 2;
+            // Amplify the waveform for more dramatic effect
+            let v = (timeDomainData[i] - 128) / 128.0;
+            v *= 2.5; // Amplify signal
+            const y = centerY + (v * this.height * 0.4);
             
             if (i === 0) {
                 this.ctx.moveTo(x, y);
@@ -240,48 +272,120 @@ class Visualizer {
         }
         
         this.ctx.stroke();
+        
+        // Add secondary waveform with different color
+        this.ctx.lineWidth = 2;
+        this.ctx.strokeStyle = colors.secondary;
+        this.ctx.shadowBlur = 15;
+        this.ctx.shadowColor = colors.secondary;
+        
+        this.ctx.beginPath();
+        x = 0;
+        
+        for (let i = 0; i < timeDomainData.length; i++) {
+            let v = (timeDomainData[i] - 128) / 128.0;
+            v *= 1.8; // Slightly less amplification for secondary wave
+            const y = centerY + (v * this.height * 0.3);
+            
+            if (i === 0) {
+                this.ctx.moveTo(x, y);
+            } else {
+                this.ctx.lineTo(x, y);
+            }
+            
+            x += sliceWidth;
+        }
+        
+        this.ctx.stroke();
+        
+        // Add center line
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeStyle = this.addAlpha(colors.accent, 0.3);
+        this.ctx.shadowBlur = 0;
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, centerY);
+        this.ctx.lineTo(this.width, centerY);
+        this.ctx.stroke();
+        
         this.ctx.restore();
     }
     
     renderCircularSpectrum(frequencyData) {
         const centerX = this.width / 2;
         const centerY = this.height / 2;
-        const radius = Math.min(this.width, this.height) * 0.25;
+        const baseRadius = Math.min(this.width, this.height) * 0.15;
+        const maxRadius = Math.min(this.width, this.height) * 0.4;
         const colors = this.colorSchemes[this.settings.colorScheme].gradient;
+        
+        // Use fewer bars for better performance and more dramatic effect
+        const barCount = Math.min(180, frequencyData.length);
         
         this.ctx.save();
         this.ctx.translate(centerX, centerY);
         this.ctx.rotate(this.rotation);
         
         if (this.settings.glowEffect) {
-            this.ctx.shadowBlur = 20;
+            this.ctx.shadowBlur = 25;
         }
         
-        const angleStep = (Math.PI * 2) / frequencyData.length;
+        const angleStep = (Math.PI * 2) / barCount;
         
-        for (let i = 0; i < frequencyData.length; i++) {
-            const amplitude = (frequencyData[i] / 255) * radius;
+        for (let i = 0; i < barCount; i++) {
+            const dataIndex = Math.floor((i / barCount) * frequencyData.length);
+            let amplitude = frequencyData[dataIndex] / 255;
+            
+            // Amplify for more dramatic effect
+            amplitude = Math.pow(amplitude * 2.2, 1.3);
+            amplitude = Math.min(amplitude, 1);
+            
             const angle = i * angleStep;
+            const barLength = amplitude * (maxRadius - baseRadius);
             
-            const x1 = Math.cos(angle) * radius;
-            const y1 = Math.sin(angle) * radius;
-            const x2 = Math.cos(angle) * (radius + amplitude);
-            const y2 = Math.sin(angle) * (radius + amplitude);
+            // Skip very small bars
+            if (barLength < 10) continue;
             
-            // Color based on frequency
-            const colorIndex = Math.floor((i / frequencyData.length) * colors.length);
-            this.ctx.strokeStyle = colors[colorIndex];
+            const x1 = Math.cos(angle) * baseRadius;
+            const y1 = Math.sin(angle) * baseRadius;
+            const x2 = Math.cos(angle) * (baseRadius + barLength);
+            const y2 = Math.sin(angle) * (baseRadius + barLength);
+            
+            // Color based on frequency and amplitude
+            const colorIndex = Math.floor((i / barCount) * colors.length);
+            const color = colors[colorIndex];
+            
+            this.ctx.strokeStyle = color;
+            this.ctx.lineWidth = 3 + amplitude * 2;
             
             if (this.settings.glowEffect) {
-                this.ctx.shadowColor = colors[colorIndex];
+                this.ctx.shadowColor = color;
+                this.ctx.shadowBlur = 15 + amplitude * 15;
             }
             
-            this.ctx.lineWidth = 2;
             this.ctx.beginPath();
             this.ctx.moveTo(x1, y1);
             this.ctx.lineTo(x2, y2);
             this.ctx.stroke();
+            
+            // Add inner glow effect
+            if (amplitude > 0.3) {
+                this.ctx.strokeStyle = this.lightenColor(color, 0.5);
+                this.ctx.lineWidth = 1;
+                this.ctx.shadowBlur = 5;
+                this.ctx.beginPath();
+                this.ctx.moveTo(x1, y1);
+                this.ctx.lineTo(x2, y2);
+                this.ctx.stroke();
+            }
         }
+        
+        // Draw center circle
+        this.ctx.strokeStyle = this.addAlpha(colors[0], 0.6);
+        this.ctx.lineWidth = 2;
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = colors[0];
+        this.ctx.beginPath();
+        this.ctx.arc(0, 0, baseRadius, 0, Math.PI * 2);
+        this.ctx.stroke();
         
         this.ctx.restore();
     }
@@ -457,6 +561,19 @@ class Visualizer {
             const g = Math.min(255, Math.floor(parseInt(hex.substr(2, 2), 16) * (1 + factor)));
             const b = Math.min(255, Math.floor(parseInt(hex.substr(4, 2), 16) * (1 + factor)));
             return `rgb(${r}, ${g}, ${b})`;
+        }
+        return color;
+    }
+    
+    addAlpha(color, alpha) {
+        // Add alpha to color
+        const match = color.match(/^#([0-9a-f]{6})$/i);
+        if (match) {
+            const hex = match[1];
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         }
         return color;
     }
