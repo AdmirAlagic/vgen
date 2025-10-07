@@ -125,11 +125,7 @@ class VideoGenerator:
         # Line thickness variations for visual interest
         self.line_thicknesses = [2, 3, 4, 5, 6, 8, 10, 12, 15, 18]
         
-        # Particle system parameters
-        self.particle_colors = [
-            (255, 255, 255), (200, 255, 255), (150, 255, 255), (100, 255, 255),
-            (255, 200, 255), (255, 150, 255), (255, 100, 255), (255, 255, 200)
-        ]
+        # Horizontal flowing wave system - no particles needed
         
         # Mesh surface parameters for 3D effects
         self.mesh_resolution = 50  # Higher resolution for smoother surfaces
@@ -232,108 +228,128 @@ class VideoGenerator:
         return clip
     
     def draw_optimized_smooth_waveform(self, frame, t, energy, beat_strength, scale_factor):
-        """Draw the PERFECT ultra-smooth waveform - single style excellence"""
-        center_y = self.height * scale_factor // 2
-        amplitude = int(energy * self.height * scale_factor * 0.45)
+        """Draw horizontal flowing waveform exactly like the reference image"""
+        self.draw_horizontal_flowing_waves(frame, t, energy, beat_strength, scale_factor)
         
-        # Perfect number of layers for maximum visual quality
-        num_layers = 8  # Increased for better depth and visual appeal
+    def draw_horizontal_flowing_waves(self, frame, t, energy, beat_strength, scale_factor):
+        """Draw beautiful horizontal flowing waves with gradient colors"""
+        center_y = self.height * scale_factor // 2
+        
+        # Define gradient colors: blue to red/orange to pink
+        gradient_colors = [
+            (255, 100, 50),   # Blue-cyan
+            (255, 150, 100),  # Light blue
+            (200, 200, 255),  # Purple-blue
+            (150, 180, 255),  # Orange-red
+            (100, 120, 255),  # Red-orange
+            (80, 100, 255),   # Deep red
+            (120, 80, 255),   # Pink-red
+            (150, 100, 255)   # Pink
+        ]
+        
+        # Create multiple flowing wave layers
+        num_layers = 8
         
         for layer in range(num_layers):
-            # Calculate layer properties for perfect depth
-            layer_amplitude = amplitude * (1 - layer * 0.12)
-            layer_alpha = 1.0 - (layer * 0.12)
+            # Layer properties for flowing effect
+            layer_offset = layer * 0.3
+            layer_amplitude = int(energy * self.height * scale_factor * (0.3 - layer * 0.03))
+            layer_speed = 2.0 + layer * 0.2
             
-            # Choose color based on layer depth with perfect gradient
-            color_idx = min(layer, len(self.glow_colors) - 1)
-            base_color = self.glow_colors[color_idx]
+            # Get gradient color for this layer
+            color_idx = layer % len(gradient_colors)
+            base_color = gradient_colors[color_idx]
             
-            # Generate ultra-smooth waveform points with maximum detail
+            # Calculate transparency based on layer depth
+            layer_alpha = 0.9 - (layer * 0.08)
+            final_color = tuple(int(c * layer_alpha * (0.7 + energy * 0.3)) for c in base_color)
+            
+            # Generate horizontal flowing wave points
             points = []
-            step = 1  # Single pixel steps for maximum smoothness
+            resolution = 2  # High resolution for smooth curves
             
-            for x in range(0, self.width * scale_factor, step):
-                # Perfect wave mathematics for ultra-smooth curves
-                freq1 = 0.004 + energy * 0.025 + layer * 0.0015
-                freq2 = 0.002 + energy * 0.015 + layer * 0.001
-                freq3 = 0.001 + energy * 0.008 + layer * 0.0005
+            for x in range(0, self.width * scale_factor + resolution, resolution):
+                # Create flowing horizontal wave motion
+                # Multiple sine waves create the flowing, organic effect
+                wave_phase = t * layer_speed + layer_offset * 2
                 
-                # Three sine waves for ultra-smooth, natural curves
-                wave1 = math.sin(x * freq1 + t * (3.5 + layer * 0.4))
-                wave2 = math.sin(x * freq2 + t * (2.5 + layer * 0.3)) * 0.7
-                wave3 = math.cos(x * freq3 + t * (4 + layer * 0.6)) * 0.4
+                # Primary wave - main flowing motion
+                primary_freq = 0.008 + energy * 0.004
+                primary_wave = math.sin(x * primary_freq + wave_phase)
                 
-                # Combine waves for perfect smooth motion
-                wave_y = center_y + layer_amplitude * (wave1 + wave2 + wave3)
-                points.append((x, int(wave_y)))
+                # Secondary wave - adds complexity
+                secondary_freq = 0.015 + energy * 0.008
+                secondary_wave = math.sin(x * secondary_freq + wave_phase * 1.5) * 0.6
+                
+                # Tertiary wave - fine detail
+                tertiary_freq = 0.025 + energy * 0.012
+                tertiary_wave = math.cos(x * tertiary_freq + wave_phase * 0.8) * 0.4
+                
+                # Beat response - makes waves react to music
+                beat_response = 1.0 + beat_strength * 0.5
+                
+                # Combine all waves for organic flowing motion
+                combined_wave = (primary_wave + secondary_wave + tertiary_wave) * beat_response
+                
+                # Calculate vertical position
+                y = center_y + int(layer_amplitude * combined_wave)
+                y = max(0, min(self.height * scale_factor - 1, y))
+                
+                points.append((x, y))
             
-            # Draw ultra-smooth lines with perfect glow effect
+            # Draw the flowing wave with multiple thickness passes for glow
             if len(points) > 1:
-                # Apply perfect smooth interpolation
-                smooth_points = self.smooth_interpolate_points(points, 0.95)
+                # Draw multiple passes for glow effect
+                glow_passes = 4
                 
-                # Draw with perfect glow effect
-                for i in range(len(smooth_points) - 1):
-                    # Perfect glow passes for maximum visual appeal
-                    for glow_pass in range(4):  # Optimized for quality
-                        thickness = max(1, 8 - layer//2 - glow_pass)
-                        alpha = layer_alpha * (1 - glow_pass * 0.25)
+                for glow_pass in range(glow_passes):
+                    # Calculate thickness and alpha for this glow pass
+                    thickness = max(1, int((6 - glow_pass) * (1 + energy)))
+                    glow_alpha = layer_alpha * (1.0 - glow_pass * 0.2)
+                    glow_color = tuple(int(c * glow_alpha) for c in final_color)
+                    
+                    # Draw smooth curves between points
+                    for i in range(len(points) - 1):
+                        pt1 = points[i]
+                        pt2 = points[i + 1]
                         
-                        # Adjust color intensity for perfect glow
-                        glow_color = tuple(int(c * alpha) for c in base_color)
-                        
-                        # Draw line with perfect anti-aliasing
-                        pt1 = (int(smooth_points[i][0]), int(smooth_points[i][1]))
-                        pt2 = (int(smooth_points[i + 1][0]), int(smooth_points[i + 1][1]))
-                        
-                        # Use anti-aliased drawing for perfect quality
+                        # Use anti-aliased drawing for smoothness
                         if self.anti_aliasing:
                             self.draw_anti_aliased_line(frame, pt1, pt2, glow_color, thickness)
                         else:
                             cv2.line(frame, pt1, pt2, glow_color, thickness)
-        
-        # Add horizontal beats visualization
-        self.draw_horizontal_beats(frame, t, energy, beat_strength, scale_factor)
     
     def draw_horizontal_beats(self, frame, t, energy, beat_strength, scale_factor):
-        """Draw horizontal beats visualization"""
-        center_x = self.width * scale_factor // 2
-        beat_width = int(beat_strength * self.width * scale_factor * 0.3)
+        """Draw horizontal beat enhancement that complements the flowing waves"""
+        if beat_strength < 0.3:  # Only show on strong beats to avoid clutter
+            return
+            
+        center_y = self.height * scale_factor // 2
         
-        # Draw horizontal beat bars at different vertical positions
-        positions = [0.2, 0.35, 0.5, 0.65, 0.8]  # Horizontal lines at different heights
+        # Create horizontal beat pulses that flow with the waves
+        pulse_intensity = beat_strength * energy
+        pulse_width = int(self.width * scale_factor * 0.8)
         
-        for i, pos in enumerate(positions):
-            y = int(self.height * scale_factor * pos)
-            
-            # Calculate beat intensity for this bar
-            bar_intensity = energy * (1 + beat_strength * 2) * (0.8 + i * 0.1)
-            bar_length = int(beat_width * bar_intensity)
-            
-            # Choose color based on position
-            color_idx = i % len(self.glow_colors)
-            base_color = self.glow_colors[color_idx]
-            beat_color = tuple(int(c * bar_intensity * 0.8) for c in base_color)
-            
-            # Draw horizontal beat bar centered
-            start_x = max(0, center_x - bar_length // 2)
-            end_x = min(self.width * scale_factor, center_x + bar_length // 2)
-            
-            if start_x < end_x and 0 <= y < self.height * scale_factor:
-                # Draw main bar
-                thickness = max(1, int(4 + beat_strength * 6))
-                if self.anti_aliasing:
-                    self.draw_anti_aliased_line(frame, (start_x, y), (end_x, y), beat_color, thickness)
-                else:
-                    cv2.line(frame, (start_x, y), (end_x, y), beat_color, thickness)
+        # Draw subtle horizontal beat accents
+        for offset in [-40, -20, 0, 20, 40]:
+            y = center_y + offset * scale_factor
+            if 0 <= y < self.height * scale_factor:
+                # Beat pulse color - complementary to the wave colors
+                beat_color = (int(255 * pulse_intensity), int(200 * pulse_intensity), int(150 * pulse_intensity))
                 
-                # Add glow effect
-                glow_color = tuple(int(c * 0.5) for c in beat_color)
-                glow_thickness = max(1, thickness + 2)
+                # Draw horizontal beat pulse
+                start_x = int(self.width * scale_factor * 0.1)
+                end_x = int(self.width * scale_factor * 0.9)
+                
+                thickness = max(1, int(2 + beat_strength * 4))
+                alpha = 0.3 + beat_strength * 0.4
+                
+                pulse_color = tuple(int(c * alpha) for c in beat_color)
+                
                 if self.anti_aliasing:
-                    self.draw_anti_aliased_line(frame, (start_x, y), (end_x, y), glow_color, glow_thickness)
+                    self.draw_anti_aliased_line(frame, (start_x, y), (end_x, y), pulse_color, thickness)
                 else:
-                    cv2.line(frame, (start_x, y), (end_x, y), glow_color, glow_thickness)
+                    cv2.line(frame, (start_x, y), (end_x, y), pulse_color, thickness)
     
     def draw_ultra_smooth_waveform(self, frame, t, energy, beat_strength, scale_factor):
         """Draw ultra-smooth waveform with multiple glowing layers"""
@@ -395,37 +411,8 @@ class VideoGenerator:
                             thickness
                         )
         
-        # Add subtle background particles for depth
-        self.add_depth_particles(frame, t, energy, scale_factor)
+        # No particles - pure waveform visualization
     
-    def add_depth_particles(self, frame, t, energy, scale_factor):
-        """Add subtle depth particles for enhanced visual appeal"""
-        num_particles = 30
-        
-        for i in range(num_particles):
-            # Random particle positioning
-            x = int((i * 37 + t * 50) % (self.width * scale_factor))
-            y = int((i * 23 + t * 30) % (self.height * scale_factor))
-            
-            # Subtle floating motion
-            float_x = x + math.sin(t * 0.5 + i * 0.1) * 20
-            float_y = y + math.cos(t * 0.3 + i * 0.15) * 15
-            
-            # Keep particles in bounds
-            float_x = max(0, min(self.width * scale_factor - 1, float_x))
-            float_y = max(0, min(self.height * scale_factor - 1, float_y))
-            
-            # Particle properties
-            size = max(1, int(2 + energy * 3))
-            alpha = 0.3 + energy * 0.4
-            
-            # Choose particle color
-            color = self.glow_colors[random.randint(0, len(self.glow_colors) - 1)]
-            particle_color = tuple(int(c * alpha) for c in color)
-            
-            # Draw particle with glow
-            self.draw_anti_aliased_circle(frame, (int(float_x), int(float_y)), size, particle_color, -1)
-            self.draw_anti_aliased_circle(frame, (int(float_x), int(float_y)), size + 1, particle_color, 1)
     
     def create_waveform_visualization(self):
         """Create advanced waveform visualization"""
@@ -451,24 +438,6 @@ class VideoGenerator:
         
         return mp.VideoClip(make_frame, duration=self.duration)
     
-    def create_particle_system(self):
-        """Create dynamic particle system"""
-        particles = []
-        
-        def make_frame(t):
-            frame = np.zeros((self.height, self.width, 3), dtype=np.uint8)
-            
-            # Update particles
-            self.update_particles(particles, t)
-            
-            # Draw particles
-            for particle in particles:
-                if particle['life'] > 0:
-                    self.draw_particle(frame, particle)
-            
-            return frame
-        
-        return mp.VideoClip(make_frame, duration=self.duration)
     
     def create_spectrum_analyzer(self):
         """Create frequency spectrum analyzer"""
@@ -558,48 +527,8 @@ class VideoGenerator:
         frame = self.add_glow_effect(frame, threshold=80, glow_intensity=energy * 0.2)
         frame = self.apply_gaussian_blur_smooth(frame, kernel_size=1)
     
-    def update_particles(self, particles, t):
-        """Update particle system"""
-        # Add new particles based on beat
-        beat_strength = self.get_beat_strength(t)
-        if beat_strength > 0.5 and random.random() < 0.3:
-            self.add_particle(particles, t)
-        
-        # Update existing particles
-        for particle in particles[:]:
-            particle['x'] += particle['vx']
-            particle['y'] += particle['vy']
-            particle['life'] -= 1
-            particle['size'] *= 0.98
-            
-            # Remove dead particles
-            if particle['life'] <= 0 or particle['size'] < 1:
-                particles.remove(particle)
     
-    def add_particle(self, particles, t):
-        """Add new particle to system"""
-        colors = self.color_schemes[self.visual_style]
-        color = colors[random.randint(0, len(colors) - 1)]
-        
-        particle = {
-            'x': random.randint(0, self.width),
-            'y': random.randint(0, self.height),
-            'vx': random.uniform(-3, 3),
-            'vy': random.uniform(-5, -1),
-            'size': random.uniform(5, 15),
-            'life': random.randint(60, 120),
-            'color': color,
-            'alpha': 1.0
-        }
-        particles.append(particle)
     
-    def draw_particle(self, frame, particle):
-        """Draw individual particle"""
-        color_bgr = tuple(int(particle['color'][i:i+2], 16) for i in (5, 3, 1))
-        size = int(particle['size'])
-        
-        if 0 <= particle['x'] < self.width and 0 <= particle['y'] < self.height:
-            cv2.circle(frame, (int(particle['x']), int(particle['y'])), size, color_bgr, -1)
     
     def draw_spectrum_bars(self, frame, t, frame_idx):
         """Draw frequency spectrum bars"""

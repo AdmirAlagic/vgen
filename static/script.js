@@ -161,14 +161,14 @@ function applyPreset(preset) {
             resolution: '1920x1080',
             fps: 30,
             visualStyle: 'complex_waveform',
-            effects: ['waveform', 'particles'],
+            effects: ['waveform'],
             durationMode: 'full'
         },
         'cinematic': {
             resolution: '1920x1080',
             fps: 24,
             visualStyle: 'serene_ribbons',
-            effects: ['waveform', 'particles', 'spectrum'],
+            effects: ['waveform', 'spectrum'],
             durationMode: 'full'
         },
         'minimal': {
@@ -233,7 +233,7 @@ async function generateVideo() {
         fps: parseInt(document.getElementById('fps').value),
         visual_style: 'aaa_quality',  // Fixed AAA quality style
         duration_mode: 'full',  // Always use full audio length
-        effects: ['waveform', 'particles']  // Always include core effects
+        effects: ['waveform']  // Core horizontal flowing waveform effect
     };
     
     console.log('AAA Quality settings:', settings);
