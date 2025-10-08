@@ -48,6 +48,7 @@ class AudioVisualizerApp {
             canvasSize: document.getElementById('canvas-size'),
             videoSize: document.getElementById('video-size'),
             testCanvasBtn: document.getElementById('test-canvas-btn'),
+            ffmpegStatus: document.getElementById('ffmpeg-status'),
             
             // Info
             trackName: document.getElementById('track-name'),
@@ -174,13 +175,15 @@ class AudioVisualizerApp {
         });
         
         this.elements.downloadBtn.addEventListener('click', () => {
-            if (this.simpleRecorder) {
-                const filename = this.simpleRecorder.downloadVideo();
+            if (this.currentVideoBlob && this.videoGenerator) {
+                const filename = this.videoGenerator.downloadVideo(this.currentVideoBlob);
                 if (filename) {
                     this.showNotification(`Video downloaded: ${filename}`, 'success');
                 } else {
                     this.showNotification('No video available for download', 'error');
                 }
+            } else {
+                this.showNotification('No video available for download', 'error');
             }
         });
         
@@ -237,9 +240,8 @@ class AudioVisualizerApp {
             this.audioAnalyzer = new AudioAnalyzer();
             await this.audioAnalyzer.initialize(this.audioElement);
             
-            // Initialize video generator and simple recorder
-            this.videoGenerator = new VideoGenerator(this.elements.canvas, this.audioElement);
-            this.simpleRecorder = new SimpleVideoRecorder(this.elements.canvas, this.audioElement);
+            // Initialize FFmpeg video generator (professional approach)
+            this.videoGenerator = new FFmpegVideoGenerator(this.elements.canvas, this.audioElement);
             
             // Set up video generator callbacks
             this.videoGenerator.onProgress = (progress) => {
@@ -254,18 +256,8 @@ class AudioVisualizerApp {
                 this.onGenerationError(error);
             };
             
-            // Set up simple recorder callbacks  
-            this.simpleRecorder.onProgress = (progress) => {
-                this.onGenerationProgress(progress);
-            };
-            
-            this.simpleRecorder.onComplete = (videoPackage) => {
-                this.onGenerationComplete(videoPackage);
-            };
-            
-            this.simpleRecorder.onError = (error) => {
-                this.onGenerationError(error);
-            };
+            // Monitor FFmpeg loading status
+            this.monitorFFmpegStatus();
             
             // Update UI
             this.elements.trackName.textContent = file.name.replace(/\.[^/.]+$/, "");
@@ -392,8 +384,14 @@ class AudioVisualizerApp {
     }
     
     async generateVideo() {
-        if (!this.simpleRecorder) {
-            this.showNotification('Video recorder not initialized', 'error');
+        if (!this.videoGenerator) {
+            this.showNotification('Video generator not initialized', 'error');
+            return;
+        }
+        
+        // Check if FFmpeg is loaded
+        if (!this.videoGenerator.isLoaded) {
+            this.showNotification('FFmpeg is still loading... Please wait and try again.', 'warning');
             return;
         }
         
@@ -409,62 +407,29 @@ class AudioVisualizerApp {
             this.showGenerationProgress();
             this.elements.generateBtn.style.display = 'none';
             
-            // Get current visualization settings and apply them
+            // Set quality
+            this.videoGenerator.setQuality(this.elements.videoQuality.value);
+            
+            // Get current visualization settings
             const settings = {
                 type: this.elements.vizType.value,
                 colorScheme: this.elements.colorScheme.value,
                 sensitivity: parseInt(this.elements.sensitivity.value),
                 smoothing: parseInt(this.elements.smoothing.value),
                 glowEffect: this.elements.glowEffect.checked,
-                blurEffect: this.elements.blurEffect.checked,
+                blurEffect: false, // Disable blur for cleaner video frames
                 particlesEffect: this.elements.particlesEffect.checked
             };
             
-            // Apply settings to visualizer for recording
-            this.visualizer.updateSettings(settings);
+            this.showNotification('Analyzing audio and generating frames...', 'info');
             
-            this.showNotification('Starting video recording...', 'info');
+            // Generate video using FFmpeg (professional approach)
+            const videoBlob = await this.videoGenerator.generateVideo(this.visualizer, settings);
             
-            // Prepare audio for recording
-            this.audioElement.volume = 1.0;
-            this.audioElement.currentTime = 0;
+            // Store the video blob for download
+            this.currentVideoBlob = videoBlob;
             
-            // Start recording first
-            await this.simpleRecorder.startRecording();
-            
-            // Then start audio playback
-            await this.audioElement.play();
-            
-            // Update progress based on audio progress
-            const duration = this.audioElement.duration;
-            const progressInterval = setInterval(() => {
-                if (this.simpleRecorder.isRecording) {
-                    const elapsed = this.audioElement.currentTime;
-                    const progress = elapsed / duration;
-                    
-                    this.updateProgress(progress, `Recording... ${Math.round(elapsed)}s / ${Math.round(duration)}s`);
-                } else {
-                    clearInterval(progressInterval);
-                }
-            }, 200);
-            
-            // Stop recording when audio ends
-            this.audioElement.onended = () => {
-                console.log('Audio finished, stopping recording...');
-                setTimeout(() => {
-                    this.simpleRecorder.stopRecording();
-                    clearInterval(progressInterval);
-                }, 1000);
-            };
-            
-            // Backup timeout
-            setTimeout(() => {
-                if (this.simpleRecorder.isRecording) {
-                    console.log('Backup timeout, stopping recording...');
-                    this.simpleRecorder.stopRecording();
-                    clearInterval(progressInterval);
-                }
-            }, (duration * 1000) + 5000);
+            console.log('Video generation complete!');
             
         } catch (error) {
             console.error('Failed to generate video:', error);
@@ -587,6 +552,33 @@ class AudioVisualizerApp {
         ctx.fillText('TEST PATTERN', canvas.width / 2, canvas.height / 2 + 10);
         
         this.showNotification(`Canvas test: ${canvas.width}x${canvas.height}`, 'info');
+    }
+    
+    monitorFFmpegStatus() {
+        const statusElement = this.elements.ffmpegStatus;
+        if (!statusElement) return;
+        
+        // Check FFmpeg status periodically
+        const checkStatus = () => {
+            if (this.videoGenerator && this.videoGenerator.isLoaded) {
+                // FFmpeg is loaded
+                statusElement.className = 'ffmpeg-status loaded';
+                statusElement.innerHTML = '<i class="fas fa-check-circle"></i><span>FFmpeg ready!</span>';
+                
+                this.showNotification('FFmpeg loaded - ready to generate videos!', 'success');
+                
+            } else if (this.videoGenerator && this.videoGenerator.isLoaded === false) {
+                // FFmpeg failed to load
+                statusElement.className = 'ffmpeg-status error';
+                statusElement.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>FFmpeg failed to load</span>';
+                
+            } else {
+                // Still loading
+                setTimeout(checkStatus, 1000);
+            }
+        };
+        
+        checkStatus();
     }
     
     toggleFullscreen() {

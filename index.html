@@ -162,8 +162,13 @@
                 <div class="control-group">
                     <button id="generate-btn" class="btn btn-primary btn-full">
                         <i class="fas fa-magic"></i>
-                        Generate Video
+                        Generate Video (FFmpeg)
                     </button>
+                    
+                    <div id="ffmpeg-status" class="ffmpeg-status">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Loading FFmpeg.wasm...</span>
+                    </div>
                     
                     <!-- Debug Info -->
                     <div id="debug-info" class="debug-info" style="display: none;">
@@ -173,7 +178,7 @@
                     </div>
                     <button id="download-btn" class="btn btn-success btn-full" style="display: none;">
                         <i class="fas fa-download"></i>
-                        Download Video (.webm with audio)
+                        Download MP4 Video
                     </button>
                     
                     <!-- Progress Bar -->
@@ -194,8 +199,7 @@
     <!-- Scripts -->
     <script src="js/audioAnalyzer.js"></script>
     <script src="js/visualizer.js"></script>
-    <script src="js/videoGenerator.js"></script>
-    <script src="js/simpleVideoRecorder.js"></script>
+    <script src="js/ffmpegVideoGenerator.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

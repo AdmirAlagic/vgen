@@ -22,12 +22,13 @@ A professional-grade web application for creating stunning audio visualizations 
 - **Advanced Particle System**: Four particle types (energy, spark, wave, cosmic) with physics simulation
 - **3D Bars**: Complex 3D bars with perspective grids, multiple rows, and atmospheric lighting
 
-### 🎯 Automatic Video Generation
-- **Smart Analysis**: Pre-analyzes entire audio file for perfect sync
-- **Programmatic Rendering**: Generates frames based on audio data, not screen recording  
-- **YouTube Optimized**: Pre-configured settings for YouTube uploads
-- **Multiple Qualities**: 720p, 1080p, 4K generation options
-- **High Quality Output**: 30fps with perfect audio synchronization
+### 🎯 Professional Video Generation (FFmpeg.wasm)
+- **FFmpeg.wasm Integration**: Industry-standard video encoding in the browser
+- **Pre-rendered Frames**: Analyzes audio and generates perfect frames offline
+- **MP4 Output**: High-quality H.264 + AAC videos ready for YouTube  
+- **Perfect Audio Sync**: Original audio embedded in final video
+- **Multiple Qualities**: 720p, 1080p, 4K with optimized bitrates
+- **No Frame Skipping**: Every frame perfectly rendered and included
 
 ### 🎛️ Professional Customization
 - **Enhanced Color Schemes**: 6 sophisticated palettes with advanced gradients and backgrounds
@@ -112,9 +113,9 @@ A professional-grade web application for creating stunning audio visualizations 
 | 4K | 3840×2160 | 25 Mbps | 192 kbps | 30 |
 
 ### Supported Formats
-- **Video Output**: WebM (VP9/VP8) - optimized for web and YouTube
+- **Video Output**: MP4 (H.264 + AAC) - universal compatibility and YouTube optimized
 - **Audio Input**: MP3, WAV, OGG, M4A, FLAC, AAC
-- **Generated Videos**: High-quality WebM files with embedded audio
+- **Generated Videos**: High-quality MP4 files with original audio perfectly synced
 
 ## 🎨 Visualization Types
 

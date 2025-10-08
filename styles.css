@@ -450,6 +450,30 @@ body {
     color: rgba(255, 255, 255, 0.7);
 }
 
+/* FFmpeg Status */
+.ffmpeg-status {
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin: 0.5rem 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ffmpeg-status.loaded {
+    background: rgba(46, 213, 115, 0.1);
+    border-color: rgba(46, 213, 115, 0.3);
+}
+
+.ffmpeg-status.error {
+    background: rgba(255, 71, 87, 0.1);
+    border-color: rgba(255, 71, 87, 0.3);
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .control-panel {
