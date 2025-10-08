@@ -7,30 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A10001 /* WaveProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20001 /* WaveProApp.swift */; };
-		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20002 /* ContentView.swift */; };
-		A10003 /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20003 /* AudioEngine.swift */; };
-		A10004 /* MetalRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20004 /* MetalRenderer.swift */; };
-		A10005 /* MetalVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20005 /* MetalVisualizationView.swift */; };
-		A10006 /* VideoExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20006 /* VideoExporter.swift */; };
-		A10007 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = A20007 /* Shaders.metal */; };
+		A01 /* WaveProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02 /* WaveProApp.swift */; };
+		A03 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04 /* ContentView.swift */; };
+		A05 /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06 /* AudioEngine.swift */; };
+		A07 /* MetalRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08 /* MetalRenderer.swift */; };
+		A09 /* MetalVisualizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10 /* MetalVisualizationView.swift */; };
+		A11 /* VideoExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12 /* VideoExporter.swift */; };
+		A13 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = F14 /* Shaders.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A10000 /* WavePro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WavePro.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A20001 /* WaveProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveProApp.swift; sourceTree = "<group>"; };
-		A20002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		A20003 /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AudioEngine.swift"; sourceTree = "<group>"; };
-		A20004 /* MetalRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MetalRenderer.swift"; sourceTree = "<group>"; };
-		A20005 /* MetalVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MetalVisualizationView.swift"; sourceTree = "<group>"; };
-		A20006 /* VideoExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoExporter.swift"; sourceTree = "<group>"; };
-		A20007 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = "Shaders.metal"; sourceTree = "<group>"; };
-		A20008 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A20009 /* WavePro.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WavePro.entitlements; sourceTree = "<group>"; };
+		F01 /* WavePro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WavePro.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F02 /* WaveProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveProApp.swift; sourceTree = "<group>"; };
+		F04 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F06 /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngine.swift; sourceTree = "<group>"; };
+		F08 /* MetalRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalRenderer.swift; sourceTree = "<group>"; };
+		F10 /* MetalVisualizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalVisualizationView.swift; sourceTree = "<group>"; };
+		F12 /* VideoExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoExporter.swift; sourceTree = "<group>"; };
+		F14 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		F15 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A09999 /* Frameworks */ = {
+		016 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -40,80 +39,95 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A09998 = {
+		017 = {
 			isa = PBXGroup;
 			children = (
-				A20000 /* WavePro */,
-				A09997 /* Products */,
+				018 /* WavePro */,
+				019 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A09997 /* Products */ = {
+		018 /* WavePro */ = {
 			isa = PBXGroup;
 			children = (
-				A10000 /* WavePro.app */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A20000 /* WavePro */ = {
-			isa = PBXGroup;
-			children = (
-				A20001 /* WaveProApp.swift */,
-				A20002 /* ContentView.swift */,
-				A30001 /* Audio */,
-				A30002 /* Rendering */,
-				A30003 /* Export */,
-				A30004 /* Shaders */,
-				A20008 /* Info.plist */,
-				A20009 /* WavePro.entitlements */,
+				F02 /* WaveProApp.swift */,
+				020 /* UI */,
+				021 /* Audio */,
+				022 /* Rendering */,
+				023 /* Export */,
+				024 /* Shaders */,
+				025 /* Resources */,
+				F15 /* Info.plist */,
 			);
 			path = WavePro;
 			sourceTree = "<group>";
 		};
-		A30001 /* Audio */ = {
+		019 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A20003 /* AudioEngine.swift */,
+				F01 /* WavePro.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		020 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				F04 /* ContentView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		021 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				F06 /* AudioEngine.swift */,
 			);
 			path = Audio;
 			sourceTree = "<group>";
 		};
-		A30002 /* Rendering */ = {
+		022 /* Rendering */ = {
 			isa = PBXGroup;
 			children = (
-				A20004 /* MetalRenderer.swift */,
-				A20005 /* MetalVisualizationView.swift */,
+				F08 /* MetalRenderer.swift */,
+				F10 /* MetalVisualizationView.swift */,
 			);
 			path = Rendering;
 			sourceTree = "<group>";
 		};
-		A30003 /* Export */ = {
+		023 /* Export */ = {
 			isa = PBXGroup;
 			children = (
-				A20006 /* VideoExporter.swift */,
+				F12 /* VideoExporter.swift */,
 			);
 			path = Export;
 			sourceTree = "<group>";
 		};
-		A30004 /* Shaders */ = {
+		024 /* Shaders */ = {
 			isa = PBXGroup;
 			children = (
-				A20007 /* Shaders.metal */,
+				F14 /* Shaders.metal */,
 			);
 			path = Shaders;
+			sourceTree = "<group>";
+		};
+		025 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A09996 /* WavePro */ = {
+		026 /* WavePro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A09995 /* Build configuration list for PBXNativeTarget "WavePro" */;
+			buildConfigurationList = 027 /* Build configuration list for PBXNativeTarget "WavePro" */;
 			buildPhases = (
-				A09994 /* Sources */,
-				A09999 /* Frameworks */,
-				A09993 /* Resources */,
+				028 /* Sources */,
+				016 /* Frameworks */,
+				029 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -121,25 +135,25 @@
 			);
 			name = WavePro;
 			productName = WavePro;
-			productReference = A10000 /* WavePro.app */;
+			productReference = F01 /* WavePro.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		A09992 /* Project object */ = {
+		030 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					A09996 = {
+					026 /* WavePro */ = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
-			buildConfigurationList = A09991 /* Build configuration list for PBXProject "WavePro" */;
+			buildConfigurationList = 031 /* Build configuration list for PBXProject "WavePro" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -147,18 +161,18 @@
 				en,
 				Base,
 			);
-			mainGroup = A09998;
-			productRefGroup = A09997 /* Products */;
+			mainGroup = 017;
+			productRefGroup = 019 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A09996 /* WavePro */,
+				026 /* WavePro */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A09993 /* Resources */ = {
+		029 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -168,24 +182,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A09994 /* Sources */ = {
+		028 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A10002 /* ContentView.swift in Sources */,
-				A10001 /* WaveProApp.swift in Sources */,
-				A10003 /* AudioEngine.swift in Sources */,
-				A10004 /* MetalRenderer.swift in Sources */,
-				A10005 /* MetalVisualizationView.swift in Sources */,
-				A10006 /* VideoExporter.swift in Sources */,
-				A10007 /* Shaders.metal in Sources */,
+				A01 /* WaveProApp.swift in Sources */,
+				A03 /* ContentView.swift in Sources */,
+				A05 /* AudioEngine.swift in Sources */,
+				A07 /* MetalRenderer.swift in Sources */,
+				A09 /* MetalVisualizationView.swift in Sources */,
+				A11 /* VideoExporter.swift in Sources */,
+				A13 /* Shaders.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		A09990 /* Debug */ = {
+		032 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -248,7 +262,7 @@
 			};
 			name = Debug;
 		};
-		A09989 /* Release */ = {
+		033 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -303,7 +317,7 @@
 			};
 			name = Release;
 		};
-		A09988 /* Debug */ = {
+		034 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -312,18 +326,19 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WavePro/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WavePro;
+				INFOPLIST_KEY_CFBundleDisplayName = "WavePro";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wavepro.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -332,7 +347,7 @@
 			};
 			name = Debug;
 		};
-		A09987 /* Release */ = {
+		035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -341,18 +356,19 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WavePro/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = WavePro;
+				INFOPLIST_KEY_CFBundleDisplayName = "WavePro";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wavepro.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -364,25 +380,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A09991 /* Build configuration list for PBXProject "WavePro" */ = {
+		027 /* Build configuration list for PBXNativeTarget "WavePro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A09990 /* Debug */,
-				A09989 /* Release */,
+				034 /* Debug */,
+				035 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A09995 /* Build configuration list for PBXNativeTarget "WavePro" */ = {
+		031 /* Build configuration list for PBXProject "WavePro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A09988 /* Debug */,
-				A09987 /* Release */,
+				032 /* Debug */,
+				033 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = A09992 /* Project object */;
+	rootObject = 030 /* Project object */;
 }
