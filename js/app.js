@@ -257,7 +257,13 @@ class AudioVisualizerApp {
             this.elements.trackName.textContent = file.name.replace(/\.[^/.]+$/, "");
             this.showVisualizerSection();
             
-            // Apply initial settings
+            // Apply initial settings with better defaults
+            this.elements.sensitivity.value = 120;
+            this.elements.sensitivityValue.textContent = 120;
+            this.elements.smoothing.value = 20;
+            this.elements.smoothingValue.textContent = 20;
+            this.elements.blurEffect.checked = true;
+            
             this.updateAnalyzerSettings();
             this.updateVisualizationSettings();
             

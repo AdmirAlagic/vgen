@@ -17,12 +17,12 @@ class AudioAnalyzer {
             treble: { start: 256, end: 512 }
         };
         
-        // Audio processing settings
+        // Audio processing settings optimized for smooth animations
         this.settings = {
-            sensitivity: 75,
-            smoothing: 60,
-            minDecibels: -90,
-            maxDecibels: -10,
+            sensitivity: 100,
+            smoothing: 30, // Lower smoothing for more responsive animations
+            minDecibels: -80,
+            maxDecibels: -20,
             fftSize: 2048
         };
     }
@@ -68,14 +68,14 @@ class AudioAnalyzer {
         
         this.analyser.getByteFrequencyData(this.dataArray);
         
-        // Apply sensitivity scaling with better curve
-        const sensitivity = Math.max(0.1, this.settings.sensitivity / 50);
+        // Apply sensitivity scaling with enhanced responsiveness
+        const sensitivity = Math.max(0.2, this.settings.sensitivity / 50);
         const scaledData = new Uint8Array(this.dataArray.length);
         
         for (let i = 0; i < this.dataArray.length; i++) {
-            // Apply sensitivity with exponential scaling for better responsiveness
+            // More aggressive scaling for dramatic animations
             let value = this.dataArray[i] * sensitivity;
-            value = Math.pow(value / 255, 0.7) * 255; // Slight compression curve
+            value = Math.pow(value / 255, 0.5) * 255; // Less compression for more dynamic range
             scaledData[i] = Math.min(255, Math.max(0, value));
         }
         
@@ -157,7 +157,14 @@ class AudioAnalyzer {
         
         if (this.analyser) {
             if (newSettings.smoothing !== undefined) {
-                this.analyser.smoothingTimeConstant = newSettings.smoothing / 100;
+                // Convert smoothing value to a more responsive range
+                const smoothingValue = Math.max(0, Math.min(0.95, newSettings.smoothing / 100));
+                this.analyser.smoothingTimeConstant = smoothingValue;
+                console.log(`Updated smoothing to: ${smoothingValue}`);
+            }
+            
+            if (newSettings.sensitivity !== undefined) {
+                console.log(`Updated sensitivity to: ${newSettings.sensitivity}`);
             }
             
             if (newSettings.fftSize !== undefined) {

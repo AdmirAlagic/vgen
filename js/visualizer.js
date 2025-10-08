@@ -23,10 +23,10 @@ class Visualizer {
         this.settings = {
             type: 'waveform',
             colorScheme: 'neon',
-            sensitivity: 75,
-            smoothing: 60,
+            sensitivity: 120,
+            smoothing: 20,
             glowEffect: true,
-            blurEffect: false,
+            blurEffect: true, // Enable motion blur for smooth animations
             particlesEffect: false
         };
         
@@ -159,18 +159,13 @@ class Visualizer {
         
         this.animationId = requestAnimationFrame((time) => this.animate(time));
         
-        const elapsed = currentTime - this.lastTime;
-        if (elapsed < this.fpsInterval) return;
+        // Remove FPS limiting for smoother animations
+        // const elapsed = currentTime - this.lastTime;
+        // if (elapsed < this.fpsInterval) return;
         
-        this.lastTime = currentTime - (elapsed % this.fpsInterval);
+        this.lastTime = currentTime;
         
-        // Performance check - skip frames if needed
-        if (this.performanceMode) {
-            this.frameSkip++;
-            if (this.frameSkip < 2) return;
-            this.frameSkip = 0;
-        }
-        
+        // Always render for maximum smoothness
         this.render();
     }
     
@@ -236,7 +231,7 @@ class Visualizer {
         // Render based on visualization type
         switch (this.settings.type) {
             case 'waveform':
-                this.renderHorizontalWaveform(timeDomainData, frequencyData);
+                this.renderWaveform(timeDomainData);
                 break;
             case 'multi-wave':
                 this.renderMultiLayerWaves(timeDomainData, frequencyData);
@@ -282,96 +277,170 @@ class Visualizer {
     }
     
     renderSpectrum(frequencyData) {
+        // Render horizontal flowing spectrum waves instead of bars
         this.drawBackground();
         
-        // Create 3D perspective spectrum with multiple layers
-        const barCount = Math.min(64, frequencyData.length);
         const colors = this.colorSchemes[this.settings.colorScheme]?.gradient || ['#ffffff', '#00d4ff', '#ff0080'];
-        const centerX = this.width / 2;
-        const centerY = this.height * 0.7;
         
         this.ctx.save();
         
-        // Draw background grid
-        this.drawGrid();
-        
-        // Multiple layers for 3D depth effect
-        const layers = [
-            { depth: 0.6, alpha: 0.3, offset: 40 },
-            { depth: 0.8, alpha: 0.6, offset: 20 },
-            { depth: 1.0, alpha: 1.0, offset: 0 }
+        // Create multiple horizontal wave layers based on different frequency bands
+        const frequencyBands = [
+            { start: 0, end: Math.floor(frequencyData.length * 0.1), yPos: 0.2, thickness: 8, name: 'bass' },
+            { start: Math.floor(frequencyData.length * 0.1), end: Math.floor(frequencyData.length * 0.3), yPos: 0.35, thickness: 6, name: 'lowMid' },
+            { start: Math.floor(frequencyData.length * 0.3), end: Math.floor(frequencyData.length * 0.6), yPos: 0.5, thickness: 4, name: 'mid' },
+            { start: Math.floor(frequencyData.length * 0.6), end: Math.floor(frequencyData.length * 0.8), yPos: 0.65, thickness: 6, name: 'highMid' },
+            { start: Math.floor(frequencyData.length * 0.8), end: frequencyData.length, yPos: 0.8, thickness: 8, name: 'treble' }
         ];
         
-        layers.forEach((layer, layerIndex) => {
+        // Draw flowing horizontal waves for each frequency band
+        frequencyBands.forEach((band, bandIndex) => {
+            this.drawHorizontalFrequencyWave(frequencyData, band, colors, bandIndex);
+        });
+        
+        // Add dynamic glow effects
+        this.drawSpectrumGlowEffects(frequencyData, colors);
+        
+        this.ctx.restore();
+    }
+    
+    drawHorizontalFrequencyWave(frequencyData, band, colors, bandIndex) {
+        this.ctx.save();
+        
+        // Calculate band average amplitude
+        let bandSum = 0;
+        for (let i = band.start; i < band.end; i++) {
+            bandSum += frequencyData[i];
+        }
+        const bandAverage = bandSum / (band.end - band.start) / 255;
+        
+        // Enhanced amplitude for more dramatic effect
+        const amplitude = Math.pow(bandAverage * 3, 1.5);
+        const baseY = this.height * band.yPos;
+        
+        // Create flowing wave points
+        const points = [];
+        const resolution = 150; // Number of points in the wave
+        
+        for (let i = 0; i <= resolution; i++) {
+            const x = (i / resolution) * this.width;
+            
+            // Create complex wave pattern combining multiple frequencies
+            let waveY = 0;
+            
+            // Primary wave based on frequency data
+            const freqIndex = Math.floor((i / resolution) * (band.end - band.start)) + band.start;
+            const freqAmplitude = (frequencyData[freqIndex] || 0) / 255;
+            waveY += freqAmplitude * amplitude * this.height * 0.15;
+            
+            // Add harmonic waves for smoothness
+            waveY += Math.sin((i / resolution) * Math.PI * 4 + Date.now() * 0.005) * amplitude * 20;
+            waveY += Math.sin((i / resolution) * Math.PI * 8 + Date.now() * 0.003) * amplitude * 10;
+            waveY += Math.sin((i / resolution) * Math.PI * 2 + Date.now() * 0.008) * amplitude * 15;
+            
+            points.push({ x: x, y: baseY + waveY });
+        }
+        
+        // Select color for this band
+        const colorIndex = (bandIndex / 5) * (colors.length - 1); // 5 is the number of frequency bands
+        const color = colors[Math.floor(colorIndex)] || colors[0];
+        
+        // Draw multiple wave layers for depth
+        const waveLayers = [
+            { alpha: 0.3, thickness: band.thickness * 2, offset: 20, blur: 40 },
+            { alpha: 0.6, thickness: band.thickness * 1.5, offset: 10, blur: 25 },
+            { alpha: 0.9, thickness: band.thickness, offset: 0, blur: 15 }
+        ];
+        
+        waveLayers.forEach((layer, layerIndex) => {
             this.ctx.save();
             this.ctx.globalAlpha = layer.alpha;
+            this.ctx.lineWidth = layer.thickness;
+            this.ctx.strokeStyle = color;
+            this.ctx.lineCap = 'round';
+            this.ctx.lineJoin = 'round';
             
-            for (let i = 0; i < barCount; i++) {
-                const dataIndex = Math.floor((i / barCount) * frequencyData.length);
-                let amplitude = frequencyData[dataIndex] / 255;
+            if (this.settings.glowEffect) {
+                this.ctx.shadowColor = color;
+                this.ctx.shadowBlur = layer.blur;
+            }
+            
+            // Draw smooth curve through points
+            this.ctx.beginPath();
+            
+            if (points.length > 2) {
+                this.ctx.moveTo(points[0].x, points[0].y + layer.offset);
                 
-                // Enhanced amplitude processing
-                amplitude = Math.pow(amplitude * 2.5, 1.2) * layer.depth;
-                amplitude = Math.min(amplitude, 1);
-                
-                if (amplitude < 0.05) continue;
-                
-                // 3D positioning with perspective
-                const angle = (i / barCount) * Math.PI * 2;
-                const radius = 200 + layer.offset;
-                const baseX = centerX + Math.cos(angle) * radius * 0.3;
-                const baseY = centerY;
-                
-                // 3D bar dimensions
-                const barWidth = 15 * layer.depth;
-                const barHeight = amplitude * this.height * 0.6;
-                const topWidth = barWidth * 0.7; // Perspective taper
-                
-            // Color selection with smooth transition
-            const colorIndex = (i / barCount) * (colors.length - 1);
-            const colorA = colors[Math.floor(colorIndex) % colors.length] || colors[0];
-            const colorB = colors[Math.ceil(colorIndex) % colors.length] || colors[0];
-            const blend = colorIndex - Math.floor(colorIndex);
-                
-        // Create complex gradient
-        const blendedColor = this.blendColors(colorA, colorB, blend);
-        const gradient = this.ctx.createLinearGradient(baseX, baseY, baseX, baseY - barHeight);
-        gradient.addColorStop(0, blendedColor);
-        gradient.addColorStop(0.3, this.lightenColor(blendedColor, 0.5));
-        gradient.addColorStop(0.7, blendedColor);
-        gradient.addColorStop(1, this.lightenColor(blendedColor, 0.8));
-        
-        this.ctx.fillStyle = gradient;
-                
-                // Enhanced glow effect
-                if (this.settings.glowEffect) {
-                    this.ctx.shadowColor = blendedColor;
-                    this.ctx.shadowBlur = 30 + amplitude * 40;
-                    this.ctx.shadowOffsetY = -5;
-                }
-                
-            // Draw 3D bar with perspective
-            this.draw3DBar(baseX, baseY, barWidth, topWidth, barHeight, blendedColor);
-                
-                // Add top highlight
-                if (barHeight > 10) {
-                    this.ctx.fillStyle = this.addAlpha(this.lightenColor(blendedColor, 0.8), 0.8);
-                    this.ctx.shadowBlur = 15;
-                    this.drawBarTop(baseX, baseY - barHeight, barWidth, topWidth);
-                }
-                
-                // Add side glow lines
-                if (amplitude > 0.3 && layerIndex === 2) {
-                    this.drawGlowLines(baseX, baseY, barHeight, blendedColor);
+                for (let i = 1; i < points.length - 1; i++) {
+                    const cp1x = (points[i].x + points[i - 1].x) / 2;
+                    const cp1y = (points[i].y + points[i - 1].y) / 2 + layer.offset;
+                    const cp2x = (points[i].x + points[i + 1].x) / 2;
+                    const cp2y = (points[i].y + points[i + 1].y) / 2 + layer.offset;
+                    
+                    this.ctx.quadraticCurveTo(points[i].x, points[i].y + layer.offset, cp2x, cp2y);
                 }
             }
             
+            this.ctx.stroke();
             this.ctx.restore();
         });
         
-        // Add atmospheric particles
-        if (this.settings.particlesEffect) {
-            this.drawAtmosphericParticles(frequencyData);
+        // Add wave fill for dramatic effect
+        if (amplitude > 0.2) {
+            this.ctx.save();
+            this.ctx.globalAlpha = 0.2;
+            
+            const fillGradient = this.ctx.createLinearGradient(0, baseY - amplitude * 50, 0, baseY + amplitude * 50);
+            fillGradient.addColorStop(0, this.addAlpha(color, 0.6));
+            fillGradient.addColorStop(0.5, this.addAlpha(color, 0.3));
+            fillGradient.addColorStop(1, this.addAlpha(color, 0));
+            
+            this.ctx.fillStyle = fillGradient;
+            
+            this.ctx.beginPath();
+            points.forEach((point, i) => {
+                if (i === 0) {
+                    this.ctx.moveTo(point.x, point.y);
+                } else {
+                    this.ctx.lineTo(point.x, point.y);
+                }
+            });
+            this.ctx.lineTo(this.width, baseY);
+            this.ctx.lineTo(0, baseY);
+            this.ctx.closePath();
+            this.ctx.fill();
+            
+            this.ctx.restore();
+        }
+        
+        this.ctx.restore();
+    }
+    
+    drawSpectrumGlowEffects(frequencyData, colors) {
+        // Add dynamic energy bursts based on frequency peaks
+        this.ctx.save();
+        
+        const peakThreshold = 200;
+        
+        for (let i = 0; i < frequencyData.length; i += 10) {
+            if (frequencyData[i] > peakThreshold) {
+                const x = (i / frequencyData.length) * this.width;
+                const intensity = (frequencyData[i] / 255) * 2;
+                const size = intensity * 80;
+                
+                const color = colors[Math.floor((i / frequencyData.length) * colors.length)];
+                
+                // Create radial glow burst
+                const gradient = this.ctx.createRadialGradient(x, this.height * 0.5, 0, x, this.height * 0.5, size);
+                gradient.addColorStop(0, this.addAlpha(color, intensity * 0.6));
+                gradient.addColorStop(0.5, this.addAlpha(color, intensity * 0.3));
+                gradient.addColorStop(1, this.addAlpha(color, 0));
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.beginPath();
+                this.ctx.arc(x, this.height * 0.5, size, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
         }
         
         this.ctx.restore();
@@ -530,48 +599,183 @@ class Visualizer {
     }
     
     renderWaveform(timeDomainData) {
-        this.drawBackground();
+        // Clear with motion blur effect for smoother animation
+        if (this.settings.blurEffect) {
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+        } else {
+            this.drawBackground();
+        }
         
         const colors = this.colorSchemes[this.settings.colorScheme] || { gradient: ['#ffffff', '#00d4ff', '#ff0080'] };
         const centerY = this.height / 2;
         
         this.ctx.save();
         
-        // Create multiple wave layers with different properties
-        const waveLayers = [
-            { amplitude: 0.6, lineWidth: 8, alpha: 0.3, offset: 40, color: colors.gradient[1] },
-            { amplitude: 0.8, lineWidth: 6, alpha: 0.5, offset: 20, color: colors.gradient[2] },
-            { amplitude: 1.0, lineWidth: 4, alpha: 0.8, offset: 10, color: colors.gradient[3] },
-            { amplitude: 1.2, lineWidth: 3, alpha: 1.0, offset: 0, color: colors.gradient[4] }
-        ];
+        // Create single dramatic waveform with high amplitude
+        this.drawDramaticWaveform(timeDomainData, centerY, colors);
         
-        // Draw background wave field
-        this.drawWaveField(timeDomainData, colors);
+        // Add secondary harmonics for richness
+        this.drawHarmonicWaves(timeDomainData, centerY, colors);
         
-        waveLayers.forEach((layer, layerIndex) => {
-            this.ctx.save();
-            this.ctx.globalAlpha = layer.alpha;
-            
-            // Create smooth curve using bezier curves
-            this.drawSmoothWave(timeDomainData, centerY, layer, layerIndex);
-            
-            // Add wave reflections
-            if (layerIndex >= 2) {
-                this.drawWaveReflection(timeDomainData, centerY, layer);
-            }
-            
-            this.ctx.restore();
-        });
+        // Add peak highlights
+        this.drawWaveformPeaks(timeDomainData, centerY, colors);
         
-        // Add dynamic particle streams
+        // Add particle effects if enabled
         if (this.settings.particlesEffect) {
             this.drawWaveParticles(timeDomainData, colors);
         }
         
-        // Add frequency-reactive glow bursts
-        this.drawGlowBursts(timeDomainData, colors);
+        this.ctx.restore();
+    }
+    
+    drawDramaticWaveform(timeDomainData, centerY, colors) {
+        this.ctx.save();
+        
+        // Main waveform with massive amplitude
+        const points = [];
+        const resolution = 300; // Higher resolution for smoother curves
+        
+        for (let i = 0; i < resolution; i++) {
+            const dataIndex = Math.floor((i / resolution) * timeDomainData.length);
+            const x = (i / resolution) * this.width;
+            
+            // Get audio sample and amplify dramatically
+            let sample = (timeDomainData[dataIndex] - 128) / 128.0;
+            sample *= 4; // Massive amplification
+            
+            // Add flowing motion effect
+            const flowOffset = Date.now() * 0.002;
+            sample += Math.sin((i / resolution) * Math.PI * 2 + flowOffset) * 0.3;
+            
+            const y = centerY + (sample * this.height * 0.4);
+            points.push({ x, y });
+        }
+        
+        // Draw multiple layers for depth and glow
+        const layers = [
+            { width: 12, alpha: 0.2, blur: 50, color: colors.gradient[1] },
+            { width: 8, alpha: 0.4, blur: 30, color: colors.gradient[2] },
+            { width: 5, alpha: 0.7, blur: 20, color: colors.gradient[3] },
+            { width: 3, alpha: 1.0, blur: 10, color: colors.gradient[4] || colors.gradient[2] }
+        ];
+        
+        layers.forEach(layer => {
+            this.ctx.save();
+            this.ctx.globalAlpha = layer.alpha;
+            this.ctx.lineWidth = layer.width;
+            this.ctx.strokeStyle = layer.color;
+            this.ctx.lineCap = 'round';
+            this.ctx.lineJoin = 'round';
+            
+            if (this.settings.glowEffect) {
+                this.ctx.shadowColor = layer.color;
+                this.ctx.shadowBlur = layer.blur;
+            }
+            
+            // Draw smooth curve
+            this.drawSmoothCurve(points);
+            
+            this.ctx.restore();
+        });
         
         this.ctx.restore();
+    }
+    
+    drawHarmonicWaves(timeDomainData, centerY, colors) {
+        // Add harmonic waves above and below the main wave
+        this.ctx.save();
+        
+        const harmonics = [
+            { yOffset: -this.height * 0.15, amplitude: 0.3, frequency: 2, color: colors.gradient[0] },
+            { yOffset: this.height * 0.15, amplitude: 0.3, frequency: 2, color: colors.gradient[0] },
+            { yOffset: -this.height * 0.25, amplitude: 0.2, frequency: 4, color: colors.gradient[1] },
+            { yOffset: this.height * 0.25, amplitude: 0.2, frequency: 4, color: colors.gradient[1] }
+        ];
+        
+        harmonics.forEach(harmonic => {
+            this.ctx.save();
+            this.ctx.globalAlpha = 0.4;
+            this.ctx.lineWidth = 4;
+            this.ctx.strokeStyle = harmonic.color;
+            this.ctx.lineCap = 'round';
+            
+            if (this.settings.glowEffect) {
+                this.ctx.shadowColor = harmonic.color;
+                this.ctx.shadowBlur = 25;
+            }
+            
+            this.ctx.beginPath();
+            
+            for (let i = 0; i < 200; i++) {
+                const x = (i / 200) * this.width;
+                const dataIndex = Math.floor((i / 200) * timeDomainData.length);
+                let sample = (timeDomainData[dataIndex] - 128) / 128.0;
+                
+                // Apply harmonic transformation
+                sample *= harmonic.amplitude * 2;
+                sample += Math.sin((i / 200) * Math.PI * harmonic.frequency + Date.now() * 0.003) * harmonic.amplitude;
+                
+                const y = centerY + harmonic.yOffset + (sample * this.height * 0.2);
+                
+                if (i === 0) {
+                    this.ctx.moveTo(x, y);
+                } else {
+                    this.ctx.lineTo(x, y);
+                }
+            }
+            
+            this.ctx.stroke();
+            this.ctx.restore();
+        });
+        
+        this.ctx.restore();
+    }
+    
+    drawWaveformPeaks(timeDomainData, centerY, colors) {
+        // Highlight amplitude peaks with bright spots
+        this.ctx.save();
+        
+        for (let i = 0; i < timeDomainData.length; i += 20) {
+            const sample = Math.abs(timeDomainData[i] - 128) / 128.0;
+            
+            if (sample > 0.7) { // Only high amplitude peaks
+                const x = (i / timeDomainData.length) * this.width;
+                const y = centerY + ((timeDomainData[i] - 128) / 128.0) * this.height * 0.4;
+                const size = sample * 15;
+                
+                const color = colors.gradient[Math.floor((sample * (colors.gradient.length - 1)))];
+                
+                // Bright peak highlight
+                const gradient = this.ctx.createRadialGradient(x, y, 0, x, y, size);
+                gradient.addColorStop(0, this.addAlpha(this.lightenColor(color, 0.8), 0.9));
+                gradient.addColorStop(0.5, this.addAlpha(color, 0.6));
+                gradient.addColorStop(1, this.addAlpha(color, 0));
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, size, 0, Math.PI * 2);
+                this.ctx.fill();
+            }
+        }
+        
+        this.ctx.restore();
+    }
+    
+    drawSmoothCurve(points) {
+        if (points.length < 3) return;
+        
+        this.ctx.beginPath();
+        this.ctx.moveTo(points[0].x, points[0].y);
+        
+        // Use quadratic curves for ultra-smooth lines
+        for (let i = 1; i < points.length - 1; i++) {
+            const cpx = (points[i].x + points[i + 1].x) / 2;
+            const cpy = (points[i].y + points[i + 1].y) / 2;
+            this.ctx.quadraticCurveTo(points[i].x, points[i].y, cpx, cpy);
+        }
+        
+        this.ctx.stroke();
     }
     
     drawWaveField(timeDomainData, colors) {
@@ -1885,6 +2089,151 @@ class Visualizer {
         }
         
         return colorA;
+    }
+    
+    renderMultiLayerWaves(timeDomainData, frequencyData) {
+        // Multiple flowing horizontal waves at different levels
+        if (this.settings.blurEffect) {
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+        } else {
+            this.drawBackground();
+        }
+        
+        const colors = this.colorSchemes[this.settings.colorScheme] || { gradient: ['#ffffff', '#00d4ff', '#ff0080'] };
+        
+        this.ctx.save();
+        
+        // Create 7 horizontal wave layers
+        const waveLevels = [0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75];
+        
+        waveLevels.forEach((yPos, index) => {
+            this.drawFlowingWaveLayer(timeDomainData, frequencyData, yPos, index, colors);
+        });
+        
+        this.ctx.restore();
+    }
+    
+    renderFlowingSoundwave(timeDomainData, frequencyData) {
+        // Single massive flowing waveform that fills the screen
+        if (this.settings.blurEffect) {
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
+            this.ctx.fillRect(0, 0, this.width, this.height);
+        } else {
+            this.drawBackground();
+        }
+        
+        const colors = this.colorSchemes[this.settings.colorScheme] || { gradient: ['#ffffff', '#00d4ff', '#ff0080'] };
+        
+        this.ctx.save();
+        
+        // Create flowing wave that changes based on frequency content
+        this.drawMassiveFlowingWave(timeDomainData, frequencyData, colors);
+        
+        this.ctx.restore();
+    }
+    
+    drawFlowingWaveLayer(timeDomainData, frequencyData, yPos, layerIndex, colors) {
+        this.ctx.save();
+        
+        const baseY = this.height * yPos;
+        const color = colors.gradient[layerIndex % colors.gradient.length];
+        const time = Date.now() * 0.001;
+        
+        // Create wave points with frequency-based modulation
+        const points = [];
+        const resolution = 200;
+        
+        for (let i = 0; i < resolution; i++) {
+            const x = (i / resolution) * this.width;
+            const dataIndex = Math.floor((i / resolution) * timeDomainData.length);
+            
+            // Get audio data
+            let sample = (timeDomainData[dataIndex] - 128) / 128.0;
+            sample *= 2 + layerIndex * 0.3; // Different amplification per layer
+            
+            // Add flowing motion
+            const flowPhase = time * (2 + layerIndex * 0.5);
+            sample += Math.sin((i / resolution) * Math.PI * 3 + flowPhase) * 0.4;
+            
+            // Frequency-based modulation
+            const freqIndex = Math.floor((i / resolution) * frequencyData.length);
+            const freqMod = (frequencyData[freqIndex] || 0) / 255 * 0.5;
+            sample += freqMod;
+            
+            const y = baseY + (sample * this.height * 0.12);
+            points.push({ x, y });
+        }
+        
+        // Draw wave with layers
+        const thickness = 6 + layerIndex;
+        const alpha = 0.4 + (layerIndex / 10);
+        
+        this.ctx.globalAlpha = alpha;
+        this.ctx.lineWidth = thickness;
+        this.ctx.strokeStyle = color;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+        
+        if (this.settings.glowEffect) {
+            this.ctx.shadowColor = color;
+            this.ctx.shadowBlur = 20 + layerIndex * 5;
+        }
+        
+        this.drawSmoothCurve(points);
+        
+        this.ctx.restore();
+    }
+    
+    drawMassiveFlowingWave(timeDomainData, frequencyData, colors) {
+        const centerY = this.height / 2;
+        const time = Date.now() * 0.001;
+        
+        // Create multiple flowing ribbons
+        const ribbons = [
+            { yOffset: 0, amplitude: 1.5, thickness: 15, alpha: 1.0, color: colors.gradient[3] },
+            { yOffset: 30, amplitude: 1.2, thickness: 12, alpha: 0.8, color: colors.gradient[2] },
+            { yOffset: -30, amplitude: 1.2, thickness: 12, alpha: 0.8, color: colors.gradient[2] },
+            { yOffset: 60, amplitude: 0.8, thickness: 8, alpha: 0.6, color: colors.gradient[1] },
+            { yOffset: -60, amplitude: 0.8, thickness: 8, alpha: 0.6, color: colors.gradient[1] }
+        ];
+        
+        ribbons.forEach((ribbon, ribbonIndex) => {
+            this.ctx.save();
+            this.ctx.globalAlpha = ribbon.alpha;
+            this.ctx.lineWidth = ribbon.thickness;
+            this.ctx.strokeStyle = ribbon.color;
+            this.ctx.lineCap = 'round';
+            
+            if (this.settings.glowEffect) {
+                this.ctx.shadowColor = ribbon.color;
+                this.ctx.shadowBlur = 30 + ribbonIndex * 10;
+            }
+            
+            // Create flowing wave points
+            const points = [];
+            const resolution = 250;
+            
+            for (let i = 0; i < resolution; i++) {
+                const x = (i / resolution) * this.width;
+                const dataIndex = Math.floor((i / resolution) * timeDomainData.length);
+                
+                let sample = (timeDomainData[dataIndex] - 128) / 128.0;
+                sample *= ribbon.amplitude * 3; // High amplification
+                
+                // Add multiple flowing harmonics
+                const flowPhase = time * (1.5 + ribbonIndex * 0.3);
+                sample += Math.sin((i / resolution) * Math.PI * 2 + flowPhase) * 0.5;
+                sample += Math.sin((i / resolution) * Math.PI * 4 + flowPhase * 1.2) * 0.3;
+                sample += Math.sin((i / resolution) * Math.PI * 8 + flowPhase * 0.8) * 0.2;
+                
+                const y = centerY + ribbon.yOffset + (sample * this.height * 0.25);
+                points.push({ x, y });
+            }
+            
+            this.drawSmoothCurve(points);
+            this.ctx.restore();
+        });
     }
 }
 
