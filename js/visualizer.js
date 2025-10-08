@@ -18,14 +18,19 @@ class Visualizer {
         
         // Visualization settings
         this.settings = {
-            type: 'spectrum',
+            type: 'waveform',
             colorScheme: 'neon',
-            sensitivity: 50,
-            smoothing: 80,
+            sensitivity: 75,
+            smoothing: 60,
             glowEffect: true,
             blurEffect: false,
             particlesEffect: false
         };
+        
+        // Waveform-specific properties
+        this.waveformHistory = [];
+        this.maxHistoryLength = 200;
+        this.flowSpeed = 2;
         
         // Enhanced color schemes with more sophisticated gradients
         this.colorSchemes = {
@@ -222,13 +227,22 @@ class Visualizer {
     }
     
     renderVisualization(frequencyData, timeDomainData, bands, beat) {
+        // Store waveform data for flowing effect
+        this.updateWaveformHistory(timeDomainData, frequencyData);
+        
         // Render based on visualization type
         switch (this.settings.type) {
+            case 'waveform':
+                this.renderHorizontalWaveform(timeDomainData, frequencyData);
+                break;
+            case 'multi-wave':
+                this.renderMultiLayerWaves(timeDomainData, frequencyData);
+                break;
+            case 'flowing-wave':
+                this.renderFlowingSoundwave(timeDomainData, frequencyData);
+                break;
             case 'spectrum':
                 this.renderSpectrum(frequencyData);
-                break;
-            case 'waveform':
-                this.renderWaveform(timeDomainData);
                 break;
             case 'circular':
                 this.renderCircularSpectrum(frequencyData);
@@ -242,9 +256,25 @@ class Visualizer {
         }
         
         // Add particle effects if enabled
-        if (this.settings.particlesEffect && this.settings.type !== 'particles') {
+        if (this.settings.particlesEffect && !['particles', 'waveform', 'multi-wave', 'flowing-wave'].includes(this.settings.type)) {
             this.updateParticles(beat);
             this.renderParticleOverlay();
+        }
+    }
+    
+    updateWaveformHistory(timeDomainData, frequencyData) {
+        // Store current frame data for flowing effects
+        const frameData = {
+            timeDomain: new Uint8Array(timeDomainData),
+            frequency: new Uint8Array(frequencyData),
+            timestamp: Date.now()
+        };
+        
+        this.waveformHistory.push(frameData);
+        
+        // Keep history size manageable
+        if (this.waveformHistory.length > this.maxHistoryLength) {
+            this.waveformHistory.shift();
         }
     }
     
