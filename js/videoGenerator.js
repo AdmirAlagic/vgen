@@ -253,8 +253,8 @@ class VideoGenerator {
                 await this.preAnalyzeAudio();
             }
             
-            // Create video with live rendering (no pre-rendered frames)
-            await this.createVideoWithLiveRendering(visualizer, settings);
+            // Use simple recording approach - just record while audio plays
+            await this.recordWhilePlaying(visualizer, settings);
             
             // Restore original canvas state
             this.restoreCanvas(visualizer);
@@ -483,7 +483,170 @@ class VideoGenerator {
         });
     }
     
-    async createVideoWithLiveRendering(visualizer, settings) {
+    async recordWhilePlaying(visualizer, settings) {
+        const videoSettings = this.settings[this.currentQuality];
+        const duration = this.audioBuffer.duration;
+        
+        return new Promise(async (resolve, reject) => {
+            try {
+                console.log('Starting simple record-while-playing approach');
+                
+                // Set up canvas stream
+                const canvasStream = this.canvas.captureStream(30); // Fixed 30fps for consistency
+                
+                // Create combined stream
+                const combinedStream = new MediaStream();
+                
+                // Add video track
+                canvasStream.getVideoTracks().forEach(track => {
+                    combinedStream.addTrack(track);
+                    console.log('Added video track');
+                });
+                
+                // Add audio track - simpler approach
+                if (this.audioElement && this.audioElement.src) {
+                    try {
+                        // Use getUserMedia to capture system audio (if available) or create silent track
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        await audioContext.resume();
+                        
+                        // Load and prepare audio buffer
+                        const audioBuffer = await this.loadAudioBuffer(this.audioElement.src, audioContext);
+                        
+                        // Create audio source
+                        const source = audioContext.createBufferSource();
+                        source.buffer = audioBuffer;
+                        
+                        // Create destination
+                        const destination = audioContext.createMediaStreamDestination();
+                        source.connect(destination);
+                        
+                        // Add audio tracks
+                        destination.stream.getAudioTracks().forEach(track => {
+                            combinedStream.addTrack(track);
+                            console.log('Added audio track');
+                        });
+                        
+                        // Store for cleanup
+                        this.recordingAudioSource = source;
+                        this.recordingAudioDestination = destination;
+                        
+                    } catch (audioError) {
+                        console.warn('Audio capture failed, continuing without audio:', audioError);
+                    }
+                }
+                
+                // Set up MediaRecorder
+                const options = {
+                    mimeType: 'video/webm; codecs=vp9,opus',
+                    videoBitsPerSecond: videoSettings.bitrate,
+                    audioBitsPerSecond: 192000
+                };
+                
+                // Fallback codecs
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options.mimeType = MediaRecorder.isTypeSupported('video/webm') ? 'video/webm' : 'video/mp4';
+                }
+                
+                const mediaRecorder = new MediaRecorder(combinedStream, options);
+                const chunks = [];
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        chunks.push(event.data);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(chunks, { type: options.mimeType });
+                    this.videoBlob = blob;
+                    this.downloadUrl = URL.createObjectURL(blob);
+                    
+                    // Cleanup
+                    if (this.recordingAudioSource) {
+                        try { this.recordingAudioSource.stop(); } catch (e) {}
+                    }
+                    combinedStream.getTracks().forEach(track => track.stop());
+                    
+                    if (this.onComplete) {
+                        this.onComplete({
+                            blob: blob,
+                            url: this.downloadUrl,
+                            settings: videoSettings,
+                            duration: duration,
+                            fps: 30,
+                            fileSize: blob.size,
+                            mimeType: options.mimeType,
+                            hasAudio: combinedStream.getAudioTracks().length > 0
+                        });
+                    }
+                    
+                    resolve();
+                };
+                
+                mediaRecorder.onerror = (error) => {
+                    console.error('MediaRecorder error:', error);
+                    reject(error);
+                };
+                
+                // Start recording
+                mediaRecorder.start(100);
+                
+                // Start audio buffer if we have one
+                if (this.recordingAudioSource) {
+                    this.recordingAudioSource.start(0);
+                }
+                
+                // Play the audio element and let the live visualization run
+                this.audioElement.currentTime = 0;
+                await this.audioElement.play();
+                
+                // Update settings for better visualization
+                visualizer.updateSettings({
+                    ...settings,
+                    blurEffect: false // Disable blur for cleaner video
+                });
+                
+                // Stop recording when audio ends
+                this.audioElement.onended = () => {
+                    console.log('Audio ended, stopping recording...');
+                    setTimeout(() => mediaRecorder.stop(), 500);
+                };
+                
+                // Also set a timeout as backup
+                setTimeout(() => {
+                    if (mediaRecorder.state === 'recording') {
+                        console.log('Timeout reached, stopping recording...');
+                        mediaRecorder.stop();
+                    }
+                }, (duration * 1000) + 2000);
+                
+                // Update progress during recording
+                const progressInterval = setInterval(() => {
+                    if (mediaRecorder.state === 'recording') {
+                        const elapsed = this.audioElement.currentTime;
+                        const progress = 0.3 + (elapsed / duration) * 0.7;
+                        
+                        if (this.onProgress) {
+                            this.onProgress({
+                                stage: 'recording',
+                                progress: progress,
+                                message: `Recording video with audio... ${Math.round(elapsed)}s / ${Math.round(duration)}s`
+                            });
+                        }
+                    } else {
+                        clearInterval(progressInterval);
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error in recordWhilePlaying:', error);
+                reject(error);
+            }
+        });
+    }
+    
+    async createVideoWithLiveRendering_OLD(visualizer, settings) {
         const videoSettings = this.settings[this.currentQuality];
         const duration = this.audioBuffer.duration;
         
@@ -500,27 +663,45 @@ class VideoGenerator {
                 videoTracks.forEach(track => combinedStream.addTrack(track));
                 
                 // Add audio track from the audio element
-                if (this.audioElement && this.audioElement.src) {
+                if (this.audioElement && this.audioElement.src && !this.audioElement.paused) {
                     try {
-                        // Create audio context and capture audio
-                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        // Get the existing audio context from the analyzer
+                        let audioContext = null;
+                        
+                        // Try to use existing audio context if available
+                        if (window.app && window.app.audioAnalyzer && window.app.audioAnalyzer.audioContext) {
+                            audioContext = window.app.audioAnalyzer.audioContext;
+                            console.log('Using existing audio context');
+                        } else {
+                            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                            console.log('Created new audio context');
+                        }
+                        
                         await audioContext.resume(); // Ensure context is running
                         
-                        // Create source from audio element
-                        const source = audioContext.createMediaElementSource(this.audioElement);
+                        // Create a new source for video recording (don't interfere with existing)
+                        const audioBuffer = await this.loadAudioBuffer(this.audioElement.src, audioContext);
+                        const audioBufferSource = audioContext.createBufferSource();
+                        audioBufferSource.buffer = audioBuffer;
                         
                         // Create destination for recording
                         const destination = audioContext.createMediaStreamDestination();
                         
-                        // Connect audio: source -> destination (for recording) + source -> speakers (for playback)
-                        source.connect(destination);
-                        source.connect(audioContext.destination);
+                        // Connect audio buffer to destination
+                        audioBufferSource.connect(destination);
                         
                         // Add audio tracks to combined stream
                         const audioTracks = destination.stream.getAudioTracks();
                         audioTracks.forEach(track => combinedStream.addTrack(track));
                         
-                        console.log('Audio tracks added to video stream:', audioTracks.length);
+                        // Start the audio buffer source
+                        audioBufferSource.start(0);
+                        
+                        // Store reference for cleanup
+                        this.audioBufferSource = audioBufferSource;
+                        this.audioDestination = destination;
+                        
+                        console.log('Audio buffer source added to video stream:', audioTracks.length, 'tracks');
                         
                     } catch (audioError) {
                         console.warn('Could not add audio to video:', audioError);
@@ -632,85 +813,70 @@ class VideoGenerator {
     
     renderLiveToCanvas(visualizer, settings, mediaRecorder) {
         const videoSettings = this.settings[this.currentQuality];
-        const frameDuration = 1000 / videoSettings.fps;
         let frameIndex = 0;
         let startTime = Date.now();
+        let lastRenderTime = 0;
         
-        // Frame smoothing buffer to reduce flicker
-        const frameSmoothing = {
-            enabled: true,
-            buffer: [],
-            maxBuffer: 3
-        };
-        
-        const renderNextFrame = () => {
-            if (frameIndex >= this.audioData.length) {
-                // All frames rendered, stop recording after allowing final frames to process
+        // Use requestAnimationFrame for precise timing and no frame skipping
+        const renderFrame = (currentTime) => {
+            // Calculate target frame time
+            const targetFrameTime = (frameIndex * 1000) / videoSettings.fps;
+            const elapsed = currentTime - startTime;
+            
+            if (elapsed >= targetFrameTime && frameIndex < this.audioData.length) {
+                const frameData = this.audioData[frameIndex];
+                
+                try {
+                    // Render frame directly without smoothing to avoid skipping
+                    this.renderVisualizationFrame(visualizer, frameData, settings);
+                    
+                    // Update progress
+                    if (this.onProgress) {
+                        const progress = 0.3 + (frameIndex / this.audioData.length) * 0.7;
+                        const realElapsed = (currentTime - startTime) / 1000;
+                        const eta = ((realElapsed / (frameIndex + 1)) * (this.audioData.length - frameIndex - 1)) || 0;
+                        
+                        this.onProgress({
+                            stage: 'rendering',
+                            progress: progress,
+                            message: `Generating video... ${frameIndex + 1}/${this.audioData.length} (${Math.round(eta)}s remaining)`
+                        });
+                    }
+                    
+                    frameIndex++;
+                    lastRenderTime = currentTime;
+                    
+                } catch (error) {
+                    console.error('Error rendering frame:', frameIndex, error);
+                    frameIndex++; // Skip this frame but continue
+                }
+            }
+            
+            // Continue rendering if we haven't finished all frames
+            if (frameIndex < this.audioData.length) {
+                requestAnimationFrame(renderFrame);
+            } else {
+                // All frames rendered, stop recording
+                console.log('All frames rendered, stopping recording...');
                 setTimeout(() => {
-                    console.log('Stopping video recording...');
                     mediaRecorder.stop();
                     
-                    // Stop audio playback
-                    if (this.audioElement && !this.audioElement.paused) {
-                        this.audioElement.pause();
-                        this.audioElement.currentTime = 0;
+                    // Clean up audio sources
+                    if (this.audioBufferSource) {
+                        try {
+                            this.audioBufferSource.stop();
+                        } catch (e) {
+                            console.log('Audio buffer source already stopped');
+                        }
                     }
-                }, 1000); // Longer delay to ensure all frames are captured
-                return;
-            }
-            
-            const frameData = this.audioData[frameIndex];
-            
-            try {
-                // Apply frame smoothing to reduce flicker
-                if (frameSmoothing.enabled) {
-                    frameSmoothing.buffer.push({
-                        frequencyData: new Uint8Array(frameData.frequencyData),
-                        timeDomainData: new Uint8Array(frameData.timeDomainData),
-                        bands: { ...frameData.bands },
-                        time: frameData.time
-                    });
-                    
-                    if (frameSmoothing.buffer.length > frameSmoothing.maxBuffer) {
-                        frameSmoothing.buffer.shift();
-                    }
-                    
-                    // Use averaged data for smoother video
-                    const smoothedFrameData = this.averageFrameData(frameSmoothing.buffer);
-                    this.renderVisualizationFrame(visualizer, smoothedFrameData, settings);
-                } else {
-                    this.renderVisualizationFrame(visualizer, frameData, settings);
-                }
-                
-                // Update progress
-                if (this.onProgress) {
-                    const progress = 0.3 + (frameIndex / this.audioData.length) * 0.7; // 30-100%
-                    const elapsed = (Date.now() - startTime) / 1000;
-                    const eta = ((elapsed / frameIndex) * (this.audioData.length - frameIndex)) || 0;
-                    
-                    this.onProgress({
-                        stage: 'rendering',
-                        progress: progress,
-                        message: `Generating video... ${frameIndex + 1}/${this.audioData.length} (ETA: ${Math.round(eta)}s)`
-                    });
-                }
-                
-                frameIndex++;
-                
-                // Use more consistent timing for smoother video
-                setTimeout(renderNextFrame, frameDuration);
-                
-            } catch (error) {
-                console.error('Error rendering live frame:', frameIndex, error);
-                frameIndex++;
-                setTimeout(renderNextFrame, frameDuration);
+                }, 1000);
             }
         };
         
-        console.log(`Starting video rendering: ${this.audioData.length} frames at ${videoSettings.fps}fps`);
+        console.log(`Starting high-precision video rendering: ${this.audioData.length} frames at ${videoSettings.fps}fps`);
         
-        // Start rendering
-        renderNextFrame();
+        // Start rendering with requestAnimationFrame for precise timing
+        requestAnimationFrame(renderFrame);
     }
     
     averageFrameData(frameBuffer) {
@@ -746,6 +912,19 @@ class VideoGenerator {
         });
         
         return avgFrame;
+    }
+    
+    async loadAudioBuffer(audioUrl, audioContext) {
+        try {
+            const response = await fetch(audioUrl);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            console.log('Audio buffer loaded:', audioBuffer.duration, 'seconds');
+            return audioBuffer;
+        } catch (error) {
+            console.error('Failed to load audio buffer:', error);
+            throw error;
+        }
     }
     
     async createVideoFromFrames(videoSettings, duration) {

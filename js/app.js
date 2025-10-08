@@ -174,8 +174,8 @@ class AudioVisualizerApp {
         });
         
         this.elements.downloadBtn.addEventListener('click', () => {
-            if (this.videoGenerator) {
-                const filename = this.videoGenerator.downloadVideo();
+            if (this.simpleRecorder) {
+                const filename = this.simpleRecorder.downloadVideo();
                 if (filename) {
                     this.showNotification(`Video downloaded: ${filename}`, 'success');
                 } else {
@@ -237,8 +237,9 @@ class AudioVisualizerApp {
             this.audioAnalyzer = new AudioAnalyzer();
             await this.audioAnalyzer.initialize(this.audioElement);
             
-            // Initialize video generator
+            // Initialize video generator and simple recorder
             this.videoGenerator = new VideoGenerator(this.elements.canvas, this.audioElement);
+            this.simpleRecorder = new SimpleVideoRecorder(this.elements.canvas, this.audioElement);
             
             // Set up video generator callbacks
             this.videoGenerator.onProgress = (progress) => {
@@ -250,6 +251,19 @@ class AudioVisualizerApp {
             };
             
             this.videoGenerator.onError = (error) => {
+                this.onGenerationError(error);
+            };
+            
+            // Set up simple recorder callbacks  
+            this.simpleRecorder.onProgress = (progress) => {
+                this.onGenerationProgress(progress);
+            };
+            
+            this.simpleRecorder.onComplete = (videoPackage) => {
+                this.onGenerationComplete(videoPackage);
+            };
+            
+            this.simpleRecorder.onError = (error) => {
                 this.onGenerationError(error);
             };
             
@@ -378,8 +392,8 @@ class AudioVisualizerApp {
     }
     
     async generateVideo() {
-        if (!this.videoGenerator) {
-            this.showNotification('Video generator not initialized', 'error');
+        if (!this.simpleRecorder) {
+            this.showNotification('Video recorder not initialized', 'error');
             return;
         }
         
@@ -391,14 +405,11 @@ class AudioVisualizerApp {
         try {
             this.isGenerating = true;
             
-            // Set quality before generation
-            this.videoGenerator.setQuality(this.elements.videoQuality.value);
-            
             // Show progress UI
             this.showGenerationProgress();
             this.elements.generateBtn.style.display = 'none';
             
-            // Get current visualization settings
+            // Get current visualization settings and apply them
             const settings = {
                 type: this.elements.vizType.value,
                 colorScheme: this.elements.colorScheme.value,
@@ -409,10 +420,51 @@ class AudioVisualizerApp {
                 particlesEffect: this.elements.particlesEffect.checked
             };
             
-            this.showNotification('Starting video generation...', 'info');
+            // Apply settings to visualizer for recording
+            this.visualizer.updateSettings(settings);
             
-            // Generate video
-            await this.videoGenerator.generateVideo(this.visualizer, settings);
+            this.showNotification('Starting video recording...', 'info');
+            
+            // Prepare audio for recording
+            this.audioElement.volume = 1.0;
+            this.audioElement.currentTime = 0;
+            
+            // Start recording first
+            await this.simpleRecorder.startRecording();
+            
+            // Then start audio playback
+            await this.audioElement.play();
+            
+            // Update progress based on audio progress
+            const duration = this.audioElement.duration;
+            const progressInterval = setInterval(() => {
+                if (this.simpleRecorder.isRecording) {
+                    const elapsed = this.audioElement.currentTime;
+                    const progress = elapsed / duration;
+                    
+                    this.updateProgress(progress, `Recording... ${Math.round(elapsed)}s / ${Math.round(duration)}s`);
+                } else {
+                    clearInterval(progressInterval);
+                }
+            }, 200);
+            
+            // Stop recording when audio ends
+            this.audioElement.onended = () => {
+                console.log('Audio finished, stopping recording...');
+                setTimeout(() => {
+                    this.simpleRecorder.stopRecording();
+                    clearInterval(progressInterval);
+                }, 1000);
+            };
+            
+            // Backup timeout
+            setTimeout(() => {
+                if (this.simpleRecorder.isRecording) {
+                    console.log('Backup timeout, stopping recording...');
+                    this.simpleRecorder.stopRecording();
+                    clearInterval(progressInterval);
+                }
+            }, (duration * 1000) + 5000);
             
         } catch (error) {
             console.error('Failed to generate video:', error);
@@ -459,23 +511,22 @@ class AudioVisualizerApp {
     onGenerationComplete(videoPackage) {
         this.hideGenerationProgress();
         this.elements.downloadBtn.style.display = 'block';
+        this.isGenerating = false;
         
         // Show completion message with audio info
-        let message = 'Video generated successfully!';
+        let message = 'Video recorded successfully!';
         if (videoPackage.fileSize) {
             const fileSize = this.formatFileSize(videoPackage.fileSize);
-            const audioInfo = videoPackage.hasAudio ? ' with audio' : ' (no audio)';
-            message = `Video${audioInfo} generated! ${fileSize} (${videoPackage.settings.width}x${videoPackage.settings.height}@${videoPackage.fps}fps)`;
-        } else {
-            const stats = this.videoGenerator.getGenerationStats();
-            if (stats) {
-                message = `Video generated! ${stats.frames} frames at ${stats.fps}fps (${stats.quality})`;
-            }
+            const audioInfo = videoPackage.hasAudio ? ' with audio' : ' (video only)';
+            message = `Video${audioInfo} recorded! ${fileSize}`;
         }
         
         this.showNotification(message, 'success');
         
-        console.log('Generation complete:', videoPackage);
+        // Store the video package for download
+        this.currentVideoPackage = videoPackage;
+        
+        console.log('Recording complete:', videoPackage);
     }
     
     formatFileSize(bytes) {
