@@ -15,19 +15,19 @@ class VideoGenerator {
                 width: 1280,
                 height: 720,
                 fps: 30,
-                bitrate: '5M'
+                bitrate: 5000000  // 5 Mbps
             },
             '1080p': {
                 width: 1920,
                 height: 1080,
                 fps: 30,
-                bitrate: '8M'
+                bitrate: 8000000  // 8 Mbps
             },
             '4k': {
                 width: 3840,
                 height: 2160,
                 fps: 30,
-                bitrate: '25M'
+                bitrate: 25000000  // 25 Mbps
             }
         };
         
@@ -357,78 +357,209 @@ class VideoGenerator {
     }
     
     async encodeVideo() {
-        // For now, create a simple video file info
-        // In a full implementation, would use FFmpeg.wasm here
-        const videoSettings = this.settings[this.currentQuality];
-        const duration = this.audioBuffer.duration;
-        
-        // Create download package with frames and audio
-        const videoPackage = {
-            frames: this.frames,
-            audio: this.audioElement.src,
-            settings: videoSettings,
-            duration: duration,
-            fps: videoSettings.fps,
-            totalFrames: this.frames.length
-        };
-        
-        if (this.onProgress) {
-            this.onProgress({
-                stage: 'encoding',
-                progress: 0.9,
-                message: 'Finalizing video...'
-            });
-        }
-        
-        // For demo purposes, create a ZIP file with frames
-        await this.createFramePackage(videoPackage);
-        
-        if (this.onComplete) {
-            this.onComplete(videoPackage);
+        try {
+            const videoSettings = this.settings[this.currentQuality];
+            const duration = this.audioBuffer.duration;
+            
+            if (this.onProgress) {
+                this.onProgress({
+                    stage: 'encoding',
+                    progress: 0.7,
+                    message: 'Creating video stream...'
+                });
+            }
+            
+            // Create video using MediaRecorder with canvas stream
+            await this.createVideoFromFrames(videoSettings, duration);
+            
+        } catch (error) {
+            console.error('Error encoding video:', error);
+            throw error;
         }
     }
     
-    async createFramePackage(videoPackage) {
-        // Create a simple package for download
-        // In production, this would generate actual video file
-        const packageData = {
-            info: {
-                quality: this.currentQuality,
-                fps: videoPackage.fps,
-                duration: videoPackage.duration,
-                frames: videoPackage.totalFrames,
-                generatedAt: new Date().toISOString()
-            },
-            frames: videoPackage.frames.length,
-            message: 'Video generation complete! Frames are ready for encoding.'
-        };
-        
-        // Create downloadable JSON info file
-        const blob = new Blob([JSON.stringify(packageData, null, 2)], { 
-            type: 'application/json' 
+    async createVideoFromFrames(videoSettings, duration) {
+        return new Promise((resolve, reject) => {
+            // Create a new canvas for video generation
+            const videoCanvas = document.createElement('canvas');
+            videoCanvas.width = videoSettings.width;
+            videoCanvas.height = videoSettings.height;
+            const ctx = videoCanvas.getContext('2d');
+            
+            // Set up MediaRecorder for the canvas
+            const stream = videoCanvas.captureStream(videoSettings.fps);
+            
+            // Configure MediaRecorder
+            const options = {
+                mimeType: 'video/webm; codecs=vp9,opus',
+                videoBitsPerSecond: videoSettings.bitrate
+            };
+            
+            // Fallback mime types
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                if (MediaRecorder.isTypeSupported('video/webm; codecs=vp8')) {
+                    options.mimeType = 'video/webm; codecs=vp8';
+                } else if (MediaRecorder.isTypeSupported('video/webm')) {
+                    options.mimeType = 'video/webm';
+                } else {
+                    options.mimeType = 'video/mp4';
+                }
+            }
+            
+            const mediaRecorder = new MediaRecorder(stream, options);
+            const recordedChunks = [];
+            
+            // Set up MediaRecorder events
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+            
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: options.mimeType });
+                this.videoBlob = blob;
+                this.downloadUrl = URL.createObjectURL(blob);
+                
+                // Clean up stream
+                stream.getTracks().forEach(track => track.stop());
+                
+                if (this.onProgress) {
+                    this.onProgress({
+                        stage: 'complete',
+                        progress: 1.0,
+                        message: `Video generated successfully! ${this.formatFileSize(blob.size)}`
+                    });
+                }
+                
+                if (this.onComplete) {
+                    const videoPackage = {
+                        blob: blob,
+                        url: this.downloadUrl,
+                        settings: videoSettings,
+                        duration: duration,
+                        fps: videoSettings.fps,
+                        totalFrames: this.frames.length,
+                        fileSize: blob.size,
+                        mimeType: options.mimeType
+                    };
+                    this.onComplete(videoPackage);
+                }
+                
+                resolve();
+            };
+            
+            mediaRecorder.onerror = (error) => {
+                console.error('MediaRecorder error:', error);
+                reject(error);
+            };
+            
+            // Start recording
+            mediaRecorder.start(100); // Collect data every 100ms
+            
+            // Render frames to canvas in real-time
+            this.renderFramesToCanvas(videoCanvas, ctx, videoSettings, mediaRecorder);
         });
-        
-        const url = URL.createObjectURL(blob);
-        this.downloadUrl = url;
-        
-        if (this.onProgress) {
-            this.onProgress({
-                stage: 'complete',
-                progress: 1.0,
-                message: `Video generated successfully! ${videoPackage.totalFrames} frames ready.`
-            });
-        }
     }
     
-    downloadFrames() {
-        if (this.downloadUrl) {
+    async renderFramesToCanvas(canvas, ctx, videoSettings, mediaRecorder) {
+        const frameDuration = 1000 / videoSettings.fps; // Duration per frame in ms
+        
+        let frameIndex = 0;
+        
+        const renderNextFrame = async () => {
+            if (frameIndex >= this.frames.length) {
+                // All frames rendered, stop recording
+                mediaRecorder.stop();
+                return;
+            }
+            
+            const frameBlob = this.frames[frameIndex];
+            
+            try {
+                // Create image from blob
+                const img = new Image();
+                const imageLoaded = new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                });
+                
+                img.src = URL.createObjectURL(frameBlob);
+                await imageLoaded;
+                
+                // Draw image to canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Clean up blob URL
+                URL.revokeObjectURL(img.src);
+                
+                // Update progress
+                if (this.onProgress) {
+                    const progress = 0.7 + (frameIndex / this.frames.length) * 0.3; // 70-100%
+                    this.onProgress({
+                        stage: 'encoding',
+                        progress: progress,
+                        message: `Encoding video... ${frameIndex + 1}/${this.frames.length}`
+                    });
+                }
+                
+                frameIndex++;
+                
+                // Schedule next frame
+                setTimeout(renderNextFrame, frameDuration);
+                
+            } catch (error) {
+                console.error('Error rendering frame:', frameIndex, error);
+                // Continue with next frame
+                frameIndex++;
+                setTimeout(renderNextFrame, frameDuration);
+            }
+        };
+        
+        // Start rendering frames
+        renderNextFrame();
+    }
+    
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    // This method is no longer needed as we generate actual video files
+    // Keeping it for backward compatibility but it's not used anymore
+    
+    downloadVideo() {
+        if (this.downloadUrl && this.videoBlob) {
+            // Generate filename based on current date and settings
+            const now = new Date();
+            const timestamp = now.toISOString().replace(/[:.]/g, '-').replace('T', '_').split('.')[0];
+            const extension = this.videoBlob.type.includes('mp4') ? 'mp4' : 'webm';
+            const filename = `audio-visualization-${this.currentQuality}-${timestamp}.${extension}`;
+            
+            // Create download link
             const a = document.createElement('a');
             a.href = this.downloadUrl;
-            a.download = `video-info-${this.currentQuality}-${Date.now()}.json`;
+            a.download = filename;
+            a.style.display = 'none';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
+            
+            console.log(`Downloaded video: ${filename}, Size: ${this.formatFileSize(this.videoBlob.size)}`);
+            return filename;
+        } else {
+            console.warn('No video available for download');
+            return null;
         }
+    }
+    
+    // Keep old method name for backward compatibility
+    downloadFrames() {
+        this.downloadVideo();
     }
     
     getGenerationStats() {

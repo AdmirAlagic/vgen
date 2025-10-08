@@ -171,7 +171,12 @@ class AudioVisualizerApp {
         
         this.elements.downloadBtn.addEventListener('click', () => {
             if (this.videoGenerator) {
-                this.videoGenerator.downloadFrames();
+                const filename = this.videoGenerator.downloadVideo();
+                if (filename) {
+                    this.showNotification(`Video downloaded: ${filename}`, 'success');
+                } else {
+                    this.showNotification('No video available for download', 'error');
+                }
             }
         });
         
@@ -427,11 +432,29 @@ class AudioVisualizerApp {
         this.hideGenerationProgress();
         this.elements.downloadBtn.style.display = 'block';
         
-        const stats = this.videoGenerator.getGenerationStats();
-        const message = `Video generated! ${stats.frames} frames at ${stats.fps}fps (${stats.quality})`;
+        // Show completion message with file size if available
+        let message = 'Video generated successfully!';
+        if (videoPackage.fileSize) {
+            const fileSize = this.formatFileSize(videoPackage.fileSize);
+            message = `Video generated! ${fileSize} (${videoPackage.settings.width}x${videoPackage.settings.height}@${videoPackage.fps}fps)`;
+        } else {
+            const stats = this.videoGenerator.getGenerationStats();
+            if (stats) {
+                message = `Video generated! ${stats.frames} frames at ${stats.fps}fps (${stats.quality})`;
+            }
+        }
+        
         this.showNotification(message, 'success');
         
-        console.log('Generation complete:', stats);
+        console.log('Generation complete:', videoPackage);
+    }
+    
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
     
     onGenerationError(error) {

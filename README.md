@@ -79,8 +79,8 @@ A professional-grade web application for creating stunning audio visualizations 
 1. **Upload Audio**: Drag and drop an audio file or click to browse
 2. **Configure**: Adjust visualization type, colors, and effects in the control panel
 3. **Preview**: Use the audio controls to preview your visualization in real-time
-4. **Generate**: Click "Generate Video" to create your visualization video
-5. **Download**: Save the generated video frames and info file
+4. **Generate**: Click "Generate Video" to create your visualization video  
+5. **Download**: Save the generated video file (.webm format, ready for upload)
 
 ## 🎮 Controls & Shortcuts
 
@@ -107,14 +107,14 @@ A professional-grade web application for creating stunning audio visualizations 
 ### Video Output
 | Quality | Resolution | Video Bitrate | Audio Bitrate | FPS |
 |---------|------------|---------------|---------------|-----|
-| 720p | 1280×720 | 5 Mbps | 128 kbps | 60 |
-| 1080p | 1920×1080 | 8 Mbps | 192 kbps | 60 |
-| 4K | 3840×2160 | 35 Mbps | 320 kbps | 60 |
+| 720p | 1280×720 | 5 Mbps | 192 kbps | 30 |
+| 1080p | 1920×1080 | 8 Mbps | 192 kbps | 30 |
+| 4K | 3840×2160 | 25 Mbps | 192 kbps | 30 |
 
 ### Supported Formats
-- **Video**: WebM (VP9/VP8), MP4 (where supported)
-- **Audio**: Opus, Vorbis, AAC
-- **Input**: MP3, WAV, OGG, M4A, FLAC, AAC
+- **Video Output**: WebM (VP9/VP8) - optimized for web and YouTube
+- **Audio Input**: MP3, WAV, OGG, M4A, FLAC, AAC
+- **Generated Videos**: High-quality WebM files with embedded audio
 
 ## 🎨 Visualization Types
 
