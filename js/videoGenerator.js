@@ -487,117 +487,217 @@ class VideoGenerator {
         const videoSettings = this.settings[this.currentQuality];
         const duration = this.audioBuffer.duration;
         
-        return new Promise((resolve, reject) => {
-            // Set up MediaRecorder for the main canvas
-            const stream = this.canvas.captureStream(videoSettings.fps);
-            
-            // Configure MediaRecorder
-            const options = {
-                mimeType: 'video/webm; codecs=vp9',
-                videoBitsPerSecond: videoSettings.bitrate
-            };
-            
-            // Fallback mime types
-            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-                if (MediaRecorder.isTypeSupported('video/webm; codecs=vp8')) {
-                    options.mimeType = 'video/webm; codecs=vp8';
-                } else if (MediaRecorder.isTypeSupported('video/webm')) {
-                    options.mimeType = 'video/webm';
+        return new Promise(async (resolve, reject) => {
+            try {
+                // Set up MediaRecorder for the main canvas
+                const canvasStream = this.canvas.captureStream(videoSettings.fps);
+                
+                // Create combined stream with audio
+                const combinedStream = new MediaStream();
+                
+                // Add video track from canvas
+                const videoTracks = canvasStream.getVideoTracks();
+                videoTracks.forEach(track => combinedStream.addTrack(track));
+                
+                // Add audio track from the audio element
+                if (this.audioElement && this.audioElement.src) {
+                    try {
+                        // Create audio context and capture audio
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        await audioContext.resume(); // Ensure context is running
+                        
+                        // Create source from audio element
+                        const source = audioContext.createMediaElementSource(this.audioElement);
+                        
+                        // Create destination for recording
+                        const destination = audioContext.createMediaStreamDestination();
+                        
+                        // Connect audio: source -> destination (for recording) + source -> speakers (for playback)
+                        source.connect(destination);
+                        source.connect(audioContext.destination);
+                        
+                        // Add audio tracks to combined stream
+                        const audioTracks = destination.stream.getAudioTracks();
+                        audioTracks.forEach(track => combinedStream.addTrack(track));
+                        
+                        console.log('Audio tracks added to video stream:', audioTracks.length);
+                        
+                    } catch (audioError) {
+                        console.warn('Could not add audio to video:', audioError);
+                    }
+                }
+                
+                // Configure MediaRecorder with audio support
+                const options = {
+                    mimeType: 'video/webm; codecs=vp9,opus',
+                    videoBitsPerSecond: videoSettings.bitrate,
+                    audioBitsPerSecond: 192000
+                };
+                
+                // Fallback mime types
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    if (MediaRecorder.isTypeSupported('video/webm; codecs=vp8,opus')) {
+                        options.mimeType = 'video/webm; codecs=vp8,opus';
+                    } else if (MediaRecorder.isTypeSupported('video/webm')) {
+                        options.mimeType = 'video/webm';
+                    } else {
+                        options.mimeType = 'video/mp4';
+                    }
+                }
+                
+                console.log('Using MediaRecorder with:', options);
+                console.log('Combined stream tracks:', {
+                    video: combinedStream.getVideoTracks().length,
+                    audio: combinedStream.getAudioTracks().length
+                });
+                
+                const mediaRecorder = new MediaRecorder(combinedStream, options);
+                const recordedChunks = [];
+                
+                // Set up MediaRecorder events
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                        console.log(`Recorded chunk: ${event.data.size} bytes`);
+                    }
+                };
+                
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: options.mimeType });
+                    this.videoBlob = blob;
+                    this.downloadUrl = URL.createObjectURL(blob);
+                    
+                    // Clean up streams
+                    canvasStream.getTracks().forEach(track => track.stop());
+                    combinedStream.getTracks().forEach(track => track.stop());
+                    
+                    console.log(`Video generation complete: ${this.formatFileSize(blob.size)}`);
+                    
+                    if (this.onProgress) {
+                        this.onProgress({
+                            stage: 'complete',
+                            progress: 1.0,
+                            message: `Video with audio generated! ${this.formatFileSize(blob.size)}`
+                        });
+                    }
+                    
+                    if (this.onComplete) {
+                        const videoPackage = {
+                            blob: blob,
+                            url: this.downloadUrl,
+                            settings: videoSettings,
+                            duration: duration,
+                            fps: videoSettings.fps,
+                            totalFrames: this.audioData.length,
+                            fileSize: blob.size,
+                            mimeType: options.mimeType,
+                            hasAudio: combinedStream.getAudioTracks().length > 0
+                        };
+                        this.onComplete(videoPackage);
+                    }
+                    
+                    resolve();
+                };
+                
+                mediaRecorder.onerror = (error) => {
+                    console.error('MediaRecorder error:', error);
+                    reject(error);
+                };
+                
+                // Start recording
+                mediaRecorder.start(250); // Collect data every 250ms for smoother video
+                
+                // Start the audio playing for recording
+                if (!this.audioElement.paused) {
+                    // Audio is already playing, just start rendering
+                    this.renderLiveToCanvas(visualizer, settings, mediaRecorder);
                 } else {
-                    options.mimeType = 'video/mp4';
-                }
-            }
-            
-            console.log('Using MediaRecorder with:', options);
-            
-            const mediaRecorder = new MediaRecorder(stream, options);
-            const recordedChunks = [];
-            
-            // Set up MediaRecorder events
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    recordedChunks.push(event.data);
-                }
-            };
-            
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(recordedChunks, { type: options.mimeType });
-                this.videoBlob = blob;
-                this.downloadUrl = URL.createObjectURL(blob);
-                
-                // Clean up stream
-                stream.getTracks().forEach(track => track.stop());
-                
-                if (this.onProgress) {
-                    this.onProgress({
-                        stage: 'complete',
-                        progress: 1.0,
-                        message: `Video generated successfully! ${this.formatFileSize(blob.size)}`
+                    // Start audio playback and then rendering
+                    this.audioElement.currentTime = 0;
+                    this.audioElement.play().then(() => {
+                        console.log('Audio started for video generation');
+                        this.renderLiveToCanvas(visualizer, settings, mediaRecorder);
+                    }).catch(error => {
+                        console.warn('Could not start audio playback:', error);
+                        this.renderLiveToCanvas(visualizer, settings, mediaRecorder);
                     });
                 }
                 
-                if (this.onComplete) {
-                    const videoPackage = {
-                        blob: blob,
-                        url: this.downloadUrl,
-                        settings: videoSettings,
-                        duration: duration,
-                        fps: videoSettings.fps,
-                        totalFrames: this.audioData.length,
-                        fileSize: blob.size,
-                        mimeType: options.mimeType
-                    };
-                    this.onComplete(videoPackage);
-                }
-                
-                resolve();
-            };
-            
-            mediaRecorder.onerror = (error) => {
-                console.error('MediaRecorder error:', error);
+            } catch (error) {
+                console.error('Error setting up video generation:', error);
                 reject(error);
-            };
-            
-            // Start recording
-            mediaRecorder.start(100); // Collect data every 100ms
-            
-            // Start live rendering
-            this.renderLiveToCanvas(visualizer, settings, mediaRecorder);
+            }
         });
     }
     
     renderLiveToCanvas(visualizer, settings, mediaRecorder) {
-        const frameDuration = 1000 / this.settings[this.currentQuality].fps;
+        const videoSettings = this.settings[this.currentQuality];
+        const frameDuration = 1000 / videoSettings.fps;
         let frameIndex = 0;
+        let startTime = Date.now();
+        
+        // Frame smoothing buffer to reduce flicker
+        const frameSmoothing = {
+            enabled: true,
+            buffer: [],
+            maxBuffer: 3
+        };
         
         const renderNextFrame = () => {
             if (frameIndex >= this.audioData.length) {
-                // All frames rendered, stop recording after a short delay
+                // All frames rendered, stop recording after allowing final frames to process
                 setTimeout(() => {
+                    console.log('Stopping video recording...');
                     mediaRecorder.stop();
-                }, 500);
+                    
+                    // Stop audio playback
+                    if (this.audioElement && !this.audioElement.paused) {
+                        this.audioElement.pause();
+                        this.audioElement.currentTime = 0;
+                    }
+                }, 1000); // Longer delay to ensure all frames are captured
                 return;
             }
             
             const frameData = this.audioData[frameIndex];
             
             try {
-                // Render frame directly to canvas
-                this.renderVisualizationFrame(visualizer, frameData, settings);
+                // Apply frame smoothing to reduce flicker
+                if (frameSmoothing.enabled) {
+                    frameSmoothing.buffer.push({
+                        frequencyData: new Uint8Array(frameData.frequencyData),
+                        timeDomainData: new Uint8Array(frameData.timeDomainData),
+                        bands: { ...frameData.bands },
+                        time: frameData.time
+                    });
+                    
+                    if (frameSmoothing.buffer.length > frameSmoothing.maxBuffer) {
+                        frameSmoothing.buffer.shift();
+                    }
+                    
+                    // Use averaged data for smoother video
+                    const smoothedFrameData = this.averageFrameData(frameSmoothing.buffer);
+                    this.renderVisualizationFrame(visualizer, smoothedFrameData, settings);
+                } else {
+                    this.renderVisualizationFrame(visualizer, frameData, settings);
+                }
                 
                 // Update progress
                 if (this.onProgress) {
                     const progress = 0.3 + (frameIndex / this.audioData.length) * 0.7; // 30-100%
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    const eta = ((elapsed / frameIndex) * (this.audioData.length - frameIndex)) || 0;
+                    
                     this.onProgress({
                         stage: 'rendering',
                         progress: progress,
-                        message: `Generating video... ${frameIndex + 1}/${this.audioData.length} frames`
+                        message: `Generating video... ${frameIndex + 1}/${this.audioData.length} (ETA: ${Math.round(eta)}s)`
                     });
                 }
                 
                 frameIndex++;
                 
-                // Schedule next frame to maintain correct timing
+                // Use more consistent timing for smoother video
                 setTimeout(renderNextFrame, frameDuration);
                 
             } catch (error) {
@@ -607,8 +707,45 @@ class VideoGenerator {
             }
         };
         
+        console.log(`Starting video rendering: ${this.audioData.length} frames at ${videoSettings.fps}fps`);
+        
         // Start rendering
         renderNextFrame();
+    }
+    
+    averageFrameData(frameBuffer) {
+        if (frameBuffer.length === 0) return null;
+        if (frameBuffer.length === 1) return frameBuffer[0];
+        
+        const avgFrame = {
+            frequencyData: new Uint8Array(frameBuffer[0].frequencyData.length),
+            timeDomainData: new Uint8Array(frameBuffer[0].timeDomainData.length),
+            bands: { bass: 0, mid: 0, treble: 0 },
+            time: frameBuffer[frameBuffer.length - 1].time
+        };
+        
+        // Average frequency data
+        for (let i = 0; i < avgFrame.frequencyData.length; i++) {
+            let sum = 0;
+            frameBuffer.forEach(frame => sum += frame.frequencyData[i]);
+            avgFrame.frequencyData[i] = Math.round(sum / frameBuffer.length);
+        }
+        
+        // Average time domain data
+        for (let i = 0; i < avgFrame.timeDomainData.length; i++) {
+            let sum = 0;
+            frameBuffer.forEach(frame => sum += frame.timeDomainData[i]);
+            avgFrame.timeDomainData[i] = Math.round(sum / frameBuffer.length);
+        }
+        
+        // Average bands
+        ['bass', 'mid', 'treble'].forEach(band => {
+            let sum = 0;
+            frameBuffer.forEach(frame => sum += (frame.bands[band] || 0));
+            avgFrame.bands[band] = Math.round(sum / frameBuffer.length);
+        });
+        
+        return avgFrame;
     }
     
     async createVideoFromFrames(videoSettings, duration) {

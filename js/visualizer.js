@@ -360,28 +360,17 @@ class Visualizer {
             this.ctx.lineCap = 'round';
             this.ctx.lineJoin = 'round';
             
-            if (this.settings.glowEffect) {
-                this.ctx.shadowColor = color;
-                this.ctx.shadowBlur = layer.blur;
+            // Create offset points for this layer
+            const offsetPoints = points.map(p => ({ x: p.x, y: p.y + layer.offset }));
+            
+            // Draw the wave line
+            this.drawSmoothCurve(offsetPoints);
+            
+            // Add atmospheric smoke effect
+            if (this.settings.glowEffect && layerIndex <= 1) {
+                this.drawSmokeAroundWave(offsetPoints, color, layer.thickness, layerIndex);
             }
             
-            // Draw smooth curve through points
-            this.ctx.beginPath();
-            
-            if (points.length > 2) {
-                this.ctx.moveTo(points[0].x, points[0].y + layer.offset);
-                
-                for (let i = 1; i < points.length - 1; i++) {
-                    const cp1x = (points[i].x + points[i - 1].x) / 2;
-                    const cp1y = (points[i].y + points[i - 1].y) / 2 + layer.offset;
-                    const cp2x = (points[i].x + points[i + 1].x) / 2;
-                    const cp2y = (points[i].y + points[i + 1].y) / 2 + layer.offset;
-                    
-                    this.ctx.quadraticCurveTo(points[i].x, points[i].y + layer.offset, cp2x, cp2y);
-                }
-            }
-            
-            this.ctx.stroke();
             this.ctx.restore();
         });
         
@@ -660,7 +649,7 @@ class Visualizer {
             { width: 3, alpha: 1.0, blur: 10, color: colors.gradient[4] || colors.gradient[2] }
         ];
         
-        layers.forEach(layer => {
+        layers.forEach((layer, layerIndex) => {
             this.ctx.save();
             this.ctx.globalAlpha = layer.alpha;
             this.ctx.lineWidth = layer.width;
@@ -668,13 +657,18 @@ class Visualizer {
             this.ctx.lineCap = 'round';
             this.ctx.lineJoin = 'round';
             
-            if (this.settings.glowEffect) {
-                this.ctx.shadowColor = layer.color;
-                this.ctx.shadowBlur = layer.blur;
-            }
-            
-            // Draw smooth curve
+            // Draw the main wave line first
             this.drawSmoothCurve(points);
+            
+            // Add smoke-like atmospheric effect around the wave
+            if (this.settings.glowEffect && layerIndex <= 2) {
+                this.drawSmokeAroundWave(points, layer.color, layer.width, layerIndex);
+                
+                // Add atmospheric mist for the main layer
+                if (layerIndex === 3) {
+                    this.drawAtmosphericMist(points, layer.color);
+                }
+            }
             
             this.ctx.restore();
         });
@@ -693,19 +687,15 @@ class Visualizer {
             { yOffset: this.height * 0.25, amplitude: 0.2, frequency: 4, color: colors.gradient[1] }
         ];
         
-        harmonics.forEach(harmonic => {
+        harmonics.forEach((harmonic, harmonicIndex) => {
             this.ctx.save();
             this.ctx.globalAlpha = 0.4;
             this.ctx.lineWidth = 4;
             this.ctx.strokeStyle = harmonic.color;
             this.ctx.lineCap = 'round';
             
-            if (this.settings.glowEffect) {
-                this.ctx.shadowColor = harmonic.color;
-                this.ctx.shadowBlur = 25;
-            }
-            
-            this.ctx.beginPath();
+            // Create harmonic wave points
+            const harmonicPoints = [];
             
             for (let i = 0; i < 200; i++) {
                 const x = (i / 200) * this.width;
@@ -717,15 +707,17 @@ class Visualizer {
                 sample += Math.sin((i / 200) * Math.PI * harmonic.frequency + Date.now() * 0.003) * harmonic.amplitude;
                 
                 const y = centerY + harmonic.yOffset + (sample * this.height * 0.2);
-                
-                if (i === 0) {
-                    this.ctx.moveTo(x, y);
-                } else {
-                    this.ctx.lineTo(x, y);
-                }
+                harmonicPoints.push({ x, y });
             }
             
-            this.ctx.stroke();
+            // Draw the harmonic wave
+            this.drawSmoothCurve(harmonicPoints);
+            
+            // Add subtle smoke effect to harmonics
+            if (this.settings.glowEffect && harmonicIndex < 2) {
+                this.drawSmokeAroundWave(harmonicPoints, harmonic.color, 4, harmonicIndex + 3);
+            }
+            
             this.ctx.restore();
         });
         
@@ -776,6 +768,96 @@ class Visualizer {
         }
         
         this.ctx.stroke();
+    }
+    
+    drawSmokeAroundWave(points, color, thickness, layerIndex) {
+        // Create soft, organic smoke-like effect around the wave
+        this.ctx.save();
+        
+        const smokeIntensity = 0.12 - layerIndex * 0.02; // Reduce intensity per layer
+        const smokeRadius = thickness * (1.5 + layerIndex * 0.3);
+        
+        // Use additive blending for soft atmospheric effect
+        this.ctx.globalCompositeOperation = 'screen';
+        
+        // Draw multiple soft gradient circles along the wave path
+        for (let i = 0; i < points.length; i += 4) { // Sample every 4th point for performance
+            const point = points[i];
+            if (!point) continue;
+            
+            // Create organic smoke gradient with time variation
+            const timeOffset = Date.now() * 0.0005 + i * 0.01;
+            const organicVariation = Math.sin(timeOffset) * 0.3 + 0.7;
+            
+            const smokeGradient = this.ctx.createRadialGradient(
+                point.x, point.y, 0,
+                point.x + Math.sin(timeOffset) * 5, point.y + Math.cos(timeOffset * 1.1) * 3, smokeRadius * organicVariation
+            );
+            
+            // Soft smoke opacity that doesn't flicker
+            const baseAlpha = smokeIntensity * organicVariation * 0.6;
+            
+            smokeGradient.addColorStop(0, this.addAlpha(this.lightenColor(color, 0.3), baseAlpha * 0.1));
+            smokeGradient.addColorStop(0.2, this.addAlpha(color, baseAlpha * 0.3));
+            smokeGradient.addColorStop(0.5, this.addAlpha(color, baseAlpha * 0.6));
+            smokeGradient.addColorStop(0.8, this.addAlpha(this.darkenColor(color, 0.2), baseAlpha * 0.3));
+            smokeGradient.addColorStop(1, this.addAlpha(color, 0));
+            
+            this.ctx.fillStyle = smokeGradient;
+            
+            // Draw soft, organic smoke shape (not perfect circle)
+            this.ctx.beginPath();
+            const smokeSize = smokeRadius * (0.8 + Math.sin(timeOffset * 1.3) * 0.4);
+            this.ctx.arc(point.x, point.y, smokeSize, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+        
+        this.ctx.globalCompositeOperation = 'source-over'; // Reset blending
+        this.ctx.restore();
+    }
+    
+    drawAtmosphericMist(points, color) {
+        // Create a subtle atmospheric mist that flows around the entire wave
+        this.ctx.save();
+        this.ctx.globalCompositeOperation = 'screen';
+        this.ctx.globalAlpha = 0.08;
+        
+        // Create large, soft atmospheric gradients
+        const mistPoints = 5; // Fewer points for broader coverage
+        
+        for (let i = 0; i < mistPoints; i++) {
+            const pointIndex = Math.floor((i / mistPoints) * points.length);
+            const point = points[pointIndex];
+            if (!point) continue;
+            
+            // Large atmospheric mist radius
+            const mistRadius = this.width * 0.15; // Much larger than smoke
+            const timeOffset = Date.now() * 0.0003 + i * 0.5;
+            
+            // Slow, organic movement
+            const mistX = point.x + Math.sin(timeOffset) * 30;
+            const mistY = point.y + Math.cos(timeOffset * 0.7) * 20;
+            
+            const mistGradient = this.ctx.createRadialGradient(
+                mistX, mistY, 0,
+                mistX, mistY, mistRadius
+            );
+            
+            const mistAlpha = 0.15 * (0.7 + Math.sin(timeOffset * 2) * 0.3);
+            
+            mistGradient.addColorStop(0, this.addAlpha(this.lightenColor(color, 0.5), mistAlpha));
+            mistGradient.addColorStop(0.3, this.addAlpha(color, mistAlpha * 0.7));
+            mistGradient.addColorStop(0.7, this.addAlpha(this.darkenColor(color, 0.1), mistAlpha * 0.4));
+            mistGradient.addColorStop(1, this.addAlpha(color, 0));
+            
+            this.ctx.fillStyle = mistGradient;
+            this.ctx.beginPath();
+            this.ctx.arc(mistX, mistY, mistRadius, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+        
+        this.ctx.globalCompositeOperation = 'source-over';
+        this.ctx.restore();
     }
     
     drawWaveField(timeDomainData, colors) {
@@ -2175,12 +2257,13 @@ class Visualizer {
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
         
-        if (this.settings.glowEffect) {
-            this.ctx.shadowColor = color;
-            this.ctx.shadowBlur = 20 + layerIndex * 5;
-        }
-        
+        // Draw the wave line
         this.drawSmoothCurve(points);
+        
+        // Add atmospheric smoke effect
+        if (this.settings.glowEffect && layerIndex <= 4) {
+            this.drawSmokeAroundWave(points, color, thickness, layerIndex);
+        }
         
         this.ctx.restore();
     }
@@ -2205,11 +2288,6 @@ class Visualizer {
             this.ctx.strokeStyle = ribbon.color;
             this.ctx.lineCap = 'round';
             
-            if (this.settings.glowEffect) {
-                this.ctx.shadowColor = ribbon.color;
-                this.ctx.shadowBlur = 30 + ribbonIndex * 10;
-            }
-            
             // Create flowing wave points
             const points = [];
             const resolution = 250;
@@ -2231,7 +2309,19 @@ class Visualizer {
                 points.push({ x, y });
             }
             
+            // Draw the main ribbon
             this.drawSmoothCurve(points);
+            
+            // Add atmospheric smoke effects
+            if (this.settings.glowEffect) {
+                this.drawSmokeAroundWave(points, ribbon.color, ribbon.thickness, ribbonIndex);
+                
+                // Add extra atmospheric mist for the main ribbon
+                if (ribbonIndex === 0) {
+                    this.drawAtmosphericMist(points, ribbon.color);
+                }
+            }
+            
             this.ctx.restore();
         });
     }

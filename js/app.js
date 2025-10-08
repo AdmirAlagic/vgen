@@ -460,11 +460,12 @@ class AudioVisualizerApp {
         this.hideGenerationProgress();
         this.elements.downloadBtn.style.display = 'block';
         
-        // Show completion message with file size if available
+        // Show completion message with audio info
         let message = 'Video generated successfully!';
         if (videoPackage.fileSize) {
             const fileSize = this.formatFileSize(videoPackage.fileSize);
-            message = `Video generated! ${fileSize} (${videoPackage.settings.width}x${videoPackage.settings.height}@${videoPackage.fps}fps)`;
+            const audioInfo = videoPackage.hasAudio ? ' with audio' : ' (no audio)';
+            message = `Video${audioInfo} generated! ${fileSize} (${videoPackage.settings.width}x${videoPackage.settings.height}@${videoPackage.fps}fps)`;
         } else {
             const stats = this.videoGenerator.getGenerationStats();
             if (stats) {
