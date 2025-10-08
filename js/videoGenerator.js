@@ -308,24 +308,46 @@ class VideoGenerator {
     }
     
     renderVisualizationFrame(visualizer, frameData, settings) {
-        // Set up mock audio analyzer data for this frame
-        const mockAnalyzer = {
-            getFrequencyData: () => frameData.frequencyData,
-            getTimeDomainData: () => frameData.timeDomainData,
-            getFrequencyBands: () => frameData.bands,
-            getBeatDetection: () => ({
-                kick: frameData.bands.bass > 100,
-                snare: frameData.bands.mid > 80,
-                hihat: frameData.bands.treble > 60,
-                intensity: frameData.averageAmplitude / 255
-            })
-        };
-        
-        // Update visualizer settings
-        visualizer.updateSettings(settings);
-        
-        // Render single frame
-        visualizer.renderFrame(mockAnalyzer, frameData.time);
+        try {
+            // Set up mock audio analyzer data for this frame
+            const mockAnalyzer = {
+                getFrequencyData: () => frameData.frequencyData || new Uint8Array(512).fill(0),
+                getTimeDomainData: () => frameData.timeDomainData || new Uint8Array(512).fill(128),
+                getFrequencyBands: () => frameData.bands || { bass: 0, mid: 0, treble: 0 },
+                getBeatDetection: () => ({
+                    kick: (frameData.bands?.bass || 0) > 100,
+                    snare: (frameData.bands?.mid || 0) > 80,
+                    hihat: (frameData.bands?.treble || 0) > 60,
+                    intensity: (frameData.averageAmplitude || 0) / 255
+                })
+            };
+            
+            // Update visualizer settings with validation
+            const validatedSettings = {
+                type: settings.type || 'spectrum',
+                colorScheme: settings.colorScheme || 'neon',
+                sensitivity: Math.max(10, Math.min(200, settings.sensitivity || 75)),
+                smoothing: Math.max(0, Math.min(95, settings.smoothing || 60)),
+                glowEffect: settings.glowEffect !== false,
+                blurEffect: settings.blurEffect === true,
+                particlesEffect: settings.particlesEffect === true
+            };
+            
+            visualizer.updateSettings(validatedSettings);
+            
+            // Render single frame with error handling
+            visualizer.renderFrame(mockAnalyzer, frameData.time || 0);
+            
+        } catch (error) {
+            console.error('Error rendering visualization frame:', error);
+            // Draw error frame
+            const ctx = visualizer.ctx;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, visualizer.width, visualizer.height);
+            ctx.fillStyle = '#ff0000';
+            ctx.font = '20px Arial';
+            ctx.fillText('Rendering Error', visualizer.width / 2 - 60, visualizer.height / 2);
+        }
     }
     
     async captureFrame() {

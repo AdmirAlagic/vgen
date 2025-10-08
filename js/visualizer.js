@@ -270,35 +270,36 @@ class Visualizer {
             const colorB = colors[Math.ceil(colorIndex) % colors.length] || colors[0];
             const blend = colorIndex - Math.floor(colorIndex);
                 
-                // Create complex gradient
-                const gradient = this.ctx.createLinearGradient(baseX, baseY, baseX, baseY - barHeight);
-                gradient.addColorStop(0, this.blendColors(colorA, colorB, blend));
-                gradient.addColorStop(0.3, this.lightenColor(this.blendColors(colorA, colorB, blend), 0.5));
-                gradient.addColorStop(0.7, this.blendColors(colorA, colorB, blend));
-                gradient.addColorStop(1, this.lightenColor(this.blendColors(colorA, colorB, blend), 0.8));
-                
-                this.ctx.fillStyle = gradient;
+        // Create complex gradient
+        const blendedColor = this.blendColors(colorA, colorB, blend);
+        const gradient = this.ctx.createLinearGradient(baseX, baseY, baseX, baseY - barHeight);
+        gradient.addColorStop(0, blendedColor);
+        gradient.addColorStop(0.3, this.lightenColor(blendedColor, 0.5));
+        gradient.addColorStop(0.7, blendedColor);
+        gradient.addColorStop(1, this.lightenColor(blendedColor, 0.8));
+        
+        this.ctx.fillStyle = gradient;
                 
                 // Enhanced glow effect
                 if (this.settings.glowEffect) {
-                    this.ctx.shadowColor = this.blendColors(colorA, colorB, blend);
+                    this.ctx.shadowColor = blendedColor;
                     this.ctx.shadowBlur = 30 + amplitude * 40;
                     this.ctx.shadowOffsetY = -5;
                 }
                 
-                // Draw 3D bar with perspective
-                this.draw3DBar(baseX, baseY, barWidth, topWidth, barHeight, gradient);
+            // Draw 3D bar with perspective
+            this.draw3DBar(baseX, baseY, barWidth, topWidth, barHeight, blendedColor);
                 
                 // Add top highlight
                 if (barHeight > 10) {
-                    this.ctx.fillStyle = this.addAlpha(this.lightenColor(this.blendColors(colorA, colorB, blend), 0.8), 0.8);
+                    this.ctx.fillStyle = this.addAlpha(this.lightenColor(blendedColor, 0.8), 0.8);
                     this.ctx.shadowBlur = 15;
                     this.drawBarTop(baseX, baseY - barHeight, barWidth, topWidth);
                 }
                 
                 // Add side glow lines
                 if (amplitude > 0.3 && layerIndex === 2) {
-                    this.drawGlowLines(baseX, baseY, barHeight, this.blendColors(colorA, colorB, blend));
+                    this.drawGlowLines(baseX, baseY, barHeight, blendedColor);
                 }
             }
             
@@ -354,10 +355,17 @@ class Visualizer {
         this.ctx.restore();
     }
     
-    draw3DBar(x, y, bottomWidth, topWidth, height, gradient) {
+    draw3DBar(x, y, bottomWidth, topWidth, height, color) {
         this.ctx.save();
         
+        // Create gradient for main bar face
+        const gradient = this.ctx.createLinearGradient(x, y, x, y - height);
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(0.5, this.lightenColor(color, 0.3));
+        gradient.addColorStop(1, this.darkenColor(color, 0.2));
+        
         // Main bar face
+        this.ctx.fillStyle = gradient;
         this.ctx.beginPath();
         this.ctx.moveTo(x - bottomWidth / 2, y);
         this.ctx.lineTo(x + bottomWidth / 2, y);
@@ -368,8 +376,8 @@ class Visualizer {
         
         // Side faces for 3D effect
         const sideGradient = this.ctx.createLinearGradient(x, y, x + bottomWidth / 2, y - height / 2);
-        sideGradient.addColorStop(0, this.darkenColor(gradient, 0.4));
-        sideGradient.addColorStop(1, this.darkenColor(gradient, 0.6));
+        sideGradient.addColorStop(0, this.darkenColor(color, 0.4));
+        sideGradient.addColorStop(1, this.darkenColor(color, 0.6));
         
         this.ctx.fillStyle = sideGradient;
         this.ctx.beginPath();
@@ -1686,53 +1694,99 @@ class Visualizer {
     }
     
     darkenColor(color, factor) {
-        // Simple color darkening
-        if (!color || typeof color !== 'string') {
-            return color || '#000000';
+        // Simple color darkening with enhanced validation
+        if (!color || typeof color !== 'string' || color.includes('Gradient')) {
+            return '#000000';
         }
         
-        const match = color.match(/^#([0-9a-f]{6})$/i);
-        if (match) {
-            const hex = match[1];
-            const r = Math.floor(parseInt(hex.substr(0, 2), 16) * (1 - factor));
-            const g = Math.floor(parseInt(hex.substr(2, 2), 16) * (1 - factor));
-            const b = Math.floor(parseInt(hex.substr(4, 2), 16) * (1 - factor));
+        // Handle hex colors
+        const hexMatch = color.match(/^#([0-9a-f]{6})$/i);
+        if (hexMatch) {
+            const hex = hexMatch[1];
+            const r = Math.floor(parseInt(hex.substr(0, 2), 16) * (1 - Math.max(0, Math.min(1, factor))));
+            const g = Math.floor(parseInt(hex.substr(2, 2), 16) * (1 - Math.max(0, Math.min(1, factor))));
+            const b = Math.floor(parseInt(hex.substr(4, 2), 16) * (1 - Math.max(0, Math.min(1, factor))));
             return `rgb(${r}, ${g}, ${b})`;
         }
+        
+        // Handle rgb colors
+        const rgbMatch = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        if (rgbMatch) {
+            const r = Math.floor(parseInt(rgbMatch[1]) * (1 - Math.max(0, Math.min(1, factor))));
+            const g = Math.floor(parseInt(rgbMatch[2]) * (1 - Math.max(0, Math.min(1, factor))));
+            const b = Math.floor(parseInt(rgbMatch[3]) * (1 - Math.max(0, Math.min(1, factor))));
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+        
         return color;
     }
     
     lightenColor(color, factor) {
-        // Simple color lightening
-        if (!color || typeof color !== 'string') {
-            return color || '#ffffff';
+        // Simple color lightening with enhanced validation
+        if (!color || typeof color !== 'string' || color.includes('Gradient')) {
+            return '#ffffff';
         }
         
-        const match = color.match(/^#([0-9a-f]{6})$/i);
-        if (match) {
-            const hex = match[1];
-            const r = Math.min(255, Math.floor(parseInt(hex.substr(0, 2), 16) * (1 + factor)));
-            const g = Math.min(255, Math.floor(parseInt(hex.substr(2, 2), 16) * (1 + factor)));
-            const b = Math.min(255, Math.floor(parseInt(hex.substr(4, 2), 16) * (1 + factor)));
+        // Handle hex colors
+        const hexMatch = color.match(/^#([0-9a-f]{6})$/i);
+        if (hexMatch) {
+            const hex = hexMatch[1];
+            const safeFactor = Math.max(0, Math.min(2, factor));
+            const r = Math.min(255, Math.floor(parseInt(hex.substr(0, 2), 16) * (1 + safeFactor)));
+            const g = Math.min(255, Math.floor(parseInt(hex.substr(2, 2), 16) * (1 + safeFactor)));
+            const b = Math.min(255, Math.floor(parseInt(hex.substr(4, 2), 16) * (1 + safeFactor)));
             return `rgb(${r}, ${g}, ${b})`;
         }
+        
+        // Handle rgb colors
+        const rgbMatch = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        if (rgbMatch) {
+            const safeFactor = Math.max(0, Math.min(2, factor));
+            const r = Math.min(255, Math.floor(parseInt(rgbMatch[1]) * (1 + safeFactor)));
+            const g = Math.min(255, Math.floor(parseInt(rgbMatch[2]) * (1 + safeFactor)));
+            const b = Math.min(255, Math.floor(parseInt(rgbMatch[3]) * (1 + safeFactor)));
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+        
         return color;
     }
     
     addAlpha(color, alpha) {
-        // Add alpha to color
-        if (!color || typeof color !== 'string') {
-            return `rgba(255, 255, 255, ${alpha || 1})`;
+        // Add alpha to color with enhanced validation
+        if (!color || typeof color !== 'string' || color.includes('Gradient')) {
+            return `rgba(255, 255, 255, ${Math.max(0, Math.min(1, alpha || 1))})`;
         }
         
-        const match = color.match(/^#([0-9a-f]{6})$/i);
-        if (match) {
-            const hex = match[1];
+        const safeAlpha = Math.max(0, Math.min(1, alpha || 1));
+        
+        // Handle hex colors
+        const hexMatch = color.match(/^#([0-9a-f]{6})$/i);
+        if (hexMatch) {
+            const hex = hexMatch[1];
             const r = parseInt(hex.substr(0, 2), 16);
             const g = parseInt(hex.substr(2, 2), 16);
             const b = parseInt(hex.substr(4, 2), 16);
-            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            return `rgba(${r}, ${g}, ${b}, ${safeAlpha})`;
         }
+        
+        // Handle rgb colors
+        const rgbMatch = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+        if (rgbMatch) {
+            const r = parseInt(rgbMatch[1]);
+            const g = parseInt(rgbMatch[2]);
+            const b = parseInt(rgbMatch[3]);
+            return `rgba(${r}, ${g}, ${b}, ${safeAlpha})`;
+        }
+        
+        // Handle rgba colors (replace alpha)
+        const rgbaMatch = color.match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)$/);
+        if (rgbaMatch) {
+            const r = parseInt(rgbaMatch[1]);
+            const g = parseInt(rgbaMatch[2]);
+            const b = parseInt(rgbaMatch[3]);
+            return `rgba(${r}, ${g}, ${b}, ${safeAlpha})`;
+        }
+        
         return color;
     }
     
