@@ -223,7 +223,7 @@ class Visualizer {
         
         // Create 3D perspective spectrum with multiple layers
         const barCount = Math.min(64, frequencyData.length);
-        const colors = this.colorSchemes[this.settings.colorScheme].gradient;
+        const colors = this.colorSchemes[this.settings.colorScheme]?.gradient || ['#ffffff', '#00d4ff', '#ff0080'];
         const centerX = this.width / 2;
         const centerY = this.height * 0.7;
         
@@ -264,11 +264,11 @@ class Visualizer {
                 const barHeight = amplitude * this.height * 0.6;
                 const topWidth = barWidth * 0.7; // Perspective taper
                 
-                // Color selection with smooth transition
-                const colorIndex = (i / barCount) * (colors.length - 1);
-                const colorA = colors[Math.floor(colorIndex)];
-                const colorB = colors[Math.ceil(colorIndex)];
-                const blend = colorIndex - Math.floor(colorIndex);
+            // Color selection with smooth transition
+            const colorIndex = (i / barCount) * (colors.length - 1);
+            const colorA = colors[Math.floor(colorIndex) % colors.length] || colors[0];
+            const colorB = colors[Math.ceil(colorIndex) % colors.length] || colors[0];
+            const blend = colorIndex - Math.floor(colorIndex);
                 
                 // Create complex gradient
                 const gradient = this.ctx.createLinearGradient(baseX, baseY, baseX, baseY - barHeight);
@@ -461,7 +461,7 @@ class Visualizer {
     renderWaveform(timeDomainData) {
         this.drawBackground();
         
-        const colors = this.colorSchemes[this.settings.colorScheme];
+        const colors = this.colorSchemes[this.settings.colorScheme] || { gradient: ['#ffffff', '#00d4ff', '#ff0080'] };
         const centerY = this.height / 2;
         
         this.ctx.save();
@@ -709,7 +709,7 @@ class Visualizer {
         
         const centerX = this.width / 2;
         const centerY = this.height / 2;
-        const colors = this.colorSchemes[this.settings.colorScheme].gradient;
+        const colors = this.colorSchemes[this.settings.colorScheme]?.gradient || ['#ffffff', '#00d4ff', '#ff0080'];
         
         this.ctx.save();
         
@@ -793,8 +793,8 @@ class Visualizer {
             
             // Dynamic color selection
             const colorIndex = (i / ring.barCount + ringIndex * 0.25) * (colors.length - 1);
-            const colorA = colors[Math.floor(colorIndex) % colors.length];
-            const colorB = colors[Math.ceil(colorIndex) % colors.length];
+            const colorA = colors[Math.floor(colorIndex) % colors.length] || colors[0];
+            const colorB = colors[Math.ceil(colorIndex) % colors.length] || colors[0];
             const blend = colorIndex - Math.floor(colorIndex);
             const color = this.blendColors(colorA, colorB, blend);
             
@@ -969,7 +969,7 @@ class Visualizer {
         // Update and manage particles
         this.updateAdvancedParticles(frequencyData, beat);
         
-        const colors = this.colorSchemes[this.settings.colorScheme].gradient;
+        const colors = this.colorSchemes[this.settings.colorScheme]?.gradient || ['#ffffff', '#00d4ff', '#ff0080'];
         
         this.ctx.save();
         
@@ -1068,7 +1068,7 @@ class Visualizer {
     }
     
     spawnParticle(type, amplitude, x = null, y = null) {
-        const colors = this.colorSchemes[this.settings.colorScheme].gradient;
+        const colors = this.colorSchemes[this.settings.colorScheme]?.gradient || ['#ffffff', '#00d4ff', '#ff0080'];
         
         const baseParticle = {
             x: x || Math.random() * this.width,
@@ -1080,7 +1080,7 @@ class Visualizer {
             life: 1,
             age: 0,
             maxAge: 60 + Math.random() * 120,
-            color: colors[Math.floor(Math.random() * colors.length)],
+            color: colors[Math.floor(Math.random() * colors.length)] || colors[0] || '#ffffff',
             type: type,
             amplitude: amplitude
         };
@@ -1400,7 +1400,7 @@ class Visualizer {
         this.drawBackground();
         
         const barCount = Math.min(48, frequencyData.length);
-        const colors = this.colorSchemes[this.settings.colorScheme].gradient;
+        const colors = this.colorSchemes[this.settings.colorScheme]?.gradient || ['#ffffff', '#00d4ff', '#ff0080'];
         const perspective = 0.6; // 3D perspective factor
         
         this.ctx.save();
@@ -1491,8 +1491,8 @@ class Visualizer {
             
             // Color selection with depth-based variation
             const colorIndex = (i / barCount + rowIndex * 0.2) * (colors.length - 1);
-            const colorA = colors[Math.floor(colorIndex) % colors.length];
-            const colorB = colors[Math.ceil(colorIndex) % colors.length];
+            const colorA = colors[Math.floor(colorIndex) % colors.length] || colors[0];
+            const colorB = colors[Math.ceil(colorIndex) % colors.length] || colors[0];
             const blend = colorIndex - Math.floor(colorIndex);
             const baseColor = this.blendColors(colorA, colorB, blend);
             
@@ -1687,6 +1687,10 @@ class Visualizer {
     
     darkenColor(color, factor) {
         // Simple color darkening
+        if (!color || typeof color !== 'string') {
+            return color || '#000000';
+        }
+        
         const match = color.match(/^#([0-9a-f]{6})$/i);
         if (match) {
             const hex = match[1];
@@ -1700,6 +1704,10 @@ class Visualizer {
     
     lightenColor(color, factor) {
         // Simple color lightening
+        if (!color || typeof color !== 'string') {
+            return color || '#ffffff';
+        }
+        
         const match = color.match(/^#([0-9a-f]{6})$/i);
         if (match) {
             const hex = match[1];
@@ -1713,6 +1721,10 @@ class Visualizer {
     
     addAlpha(color, alpha) {
         // Add alpha to color
+        if (!color || typeof color !== 'string') {
+            return `rgba(255, 255, 255, ${alpha || 1})`;
+        }
+        
         const match = color.match(/^#([0-9a-f]{6})$/i);
         if (match) {
             const hex = match[1];
@@ -1726,6 +1738,13 @@ class Visualizer {
     
     blendColors(colorA, colorB, factor) {
         // Blend two hex colors
+        if (!colorA || typeof colorA !== 'string') {
+            return colorB || '#ffffff';
+        }
+        if (!colorB || typeof colorB !== 'string') {
+            return colorA;
+        }
+        
         const matchA = colorA.match(/^#([0-9a-f]{6})$/i);
         const matchB = colorB.match(/^#([0-9a-f]{6})$/i);
         
