@@ -175,15 +175,15 @@ class AudioVisualizerApp {
         });
         
         this.elements.downloadBtn.addEventListener('click', () => {
-            if (this.currentVideoBlob && this.videoGenerator) {
-                const filename = this.videoGenerator.downloadVideo(this.currentVideoBlob);
+            if (this.videoGenerator) {
+                const filename = this.videoGenerator.downloadVideo();
                 if (filename) {
                     this.showNotification(`Video downloaded: ${filename}`, 'success');
                 } else {
                     this.showNotification('No video available for download', 'error');
                 }
             } else {
-                this.showNotification('No video available for download', 'error');
+                this.showNotification('No video generator available', 'error');
             }
         });
         
@@ -240,8 +240,8 @@ class AudioVisualizerApp {
             this.audioAnalyzer = new AudioAnalyzer();
             await this.audioAnalyzer.initialize(this.audioElement);
             
-            // Initialize FFmpeg video generator (professional approach)
-            this.videoGenerator = new FFmpegVideoGenerator(this.elements.canvas, this.audioElement);
+            // Initialize reliable video recorder (no external dependencies)
+            this.videoGenerator = new ReliableVideoRecorder(this.elements.canvas, this.audioElement);
             
             // Set up video generator callbacks
             this.videoGenerator.onProgress = (progress) => {
@@ -255,9 +255,6 @@ class AudioVisualizerApp {
             this.videoGenerator.onError = (error) => {
                 this.onGenerationError(error);
             };
-            
-            // Monitor FFmpeg loading status
-            this.monitorFFmpegStatus();
             
             // Update UI
             this.elements.trackName.textContent = file.name.replace(/\.[^/.]+$/, "");
@@ -285,6 +282,9 @@ class AudioVisualizerApp {
         this.elements.uploadSection.style.display = 'none';
         this.elements.visualizerSection.style.display = 'flex';
         this.elements.controlPanel.style.display = 'flex';
+        
+        // Update video status
+        this.updateVideoStatus();
         
         // Start visualization
         if (this.visualizer && this.audioAnalyzer) {
@@ -389,12 +389,6 @@ class AudioVisualizerApp {
             return;
         }
         
-        // Check if FFmpeg is loaded
-        if (!this.videoGenerator.isLoaded) {
-            this.showNotification('FFmpeg is still loading... Please wait and try again.', 'warning');
-            return;
-        }
-        
         if (this.isGenerating) {
             this.showNotification('Video generation already in progress', 'warning');
             return;
@@ -407,9 +401,6 @@ class AudioVisualizerApp {
             this.showGenerationProgress();
             this.elements.generateBtn.style.display = 'none';
             
-            // Set quality
-            this.videoGenerator.setQuality(this.elements.videoQuality.value);
-            
             // Get current visualization settings
             const settings = {
                 type: this.elements.vizType.value,
@@ -417,17 +408,14 @@ class AudioVisualizerApp {
                 sensitivity: parseInt(this.elements.sensitivity.value),
                 smoothing: parseInt(this.elements.smoothing.value),
                 glowEffect: this.elements.glowEffect.checked,
-                blurEffect: false, // Disable blur for cleaner video frames
+                blurEffect: false, // Disable blur for cleaner video
                 particlesEffect: this.elements.particlesEffect.checked
             };
             
-            this.showNotification('Analyzing audio and generating frames...', 'info');
+            this.showNotification('Starting video recording...', 'info');
             
-            // Generate video using FFmpeg (professional approach)
-            const videoBlob = await this.videoGenerator.generateVideo(this.visualizer, settings);
-            
-            // Store the video blob for download
-            this.currentVideoBlob = videoBlob;
+            // Generate video using reliable recorder
+            await this.videoGenerator.generateVideo(this.visualizer, settings);
             
             console.log('Video generation complete!');
             
@@ -554,31 +542,13 @@ class AudioVisualizerApp {
         this.showNotification(`Canvas test: ${canvas.width}x${canvas.height}`, 'info');
     }
     
-    monitorFFmpegStatus() {
+    updateVideoStatus() {
         const statusElement = this.elements.ffmpegStatus;
-        if (!statusElement) return;
-        
-        // Check FFmpeg status periodically
-        const checkStatus = () => {
-            if (this.videoGenerator && this.videoGenerator.isLoaded) {
-                // FFmpeg is loaded
-                statusElement.className = 'ffmpeg-status loaded';
-                statusElement.innerHTML = '<i class="fas fa-check-circle"></i><span>FFmpeg ready!</span>';
-                
-                this.showNotification('FFmpeg loaded - ready to generate videos!', 'success');
-                
-            } else if (this.videoGenerator && this.videoGenerator.isLoaded === false) {
-                // FFmpeg failed to load
-                statusElement.className = 'ffmpeg-status error';
-                statusElement.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>FFmpeg failed to load</span>';
-                
-            } else {
-                // Still loading
-                setTimeout(checkStatus, 1000);
-            }
-        };
-        
-        checkStatus();
+        if (statusElement) {
+            // Update status to show ready
+            statusElement.className = 'ffmpeg-status loaded';
+            statusElement.innerHTML = '<i class="fas fa-check-circle"></i><span>Video recorder ready!</span>';
+        }
     }
     
     toggleFullscreen() {
