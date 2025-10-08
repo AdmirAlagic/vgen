@@ -15,6 +15,9 @@ class Visualizer {
         // Performance optimizations
         this.performanceMode = false;
         this.frameSkip = 0;
+        this.lastFrameData = null;
+        this.smoothingBuffer = [];
+        this.targetFPS = 60;
         
         // Visualization settings
         this.settings = {
