@@ -1,12 +1,13 @@
 {
   "name": "vgenerator-audio-visualizer",
-  "version": "1.0.0",
-  "description": "Professional audio visualizer that generates high-quality videos from audio data in real-time, optimized for YouTube",
+  "version": "2.0.0",
+  "description": "Professional audio visualizer with hybrid web/Python architecture - generates high-quality MP4 videos using Mac FFmpeg",
   "main": "index.html",
   "scripts": {
+    "setup": "./setup.sh",
     "start": "python3 -m http.server 8000",
-    "serve": "python3 -m http.server 8000",
-    "dev": "python3 -m http.server 8000"
+    "generate": "./run.sh",
+    "serve": "python3 -m http.server 8000"
   },
   "keywords": [
     "audio",

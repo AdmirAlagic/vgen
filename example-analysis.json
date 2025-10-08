@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "version": "2.0",
+    "generatedAt": "2025-10-07T22:30:15.123Z",
+    "audioFileName": "example-song.mp3",
+    "audioFileSize": 5242880,
+    "audioFileType": "audio/mpeg"
+  },
+  "settings": {
+    "type": "spectrum",
+    "colorScheme": "neon",
+    "quality": "1080p",
+    "fps": 30,
+    "sensitivity": 150
+  },
+  "instructions": {
+    "setup": [
+      "1. Save your audio file as: audio.mp3 (or keep original name)",
+      "2. Make sure both files are in the same directory as generate_video.py",
+      "3. Install dependencies: pip3 install -r requirements.txt",
+      "4. Install FFmpeg: brew install ffmpeg (if not already installed)",
+      "5. Run: python3 generate_video.py"
+    ],
+    "notes": [
+      "The script will automatically detect your audio file",
+      "Output will be: visualization.mp4",
+      "Processing time depends on audio length (usually 2-5 minutes)",
+      "Final video will have perfect audio sync and high quality"
+    ]
+  },
+  "technical": {
+    "expectedFrames": "Will be calculated from audio duration",
+    "outputFormat": "MP4 (H.264 + AAC)",
+    "audioSync": "Perfect synchronization guaranteed"
+  }
+}

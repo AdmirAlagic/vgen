@@ -22,13 +22,13 @@ A professional-grade web application for creating stunning audio visualizations 
 - **Advanced Particle System**: Four particle types (energy, spark, wave, cosmic) with physics simulation
 - **3D Bars**: Complex 3D bars with perspective grids, multiple rows, and atmospheric lighting
 
-### 🎯 Reliable Video Generation
-- **Advanced MediaRecorder**: Optimized browser-native video recording
-- **Perfect Audio Sync**: Original audio captured and embedded seamlessly  
-- **High-Quality Output**: WebM/MP4 videos ready for YouTube
-- **No External Dependencies**: Works entirely in the browser
-- **Multiple Qualities**: 720p, 1080p, 4K recording options
-- **Smooth Recording**: No frame drops or timing issues
+### 🎯 Professional Video Generation
+- **Mac FFmpeg Integration**: Uses your system's FFmpeg for professional encoding
+- **Python-Based Rendering**: Generates perfect frames using PIL and NumPy
+- **Perfect Audio Sync**: Original audio embedded with frame-perfect timing
+- **High-Quality MP4 Output**: H.264 + AAC optimized for YouTube
+- **No Browser Limitations**: All processing happens on your Mac
+- **Reliable & Fast**: No network dependencies or browser memory limits
 
 ### 🎛️ Professional Customization
 - **Enhanced Color Schemes**: 6 sophisticated palettes with advanced gradients and backgrounds
@@ -47,41 +47,46 @@ A professional-grade web application for creating stunning audio visualizations 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Modern web browser with Web Audio API support (Chrome 66+, Firefox 60+, Safari 14+)
-- Local web server (for development)
+- **macOS** with Homebrew (for FFmpeg)
+- **Python 3.7+**
+- **Modern web browser** (for configuration interface)
 
-### Installation
+### One-Time Setup
 
-1. **Clone the repository**
+1. **Clone and setup**
    ```bash
    git clone https://github.com/yourusername/vgenerator-audio-visualizer.git
    cd vgenerator-audio-visualizer
+   chmod +x setup.sh run.sh
+   ./setup.sh
    ```
 
-2. **Start a local server**
+2. **Start the configuration server**
    ```bash
-   # Using Python (recommended)
    python3 -m http.server 8000
-   
-   # Using Node.js
-   npx http-server -p 8000
-   
-   # Using PHP
-   php -S localhost:8000
    ```
 
-3. **Open in browser**
-   ```
-   http://localhost:8000
-   ```
+### Generate Videos
 
-### Usage
+#### Method 1: Easy Mode (Recommended)
+1. **Configure online**: Open http://localhost:8000
+2. **Upload audio** and choose visualization settings  
+3. **Download settings file** (analysis.json)
+4. **Place your audio file** in the project directory
+5. **Run**: `./run.sh` (auto-detects audio file)
+6. **Get your MP4 video!**
 
-1. **Upload Audio**: Drag and drop an audio file or click to browse
-2. **Configure**: Adjust visualization type, colors, and effects in the control panel
-3. **Preview**: Use the audio controls to preview your visualization in real-time
-4. **Generate**: Click "Generate Video" to create your visualization video  
-5. **Download**: Save the generated video file (.webm format, ready for upload)
+#### Method 2: Command Line
+```bash
+python3 generate_video.py analysis.json your-audio.mp3 output.mp4
+```
+
+### What You Get
+- **Professional MP4 videos** with perfect audio sync
+- **High-quality H.264 encoding** optimized for YouTube
+- **Multiple resolution options**: 720p, 1080p, 4K
+- **Smooth animations** with no frame drops
+- **Perfect audio synchronization**
 
 ## 🎮 Controls & Shortcuts
 
@@ -145,47 +150,50 @@ Three-dimensional frequency bars with perspective and depth effects, creating an
 
 ## 📊 Performance
 
-- **Rendering**: 60fps real-time canvas rendering
-- **Memory Usage**: <100MB typical, <200MB with 4K recording
-- **CPU Usage**: 15-30% on modern hardware
-- **Browser Support**: Chrome 66+, Firefox 60+, Safari 14+, Edge 79+
+- **Audio Analysis**: Powered by librosa for professional-grade frequency analysis
+- **Frame Generation**: Python + PIL for high-quality image rendering
+- **Video Encoding**: Your Mac's FFmpeg for optimal performance and quality
+- **Processing Speed**: Typically 2-5 minutes for a 3-4 minute song
+- **Output Quality**: Broadcast-ready MP4 files optimized for YouTube
 
-## 🛠️ Development
+## 🛠️ Architecture
 
-### Architecture
+### Hybrid System Design
 ```
-├── index.html          # Main application entry point
-├── styles.css          # Professional UI styling
-├── js/
-│   ├── audioAnalyzer.js    # Web Audio API processing
-│   ├── visualizer.js       # Canvas rendering engine
-│   ├── videoRecorder.js    # MediaRecorder integration
-│   └── app.js             # Main application controller
-└── package.json        # Project configuration
+Web Interface (Browser):
+├── index.html              # Simple upload and settings interface
+└── Configuration only      # No heavy processing
+
+Python Backend (Mac):
+├── generate_video.py       # Main video generator
+├── requirements.txt        # Python dependencies
+├── setup.sh               # One-time setup script
+└── run.sh                 # Easy execution script
 ```
 
 ### Key Components
 
-- **AudioAnalyzer**: Handles Web Audio API setup, FFT analysis, and frequency band extraction
-- **Visualizer**: Canvas-based rendering engine with multiple visualization modes
-- **VideoRecorder**: MediaRecorder wrapper with YouTube optimization
-- **App**: Main controller coordinating all components and UI interactions
+- **Web Interface**: Simple upload form and settings configurator
+- **Audio Analyzer**: Python + librosa for professional audio analysis  
+- **Frame Renderer**: PIL/Pillow for high-quality image generation
+- **FFmpeg Integration**: Your Mac's FFmpeg for professional video encoding
+- **Automation Scripts**: Easy setup and execution
 
-### Browser Compatibility
-The application uses modern web APIs and requires:
-- Web Audio API (audio processing)
-- Canvas 2D API (visualization rendering)
-- MediaRecorder API (video recording)
-- Capture Stream API (canvas recording)
+### System Requirements
+- **macOS**: With Homebrew for FFmpeg installation
+- **Python 3.7+**: For audio analysis and frame generation
+- **FFmpeg**: For professional video encoding (installed via Homebrew)
+- **Python Packages**: librosa, numpy, Pillow (auto-installed)
 
 ## 📈 YouTube Optimization
 
 Videos generated by VGenerator are optimized for YouTube with:
 - **Resolution**: 1080p recommended (1920×1080)
-- **Frame Rate**: 60fps for smooth motion
-- **Codec**: VP9 for better compression
+- **Frame Rate**: 30fps (standard) or 60fps (smooth)
+- **Codec**: H.264 + AAC for universal compatibility
 - **Bitrate**: 8 Mbps video + 192 kbps audio
-- **Format**: WebM container for best quality
+- **Format**: MP4 container for maximum platform support
+- **Perfect Sync**: Frame-accurate audio/video alignment
 
 ## 🤝 Contributing
 

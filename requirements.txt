@@ -1,0 +1,17 @@
+# VGenerator - Audio Visualizer Dependencies
+# Install with: pip3 install -r requirements.txt
+
+# Audio processing
+librosa>=0.10.0
+numpy>=1.21.0
+
+# Image generation
+Pillow>=9.0.0
+
+# Optional: Advanced image effects
+# cairocffi>=1.4.0  # Uncomment for advanced graphics
+
+# Note: FFmpeg must be installed separately
+# macOS: brew install ffmpeg
+# Ubuntu: sudo apt install ffmpeg
+# Windows: Download from https://ffmpeg.org/
