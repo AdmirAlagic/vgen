@@ -1,13 +1,13 @@
 {
   "name": "vgenerator-audio-visualizer",
   "version": "2.0.0",
-  "description": "Professional audio visualizer with hybrid web/Python architecture - generates high-quality MP4 videos using Mac FFmpeg",
-  "main": "index.html",
+  "description": "Fully automated professional audio visualizer - upload audio, get professional MP4 videos automatically using Mac FFmpeg",
+  "main": "app.py",
   "scripts": {
     "setup": "./setup.sh",
-    "start": "python3 -m http.server 8000",
-    "generate": "./run.sh",
-    "serve": "python3 -m http.server 8000"
+    "start": "./start.sh",
+    "server": "python3 app.py",
+    "dev": "python3 app.py"
   },
   "keywords": [
     "audio",

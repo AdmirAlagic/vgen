@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# VGenerator Setup Script
-# This script sets up everything needed on your Mac
+# VGenerator Automated Setup Script
+# This script sets up the fully automated audio visualizer
 
-echo "🚀 VGenerator - Professional Audio Visualizer Setup"
-echo "================================================="
+echo "🚀 VGenerator - Fully Automated Audio Visualizer Setup"
+echo "======================================================"
 echo
 
 # Check if Python 3 is installed
@@ -59,11 +59,13 @@ fi
 echo
 echo "🎉 Setup complete!"
 echo
-echo "Next steps:"
-echo "1. Open http://localhost:8000 in your browser"
-echo "2. Upload your audio file and configure settings"
-echo "3. Download the analysis.json file"
-echo "4. Place your audio file in this directory"
-echo "5. Run: python3 generate_video.py"
+echo "🚀 To start the automated video generator:"
+echo "   python3 app.py"
 echo
-echo "Your professional audio visualization video will be generated!"
+echo "Then:"
+echo "✨ Open http://localhost:5000 in your browser"
+echo "🎵 Upload audio file + choose settings"
+echo "⏱️  Wait for automatic processing (2-5 minutes)"
+echo "📥 Download your professional MP4 video!"
+echo
+echo "💡 Everything is fully automated - no scripts to run manually!"
