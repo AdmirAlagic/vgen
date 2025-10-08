@@ -92,24 +92,45 @@ class Visualizer {
     }
     
     resize() {
-        const rect = this.canvas.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        
-        this.canvas.width = rect.width * dpr;
-        this.canvas.height = rect.height * dpr;
-        this.canvas.style.width = rect.width + 'px';
-        this.canvas.style.height = rect.height + 'px';
-        
-        this.ctx.scale(dpr, dpr);
-        
-        this.width = rect.width;
-        this.height = rect.height;
+        // Check if we're in video generation mode
+        if (this.videoGenerationMode) {
+            // Use the dimensions set for video generation
+            this.width = this.canvas.width;
+            this.height = this.canvas.height;
+            console.log(`Visualizer resize for video: ${this.width}x${this.height}`);
+        } else {
+            // Normal resize for live preview
+            const rect = this.canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            
+            this.canvas.width = rect.width * dpr;
+            this.canvas.height = rect.height * dpr;
+            this.canvas.style.width = rect.width + 'px';
+            this.canvas.style.height = rect.height + 'px';
+            
+            this.ctx.scale(dpr, dpr);
+            
+            this.width = rect.width;
+            this.height = rect.height;
+        }
         
         // Update particle positions on resize
         this.particles.forEach(particle => {
-            particle.x = Math.random() * this.width;
-            particle.y = Math.random() * this.height;
+            if (particle.x > this.width) particle.x = this.width * 0.9;
+            if (particle.y > this.height) particle.y = this.height * 0.9;
         });
+    }
+    
+    setVideoMode(enabled, width = null, height = null) {
+        this.videoGenerationMode = enabled;
+        if (enabled && width && height) {
+            this.width = width;
+            this.height = height;
+            console.log(`Video mode enabled: ${width}x${height}`);
+        } else if (!enabled) {
+            console.log('Video mode disabled');
+            // Will resize normally on next resize() call
+        }
     }
     
     start(audioAnalyzer) {
@@ -176,7 +197,14 @@ class Visualizer {
     
     renderFrame(mockAnalyzer, currentTime) {
         // Single frame rendering for video generation
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        // Ensure we're using the correct canvas dimensions
+        this.width = this.canvas.width;
+        this.height = this.canvas.height;
+        
+        // Reset canvas context transformation (important for video generation)
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        
+        // Don't clear here - let the video generator handle clearing
         
         // Get data from mock analyzer
         const frequencyData = mockAnalyzer.getFrequencyData();
@@ -189,6 +217,8 @@ class Visualizer {
         
         // Render visualization
         this.renderVisualization(frequencyData, timeDomainData, bands, beat);
+        
+        console.log(`Frame rendered: ${this.settings.type} at ${this.width}x${this.height}`);
     }
     
     renderVisualization(frequencyData, timeDomainData, bands, beat) {

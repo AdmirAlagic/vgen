@@ -44,6 +44,10 @@ class AudioVisualizerApp {
             generationProgress: document.getElementById('generation-progress'),
             progressFill: document.getElementById('progress-fill'),
             progressText: document.getElementById('progress-text'),
+            debugInfo: document.getElementById('debug-info'),
+            canvasSize: document.getElementById('canvas-size'),
+            videoSize: document.getElementById('video-size'),
+            testCanvasBtn: document.getElementById('test-canvas-btn'),
             
             // Info
             trackName: document.getElementById('track-name'),
@@ -178,6 +182,11 @@ class AudioVisualizerApp {
                     this.showNotification('No video available for download', 'error');
                 }
             }
+        });
+        
+        // Test canvas button
+        this.elements.testCanvasBtn.addEventListener('click', () => {
+            this.testCanvas();
         });
         
         // UI controls
@@ -409,12 +418,20 @@ class AudioVisualizerApp {
     showGenerationProgress() {
         this.elements.generationProgress.style.display = 'block';
         this.elements.generationStatus.style.display = 'flex';
+        this.elements.debugInfo.style.display = 'block';
         this.updateProgress(0, 'Initializing...');
+        
+        // Show current canvas dimensions
+        const canvas = this.elements.canvas;
+        this.elements.canvasSize.textContent = `${canvas.width}x${canvas.height}`;
+        const videoSettings = this.videoGenerator.settings[this.elements.videoQuality.value];
+        this.elements.videoSize.textContent = `${videoSettings.width}x${videoSettings.height}`;
     }
     
     hideGenerationProgress() {
         this.elements.generationProgress.style.display = 'none';
         this.elements.generationStatus.style.display = 'none';
+        this.elements.debugInfo.style.display = 'none';
         this.elements.generateBtn.style.display = 'block';
         this.isGenerating = false;
     }
@@ -426,6 +443,11 @@ class AudioVisualizerApp {
     
     onGenerationProgress(progress) {
         this.updateProgress(progress.progress, progress.message);
+        
+        // Update debug info during generation
+        if (this.elements.canvasSize && this.elements.canvas) {
+            this.elements.canvasSize.textContent = `${this.elements.canvas.width}x${this.elements.canvas.height}`;
+        }
     }
     
     onGenerationComplete(videoPackage) {
@@ -460,6 +482,53 @@ class AudioVisualizerApp {
     onGenerationError(error) {
         this.hideGenerationProgress();
         console.error('Generation error:', error);
+    }
+    
+    testCanvas() {
+        const canvas = this.elements.canvas;
+        const ctx = canvas.getContext('2d');
+        
+        console.log(`Testing canvas: ${canvas.width}x${canvas.height}`);
+        
+        // Clear and draw test pattern
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transformation
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Fill entire canvas with test pattern
+        ctx.fillStyle = '#003366';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw border
+        ctx.strokeStyle = '#00d4ff';
+        ctx.lineWidth = 8;
+        ctx.strokeRect(4, 4, canvas.width - 8, canvas.height - 8);
+        
+        // Draw center cross
+        ctx.strokeStyle = '#ff0080';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2, 0);
+        ctx.lineTo(canvas.width / 2, canvas.height);
+        ctx.moveTo(0, canvas.height / 2);
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.stroke();
+        
+        // Draw corner markers
+        const cornerSize = 50;
+        ctx.fillStyle = '#00ff88';
+        ctx.fillRect(0, 0, cornerSize, cornerSize);
+        ctx.fillRect(canvas.width - cornerSize, 0, cornerSize, cornerSize);
+        ctx.fillRect(0, canvas.height - cornerSize, cornerSize, cornerSize);
+        ctx.fillRect(canvas.width - cornerSize, canvas.height - cornerSize, cornerSize, cornerSize);
+        
+        // Add text with dimensions
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`${canvas.width}x${canvas.height}`, canvas.width / 2, canvas.height / 2 - 30);
+        ctx.fillText('TEST PATTERN', canvas.width / 2, canvas.height / 2 + 10);
+        
+        this.showNotification(`Canvas test: ${canvas.width}x${canvas.height}`, 'info');
     }
     
     toggleFullscreen() {
