@@ -84,9 +84,26 @@ class AudioEngine: ObservableObject {
     
     func loadAudio(from url: URL) throws {
         do {
+            // Validate file exists and is accessible
+            guard FileManager.default.fileExists(atPath: url.path) else {
+                print("❌ Audio file does not exist at path: \(url.path)")
+                throw AudioEngineError.cannotLoadFile
+            }
+            
             audioFile = try AVAudioFile(forReading: url)
             guard let audioFile = audioFile else {
+                print("❌ Failed to create AVAudioFile from URL: \(url)")
                 throw AudioEngineError.cannotLoadFile
+            }
+            
+            // Validate audio format
+            let format = audioFile.fileFormat
+            print("🎵 Loading audio: \(format.sampleRate)Hz, \(format.channelCount) channels, \(audioFile.length) frames")
+            
+            // Check for reasonable file size (prevent memory issues)
+            let maxFrames: AVAudioFrameCount = 44100 * 60 * 10 // 10 minutes max at 44.1kHz
+            if audioFile.length > maxFrames {
+                print("⚠️ Audio file is very large (\(audioFile.length) frames). Performance may be affected.")
             }
             
             duration = Double(audioFile.length) / audioFile.fileFormat.sampleRate
@@ -96,6 +113,7 @@ class AudioEngine: ObservableObject {
                 pcmFormat: audioFile.processingFormat,
                 frameCapacity: AVAudioFrameCount(audioFile.length)
             ) else {
+                print("❌ Failed to create PCM buffer for \(audioFile.length) frames")
                 throw AudioEngineError.cannotCreateBuffer
             }
             
@@ -105,12 +123,24 @@ class AudioEngine: ObservableObject {
             // Convert to mono float array for analysis
             convertBufferToFloatArray()
             
-            // Create audio player
+            // Create audio player with better error handling
             let data = try Data(contentsOf: url)
             audioPlayer = try AVAudioPlayer(data: data)
-            audioPlayer?.prepareToPlay()
             
-        } catch {
+            guard let player = audioPlayer else {
+                print("❌ Failed to create AVAudioPlayer")
+                throw AudioEngineError.cannotLoadFile
+            }
+            
+            player.prepareToPlay()
+            print("✅ Audio loaded successfully: \(duration) seconds")
+            
+        } catch let error as NSError {
+            print("❌ Audio loading error: \(error.localizedDescription)")
+            print("   Domain: \(error.domain), Code: \(error.code)")
+            if let underlyingError = error.userInfo[NSUnderlyingErrorKey] as? NSError {
+                print("   Underlying: \(underlyingError.localizedDescription)")
+            }
             throw AudioEngineError.cannotLoadFile
         }
     }
@@ -416,15 +446,30 @@ class AudioEngine: ObservableObject {
     // MARK: - Cleanup
     
     private func cleanup() {
+        print("🧹 Cleaning up AudioEngine resources...")
+        
+        // Stop and clean up display link
         displayLink?.invalidate()
         displayLink = nil
         
+        // Clean up FFT resources
         if let fftSetup = fftSetup {
             vDSP_destroy_fftsetup(fftSetup)
+            self.fftSetup = nil
         }
         
+        // Stop audio player and clear references
         audioPlayer?.stop()
         audioPlayer = nil
+        audioFile = nil
+        audioBuffer = nil
+        
+        // Clear analysis data
+        analysisBuffer.removeAll()
+        exportFFTData.removeAll()
+        exportAudioData.removeAll()
+        
+        print("✅ AudioEngine cleanup completed")
     }
 }
 

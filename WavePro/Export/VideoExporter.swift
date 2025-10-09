@@ -298,9 +298,13 @@ class VideoExporter: ObservableObject {
                     print("⏳ Waiting for videoInput to be ready for frame \(frameIndex)... (this is normal)")
                     loggedWait = true
                 }
-                if waitCount > 300000 { // 5 minutes timeout - something is stuck
-                    print("❌ Error: videoInput stuck for frame \(frameIndex) after 5 minutes")
-                    print("   This might be a writer issue. Try reducing export quality or file size.")
+                if waitCount > 60000 { // 1 minute timeout - more reasonable
+                    print("❌ Error: videoInput stuck for frame \(frameIndex) after 1 minute")
+                    print("   This might indicate:")
+                    print("   - Insufficient memory for export resolution")
+                    print("   - Disk space issues")
+                    print("   - System performance constraints")
+                    print("   Recommendation: Try reducing export quality or closing other applications")
                     throw VideoExportError.cannotAppendPixelBuffer
                 }
                 
