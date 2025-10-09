@@ -125,7 +125,13 @@ class MetalRenderer: NSObject, ObservableObject {
         var tempBufferPool: [MTLBuffer] = []
         for _ in 0..<3 {
             guard let buffer = device.makeBuffer(length: MemoryLayout<AudioVisualizationUniforms>.size, options: []) else {
-                fatalError("Failed to create buffer pool")
+                print("❌ Critical Error: Failed to create buffer pool - Metal device may not support required buffer size")
+                // Fallback: create smaller buffer or throw proper error
+                guard let fallbackBuffer = device.makeBuffer(length: 256, options: []) else {
+                    fatalError("Critical: Cannot create any Metal buffers - unsupported device")
+                }
+                tempBufferPool.append(fallbackBuffer)
+                continue
             }
             tempBufferPool.append(buffer)
         }
@@ -262,7 +268,16 @@ class MetalRenderer: NSObject, ObservableObject {
     // MARK: - Rendering
     
     func render(to texture: MTLTexture, time: Float) {
-        guard let commandBuffer = commandQueue.makeCommandBuffer() else { return }
+        // Validate texture state
+        guard texture.width > 0 && texture.height > 0 else {
+            print("⚠️ Invalid texture dimensions: \(texture.width)x\(texture.height)")
+            return
+        }
+        
+        guard let commandBuffer = commandQueue.makeCommandBuffer() else {
+            print("❌ Failed to create Metal command buffer")
+            return
+        }
         
         // Update audio data
         updateAudioData()
