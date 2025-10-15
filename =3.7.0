@@ -1,0 +1,34 @@
+Collecting matplotlib
+  Using cached matplotlib-3.10.7-cp314-cp314-macosx_11_0_arm64.whl.metadata (11 kB)
+Collecting contourpy>=1.0.1 (from matplotlib)
+  Downloading contourpy-1.3.3-cp314-cp314-macosx_11_0_arm64.whl.metadata (5.5 kB)
+Collecting cycler>=0.10 (from matplotlib)
+  Using cached cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
+Collecting fonttools>=4.22.0 (from matplotlib)
+  Downloading fonttools-4.60.1-cp314-cp314-macosx_10_13_universal2.whl.metadata (112 kB)
+Collecting kiwisolver>=1.3.1 (from matplotlib)
+  Downloading kiwisolver-1.4.9-cp314-cp314-macosx_11_0_arm64.whl.metadata (6.3 kB)
+Requirement already satisfied: numpy>=1.23 in ./venv/lib/python3.14/site-packages (from matplotlib) (2.3.3)
+Collecting packaging>=20.0 (from matplotlib)
+  Using cached packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+Requirement already satisfied: pillow>=8 in ./venv/lib/python3.14/site-packages (from matplotlib) (11.3.0)
+Collecting pyparsing>=3 (from matplotlib)
+  Using cached pyparsing-3.2.5-py3-none-any.whl.metadata (5.0 kB)
+Collecting python-dateutil>=2.7 (from matplotlib)
+  Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting six>=1.5 (from python-dateutil>=2.7->matplotlib)
+  Using cached six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Downloading matplotlib-3.10.7-cp314-cp314-macosx_11_0_arm64.whl (8.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.1/8.1 MB 3.0 MB/s  0:00:02
+Downloading contourpy-1.3.3-cp314-cp314-macosx_11_0_arm64.whl (273 kB)
+Using cached cycler-0.12.1-py3-none-any.whl (8.3 kB)
+Downloading fonttools-4.60.1-cp314-cp314-macosx_10_13_universal2.whl (2.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.8/2.8 MB 2.6 MB/s  0:00:01
+Downloading kiwisolver-1.4.9-cp314-cp314-macosx_11_0_arm64.whl (64 kB)
+Using cached packaging-25.0-py3-none-any.whl (66 kB)
+Using cached pyparsing-3.2.5-py3-none-any.whl (113 kB)
+Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+Installing collected packages: six, pyparsing, packaging, kiwisolver, fonttools, cycler, contourpy, python-dateutil, matplotlib
+
+Successfully installed contourpy-1.3.3 cycler-0.12.1 fonttools-4.60.1 kiwisolver-1.4.9 matplotlib-3.10.7 packaging-25.0 pyparsing-3.2.5 python-dateutil-2.9.0.post0 six-1.17.0

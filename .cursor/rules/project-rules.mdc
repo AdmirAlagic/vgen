@@ -1,0 +1,68 @@
+---
+alwaysApply: true
+---
+
+# Project Rules: High-Fidelity Audio-Reactive Video Generator
+
+## I. Core Development & Application Structure
+
+### Rule: Innovative & High-Fidelity Design
+- **Description:** Prioritize complex, procedural generation techniques over simple keyframing to achieve **innovative, high-graphics, and hyper-realistic** rendering. Never settle for default Blender material or lighting setups.
+- **Priority:** High
+- **Tags:** quality, realism, graphics
+
+### Rule: Blender API Best Practices
+- **Description:** All Blender Python (`bpy`) code must correctly manage the active context (`bpy.context`) and data (`bpy.data`). Operations must be idempotent where possible. Always check for object existence before modification.
+- **Priority:** High
+- **Tags:** python, blender, stability
+
+### Rule: Modularity and Background Mode
+- **Description:** Separate code into distinct, reusable modules: `audio_analysis.py`, `scene_setup.py`, and `animation_drivers.py`. The application must be designed to run reliably in Blender's **background mode** (`blender --background ... -P script.py`).
+- **Priority:** High
+- **Tags:** structure, reusability, pipeline
+
+## II. Graphics, Realism, and Smoothness
+
+### Rule: Procedural Graphics (Geometry/Shader Nodes)
+- **Description:** Leverage **Blender Geometry Nodes** for procedural content generation (e.g., complex meshes, particle systems, landscapes) and advanced **Shader Nodes** for realistic, PBR-compliant materials. Link procedural parameters to Python drivers for sound reactivity.
+- **Priority:** Critical
+- **Tags:** graphics, procedural, realism
+
+### Rule: Cycles/Eevee Render Quality
+- **Description:** For final rendering scripts, enforce high-quality settings. Use **Cycles** for ultimate realism (high samples, volumetric lighting) or optimized **Eevee** with max samples, bloom, and screen space reflections enabled.
+- **Priority:** High
+- **Tags:** rendering, quality, output
+
+### Rule: Smooth and Continuous Motion
+- **Description:** All generated F-Curves and keyframe interpolations must be set to **Bezier** or a **Smooth** type. Avoid linear or constant interpolation to guarantee **smooth and continuous** visual motion, preventing jarring visual jumps.
+- **Priority:** High
+- **Tags:** smoothness, animation, continuity
+
+## III. Sound-Responsive Logic
+
+### Rule: Advanced Audio Feature Extraction
+- **Description:** Do not rely only on raw amplitude. Use external Python libraries (e.g., `@librosa`) to perform detailed audio analysis, extracting **specific frequency bands (e.g., Kick, Snare, High-Hats, Vocal Envelope)** and beat/tempo (BPM) data.
+- **Priority:** Critical
+- **Tags:** sound-response, audio_analysis
+
+### Rule: Driver-Based Reactivity
+- **Description:** The primary method for linking sound to visuals must be through **Blender Drivers** or by scripting **F-Curve Sound Bake** for specific frequency ranges. The AI must ensure the driver expression correctly maps the *normalized* audio data (0.0 to 1.0) to the visual property's required range (e.g., emission strength, scale).
+- **Priority:** Critical
+- **Tags:** responsiveness, drivers, animation
+
+### Rule: Layered and Subtle Sound-to-Visual Mapping
+- **Description:** Implement a layered sound-to-visual mapping. Small audio changes should result in **subtle, continuous** visual feedback (e.g., texture ripple, slow color shift), while peaks and beat drops should trigger **impactful, high-energy** effects (e.g., flashes, particle bursts, camera shake). The result must feel organic and **responsive to sound**.
+- **Priority:** High
+- **Tags:** innovation, design, responsiveness
+
+## IV. Code Style and Maintenance
+
+### Rule: Clean and Descriptive Python
+- **Description:** Code must be fully compliant with PEP 8 (spacing, variable names). Use type hinting. Function names must clearly describe their role in the Blender scene (e.g., `create_procedural_planet`, `bake_audio_to_emission`).
+- **Priority:** Medium
+- **Tags:** style, maintainability
+
+### Rule: Full Documentation
+- **Description:** Include docstrings for all functions and classes, clearly detailing inputs, outputs, and the *Blender objects* they create or modify. Use clear, non-jargon comments for complex `bpy` code blocks.
+- **Priority:** Medium
+- **Tags:** documentation, clarity

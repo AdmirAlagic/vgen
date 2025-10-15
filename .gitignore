@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Project specific
+output/
+temp/
+*.blend
+*.blend1
+*.mp4
+*.mp3
+*.wav
+*.flac
+*.ogg
+*.m4a
+frames/
+*.json
+analysis.json
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
