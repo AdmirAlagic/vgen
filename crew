@@ -1,0 +1,13 @@
+#!/bin/bash
+# CrewAI Crew Command Alias
+# =========================
+# This script provides a simple 'crew' command for CrewAI operations
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Change to the project directory
+cd "$SCRIPT_DIR"
+
+# Run the CrewAI crew command
+python crewai_crew.py "$@"

@@ -224,12 +224,26 @@ AudioBlenderVideo/
 │       └── style.py                       # Dark theme styling
 │
 ├── output/                                 # Generated videos & scenes
+│   ├── autonomous/                        # CrewAI autonomous development
+│   │   ├── reports/                       # Performance reports
+│   │   ├── logs/                          # System logs
+│   │   └── videos/                        # Generated videos
 │   ├── *.blend                            # Blender scene files
 │   ├── *.mp4                              # Rendered videos
 │   └── *.json                             # Audio analysis data
 │
 ├── docker/                                 # Distributed rendering (optional)
 │   └── docker-compose.yml                 # Multi-node setup
+│
+├── crewai_config.py                       # CrewAI agent configurations
+├── self_improvement_system.py             # Autonomous learning system
+├── run_crewai_autonomous.py               # CrewAI autonomous runner
+├── crewai_crew.py                         # CrewAI crew command interface
+├── autonomous_development.py              # Main autonomous development script
+├── setup_crewai.py                        # CrewAI setup and installation
+├── crew                                   # CrewAI crew command alias
+├── requirements_crewai.txt                # CrewAI dependencies
+├── CREWAI_README.md                       # CrewAI documentation
 │
 ├── generate_audio_reactive_video.py       # CLI video generator
 ├── test_video_generation.py               # Comprehensive test suite
@@ -238,6 +252,47 @@ AudioBlenderVideo/
 ├── README.md                              # This file
 └── .gitignore                             # Git ignore patterns
 ```
+
+## 🤖 CrewAI Autonomous Development
+
+> **NEW**: This project now includes a complete CrewAI integration for autonomous development!
+
+### 🚀 Quick Start with CrewAI
+
+```bash
+# Setup CrewAI environment
+python setup_crewai.py
+
+# Run autonomous video generation
+python autonomous_development.py --video audio.wav
+
+# Run continuous improvement
+python autonomous_development.py --continuous
+
+# Use CrewAI crew commands
+./crew "Optimize audio analysis for better quality"
+```
+
+### 🧠 Autonomous AI Agents
+
+The system includes 5 specialized AI agents that work together:
+
+- **🎵 Audio Analysis Specialist**: Optimizes audio processing and feature extraction
+- **🎨 Blender Animation Expert**: Creates and optimizes 3D scenes and animations  
+- **⚡ Rendering Performance Specialist**: Optimizes rendering performance and quality
+- **📊 Quality Assurance Manager**: Ensures commercial standards and continuous improvement
+- **🎭 Project Orchestrator**: Coordinates all agents and manages development workflow
+
+### 🔄 Self-Improvement System
+
+The system continuously learns and improves:
+- **Performance Tracking**: Every session is logged with detailed metrics
+- **Pattern Learning**: Successful configurations are identified and reused
+- **Adaptive Optimization**: System automatically adjusts parameters
+- **Quality Assessment**: Continuous evaluation against commercial standards
+- **Knowledge Retention**: Learning accumulates over time
+
+For complete CrewAI documentation, see [CREWAI_README.md](CREWAI_README.md).
 
 ## 🤖 Development with Claude AI
 
