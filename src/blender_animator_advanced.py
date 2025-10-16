@@ -149,18 +149,48 @@ if scene.render.engine == 'CYCLES':
     scene.cycles.samples = {settings['samples']}
     scene.cycles.use_denoising = {str(settings['use_denoising'])}
     scene.cycles.denoiser = 'OPENIMAGEDENOISE'
+    scene.cycles.denoising_input_passes = 'RGB_ALBEDO_NORMAL'  # Best quality
     scene.cycles.device = 'GPU'
     scene.cycles.use_adaptive_sampling = True
+    scene.cycles.adaptive_threshold = 0.01  # Higher quality threshold
+    
+    # Light paths for better caustics and reflections
+    scene.cycles.max_bounces = 12
+    scene.cycles.diffuse_bounces = 4
+    scene.cycles.glossy_bounces = 4
+    scene.cycles.transmission_bounces = 12
+    scene.cycles.volume_bounces = 0
+    scene.cycles.transparent_max_bounces = 8
+    
+    # Caustics for metallic reflections
+    scene.cycles.caustics_reflective = True
+    scene.cycles.caustics_refractive = True
+    scene.cycles.blur_glossy = 0.5  # Reduce fireflies
     scene.render.use_motion_blur = {str(settings.get('motion_blur', True))}
     scene.render.motion_blur_shutter = 0.5
 else:
     scene.eevee.taa_render_samples = {settings['samples']}
     scene.eevee.use_bloom = True
+    scene.eevee.bloom_threshold = 0.8
+    scene.eevee.bloom_intensity = 0.05
+    scene.eevee.bloom_radius = 6.5
+    
     scene.eevee.use_ssr = True
+    scene.eevee.use_ssr_refraction = True
+    scene.eevee.ssr_quality = 0.25
+    scene.eevee.ssr_max_roughness = 0.5
+    
+    scene.eevee.use_gtao = True  # Ambient occlusion
+    scene.eevee.gtao_distance = 0.2
+    scene.eevee.gtao_quality = 0.25
+    
     scene.eevee.use_motion_blur = True
+    scene.eevee.motion_blur_shutter = 0.5
 
-scene.view_settings.view_transform = 'Filmic'
-scene.view_settings.look = 'Very High Contrast'
+# Color management for cinematic look
+scene.view_settings.view_transform = 'AgX'
+scene.view_settings.look = 'AgX - Very High Contrast'
+scene.sequencer_colorspace_settings.name = 'Linear Rec.709'
 
 # Camera - FIXED POSITIONING FOR PROPER VISIBILITY
 camera_data = bpy.data.cameras.new('Camera')
@@ -188,10 +218,24 @@ def create_light(name, location, rotation, power, size, color):
     light_obj.rotation_euler = rotation
     return light_obj
 
-# FIXED: Much brighter lighting for visibility
-create_light('KeyLight', (6, -6, 8), (math.radians(45), 0, math.radians(45)), 10000, 10, (1.0, 0.95, 0.85))
-create_light('FillLight', (-4, -4, 6), (math.radians(30), 0, math.radians(-30)), 5000, 15, (0.6, 0.7, 1.0))
-create_light('RimLight', (0, 8, 8), (math.radians(-45), 0, 0), 6000, 8, (1.0, 0.8, 0.5))
+# Professional 3-point lighting with HDR intensity
+# Key Light - Main illumination (warm, strong)
+key_light = create_light('KeyLight', (6, -6, 8), (math.radians(45), 0, math.radians(45)), 15000, 10, (1.0, 0.95, 0.85))
+key_light.data.use_shadow = True
+key_light.data.shadow_soft_size = 2.0  # Soft shadows
+
+# Fill Light - Soften shadows (cool, gentle)
+fill_light = create_light('FillLight', (-4, -4, 6), (math.radians(30), 0, math.radians(-30)), 8000, 15, (0.6, 0.7, 1.0))
+fill_light.data.use_shadow = False  # No competing shadows
+
+# Rim Light - Edge definition (warm accent)
+rim_light = create_light('RimLight', (0, 8, 8), (math.radians(-45), 0, 0), 10000, 8, (1.0, 0.8, 0.5))
+rim_light.data.use_shadow = True
+rim_light.data.shadow_soft_size = 1.5
+
+# Accent lights for depth
+accent_light = create_light('AccentLight', (4, 4, 10), (math.radians(-60), 0, math.radians(30)), 5000, 6, (0.8, 0.9, 1.0))
+accent_light.data.use_shadow = False
 
 # World
 world = bpy.data.worlds.new("World")
@@ -201,8 +245,23 @@ nodes = world.node_tree.nodes
 nodes.clear()
 output = nodes.new('ShaderNodeOutputWorld')
 bg = nodes.new('ShaderNodeBackground')
-bg.inputs[0].default_value = (0.05, 0.05, 0.1, 1.0)  # Much brighter background
-bg.inputs[1].default_value = 0.8  # Higher intensity for visibility
+# Environment with gradient for depth
+coord = nodes.new('ShaderNodeTexCoord')
+mapping = nodes.new('ShaderNodeMapping')
+grad = nodes.new('ShaderNodeTexGradient')
+colorramp = nodes.new('ShaderNodeValToRGB')
+
+# Setup gradient from dark to bright
+colorramp.color_ramp.elements[0].position = 0.0
+colorramp.color_ramp.elements[0].color = (0.02, 0.02, 0.05, 1.0)  # Deep blue-black
+colorramp.color_ramp.elements[1].position = 1.0
+colorramp.color_ramp.elements[1].color = (0.1, 0.1, 0.2, 1.0)  # Lighter blue
+
+world.node_tree.links.new(coord.outputs['Generated'], mapping.inputs['Vector'])
+world.node_tree.links.new(mapping.outputs['Vector'], grad.inputs['Vector'])
+world.node_tree.links.new(grad.outputs['Color'], colorramp.inputs['Fac'])
+world.node_tree.links.new(colorramp.outputs['Color'], bg.inputs['Color'])
+bg.inputs['Strength'].default_value = 1.2  # Balanced intensity
 world.node_tree.links.new(bg.outputs[0], output.inputs[0])
 
 print("✅ Scene setup complete")
@@ -253,8 +312,18 @@ print("✅ Compositor configured")
         return '''# Advanced Cinematic Space Scene with Complex Geometry
 print("Creating advanced scene...")
 
-def create_material(name, color, metallic=0.0, roughness=0.5, emission_strength=0.0, fresnel=False):
-    """Create advanced PBR material with optional fresnel."""
+def create_material(name, color, metallic=0.0, roughness=0.5, emission_strength=0.0, fresnel=False, 
+                   anisotropic=0.0, sheen=0.0, clearcoat=0.0):
+    """Create advanced PBR material with professional shader techniques.
+    
+    Enhanced features:
+    - Proper PBR workflow with metallic/roughness
+    - Anisotropic reflections for brushed metals
+    - Sheen for cloth/fabric materials
+    - Clearcoat for multilayered surfaces
+    - Fresnel for realistic edge reflection
+    - Emission with HDR values
+    """
     mat = bpy.data.materials.new(name)
     mat.use_nodes = True
     nodes = mat.node_tree.nodes
@@ -262,34 +331,63 @@ def create_material(name, color, metallic=0.0, roughness=0.5, emission_strength=
     nodes.clear()
     
     output = nodes.new('ShaderNodeOutputMaterial')
-    output.location = (400, 0)
+    output.location = (600, 0)
     
-    mix_shader = nodes.new('ShaderNodeMixShader')
-    mix_shader.location = (200, 0)
-    
-    emission_node = nodes.new('ShaderNodeEmission')
-    emission_node.location = (0, 100)
-    emission_node.inputs['Color'].default_value = color
-    emission_node.inputs['Strength'].default_value = emission_strength
-    
+    # Principled BSDF - Industry standard PBR shader
     bsdf = nodes.new('ShaderNodeBsdfPrincipled')
-    bsdf.location = (0, -100)
+    bsdf.location = (200, 0)
     bsdf.inputs['Base Color'].default_value = color
     bsdf.inputs['Metallic'].default_value = metallic
     bsdf.inputs['Roughness'].default_value = roughness
     bsdf.inputs['Specular IOR Level'].default_value = 0.5
     
-    if fresnel:
-        fresnel_node = nodes.new('ShaderNodeFresnel')
-        fresnel_node.location = (-200, 0)
-        fresnel_node.inputs['IOR'].default_value = 1.45
-        links.new(fresnel_node.outputs['Fac'], mix_shader.inputs['Fac'])
-    else:
-        mix_shader.inputs['Fac'].default_value = 0.7 if emission_strength > 0 else 0.0
+    # Advanced material properties
+    bsdf.inputs['Anisotropic'].default_value = anisotropic
+    bsdf.inputs['Sheen Weight'].default_value = sheen
+    bsdf.inputs['Coat Weight'].default_value = clearcoat
+    bsdf.inputs['Coat Roughness'].default_value = roughness * 0.5
     
-    links.new(emission_node.outputs['Emission'], mix_shader.inputs[1])
-    links.new(bsdf.outputs['BSDF'], mix_shader.inputs[2])
-    links.new(mix_shader.outputs['Shader'], output.inputs['Surface'])
+    # Subsurface scattering for organic look
+    if metallic < 0.5:  # Non-metallic surfaces benefit from SSS
+        bsdf.inputs['Subsurface Weight'].default_value = 0.05
+        bsdf.inputs['Subsurface Radius'].default_value = (1.0, 0.2, 0.1)
+    
+    # Emission setup with proper HDR handling
+    if emission_strength > 0:
+        mix_shader = nodes.new('ShaderNodeMixShader')
+        mix_shader.location = (400, 0)
+        
+        emission_node = nodes.new('ShaderNodeEmission')
+        emission_node.location = (200, 200)
+        emission_node.inputs['Color'].default_value = color
+        emission_node.inputs['Strength'].default_value = emission_strength
+        
+        # Add Fresnel for realistic edge glow
+        if fresnel:
+            fresnel_node = nodes.new('ShaderNodeFresnel')
+            fresnel_node.location = (0, 100)
+            fresnel_node.inputs['IOR'].default_value = 1.45
+            
+            # Use ColorRamp for better control
+            colorramp = nodes.new('ShaderNodeValToRGB')
+            colorramp.location = (200, 100)
+            colorramp.color_ramp.elements[0].position = 0.4
+            colorramp.color_ramp.elements[1].position = 0.8
+            
+            links.new(fresnel_node.outputs['Fac'], colorramp.inputs['Fac'])
+            links.new(colorramp.outputs['Color'], mix_shader.inputs['Fac'])
+        else:
+            mix_shader.inputs['Fac'].default_value = 0.7
+        
+        links.new(emission_node.outputs['Emission'], mix_shader.inputs[1])
+        links.new(bsdf.outputs['BSDF'], mix_shader.inputs[2])
+        links.new(mix_shader.outputs['Shader'], output.inputs['Surface'])
+    else:
+        # Direct connection for non-emissive materials
+        links.new(bsdf.outputs['BSDF'], output.inputs['Surface'])
+    
+    # Enable backface culling for performance
+    mat.use_backface_culling = True
     
     return mat
 
@@ -310,7 +408,9 @@ tex.noise_scale = 2.0
 displace.texture = tex
 displace.strength = 0.0  # Will be animated
 
-mat = create_material('CoreMat', (0.2, 0.5, 1.0, 1.0), 0.9, 0.15, 15.0, fresnel=True)
+# Core with anisotropic metal and clearcoat
+mat = create_material('CoreMat', (0.2, 0.5, 1.0, 1.0), metallic=0.95, roughness=0.1, 
+                     emission_strength=15.0, fresnel=True, anisotropic=0.5, clearcoat=0.3)
 core.data.materials.append(mat)
 bpy.ops.object.shade_smooth()
 
@@ -325,10 +425,13 @@ for i in range(12):
     particle.location = (math.cos(angle) * radius, math.sin(angle) * radius, 0)
     
     hue = i / 12
+    # Particles with varied properties for visual interest
     mat = create_material(
         f'InnerParticleMat{i}',
         (0.3 + hue * 0.7, 0.4 + (1-hue) * 0.6, 1.0, 1.0),
-        0.7, 0.2, 20.0, fresnel=True
+        metallic=0.85, roughness=0.15 + (i % 3) * 0.05,  # Slight variation
+        emission_strength=20.0 + (i % 4) * 2,  # Varied brightness
+        fresnel=True, anisotropic=0.3
     )
     particle.data.materials.append(mat)
     bpy.ops.object.shade_smooth()
@@ -349,10 +452,12 @@ for i in range(8):
     orb.location = (math.cos(angle) * radius, math.sin(angle) * radius, height)
     
     hue = i / 8
+    # Orbs with sheen for soft cloth-like quality
     mat = create_material(
         f'MidOrbMat{i}',
         (0.4 + hue * 0.6, 0.5 + (1-hue) * 0.5, 0.9 - hue * 0.2, 1.0),
-        0.8, 0.25, 18.0, fresnel=True
+        metallic=0.75, roughness=0.2, emission_strength=18.0, 
+        fresnel=True, sheen=0.3, clearcoat=0.2
     )
     orb.data.materials.append(mat)
     bpy.ops.object.shade_smooth()
@@ -391,10 +496,12 @@ for i in range(4):
     else:
         ring.rotation_euler = (math.radians(30), 0, math.radians(60))
     
+    # Rings with perfect mirror-like finish
     mat = create_material(
         f'RingMat{i}',
         (0.5 + i * 0.15, 0.4, 1.0 - i * 0.15, 1.0),
-        0.95, 0.05, 25.0
+        metallic=0.98, roughness=0.02, emission_strength=25.0,
+        anisotropic=0.8  # Circular anisotropy for ring geometry
     )
     ring.data.materials.append(mat)
     bpy.ops.object.shade_smooth()
