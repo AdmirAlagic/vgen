@@ -1,0 +1,49 @@
+# GPU-Accelerated Audio Processing Container
+FROM nvidia/cuda:12.0-runtime-ubuntu22.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CUDA_VISIBLE_DEVICES=0
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-dev \
+    ffmpeg \
+    libsndfile1 \
+    libsndfile1-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python audio processing libraries
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install \
+    librosa \
+    soundfile \
+    numpy \
+    scipy \
+    cupy-cuda12x \
+    numba \
+    flask \
+    gunicorn \
+    redis
+
+# Create working directory
+WORKDIR /app
+
+# Copy audio processing scripts
+COPY audio_processor.py /app/
+COPY requirements.txt /app/
+
+# Create directories
+RUN mkdir -p /app/input /app/output /app/cache
+
+# Expose port for communication
+EXPOSE 8001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python3 -c "import librosa, cupy; print('Audio processor healthy')" || exit 1
+
+# Default command
+CMD ["python3", "/app/audio_processor.py"]

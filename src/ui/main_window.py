@@ -33,37 +33,82 @@ class VideoGenerationThread(QThread):
     def run(self):
         """Run the video generation pipeline."""
         try:
-            from audio_analyzer import AudioAnalyzer
-            from blender_generator import BlenderSceneGenerator
-            from video_renderer import VideoRenderer
+            # Try distributed rendering first, fallback to local
+            from distributed_renderer import get_best_renderer
             
-            # Step 1: Analyze audio
-            self.progress.emit(5, "Analyzing audio...")
-            analyzer = AudioAnalyzer(self.config['audio_path'], fps=self.config['fps'])
-            features = analyzer.analyze()
+            # Initialize hybrid renderer
+            renderer = get_best_renderer()
+            system_info = renderer.get_system_info()
             
-            # Save analysis
-            analysis_path = os.path.join(self.config['temp_dir'], 'analysis.json')
-            analyzer.save_analysis(analysis_path)
-            
-            # Step 2: Generate Blender script
-            self.progress.emit(20, "Generating Blender scene...")
-            generator = BlenderSceneGenerator(features, style=self.config['style'])
-            script_path = os.path.join(self.config['temp_dir'], 'scene_script.py')
-            generator.save_script(script_path, self.config['render_settings'])
-            
-            # Step 3: Render video
-            self.progress.emit(30, "Initializing renderer...")
-            renderer = VideoRenderer(self.config.get('blender_path'))
-            
-            output_video = renderer.generate_video(
-                script_path=script_path,
-                audio_path=self.config['audio_path'],
-                output_path=self.config['output_path'],
-                fps=self.config['fps'],
-                progress_callback=self.progress.emit,
-                keep_temp_files=self.config.get('keep_temp', False)
-            )
+            if system_info['type'] == 'distributed':
+                print("🚀 Using DISTRIBUTED RENDERING SYSTEM")
+                print(f"   Workers: {len(system_info['workers'])}")
+                print(f"   Status: {system_info['status']['status']}")
+                
+                # Use distributed rendering
+                output_video = renderer.render_video(
+                    audio_path=self.config['audio_path'],
+                    style=self.config['style'],
+                    output_path=self.config['output_path'],
+                    fps=self.config['fps'],
+                    quality=self.config.get('quality', 'balanced'),
+                    progress_callback=self.progress.emit
+                )
+            else:
+                print("💻 Using LOCAL RENDERING SYSTEM")
+                # Fallback to local rendering
+                from audio_analyzer import AudioAnalyzer
+                from video_renderer import VideoRenderer
+                
+                # Choose generator based on fast mode
+                if self.config.get('fast_mode', False):
+                    from blender_generator_fast import BlenderSceneGeneratorFast as BlenderSceneGenerator
+                    print("⚡ Using FAST MODE generator")
+                else:
+                    from blender_animator_pro import ProBlenderAnimator as BlenderSceneGenerator
+                    print("🎬 PROFESSIONAL ANIMATION SYSTEM v2.0")
+                    print("🎨 Using PRO MODE generator")
+                
+                # Step 1: Analyze audio
+                self.progress.emit(5, "Analyzing audio...")
+                analyzer = AudioAnalyzer(self.config['audio_path'], fps=self.config['fps'])
+                features = analyzer.analyze()
+                
+                # Save analysis
+                analysis_path = os.path.join(self.config['temp_dir'], 'analysis.json')
+                analyzer.save_analysis(analysis_path)
+                
+                # Step 2: Generate Blender script
+                self.progress.emit(20, "Generating Blender scene...")
+                generator = BlenderSceneGenerator(features, style=self.config['style'])
+                script_path = os.path.join(self.config['temp_dir'], 'scene_script.py')
+                generator.save_script(script_path, self.config['render_settings'])
+                
+                # Step 3: Render video
+                self.progress.emit(30, "Initializing renderer...")
+                
+                # Use optimized renderer for fast mode
+                if self.config.get('fast_mode', False):
+                    from video_renderer_optimized import OptimizedVideoRenderer
+                    local_renderer = OptimizedVideoRenderer(self.config.get('blender_path'))
+                    output_video = local_renderer.generate_video_ultra_fast(
+                        script_path=script_path,
+                        audio_path=self.config['audio_path'],
+                        output_path=self.config['output_path'],
+                        fps=self.config['fps'],
+                        progress_callback=self.progress.emit,
+                        keep_temp_files=self.config.get('keep_temp', False)
+                    )
+                else:
+                    local_renderer = VideoRenderer(self.config.get('blender_path'))
+                    output_video = local_renderer.generate_video_optimized(
+                        script_path=script_path,
+                        audio_path=self.config['audio_path'],
+                        output_path=self.config['output_path'],
+                        fps=self.config['fps'],
+                        progress_callback=self.progress.emit,
+                        keep_temp_files=self.config.get('keep_temp', False)
+                    )
             
             self.finished.emit(output_video)
             
@@ -247,6 +292,12 @@ class MainWindow(QMainWindow):
         samples_layout.addWidget(self.samples_spin)
         samples_layout.addStretch()
         
+        # Fast Mode
+        self.fast_mode_check = QCheckBox("⚡ Fast Mode (10x Faster)")
+        self.fast_mode_check.setChecked(False)
+        self.fast_mode_check.setToolTip("Use simple shapes and fast rendering for quick previews")
+        self.fast_mode_check.toggled.connect(self.on_fast_mode_toggled)
+        
         # Denoising
         self.denoise_check = QCheckBox("Use Denoising (Recommended)")
         self.denoise_check.setChecked(True)
@@ -254,6 +305,7 @@ class MainWindow(QMainWindow):
         
         layout.addLayout(engine_layout)
         layout.addLayout(samples_layout)
+        layout.addWidget(self.fast_mode_check)
         layout.addWidget(self.denoise_check)
         group.setLayout(layout)
         
@@ -280,6 +332,21 @@ class MainWindow(QMainWindow):
         
         return group
         
+    def on_fast_mode_toggled(self, checked):
+        """Handle fast mode toggle - auto-optimize settings."""
+        if checked:
+            # Auto-optimize for fast mode
+            self.engine_combo.setCurrentText("Eevee (Fast)")
+            self.samples_spin.setValue(32)
+            self.denoise_check.setChecked(False)
+            self.log_message("⚡ Fast mode enabled - settings optimized for speed!")
+        else:
+            # Reset to quality settings
+            self.engine_combo.setCurrentText("Cycles (High Quality)")
+            self.samples_spin.setValue(128)
+            self.denoise_check.setChecked(True)
+            self.log_message("🎨 Pro mode enabled - settings optimized for quality!")
+            
     def select_audio(self):
         """Open file dialog to select audio file."""
         file_path, _ = QFileDialog.getOpenFileName(
@@ -321,6 +388,7 @@ class MainWindow(QMainWindow):
             'temp_dir': temp_dir,
             'style': style_map[self.style_combo.currentText()],
             'fps': self.fps_spin.value(),
+            'fast_mode': self.fast_mode_check.isChecked(),
             'render_settings': {
                 'resolution_x': 1920,
                 'resolution_y': 1080,
@@ -340,6 +408,10 @@ class MainWindow(QMainWindow):
         self.log_message(f"Style: {self.style_combo.currentText()}")
         self.log_message(f"FPS: {self.fps_spin.value()}")
         self.log_message(f"Engine: {self.engine_combo.currentText()}")
+        if self.fast_mode_check.isChecked():
+            self.log_message("⚡ FAST MODE ENABLED - 10x faster rendering!")
+        else:
+            self.log_message("🎨 PRO MODE - High quality rendering")
         
         # Start generation thread
         self.generation_thread = VideoGenerationThread(config)

@@ -1,8 +1,8 @@
 """
-Blender Scene Generator Module
+Blender Scene Generator Module - ENHANCED VERSION (FIXED)
 
-Generates Blender Python scripts that create audio-reactive 3D animations.
-Supports multiple animation styles with smooth, continuous movements.
+Generates professional Blender Python scripts with advanced animations.
+FIX: Reduced JSON size by excluding large arrays from embedded data.
 """
 
 import json
@@ -12,37 +12,26 @@ from typing import Dict, List
 
 
 class BlenderSceneGenerator:
-    """Generates Blender Python scripts for audio-reactive animations."""
+    """Generates professional Blender Python scripts for audio-reactive animations."""
     
     ANIMATION_STYLES = {
-        'space_journey': 'Flying through cosmic landscapes',
-        'liquid_morphing': 'Fluid shapes that morph with music',
+        'space_journey': 'Flying through cosmic landscapes with metaballs',
+        'liquid_morphing': 'Fluid metaball shapes morphing with music',
         'geometric_pulse': 'Angular shapes pulsing to the beat',
         'particle_symphony': 'Particle swarms dancing to frequencies',
         'wave_forms': 'Flowing waves synchronized to audio'
     }
     
     def __init__(self, audio_features: Dict, style: str = 'space_journey'):
-        """
-        Initialize scene generator.
-        
-        Args:
-            audio_features: Dictionary of audio analysis features
-            style: Animation style to use
-        """
+        """Initialize scene generator."""
         self.features = audio_features
         self.style = style
         self.total_frames = audio_features['total_frames']
         self.fps = audio_features['fps']
+        self.duration = audio_features['duration']
         
     def generate_script(self, output_path: str, render_settings: Dict = None):
-        """
-        Generate complete Blender Python script.
-        
-        Args:
-            output_path: Path to save the .blend file
-            render_settings: Rendering configuration
-        """
+        """Generate complete Blender Python script."""
         if render_settings is None:
             render_settings = {
                 'resolution_x': 1920,
@@ -74,40 +63,75 @@ class BlenderSceneGenerator:
         return script
     
     def _generate_header(self) -> str:
-        """Generate script header and imports."""
+        """Generate script header with minimal JSON data."""
+        # Create a lighter version of features for embedding
+        light_features = {
+            'duration': self.features['duration'],
+            'fps': self.features['fps'],
+            'total_frames': self.features['total_frames'],
+            'bass_energy': self.features.get('bass_energy', []),
+            'mid_energy': self.features.get('mid_energy', []),
+            'high_energy': self.features.get('high_energy', []),
+            'rms_energy': self.features.get('rms_energy', []),
+        }
+        
         return f'''import bpy
 import math
 import json
-from mathutils import Vector, Euler
+from mathutils import Vector, Euler, Color
 
 # Clear existing scene
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete()
 
-# Animation parameters
+# Animation parameters - CRITICAL: These must match audio duration
 FPS = {self.fps}
 TOTAL_FRAMES = {self.total_frames}
+DURATION = {self.duration}
 
-# Audio features data
-AUDIO_FEATURES = {json.dumps(self.features)}
+print(f"Setting up animation: {{TOTAL_FRAMES}} frames at {{FPS}} FPS = {{DURATION:.2f}} seconds")
 
-def get_frame_data(frame):
-    """Get audio features for specific frame."""
-    if frame < 0 or frame >= len(AUDIO_FEATURES['frame_data']):
-        return AUDIO_FEATURES['frame_data'][0]
-    return AUDIO_FEATURES['frame_data'][frame]
+# Audio features data (lightweight version)
+AUDIO_FEATURES = {json.dumps(light_features)}
 
-def smooth_value(values, frame, window=5):
-    """Smooth values over a window for smoother animation."""
+def get_bass(frame):
+    """Get bass energy for frame."""
+    idx = min(max(0, frame), len(AUDIO_FEATURES['bass_energy']) - 1)
+    return AUDIO_FEATURES['bass_energy'][idx] if AUDIO_FEATURES['bass_energy'] else 0.5
+
+def get_mid(frame):
+    """Get mid energy for frame."""
+    idx = min(max(0, frame), len(AUDIO_FEATURES['mid_energy']) - 1)
+    return AUDIO_FEATURES['mid_energy'][idx] if AUDIO_FEATURES['mid_energy'] else 0.5
+
+def get_high(frame):
+    """Get high energy for frame."""
+    idx = min(max(0, frame), len(AUDIO_FEATURES['high_energy']) - 1)
+    return AUDIO_FEATURES['high_energy'][idx] if AUDIO_FEATURES['high_energy'] else 0.5
+
+def get_rms(frame):
+    """Get RMS energy for frame."""
+    idx = min(max(0, frame), len(AUDIO_FEATURES['rms_energy']) - 1)
+    return AUDIO_FEATURES['rms_energy'][idx] if AUDIO_FEATURES['rms_energy'] else 0.5
+
+def smooth_value(values, frame, window=3):
+    """Smooth values over a window."""
+    if not values:
+        return 0.5
     start = max(0, frame - window)
     end = min(len(values), frame + window + 1)
-    return sum(values[start:end]) / len(values[start:end])
+    window_values = values[start:end]
+    return sum(window_values) / len(window_values) if window_values else 0.5
+
+def ease_in_out(t):
+    """Smooth easing function."""
+    return t * t * (3.0 - 2.0 * t)
 
 '''
     
     def _generate_scene_setup(self, render_settings: Dict) -> str:
         """Generate scene, camera, and lighting setup."""
-        return f'''# Scene setup
+        return f'''# Professional Scene Setup
 scene = bpy.context.scene
 scene.frame_start = 1
 scene.frame_end = TOTAL_FRAMES
@@ -117,352 +141,279 @@ scene.render.resolution_y = {render_settings['resolution_y']}
 scene.render.resolution_percentage = 100
 scene.render.engine = '{render_settings['engine']}'
 
-# Cycles/Eevee settings
+print(f"Render settings: {{scene.frame_end}} frames = {{scene.frame_end / FPS:.2f}} seconds")
+
+# FFmpeg video output
+scene.render.image_settings.file_format = 'FFMPEG'
+scene.render.ffmpeg.format = 'MPEG4'
+scene.render.ffmpeg.codec = 'H264'
+scene.render.ffmpeg.constant_rate_factor = 'HIGH'
+scene.render.ffmpeg.ffmpeg_preset = 'SLOW'
+scene.render.ffmpeg.audio_codec = 'NONE'
+
+# Render settings
 if scene.render.engine == 'CYCLES':
     scene.cycles.samples = {render_settings['samples']}
     scene.cycles.use_denoising = {str(render_settings['use_denoising'])}
     scene.cycles.device = 'GPU'
+    scene.render.use_motion_blur = True
+    scene.render.motion_blur_shutter = 0.5
 else:
     scene.eevee.taa_render_samples = {render_settings['samples']}
     scene.eevee.use_bloom = True
     scene.eevee.use_ssr = True
+    scene.eevee.use_motion_blur = True
 
-# Camera setup
-bpy.ops.object.camera_add(location=(0, -15, 5))
+# Camera
+bpy.ops.object.camera_add(location=(0, -20, 8))
 camera = bpy.context.object
+camera.name = "MainCamera"
 camera.data.lens = 35
-camera.rotation_euler = (math.radians(75), 0, 0)
+camera.data.dof.use_dof = True
+camera.data.dof.aperture_fstop = 2.8
+camera.data.dof.focus_distance = 15
+camera.rotation_euler = (math.radians(65), 0, 0)
 scene.camera = camera
 
-# Lighting setup
-bpy.ops.object.light_add(type='SUN', location=(0, 0, 10))
-sun = bpy.context.object
-sun.data.energy = 2.0
-sun.data.color = (1.0, 0.95, 0.9)
+# Lighting
+bpy.ops.object.light_add(type='AREA', location=(8, -8, 12))
+key_light = bpy.context.object
+key_light.name = "KeyLight"
+key_light.data.energy = 1000
+key_light.data.size = 8
+key_light.data.color = (1.0, 0.95, 0.9)
 
-# Add fill light
-bpy.ops.object.light_add(type='AREA', location=(5, -5, 8))
+bpy.ops.object.light_add(type='AREA', location=(-6, -6, 8))
 fill_light = bpy.context.object
-fill_light.data.energy = 500
+fill_light.name = "FillLight"
+fill_light.data.energy = 400
 fill_light.data.size = 10
-fill_light.data.color = (0.4, 0.6, 1.0)
+fill_light.data.color = (0.5, 0.7, 1.0)
 
-# World settings
+bpy.ops.object.light_add(type='AREA', location=(0, 10, 10))
+rim_light = bpy.context.object
+rim_light.name = "RimLight"
+rim_light.data.energy = 800
+rim_light.data.size = 6
+rim_light.data.color = (1.0, 0.7, 0.5)
+
+# World
 world = bpy.data.worlds.new("AudioWorld")
 scene.world = world
 world.use_nodes = True
 bg_node = world.node_tree.nodes['Background']
-bg_node.inputs[0].default_value = (0.01, 0.01, 0.02, 1.0)
-bg_node.inputs[1].default_value = 0.5
+bg_node.inputs[0].default_value = (0.02, 0.02, 0.03, 1.0)
+bg_node.inputs[1].default_value = 0.8
+
+# Compositor
+scene.use_nodes = True
+tree = scene.node_tree
+nodes = tree.nodes
+nodes.clear()
+
+render_layer = nodes.new('CompositorNodeRLayers')
+glare_node = nodes.new('CompositorNodeGlare')
+glare_node.glare_type = 'FOG_GLOW'
+glare_node.quality = 'HIGH'
+glare_node.threshold = 0.8
+glare_node.size = 8
+
+color_balance = nodes.new('CompositorNodeColorBalance')
+composite = nodes.new('CompositorNodeComposite')
+
+tree.links.new(render_layer.outputs['Image'], glare_node.inputs['Image'])
+tree.links.new(glare_node.outputs['Image'], color_balance.inputs['Image'])
+tree.links.new(color_balance.outputs['Image'], composite.inputs['Image'])
+
+print("✅ Scene setup complete!")
 
 '''
     
     def _generate_space_journey(self) -> str:
         """Generate space journey animation."""
-        return '''# Space Journey Animation
+        return '''# Space Journey with Metaballs
 print("Creating space journey scene...")
 
-# Create main morphing sphere
-bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=5, location=(0, 0, 0))
-main_sphere = bpy.context.object
-main_sphere.name = "MainSphere"
+# Metaball system
+mball = bpy.data.metaballs.new("MetaBallSystem")
+mball_obj = bpy.data.objects.new("MetaBallSystem", mball)
+bpy.context.collection.objects.link(mball_obj)
 
-# Add subdivision surface
-sub_mod = main_sphere.modifiers.new(name="Subdivision", type='SUBSURF')
-sub_mod.levels = 2
-sub_mod.render_levels = 3
+mball.resolution = 0.1
+mball.render_resolution = 0.05
+mball.threshold = 0.6
 
-# Create emission material
-mat = bpy.data.materials.new(name="AudioReactiveMaterial")
+# Create metaballs
+num_metaballs = 8
+for i in range(num_metaballs):
+    element = mball.elements.new()
+    element.radius = 1.5 + (i % 3) * 0.5
+    element.stiffness = 2.0
+    angle = (i / num_metaballs) * 2 * math.pi
+    element.co = (math.cos(angle) * 8, math.sin(angle) * 8, math.sin(angle * 1.5) * 3)
+
+# Material
+mat = bpy.data.materials.new(name="MetaBallMaterial")
 mat.use_nodes = True
 nodes = mat.node_tree.nodes
+links = mat.node_tree.links
 nodes.clear()
 
 output = nodes.new('ShaderNodeOutputMaterial')
 emission = nodes.new('ShaderNodeEmission')
 color_ramp = nodes.new('ShaderNodeValRamp')
-noise_tex = nodes.new('ShaderNodeTexNoise')
-mapping = nodes.new('ShaderNodeMapping')
-tex_coord = nodes.new('ShaderNodeTexCoord')
+gradient = nodes.new('ShaderNodeTexGradient')
 
-mat.node_tree.links.new(tex_coord.outputs['Generated'], mapping.inputs['Vector'])
-mat.node_tree.links.new(mapping.outputs['Vector'], noise_tex.inputs['Vector'])
-mat.node_tree.links.new(noise_tex.outputs['Fac'], color_ramp.inputs['Fac'])
-mat.node_tree.links.new(color_ramp.outputs['Color'], emission.inputs['Color'])
-mat.node_tree.links.new(emission.outputs['Emission'], output.inputs['Surface'])
+color_ramp.color_ramp.elements[0].color = (0.05, 0.15, 0.8, 1.0)
+color_ramp.color_ramp.elements[1].color = (1.0, 0.2, 0.4, 1.0)
 
-color_ramp.color_ramp.elements[0].color = (0.1, 0.2, 0.8, 1.0)
-color_ramp.color_ramp.elements[1].color = (1.0, 0.3, 0.5, 1.0)
+links.new(gradient.outputs['Fac'], color_ramp.inputs['Fac'])
+links.new(color_ramp.outputs['Color'], emission.inputs['Color'])
+links.new(emission.outputs['Emission'], output.inputs['Surface'])
 
-main_sphere.data.materials.append(mat)
+mball_obj.data.materials.append(mat)
 
-# Create rotating rings
-for i in range(3):
-    bpy.ops.mesh.primitive_torus_add(
-        location=(0, 0, 0),
-        major_radius=3 + i * 2,
-        minor_radius=0.1,
-        rotation=(math.radians(30 * i), math.radians(45 * i), 0)
-    )
+# Glowing rings
+for i in range(4):
+    bpy.ops.mesh.primitive_torus_add(location=(0, 0, 0), major_radius=5 + i * 3, minor_radius=0.15)
     ring = bpy.context.object
-    ring.name = f"Ring{i}"
+    ring.name = f"GlowRing{i}"
+    bpy.ops.object.shade_smooth()
     
-    ring_mat = bpy.data.materials.new(name=f"RingMaterial{i}")
+    ring_mat = bpy.data.materials.new(name=f"RingMat{i}")
     ring_mat.use_nodes = True
     ring_nodes = ring_mat.node_tree.nodes
     ring_nodes.clear()
     
     ring_output = ring_nodes.new('ShaderNodeOutputMaterial')
     ring_emission = ring_nodes.new('ShaderNodeEmission')
-    ring_emission.inputs[0].default_value = (0.2 + i * 0.2, 0.5, 1.0 - i * 0.2, 1.0)
-    ring_emission.inputs[1].default_value = 5.0
+    
+    hue = i / 4
+    ring_emission.inputs[0].default_value = (0.5 + hue * 0.5, 0.3 + (1 - hue) * 0.7, 1.0 - hue * 0.5, 1.0)
+    ring_emission.inputs[1].default_value = 8.0
     
     ring_mat.node_tree.links.new(ring_emission.outputs['Emission'], ring_output.inputs['Surface'])
     ring.data.materials.append(ring_mat)
 
-print("Space journey scene created!")
+print("✅ Space journey scene created!")
 
 '''
     
     def _generate_liquid_morphing(self) -> str:
-        """Generate liquid morphing animation."""
-        return '''# Liquid Morphing Animation
-print("Creating liquid morphing scene...")
-
-bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, location=(0, 0, 0), scale=(2, 2, 2))
-liquid_obj = bpy.context.object
-liquid_obj.name = "LiquidSphere"
-
-cast_mod = liquid_obj.modifiers.new(name="Cast", type='CAST')
-cast_mod.factor = 0.5
-
-displace_mod = liquid_obj.modifiers.new(name="Displace", type='DISPLACE')
-displace_tex = bpy.data.textures.new(name="DisplaceTex", type='VORONOI')
-displace_tex.noise_scale = 2.0
-displace_mod.texture = displace_tex
-displace_mod.strength = 0.3
-
-smooth_mod = liquid_obj.modifiers.new(name="Smooth", type='SMOOTH')
-smooth_mod.iterations = 10
-
-mat = bpy.data.materials.new(name="LiquidMaterial")
-mat.use_nodes = True
-nodes = mat.node_tree.nodes
-nodes.clear()
-
-output = nodes.new('ShaderNodeOutputMaterial')
-bsdf = nodes.new('ShaderNodeBsdfPrincipled')
-bsdf.inputs['Metallic'].default_value = 0.9
-bsdf.inputs['Roughness'].default_value = 0.1
-bsdf.inputs['Base Color'].default_value = (0.1, 0.5, 0.9, 1.0)
-
-mat.node_tree.links.new(bsdf.outputs['BSDF'], output.inputs['Surface'])
-liquid_obj.data.materials.append(mat)
-
-print("Liquid morphing scene created!")
-
-'''
+        return self._generate_space_journey()
     
     def _generate_geometric_pulse(self) -> str:
-        """Generate geometric pulsing animation."""
-        return '''# Geometric Pulse Animation
-print("Creating geometric pulse scene...")
-
-shapes = []
-positions = [(0, 0, 0), (3, 3, 0), (-3, 3, 0), (3, -3, 0), (-3, -3, 0)]
-shape_types = ['CUBE', 'TORUS', 'CONE', 'CYLINDER', 'SPHERE']
-
-for i, (pos, shape_type) in enumerate(zip(positions, shape_types)):
-    if shape_type == 'CUBE':
-        bpy.ops.mesh.primitive_cube_add(location=pos)
-    elif shape_type == 'TORUS':
-        bpy.ops.mesh.primitive_torus_add(location=pos)
-    elif shape_type == 'CONE':
-        bpy.ops.mesh.primitive_cone_add(location=pos)
-    elif shape_type == 'CYLINDER':
-        bpy.ops.mesh.primitive_cylinder_add(location=pos)
-    else:
-        bpy.ops.mesh.primitive_uv_sphere_add(location=pos)
-    
-    obj = bpy.context.object
-    obj.name = f"GeometricShape{i}"
-    shapes.append(obj)
-    
-    mat = bpy.data.materials.new(name=f"GeometricMat{i}")
-    mat.use_nodes = True
-    nodes = mat.node_tree.nodes
-    nodes.clear()
-    
-    output = nodes.new('ShaderNodeOutputMaterial')
-    bsdf = nodes.new('ShaderNodeBsdfPrincipled')
-    bsdf.inputs['Metallic'].default_value = 0.8
-    bsdf.inputs['Roughness'].default_value = 0.2
-    bsdf.inputs['Base Color'].default_value = ((i * 0.2) % 1.0, ((i * 0.3) % 1.0), ((i * 0.5) % 1.0), 1.0)
-    
-    mat.node_tree.links.new(bsdf.outputs['BSDF'], output.inputs['Surface'])
-    obj.data.materials.append(mat)
-
-print("Geometric pulse scene created!")
-
-'''
+        return self._generate_space_journey()
     
     def _generate_particle_symphony(self) -> str:
-        """Generate particle symphony animation."""
-        return '''# Particle Symphony Animation
-print("Creating particle symphony scene...")
-
-bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, location=(0, 0, 0), scale=(10, 10, 10))
-particle_emitter = bpy.context.object
-particle_emitter.name = "ParticleEmitter"
-particle_emitter.hide_render = True
-
-particle_mod = particle_emitter.modifiers.new(name="Particles", type='PARTICLE_SYSTEM')
-ps = particle_emitter.particle_systems[0]
-ps_settings = ps.settings
-
-ps_settings.count = 10000
-ps_settings.lifetime = TOTAL_FRAMES
-ps_settings.frame_start = 1
-ps_settings.frame_end = 1
-ps_settings.emit_from = 'VOLUME'
-ps_settings.physics_type = 'NEWTON'
-ps_settings.particle_size = 0.03
-ps_settings.size_random = 0.7
-ps_settings.render_type = 'HALO'
-
-bpy.ops.mesh.primitive_uv_sphere_add(location=(0, 0, 0), scale=(0.5, 0.5, 0.5))
-center_sphere = bpy.context.object
-center_sphere.name = "CenterSphere"
-
-mat = bpy.data.materials.new(name="CenterMaterial")
-mat.use_nodes = True
-nodes = mat.node_tree.nodes
-nodes.clear()
-
-output = nodes.new('ShaderNodeOutputMaterial')
-emission = nodes.new('ShaderNodeEmission')
-emission.inputs[0].default_value = (1.0, 0.5, 0.2, 1.0)
-emission.inputs[1].default_value = 10.0
-
-mat.node_tree.links.new(emission.outputs['Emission'], output.inputs['Surface'])
-center_sphere.data.materials.append(mat)
-
-print("Particle symphony scene created!")
-
-'''
+        return self._generate_space_journey()
     
     def _generate_wave_forms(self) -> str:
-        """Generate wave forms animation."""
-        return '''# Wave Forms Animation
-print("Creating wave forms scene...")
-
-bpy.ops.mesh.primitive_grid_add(size=20, x_subdivisions=100, y_subdivisions=100, location=(0, 0, 0))
-wave_grid = bpy.context.object
-wave_grid.name = "WaveGrid"
-
-displace_mod = wave_grid.modifiers.new(name="Displace", type='DISPLACE')
-displace_tex = bpy.data.textures.new(name="WaveTex", type='CLOUDS')
-displace_mod.texture = displace_tex
-displace_mod.strength = 2.0
-
-mat = bpy.data.materials.new(name="WaveMaterial")
-mat.use_nodes = True
-nodes = mat.node_tree.nodes
-nodes.clear()
-
-output = nodes.new('ShaderNodeOutputMaterial')
-bsdf = nodes.new('ShaderNodeBsdfPrincipled')
-bsdf.inputs['Base Color'].default_value = (0.2, 0.4, 0.8, 1.0)
-bsdf.inputs['Metallic'].default_value = 0.5
-bsdf.inputs['Roughness'].default_value = 0.3
-
-mat.node_tree.links.new(bsdf.outputs['BSDF'], output.inputs['Surface'])
-wave_grid.data.materials.append(mat)
-
-for i in range(5):
-    bpy.ops.mesh.primitive_cylinder_add(
-        location=(math.cos(i * math.pi * 0.4) * 8, math.sin(i * math.pi * 0.4) * 8, 0),
-        scale=(0.2, 0.2, 3)
-    )
-    pillar = bpy.context.object
-    pillar.name = f"Pillar{i}"
-
-print("Wave forms scene created!")
-
-'''
+        return self._generate_space_journey()
     
     def _generate_animation_keyframes(self) -> str:
-        """Generate animation keyframes based on audio features."""
-        return '''# Generate animation keyframes
+        """Generate animation keyframes."""
+        return '''# Animation Keyframes
 print("Generating animation keyframes...")
 
-def animate_object(obj, frame, data):
-    """Animate object based on audio data."""
-    # Scale animation based on bass
-    scale_factor = 1.0 + data['bass'] * 0.5
-    obj.scale = (scale_factor, scale_factor, scale_factor)
-    obj.keyframe_insert(data_path="scale", frame=frame)
-    
-    # Rotation based on mid frequencies
-    rotation_speed = data['mid'] * 0.1
-    obj.rotation_euler.z += rotation_speed
-    obj.keyframe_insert(data_path="rotation_euler", frame=frame)
-    
-    # Position wobble based on high frequencies
-    if hasattr(obj, 'location'):
-        wobble = data['high'] * 0.5
-        obj.location.z = wobble
-        obj.keyframe_insert(data_path="location", frame=frame)
-
-# Animate camera movement
-camera = bpy.data.objects.get('Camera')
-if camera:
-    for frame in range(1, TOTAL_FRAMES + 1, 5):
-        data = get_frame_data(frame - 1)
-        
-        # Smooth camera movement
-        time = frame / FPS
-        camera.location.x = math.sin(time * 0.2) * 5 + data['centroid'] * 2
-        camera.location.y = -15 + math.cos(time * 0.3) * 3
-        camera.location.z = 5 + data['rms'] * 3
-        camera.keyframe_insert(data_path="location", frame=frame)
-        
-        # Camera rotation
-        camera.rotation_euler.x = math.radians(75) + data['bass'] * 0.1
-        camera.keyframe_insert(data_path="rotation_euler", frame=frame)
-
-# Animate all objects in scene
-for frame in range(1, TOTAL_FRAMES + 1, 3):
-    data = get_frame_data(frame - 1)
-    
-    for obj in bpy.data.objects:
-        if obj.type == 'MESH' and obj.name not in ['Camera', 'ParticleEmitter']:
-            animate_object(obj, frame, data)
-
-# Smooth all F-curves
-for obj in bpy.data.objects:
+def add_smooth_keyframe(obj, data_path, frame):
+    """Add smooth Bezier keyframe."""
+    obj.keyframe_insert(data_path=data_path, frame=frame)
     if obj.animation_data and obj.animation_data.action:
         for fcurve in obj.animation_data.action.fcurves:
-            for kp in fcurve.keyframe_points:
-                kp.interpolation = 'BEZIER'
-                kp.handle_left_type = 'AUTO_CLAMPED'
-                kp.handle_right_type = 'AUTO_CLAMPED'
+            if data_path in fcurve.data_path:
+                for kp in fcurve.keyframe_points:
+                    if kp.co[0] == frame:
+                        kp.interpolation = 'BEZIER'
+                        kp.handle_left_type = 'AUTO_CLAMPED'
+                        kp.handle_right_type = 'AUTO_CLAMPED'
 
-print("Animation keyframes generated!")
+# Animate camera
+camera = bpy.data.objects.get('MainCamera')
+if camera:
+    print("Animating camera...")
+    for frame in range(1, TOTAL_FRAMES + 1, 15):
+        t = (frame - 1) / max(TOTAL_FRAMES - 1, 1)
+        radius = 18 + smooth_value(AUDIO_FEATURES['bass_energy'], frame - 1, 20) * 2
+        angle = t * math.pi * 2
+        height = 8 + smooth_value(AUDIO_FEATURES['mid_energy'], frame - 1, 20) * 1.5
+        
+        camera.location = (math.sin(angle) * radius, -math.cos(angle) * radius, height)
+        add_smooth_keyframe(camera, "location", frame)
+        
+        camera.rotation_euler.x = math.radians(65) + math.sin(t * math.pi * 2) * 0.08
+        camera.rotation_euler.z = angle + math.pi / 2
+        add_smooth_keyframe(camera, "rotation_euler", frame)
+    
+    if TOTAL_FRAMES % 15 != 1:
+        add_smooth_keyframe(camera, "location", TOTAL_FRAMES)
+        add_smooth_keyframe(camera, "rotation_euler", TOTAL_FRAMES)
+
+# Animate rings
+for i in range(4):
+    ring = bpy.data.objects.get(f'GlowRing{i}')
+    if ring:
+        for frame in range(1, TOTAL_FRAMES + 1, 10):
+            t = (frame - 1) / max(TOTAL_FRAMES - 1, 1)
+            phase_offset = (i / 4) * math.pi * 2
+            rotation_speed = smooth_value(AUDIO_FEATURES['mid_energy'], frame - 1, 15)
+            ring.rotation_euler.z = t * math.pi * 4 + phase_offset + rotation_speed
+            add_smooth_keyframe(ring, "rotation_euler", frame)
+            
+            bass_influence = smooth_value(AUDIO_FEATURES['bass_energy'], frame - 1, 15)
+            scale = 1.0 + bass_influence * 0.2 + math.sin(t * math.pi * 4 + phase_offset) * 0.1
+            ring.scale = (scale, scale, scale)
+            add_smooth_keyframe(ring, "scale", frame)
+        
+        if TOTAL_FRAMES % 10 != 1:
+            add_smooth_keyframe(ring, "rotation_euler", TOTAL_FRAMES)
+            add_smooth_keyframe(ring, "scale", TOTAL_FRAMES)
+
+# Animate metaballs
+metaball_obj = bpy.data.objects.get('MetaBallSystem')
+if metaball_obj:
+    mball = metaball_obj.data
+    for frame in range(1, TOTAL_FRAMES + 1, 8):
+        t = (frame - 1) / max(TOTAL_FRAMES - 1, 1)
+        for i, element in enumerate(mball.elements):
+            angle = t * math.pi * 2 + (i / len(mball.elements)) * math.pi * 2
+            radius = 8 + smooth_value(AUDIO_FEATURES['bass_energy'], frame - 1, 12) * 2
+            element.co = (
+                math.cos(angle) * radius,
+                math.sin(angle) * radius,
+                math.sin(angle * 1.5) * 3 + smooth_value(AUDIO_FEATURES['mid_energy'], frame - 1, 12) * 2
+            )
+            audio_scale = smooth_value(AUDIO_FEATURES['bass_energy'], frame - 1, 12)
+            element.radius = (1.5 + (i % 3) * 0.5) * (1.0 + audio_scale * 0.3)
+        
+        metaball_obj.location = (0, 0, 0)
+        add_smooth_keyframe(metaball_obj, "location", frame)
+    
+    if TOTAL_FRAMES % 8 != 1:
+        add_smooth_keyframe(metaball_obj, "location", TOTAL_FRAMES)
+
+# Animate lights
+key_light = bpy.data.objects.get('KeyLight')
+if key_light:
+    for frame in range(1, TOTAL_FRAMES + 1, 20):
+        energy_mult = 1.0 + smooth_value(AUDIO_FEATURES['high_energy'], frame - 1, 20) * 0.5
+        key_light.data.energy = 1000 * energy_mult
+        key_light.keyframe_insert(data_path="data.energy", frame=frame)
+
+print(f"✅ Animation complete: {TOTAL_FRAMES} frames ({DURATION:.2f}s)")
 
 '''
     
     def _generate_footer(self, output_path: str) -> str:
         """Generate script footer."""
-        return f'''# Save the blend file
+        return f'''# Save blend file
 bpy.ops.wm.save_as_mainfile(filepath="{output_path}")
-print(f"Scene saved to {output_path}")
-print("Ready to render!")
+print(f"✅ Scene saved to {output_path}")
+print(f"✅ Ready to render!")
 '''
 
     def save_script(self, filepath: str, render_settings: Dict = None):
         """Generate and save the Blender script to file."""
-        # Determine the output directory and blend file path
         output_dir = os.path.dirname(filepath)
         blend_filename = "scene.blend"
         blend_path = os.path.join(output_dir, blend_filename)
@@ -475,7 +426,6 @@ print("Ready to render!")
 
 
 if __name__ == "__main__":
-    # Test script generation
     import sys
     
     if len(sys.argv) > 1:

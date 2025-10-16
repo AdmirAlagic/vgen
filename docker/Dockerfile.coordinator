@@ -1,0 +1,45 @@
+# Render Coordinator Container
+FROM python:3.11-slim
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+RUN pip install --upgrade pip
+RUN pip install \
+    redis \
+    flask \
+    gunicorn \
+    requests \
+    numpy \
+    scipy \
+    concurrent-futures \
+    threading \
+    asyncio
+
+# Create working directory
+WORKDIR /app
+
+# Copy coordinator scripts
+COPY render_coordinator.py /app/
+COPY requirements.txt /app/
+
+# Create directories
+RUN mkdir -p /app/input /app/output /app/temp
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Default command
+CMD ["python3", "/app/render_coordinator.py"]

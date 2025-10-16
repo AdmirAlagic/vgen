@@ -1,0 +1,104 @@
+# GPU-Accelerated Blender Container
+FROM nvidia/cuda:12.0-devel-ubuntu22.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV BLENDER_SYSTEM_SCRIPTS=/opt/blender/scripts
+ENV CUDA_VISIBLE_DEVICES=0
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility,graphics
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    python3 \
+    python3-pip \
+    python3-dev \
+    ffmpeg \
+    libgl1-mesa-glx \
+    libglu1-mesa \
+    libxi6 \
+    libxrender1 \
+    libxrandr2 \
+    libxss1 \
+    libxcursor1 \
+    libxcomposite1 \
+    libasound2 \
+    libxdamage1 \
+    libxfixes3 \
+    libxext6 \
+    libx11-6 \
+    libxau6 \
+    libxdmcp6 \
+    libxcb1 \
+    libxcb-dri2-0 \
+    libxcb-dri3-0 \
+    libxcb-present0 \
+    libxcb-sync1 \
+    libxcb-xfixes0 \
+    libxcb-xrandr0 \
+    libxcb-render-util0 \
+    libxcb-render0 \
+    libxcb-shape0 \
+    libxcb-keysyms1 \
+    libxcb-image0 \
+    libxcb-util1 \
+    libxcb-icccm4 \
+    libxcb-xkb1 \
+    libxcb-shm0 \
+    libxcb-xinerama0 \
+    libxcb-xinput0 \
+    libxcb-xkb1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install Blender 4.0 with GPU support
+RUN wget https://download.blender.org/release/Blender4.0/blender-4.0.2-linux-x64.tar.xz && \
+    tar -xf blender-4.0.2-linux-x64.tar.xz && \
+    mv blender-4.0.2-linux-x64 /opt/blender && \
+    rm blender-4.0.2-linux-x64.tar.xz
+
+# Add Blender to PATH
+ENV PATH="/opt/blender:${PATH}"
+
+# Create working directory
+WORKDIR /app
+
+# Install Python dependencies for Blender
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install \
+    numpy \
+    scipy \
+    pillow \
+    requests \
+    flask \
+    gunicorn
+
+# Create Blender addon directory
+RUN mkdir -p /opt/blender/scripts/addons
+
+# Copy custom Blender scripts
+COPY blender_scripts/ /opt/blender/scripts/
+COPY requirements.txt /app/
+
+# Install additional requirements
+RUN pip3 install -r requirements.txt
+
+# Create render directories
+RUN mkdir -p /app/input /app/output /app/temp
+
+# Copy the main render script
+COPY render_worker.py /app/
+
+# Make render script executable
+RUN chmod +x /app/render_worker.py
+
+# Expose port for communication
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python3 -c "import bpy; print('Blender GPU container healthy')" || exit 1
+
+# Default command
+CMD ["python3", "/app/render_worker.py"]
