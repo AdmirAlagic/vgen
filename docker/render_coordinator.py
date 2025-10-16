@@ -307,15 +307,15 @@ class DistributedRenderCoordinator:
             temp_dir.mkdir(parents=True, exist_ok=True)
             
             # Generate optimized Blender script
-            from src.blender_generator_ultra_fast import UltraFastBlenderGenerator
+            from src.blender_animator_advanced import AdvancedAnimator
             
-            generator = UltraFastBlenderGenerator(audio_features, style)
+            generator = AdvancedAnimator(audio_features, style)
             blend_path = temp_dir / "scene.blend"
             script_path = temp_dir / "scene.py"
             
             # Apply AI optimizations
             render_settings = optimization['optimized_parameters']
-            generator.save_optimized_script(str(script_path), str(blend_path), render_settings)
+            generator.save_script(str(script_path), render_settings, str(blend_path))
             
             return str(blend_path)
             

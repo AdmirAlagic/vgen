@@ -1,7 +1,0 @@
-Collecting scipy
-  Using cached scipy-1.16.2-cp314-cp314-macosx_14_0_arm64.whl.metadata (62 kB)
-Requirement already satisfied: numpy<2.6,>=1.25.2 in ./venv/lib/python3.14/site-packages (from scipy) (2.3.3)
-Downloading scipy-1.16.2-cp314-cp314-macosx_14_0_arm64.whl (20.9 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.9/20.9 MB 3.7 MB/s  0:00:05
-Installing collected packages: scipy
-Successfully installed scipy-1.16.2

@@ -211,25 +211,24 @@ class DistributedRenderer:
             return 60.0  # Default estimate
 
 
-class HybridRenderer:
-    """Hybrid renderer that uses distributed system when available, falls back to local."""
+class UnifiedRenderer:
+    """Unified renderer using single, reliable rendering system."""
     
     def __init__(self, coordinator_url: str = "http://localhost:8000"):
-        """Initialize hybrid renderer."""
+        """Initialize unified renderer."""
         self.distributed_renderer = DistributedRenderer(coordinator_url)
         self.use_distributed = self.distributed_renderer.is_distributed_system_available()
         
+        # Always use the same local renderer
+        from video_renderer import UltraVideoRenderer
+        from blender_animator_advanced import AdvancedAnimator
+        self.local_renderer = UltraVideoRenderer()
+        self.local_generator = AdvancedAnimator
+        
         if self.use_distributed:
             logger.info("🚀 Using distributed rendering system")
-            # Import local renderers as fallback
-            from video_renderer_optimized import OptimizedVideoRenderer
-            from blender_generator_fast import BlenderSceneGeneratorFast
-            self.local_renderer = OptimizedVideoRenderer()
-            self.local_generator = BlenderSceneGeneratorFast
         else:
             logger.info("💻 Using local rendering system")
-            self.local_renderer = None
-            self.local_generator = None
     
     def render_video(
         self,
@@ -240,7 +239,7 @@ class HybridRenderer:
         quality: str = 'balanced',
         progress_callback: Optional[Callable[[int, str], None]] = None
     ) -> str:
-        """Render video using the best available method."""
+        """Render video using unified system."""
         
         if self.use_distributed:
             try:
@@ -254,14 +253,9 @@ class HybridRenderer:
                     progress_callback=progress_callback
                 )
             except Exception as e:
-                logger.warning(f"⚠️ Distributed rendering failed, falling back to local: {e}")
-                self.use_distributed = False
+                logger.warning(f"⚠️ Distributed rendering failed, using local: {e}")
         
-        # Fallback to local rendering
-        if not self.local_renderer:
-            raise RuntimeError("No rendering system available")
-        
-        # Use local optimized renderer
+        # Use local unified renderer
         temp_dir = os.path.join(os.path.dirname(output_path), "temp")
         os.makedirs(temp_dir, exist_ok=True)
         
@@ -272,7 +266,8 @@ class HybridRenderer:
         
         generator = self.local_generator(features, style=style)
         script_path = os.path.join(temp_dir, 'scene_script.py')
-        generator.save_script(script_path)
+        blend_path = os.path.join(temp_dir, 'scene.blend')
+        generator.save_script(script_path, blend_path=blend_path)
         
         # Render video
         return self.local_renderer.generate_video_ultra_fast(
@@ -304,9 +299,9 @@ class HybridRenderer:
 
 
 # Convenience function for easy integration
-def get_best_renderer(coordinator_url: str = "http://localhost:8000") -> HybridRenderer:
-    """Get the best available renderer."""
-    return HybridRenderer(coordinator_url)
+def get_best_renderer(coordinator_url: str = "http://localhost:8000") -> UnifiedRenderer:
+    """Get the unified renderer."""
+    return UnifiedRenderer(coordinator_url)
 
 
 if __name__ == "__main__":

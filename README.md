@@ -1,377 +1,269 @@
-# 🎬 AudioBlender Video Generator
+# AudioBlender Video Generator
 
-## Professional Mac Application for Audio-Reactive 3D Video Generation
+A professional-grade audio-reactive 3D video generation system built with Python and Blender. Create stunning, high-quality animations that respond to audio input with advanced graphics, complex animations, and optimized rendering.
 
-A complete, production-ready macOS application that analyzes audio files and generates stunning synchronized 3D animations using Blender. Perfect for music videos, visualizers, social media content, and professional video production.
+## 🎯 Current Implementation
 
----
+### Core Features
+- **Advanced Audio Analysis**: Sophisticated frequency analysis with librosa integration and scipy fallback
+- **Professional Blender Integration**: Commercial-grade animation system with procedural graphics
+- **High-Quality Graphics**: Cycles/Eevee rendering with PBR materials, advanced lighting, and post-processing
+- **Complex Animations**: Multi-layer F-curve animations with smooth Bezier interpolation
+- **Optimized Rendering**: Hardware acceleration, GPU support, and ultra-fast modes
+- **Modern UI**: Professional PyQt6 interface with dark theme and real-time progress tracking
 
-## ✨ Features
-
-### 🎵 Advanced Audio Analysis
-- **FFT-based frequency analysis** (20 Hz - 20 kHz)
-- **Beat detection** with onset strength calculation
-- **Tempo analysis** and rhythm extraction
-- **Spectral features** (centroid, rolloff, contrast)
-- **Frame-accurate synchronization** at 24-120 fps
-
-### 🎨 Multiple Animation Styles
-
-1. **Space Journey** 🌌
-   - Morphing 3D spheres with procedural materials
-   - Rotating energy rings
-   - Dynamic particle systems
-   - Perfect for electronic/synthwave music
-
-2. **Liquid Morphing** 💧
-   - Fluid organic shapes
-   - Glossy metallic materials
-   - Smooth transitions
-   - Ideal for R&B/lo-fi/chill music
-
-3. **Geometric Pulse** 📐
-   - Sharp angular shapes
-   - Metallic materials
-   - Rhythmic movements
-   - Great for EDM/techno
-
-4. **Particle Symphony** ✨
-   - 10,000+ audio-reactive particles
-   - Complex swarm behaviors
-   - Central energy sphere
-   - Perfect for orchestral/complex music
-
-5. **Wave Forms** 🌊
-   - Flowing displacement grids
-   - Pillars and waves
-   - Fluid motion
-   - Ideal for ambient/meditation
-
-### 🎬 Professional Rendering
-- **1920x1080 Full HD** output
-- **Cycles or Eevee** rendering engines
-- **60 fps** default (configurable 24-120 fps)
-- **YouTube-optimized** H.264 encoding
-- **High-quality audio** (AAC 320kbps)
-- **No real-time preview lag** - direct render
-
-### 🖥️ Beautiful Native UI
-- **Modern dark theme** interface
-- **Real-time progress** monitoring
-- **Drag-and-drop** workflow
-- **macOS native** look and feel
-
----
-
-## 📋 Requirements
-
-### System Requirements
-- **macOS 10.15** or later
-- **8GB RAM** minimum (16GB recommended)
-- **5GB** free disk space
-- **Python 3.9+**
-
-### Software Dependencies
-- **Blender 3.6+** - Download from [blender.org](https://www.blender.org)
-- **FFmpeg** - Install via `brew install ffmpeg`
-
----
-
-## 🚀 Quick Start
-
-### 1. Installation
-
-```bash
-cd AudioBlenderVideo
-chmod +x setup.sh run.sh
-./setup.sh
-```
-
-The setup script will:
-- ✅ Check Python version
-- ✅ Detect Blender installation
-- ✅ Install FFmpeg if needed
-- ✅ Create virtual environment
-- ✅ Install all dependencies
-
-### 2. Run the Application
-
-```bash
-./run.sh
-```
-
-Or manually:
-```bash
-source venv/bin/activate
-python src/main.py
-```
-
-### 3. Generate Your First Video
-
-1. Click **"📁 Select Audio File"**
-2. Choose your audio (MP3, WAV, FLAC, OGG, M4A)
-3. Select an **animation style**
-4. Configure **render settings** (or use defaults)
-5. Click **"🎬 Generate Video"**
-6. Wait for completion (progress shown in real-time)
-7. Find your video in the project's `output/` directory
-
----
-
-## 💡 Usage Examples
-
-### GUI Usage
-The main application provides a complete graphical interface. Simply run `./run.sh` and use the intuitive UI.
-
-### Command Line Usage
-
-```bash
-# Basic usage
-python example.py song.mp3
-
-# Specify style
-python example.py song.mp3 --style liquid_morphing
-
-# Custom output directory
-python example.py song.mp3 --style geometric_pulse --output ./videos
-
-# All styles
-python example.py song.mp3 --style space_journey
-python example.py song.mp3 --style liquid_morphing
-python example.py song.mp3 --style geometric_pulse
-python example.py song.mp3 --style particle_symphony
-python example.py song.mp3 --style wave_forms
-```
-
-### Python API Usage
-
-```python
-from audio_analyzer import AudioAnalyzer
-from blender_generator import BlenderSceneGenerator
-from video_renderer import VideoRenderer
-
-# Analyze audio
-analyzer = AudioAnalyzer("song.mp3", fps=60)
-features = analyzer.analyze()
-
-# Generate Blender scene
-generator = BlenderSceneGenerator(features, style='space_journey')
-script_path = generator.save_script("scene.py")
-
-# Render video
-renderer = VideoRenderer()
-video_path = renderer.generate_video(
-    script_path="scene.py",
-    audio_path="song.mp3",
-    output_path="output.mp4",
-    fps=60
-)
-```
-
----
-
-## ⚙️ Configuration
-
-### Render Settings
-
-**Cycles (High Quality)**
-- Ray-traced rendering
-- Photorealistic materials
-- Slower render time
-- Best for final videos
-
-**Eevee (Fast)**
-- Real-time engine
-- Good quality
-- 3-5x faster
-- Great for previews
-
-### Performance Guide
-
-For a 3-minute song:
-
-| Settings | Time |
-|----------|------|
-| 60fps, Eevee, 128 samples | 15-25 min |
-| 60fps, Cycles, 128 samples | 45-90 min |
-| 30fps, Eevee, 64 samples | 8-12 min |
-| 60fps, Cycles, 256 samples | 2-4 hours |
-
-**Optimization Tips:**
-- Use Eevee for previews
-- Lower sample count (64-96)
-- Reduce FPS to 30 for testing
-- Close other applications
-
----
-
-## 📁 Project Structure
+### Architecture
 
 ```
-AudioBlenderVideo/
+AudioBlender Video Generator
 ├── src/
-│   ├── main.py              # Application entry point
-│   ├── audio_analyzer.py    # Audio processing
-│   ├── blender_generator.py # Scene generation
-│   ├── video_renderer.py    # Rendering & export
-│   └── ui/                  # User interface
-├── assets/                  # Resources
-├── output/                  # Generated videos
-├── README.md               # This file
-├── USER_GUIDE.md           # User documentation
-├── DEVELOPER_GUIDE.md      # Developer documentation
-├── example.py              # Command-line example
-├── requirements.txt        # Dependencies
-├── setup.sh               # Setup script
-└── run.sh                 # Run script
+│   ├── blender_animator_advanced.py    # Core animation engine
+│   ├── audio_analyzer.py               # Audio analysis (librosa + fallback)
+│   ├── audio_analyzer_simple.py        # Scipy-only fallback
+│   ├── video_renderer.py               # Ultra-optimized rendering
+│   ├── distributed_renderer.py         # Distributed system integration
+│   ├── main.py                         # Application entry point
+│   └── ui/
+│       ├── main_window.py              # Professional UI interface
+│       └── style.py                    # Dark theme styling
+├── generate_audio_reactive_video.py    # Command-line generator
+├── docker/                             # Distributed rendering system
+└── output/                             # Generated videos
 ```
 
----
+### Animation Styles
+1. **Cinematic Space**: Advanced lighting with space-themed effects
+2. **Abstract Luxury**: Metallic materials with luxury aesthetics  
+3. **Geometric Tech**: Holographic effects with tech styling
+4. **Organic Nature**: Displacement-based organic animations
+5. **Music Visualizer Pro**: Professional music visualization
 
-## 🎯 Use Cases
+### Technical Specifications
 
-### Music Videos
-- Create professional visualizers for music releases
-- Generate engaging content for streaming platforms
-- Produce unique visuals for each track
+#### Audio Analysis
+- **Frequency Bands**: Bass (0-250Hz), Mid (250-4000Hz), High (4000Hz+)
+- **Advanced Features**: Spectral centroid, rolloff, contrast, onset detection
+- **Beat Detection**: Automatic tempo detection and beat tracking
+- **Frame Mapping**: Precise audio-to-video frame synchronization
 
-### Social Media
-- Eye-catching Instagram/TikTok content
-- YouTube video backgrounds
-- Twitter/X engagement content
+#### Graphics & Rendering
+- **Render Engines**: Cycles (quality) and Eevee (speed)
+- **Resolution**: Up to 4K (3840x2160) support
+- **Samples**: 32-512 samples with adaptive sampling
+- **GPU Acceleration**: Metal (macOS), CUDA, OpenCL support
+- **Post-Processing**: Compositor with glare, color correction, bloom
 
-### Live Performances
-- VJ visuals synchronized to DJ sets
-- Concert background animations
-- Festival visual content
+#### Animation System
+- **Interpolation**: Smooth Bezier curves with auto-clamped handles
+- **Multi-Layer**: Complex object hierarchies with independent animations
+- **Procedural**: Geometry nodes and shader nodes for dynamic content
+- **Audio-Reactive**: Real-time audio data mapping to visual properties
 
-### Commercial Projects
-- Product launch videos
-- Corporate presentation backgrounds
-- Advertising content
+## 🚀 Planned Implementation
 
-### Personal Projects
-- Music hobby projects
-- YouTube channel content
-- Portfolio pieces
+### High-Quality Graphics Enhancements
+- **Procedural Geometry**: Advanced geometry nodes for complex meshes
+- **PBR Materials**: Physically-based rendering with subsurface scattering
+- **Volumetric Lighting**: Fog, clouds, and atmospheric effects
+- **Particle Systems**: Advanced particle effects with fluid simulation
+- **Texture Generation**: Procedural texture creation with noise patterns
 
----
+### Advanced Effects
+- **Post-Processing Pipeline**: Advanced compositor with:
+  - Motion blur and depth of field
+  - Chromatic aberration and lens distortion
+  - HDR tone mapping and color grading
+  - Film grain and vignette effects
+- **Shader Networks**: Complex node-based material systems
+- **Lighting Rigs**: Professional three-point lighting setups
+- **Camera Systems**: Advanced camera movements with focus pulling
 
-## 🛠️ Technical Details
+### Complex Animations
+- **Morphing Systems**: Shape keys and mesh deformation
+- **Particle Dynamics**: Physics-based particle interactions
+- **Fluid Simulation**: Liquid and gas effects
+- **Hair/Fur Systems**: Dynamic hair and fur simulation
+- **Cloth Simulation**: Realistic fabric movement
+- **Rigid Body Physics**: Object collision and dynamics
 
-### Audio Analysis
-- **Library**: Librosa 0.10+
-- **FFT Size**: 2048
-- **Frequency Bands**: Bass (0-250Hz), Mid (250-4kHz), High (4kHz+)
-- **Beat Detection**: Onset strength with tempo analysis
-- **Frame Accuracy**: Synchronized to video FPS
+### Advanced Python & Blender Integration
+- **Custom Operators**: Python-based Blender add-ons
+- **Animation Nodes**: Visual scripting for complex animations
+- **Driver Systems**: Advanced driver expressions and constraints
+- **Custom Properties**: Dynamic property creation and manipulation
+- **API Extensions**: Custom Blender API extensions
 
-### 3D Rendering
-- **Engine**: Blender 3.6+ (Cycles/Eevee)
-- **Resolution**: 1920x1080 (Full HD)
-- **Frame Rate**: 24-120 fps (60 fps default)
-- **Format**: PNG sequence → MP4
+### Rendering Optimization
+- **Distributed Rendering**: Multi-machine rendering clusters
+- **GPU Rendering**: Advanced GPU acceleration
+- **Memory Optimization**: Efficient memory management
+- **Render Farm Integration**: Cloud rendering services
+- **Real-time Preview**: Live preview during editing
 
-### Video Encoding
-- **Codec**: H.264 (libx264)
-- **Quality**: CRF 18 (visually lossless)
-- **Audio**: AAC 320kbps
-- **Container**: MP4 with fast start
-- **Compatibility**: YouTube/social media optimized
+### Advanced Features
+- **Machine Learning**: AI-powered style transfer and enhancement
+- **Real-time Audio**: Live audio input processing
+- **VR/AR Support**: Immersive video generation
+- **Batch Processing**: Multiple file processing
+- **Template System**: Reusable animation templates
+- **Plugin Architecture**: Extensible plugin system
 
----
+## 🛠 Installation & Setup
 
-## 📖 Documentation
+### Requirements
+- **Python 3.8+**
+- **Blender 3.6+**
+- **macOS 10.15+** (primary platform)
 
-- **[USER_GUIDE.md](USER_GUIDE.md)** - Complete user manual with tips and troubleshooting
-- **[DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)** - Architecture, API reference, and contribution guide
-- **[example.py](example.py)** - Command-line usage examples
-
----
-
-## 🐛 Troubleshooting
-
-### Blender Not Found
+### Dependencies
 ```bash
-# Install Blender from https://www.blender.org
-# Or specify custom path in video_renderer.py
+pip install numpy scipy soundfile PyQt6 requests
+pip install librosa  # Optional: for advanced audio analysis
 ```
 
-### FFmpeg Not Found
+### Quick Start
 ```bash
-brew install ffmpeg
+# GUI Application
+python src/main.py
+
+# Command Line
+python generate_audio_reactive_video.py audio_file.wav output_name
 ```
 
-### Slow Rendering
-- Switch to Eevee engine
-- Lower sample count to 64
-- Reduce FPS to 30
-- Use shorter audio clips for testing
+### Distributed System (Optional)
+```bash
+cd docker
+docker-compose up -d
+```
 
-### Out of Memory
-- Close other applications
-- Reduce particle count
-- Lower resolution temporarily
-- Use swap space
+## 📖 Usage
 
----
+### GUI Application
+1. Launch the application: `python src/main.py`
+2. Select an audio file (MP3, WAV, FLAC, OGG, M4A)
+3. Choose animation style and settings
+4. Configure render quality and FPS
+5. Click "Generate Video"
 
-## 🚧 Roadmap
+### Command Line
+```bash
+python generate_audio_reactive_video.py music.wav my_video
+```
 
-- [ ] Real-time preview (low-resolution)
-- [ ] Custom color schemes
-- [ ] GIF export option
-- [ ] Batch processing
-- [ ] Template library
-- [ ] Cloud rendering integration
+### Advanced Configuration
+- **Fast Mode**: 10x faster rendering with simplified effects
+- **Pro Mode**: High-quality rendering with advanced effects
+- **Custom Settings**: Adjust samples, resolution, and engine
+
+## 🎨 Animation Styles Details
+
+### Cinematic Space
+- **Lighting**: Multi-layer lighting with rim, key, and fill lights
+- **Materials**: Metallic spheres with emission and reflection
+- **Animation**: Orbital camera movements with smooth transitions
+- **Effects**: Volumetric lighting and particle systems
+
+### Abstract Luxury
+- **Materials**: Gold, silver, and platinum with high reflectivity
+- **Shapes**: Geometric forms with smooth surfaces
+- **Lighting**: Warm, luxurious lighting setups
+- **Animation**: Elegant, slow movements with emphasis on materials
+
+### Geometric Tech
+- **Shaders**: Holographic materials with transparency
+- **Geometry**: Complex geometric patterns and fractals
+- **Effects**: Glitch effects and digital artifacts
+- **Animation**: Fast, precise movements with tech aesthetics
+
+### Organic Nature
+- **Materials**: Natural textures with subsurface scattering
+- **Shapes**: Organic, flowing forms
+- **Effects**: Displacement and deformation
+- **Animation**: Fluid, natural movements
+
+### Music Visualizer Pro
+- **Reactivity**: High sensitivity to audio features
+- **Effects**: Beat-synchronized particle bursts
+- **Colors**: Dynamic color mapping based on frequency
+- **Animation**: Complex multi-layer animations
+
+## 🔧 Technical Architecture
+
+### Audio Processing Pipeline
+1. **File Loading**: Support for multiple audio formats
+2. **Frequency Analysis**: FFT-based spectrum analysis
+3. **Feature Extraction**: Bass, mid, high energy extraction
+4. **Beat Detection**: Onset detection and tempo estimation
+5. **Frame Mapping**: Audio data mapped to video frames
+
+### Animation Generation
+1. **Scene Setup**: Professional lighting and camera setup
+2. **Object Creation**: Procedural geometry generation
+3. **Material Assignment**: PBR material creation
+4. **Animation Baking**: Audio-reactive keyframe generation
+5. **Optimization**: Performance optimization for rendering
+
+### Rendering Pipeline
+1. **Scene Optimization**: Geometry and material optimization
+2. **Render Settings**: Quality vs. speed configuration
+3. **GPU Acceleration**: Hardware-accelerated rendering
+4. **Post-Processing**: Compositor effects application
+5. **Output Encoding**: Video compression and format conversion
+
+## 🚀 Performance Optimization
+
+### Ultra-Fast Mode
+- **Simplified Geometry**: Reduced polygon count
+- **Lower Samples**: 16-32 samples for speed
+- **GPU Rendering**: Hardware acceleration
+- **Stream Copy**: Fast video encoding
+- **Memory Efficient**: Optimized memory usage
+
+### Pro Mode
+- **High Quality**: 256-512 samples
+- **Advanced Materials**: Complex shader networks
+- **Post-Processing**: Full compositor pipeline
+- **Motion Blur**: Cinematic motion effects
+- **Depth of Field**: Realistic focus effects
+
+## 🔮 Future Roadmap
+
+### Phase 1: Graphics Enhancement
+- [ ] Advanced procedural geometry
+- [ ] PBR material library
+- [ ] Volumetric effects
+- [ ] Advanced particle systems
+
+### Phase 2: Animation Complexity
+- [ ] Morphing systems
+- [ ] Physics simulation
+- [ ] Fluid dynamics
+- [ ] Hair/fur simulation
+
+### Phase 3: AI Integration
+- [ ] Style transfer
+- [ ] Automatic style detection
+- [ ] AI-powered enhancement
+- [ ] Smart optimization
+
+### Phase 4: Platform Expansion
 - [ ] Windows/Linux support
-- [ ] Plugin system
+- [ ] Web interface
+- [ ] Mobile app
+- [ ] Cloud rendering
 
----
+## 📄 License
 
-## 📜 License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-Professional commercial application. All rights reserved.
+## 🤝 Contributing
 
----
-
-## 🙏 Credits
-
-Built with:
-- **Blender** - 3D rendering engine
-- **Librosa** - Audio analysis
-- **PyQt6** - User interface
-- **FFmpeg** - Video encoding
-- **NumPy/SciPy** - Signal processing
-
----
+Contributions are welcome! Please read our contributing guidelines and submit pull requests for any improvements.
 
 ## 📞 Support
 
-For issues or questions:
-1. Check [USER_GUIDE.md](USER_GUIDE.md)
-2. Review [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md)
-3. Check terminal output for errors
-4. Ensure all dependencies are installed
+For support, please open an issue on GitHub or contact the development team.
 
 ---
 
-## ⭐ Features at a Glance
-
-✅ Professional native macOS application  
-✅ 5 unique animation styles  
-✅ Advanced audio analysis (FFT, beat detection, spectral features)  
-✅ Smooth 60fps animations  
-✅ YouTube-optimized output  
-✅ No real-time preview lag  
-✅ Beautiful dark theme UI  
-✅ Progress monitoring  
-✅ Automatic Blender/FFmpeg detection  
-✅ Command-line interface  
-✅ Python API  
-✅ Comprehensive documentation  
-✅ Production-ready code  
-
----
-
-**Ready to create stunning audio-reactive videos? Run `./setup.sh` and get started!** 🎬✨
+**AudioBlender Video Generator** - Creating the future of audio-reactive 3D content generation.

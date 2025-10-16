@@ -66,3 +66,6 @@ alwaysApply: true
 - **Description:** Include docstrings for all functions and classes, clearly detailing inputs, outputs, and the *Blender objects* they create or modify. Use clear, non-jargon comments for complex `bpy` code blocks.
 - **Priority:** Medium
 - **Tags:** documentation, clarity
+
+-Output renders in this project output folder
+-Update and use only one blender_generator_script.py (latest)

@@ -55,19 +55,16 @@ class VideoGenerationThread(QThread):
                     progress_callback=self.progress.emit
                 )
             else:
-                print("💻 Using LOCAL RENDERING SYSTEM")
-                # Fallback to local rendering
+                print("💻 Using UNIFIED LOCAL RENDERING SYSTEM")
+                # Use unified local rendering
                 from audio_analyzer import AudioAnalyzer
-                from video_renderer import VideoRenderer
+                from video_renderer import UltraVideoRenderer
+                from blender_animator_advanced import AdvancedAnimator
                 
-                # Choose generator based on fast mode
                 if self.config.get('fast_mode', False):
-                    from blender_generator_fast import BlenderSceneGeneratorFast as BlenderSceneGenerator
-                    print("⚡ Using FAST MODE generator")
+                    print("⚡ UNIFIED SYSTEM - FAST MODE")
                 else:
-                    from blender_animator_pro import ProBlenderAnimator as BlenderSceneGenerator
-                    print("🎬 PROFESSIONAL ANIMATION SYSTEM v2.0")
-                    print("🎨 Using PRO MODE generator")
+                    print("🎬 UNIFIED SYSTEM - COMMERCIAL GRADE")
                 
                 # Step 1: Analyze audio
                 self.progress.emit(5, "Analyzing audio...")
@@ -80,35 +77,26 @@ class VideoGenerationThread(QThread):
                 
                 # Step 2: Generate Blender script
                 self.progress.emit(20, "Generating Blender scene...")
-                generator = BlenderSceneGenerator(features, style=self.config['style'])
+                generator = AdvancedAnimator(features, style=self.config['style'])
                 script_path = os.path.join(self.config['temp_dir'], 'scene_script.py')
-                generator.save_script(script_path, self.config['render_settings'])
+                blend_path = os.path.join(self.config['temp_dir'], 'scene.blend')
+                generator.save_script(script_path, self.config['render_settings'], blend_path)
                 
                 # Step 3: Render video
-                self.progress.emit(30, "Initializing renderer...")
+                self.progress.emit(30, "Initializing unified renderer...")
                 
-                # Use optimized renderer for fast mode
-                if self.config.get('fast_mode', False):
-                    from video_renderer_optimized import OptimizedVideoRenderer
-                    local_renderer = OptimizedVideoRenderer(self.config.get('blender_path'))
-                    output_video = local_renderer.generate_video_ultra_fast(
-                        script_path=script_path,
-                        audio_path=self.config['audio_path'],
-                        output_path=self.config['output_path'],
-                        fps=self.config['fps'],
-                        progress_callback=self.progress.emit,
-                        keep_temp_files=self.config.get('keep_temp', False)
-                    )
-                else:
-                    local_renderer = VideoRenderer(self.config.get('blender_path'))
-                    output_video = local_renderer.generate_video_optimized(
-                        script_path=script_path,
-                        audio_path=self.config['audio_path'],
-                        output_path=self.config['output_path'],
-                        fps=self.config['fps'],
-                        progress_callback=self.progress.emit,
-                        keep_temp_files=self.config.get('keep_temp', False)
-                    )
+                # Use unified renderer for all modes
+                local_renderer = UltraVideoRenderer(self.config.get('blender_path'))
+                target_fps = min(self.config['fps'], 30) if self.config.get('fast_mode', False) else self.config['fps']
+                
+                output_video = local_renderer.generate_video_ultra_fast(
+                    script_path=script_path,
+                    audio_path=self.config['audio_path'],
+                    output_path=self.config['output_path'],
+                    fps=target_fps,
+                    progress_callback=self.progress.emit,
+                    keep_temp_files=self.config.get('keep_temp', False)
+                )
             
             self.finished.emit(output_video)
             
@@ -237,11 +225,11 @@ class MainWindow(QMainWindow):
         
         self.style_combo = QComboBox()
         self.style_combo.addItems([
-            "Space Journey",
-            "Liquid Morphing",
-            "Geometric Pulse",
-            "Particle Symphony",
-            "Wave Forms"
+            "Cinematic Space",
+            "Abstract Luxury",
+            "Geometric Tech",
+            "Organic Nature",
+            "Music Visualizer Pro"
         ])
         self.style_combo.setToolTip("Choose the visual style for your animation")
         style_layout.addWidget(self.style_combo)
@@ -370,11 +358,11 @@ class MainWindow(QMainWindow):
         
         # Prepare configuration
         style_map = {
-            "Space Journey": "space_journey",
-            "Liquid Morphing": "liquid_morphing",
-            "Geometric Pulse": "geometric_pulse",
-            "Particle Symphony": "particle_symphony",
-            "Wave Forms": "wave_forms"
+            "Cinematic Space": "cinematic_space",
+            "Abstract Luxury": "abstract_luxury",
+            "Geometric Tech": "geometric_tech",
+            "Organic Nature": "organic_nature",
+            "Music Visualizer Pro": "music_visualizer_pro"
         }
         
         audio_name = Path(self.audio_path).stem
