@@ -31,24 +31,25 @@ class UltraVideoRenderer:
         print(f"⚡ ULTRA RENDERER: Using Blender: {self.blender_path}")
         
     def _find_blender(self) -> Optional[str]:
-        """Auto-detect Blender installation on macOS."""
-        possible_paths = [
-            "/Applications/Blender.app/Contents/MacOS/Blender",
-            "/Applications/Blender 4.0/Blender.app/Contents/MacOS/Blender",
-            "/Applications/Blender 3.6/Blender.app/Contents/MacOS/Blender",
-            "/Applications/Blender 4.1/Blender.app/Contents/MacOS/Blender",
-            "/Applications/Blender 4.2/Blender.app/Contents/MacOS/Blender",
-            str(Path.home() / "Applications" / "Blender.app" / "Contents" / "MacOS" / "Blender"),
+        """Auto-detect Blender installation - matches working scripts."""
+        # Use the same paths as the working scripts
+        blender_paths = [
+            '/Applications/Blender.app/Contents/MacOS/Blender',  # macOS default - prioritize direct path
+            'blender',  # Try PATH
+            os.path.expanduser('~/bin/blender'),  # User bin directory
+            '/usr/bin/blender',  # Linux
+            'C:\\Program Files\\Blender Foundation\\Blender 4.0\\blender.exe',  # Windows
         ]
         
-        # Check if blender is in PATH
-        if shutil.which("blender"):
-            return "blender"
-        
-        # Check common installation paths
-        for path in possible_paths:
-            if os.path.exists(path):
-                return path
+        # Test each path by running --version command (like working scripts)
+        for path in blender_paths:
+            try:
+                result = subprocess.run([path, '--version'], capture_output=True, text=True, timeout=10)
+                if result.returncode == 0:
+                    print(f"✅ Found Blender at: {path}")
+                    return path
+            except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+                continue
         
         return None
     
@@ -71,11 +72,10 @@ class UltraVideoRenderer:
         # Ensure directory exists
         os.makedirs(os.path.dirname(blend_output_path), exist_ok=True)
         
-        # Ultra-fast Blender execution
+        # Ultra-fast Blender execution with memory optimization
         cmd = [
             self.blender_path,
             "--background",
-            "--factory-startup",  # Skip user preferences
             "--python", script_path
         ]
         
@@ -196,14 +196,14 @@ except:
     scene.cycles.device = 'CPU'
     print("⚠️  GPU not available, using CPU")
 
-# Speed optimizations
+# Speed optimizations with memory management
 scene.render.use_persistent_data = True  # Reuse data
 scene.render.use_simplify = True  # Simplify geometry
 scene.render.simplify_subdivision = 0  # Disable subdivision
 scene.cycles.use_denoising = False  # Disable denoising for speed
-scene.cycles.samples = 16  # Ultra-low samples
-scene.cycles.preview_samples = 8
-scene.cycles.max_bounces = 2  # Minimal bounces
+scene.cycles.samples = 8  # Ultra-low samples for stability
+scene.cycles.preview_samples = 4
+scene.cycles.max_bounces = 1  # Minimal bounces for stability
 scene.cycles.diffuse_bounces = 1
 scene.cycles.glossy_bounces = 1
 scene.cycles.transparent_max_bounces = 1
@@ -215,20 +215,32 @@ scene.render.use_compositing = False
 scene.render.use_sequencer = False
 scene.render.use_motion_blur = False
 
-# Tile optimization for GPU
-scene.cycles.tile_size = 256  # Larger tiles for GPU
+# Memory and performance optimization
+scene.cycles.tile_size = 512  # Larger tiles for GPU efficiency
+scene.cycles.use_progressive_refine = False  # Disable progressive rendering
+scene.cycles.debug_use_spatial_splits = False  # Disable spatial splits
+scene.cycles.debug_use_hair_bvh = False  # Disable hair BVH
+
+# GPU memory optimization
+try:
+    prefs = bpy.context.preferences.addons['cycles'].preferences
+    for device in prefs.devices:
+        if device.type == 'CUDA' or device.type == 'OPTIX' or device.type == 'METAL':
+            device.use = True
+        else:
+            device.use = False
+except:
+    pass
 
 print("✅ Ultra-fast optimizations applied")
 """
         
-        # Execute optimization and render in one go
+        # Execute optimization and render with memory limits
         cmd = [
             self.blender_path,
             "--background",
-            "--factory-startup",
             blend_file,
             "--render-output", output_path,
-            "--python-expr", optimization_script,
             "--render-anim"
         ]
         

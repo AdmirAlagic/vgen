@@ -132,5 +132,13 @@ if LIBROSA_AVAILABLE:
 
 else:
     # Fallback implementation using scipy only
-    from audio_analyzer_simple import AudioAnalyzer
-    print("✅ Using scipy-based audio analyzer (Python 3.14 compatible)")
+    try:
+        from .audio_analyzer_simple import AudioAnalyzer
+        print("✅ Using scipy-based audio analyzer (Python 3.14 compatible)")
+    except ImportError:
+        # Try absolute import as fallback
+        import sys
+        import os
+        sys.path.append(os.path.dirname(__file__))
+        from audio_analyzer_simple import AudioAnalyzer
+        print("✅ Using scipy-based audio analyzer (Python 3.14 compatible)")

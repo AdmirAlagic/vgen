@@ -1,0 +1,64 @@
+# src/audioblender_video_generator/config/tasks.yaml
+audio_optimization_task:
+  description: >
+    Analyze the current audio processing pipeline and identify opportunities for improvement.
+    Focus on feature extraction accuracy, processing performance, audio-to-visual mapping optimization,
+    and real-time processing capabilities. Provide specific recommendations for enhancing the audio
+    analysis system to achieve commercial-quality video generation.
+  expected_output: >
+    A detailed analysis report with improvement recommendations and implementation plan for audio
+    processing optimization, including specific metrics and performance benchmarks.
+  agent: audio_analysis_specialist
+  output_file: output/audio_optimization_report.md
+
+blender_enhancement_task:
+  description: >
+    Review and enhance the Blender animation system for commercial quality output.
+    Focus on scene complexity, visual appeal, material and lighting quality, animation smoothness,
+    responsiveness, and procedural generation techniques. Implement advanced Geometry Nodes and
+    Shader Nodes for realistic, PBR-compliant materials.
+  expected_output: >
+    Enhanced animation system with commercial-quality improvements, including optimized scene
+    generation scripts and procedural content creation techniques.
+  agent: blender_animation_expert
+  output_file: output/blender_enhancement_report.md
+
+rendering_optimization_task:
+  description: >
+    Optimize the rendering pipeline for maximum quality and performance.
+    Focus on render engine configuration, GPU utilization and performance, output quality optimization,
+    and render time reduction techniques. Provide optimized rendering configurations for different
+    quality targets (ultra_fast, commercial, broadcast).
+  expected_output: >
+    Optimized rendering pipeline with performance and quality improvements, including specific
+    render settings and hardware utilization strategies.
+  agent: rendering_performance_specialist
+  output_file: output/rendering_optimization_report.md
+
+quality_assessment_task:
+  description: >
+    Assess current output quality and identify areas for improvement.
+    Focus on commercial readiness evaluation, quality metrics and benchmarks, improvement recommendations,
+    and standards compliance. Ensure all output meets professional broadcast standards.
+  expected_output: >
+    Quality assessment report with improvement roadmap and standards compliance, including
+    specific quality metrics and commercial readiness evaluation.
+  agent: quality_assurance_manager
+  output_file: output/quality_assessment_report.md
+
+orchestration_task:
+  description: >
+    Coordinate the autonomous development process and implement continuous improvement.
+    Focus on agent coordination and workflow optimization, system-wide performance improvements,
+    commercial quality achievement, and self-improvement mechanisms. Create an integrated development
+    plan that leverages all agents for maximum effectiveness.
+  expected_output: >
+    Comprehensive development plan with integrated improvements and self-optimization strategies,
+    including workflow coordination and continuous improvement mechanisms.
+  agent: project_orchestrator
+  output_file: output/orchestration_report.md
+  context:
+    - audio_optimization_task
+    - blender_enhancement_task
+    - rendering_optimization_task
+    - quality_assessment_task

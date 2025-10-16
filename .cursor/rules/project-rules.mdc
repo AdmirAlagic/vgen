@@ -68,4 +68,3 @@ alwaysApply: true
 - **Tags:** documentation, clarity
 
 -Output renders in this project output folder
--Update and use only one blender_generator_script.py (latest)

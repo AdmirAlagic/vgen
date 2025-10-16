@@ -34,37 +34,86 @@ class VideoGenerationThread(QThread):
         """Run the video generation pipeline."""
         try:
             # Try distributed rendering first, fallback to local
-            from distributed_renderer import get_best_renderer
+            try:
+                from distributed_renderer import get_best_renderer
+            except ImportError:
+                print("⚠️  Distributed renderer not available, using local rendering")
+                get_best_renderer = None
             
             # Initialize hybrid renderer
-            renderer = get_best_renderer()
-            system_info = renderer.get_system_info()
-            
-            if system_info['type'] == 'distributed':
-                print("🚀 Using DISTRIBUTED RENDERING SYSTEM")
-                print(f"   Workers: {len(system_info['workers'])}")
-                print(f"   Status: {system_info['status']['status']}")
+            if get_best_renderer:
+                renderer = get_best_renderer()
+                system_info = renderer.get_system_info()
                 
-                # Use distributed rendering
-                output_video = renderer.render_video(
-                    audio_path=self.config['audio_path'],
-                    style=self.config['style'],
-                    output_path=self.config['output_path'],
-                    fps=self.config['fps'],
-                    quality=self.config.get('quality', 'balanced'),
-                    progress_callback=self.progress.emit
-                )
+                if system_info['type'] == 'distributed':
+                    print("🚀 Using DISTRIBUTED RENDERING SYSTEM")
+                    print(f"   Workers: {len(system_info['workers'])}")
+                    print(f"   Status: {system_info['status']['status']}")
+                    
+                    # Use distributed rendering
+                    output_video = renderer.render_video(
+                        audio_path=self.config['audio_path'],
+                        style=self.config['style'],
+                        output_path=self.config['output_path'],
+                        fps=self.config['fps'],
+                        quality=self.config.get('quality', 'balanced'),
+                        progress_callback=self.progress.emit
+                    )
+                else:
+                    print("💻 Using UNIFIED LOCAL RENDERING SYSTEM")
+                    # Use unified local rendering
+                    from audio_analyzer import AudioAnalyzer
+                    from video_renderer import UltraVideoRenderer
+                    from blender_animator_advanced import AdvancedAnimator
+                    
+                    if self.config.get('fast_mode', False):
+                        print("⚡ UNIFIED SYSTEM - FAST MODE")
+                    else:
+                        print("🎬 UNIFIED SYSTEM - COMMERCIAL GRADE")
+                    
+                    # Step 1: Analyze audio
+                    self.progress.emit(5, "Analyzing audio...")
+                    analyzer = AudioAnalyzer(self.config['audio_path'], fps=self.config['fps'])
+                    features = analyzer.analyze()
+                    
+                    # Save analysis
+                    analysis_path = os.path.join(self.config['temp_dir'], 'analysis.json')
+                    analyzer.save_analysis(analysis_path)
+                    
+                    # Step 2: Generate Blender script
+                    self.progress.emit(20, "Generating Blender scene...")
+                    generator = AdvancedAnimator(features, style=self.config['style'])
+                    script_path = os.path.join(self.config['temp_dir'], 'scene_script.py')
+                    blend_path = os.path.join(self.config['temp_dir'], 'scene.blend')
+                    generator.save_script(script_path, self.config['render_settings'], blend_path)
+                    
+                    # Step 3: Render video
+                    self.progress.emit(30, "Initializing unified renderer...")
+                    
+                    # Use unified renderer for all modes
+                    local_renderer = UltraVideoRenderer(self.config.get('blender_path'))
+                    target_fps = min(self.config['fps'], 30) if self.config.get('fast_mode', False) else self.config['fps']
+                    
+                    output_video = local_renderer.generate_video_ultra_fast(
+                        script_path=script_path,
+                        audio_path=self.config['audio_path'],
+                        output_path=self.config['output_path'],
+                        fps=target_fps,
+                        progress_callback=self.progress.emit,
+                        keep_temp_files=self.config.get('keep_temp', False)
+                    )
             else:
-                print("💻 Using UNIFIED LOCAL RENDERING SYSTEM")
+                # Fallback to local rendering when distributed renderer is not available
+                print("💻 Using LOCAL RENDERING SYSTEM")
                 # Use unified local rendering
                 from audio_analyzer import AudioAnalyzer
                 from video_renderer import UltraVideoRenderer
                 from blender_animator_advanced import AdvancedAnimator
                 
                 if self.config.get('fast_mode', False):
-                    print("⚡ UNIFIED SYSTEM - FAST MODE")
+                    print("⚡ LOCAL SYSTEM - FAST MODE")
                 else:
-                    print("🎬 UNIFIED SYSTEM - COMMERCIAL GRADE")
+                    print("🎬 LOCAL SYSTEM - COMMERCIAL GRADE")
                 
                 # Step 1: Analyze audio
                 self.progress.emit(5, "Analyzing audio...")
