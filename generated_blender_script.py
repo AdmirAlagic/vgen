@@ -1,77 +1,4 @@
-"""
-Advanced Professional Blender Animation System
-==============================================
-
-Commercial-grade animation engine with:
-- Multi-layer F-curve animation
-- Advanced easing functions
-- Procedural material systems
-- Professional lighting rigs
-- Cinematic camera movements
-- Post-processing compositor
-
-This is a complete upgrade over the basic pro animator.
-"""
-
-import json
-import math
-import os
-from typing import Dict
-
-
-class AdvancedAnimator:
-    """Production-grade animation system for commercial-quality videos."""
-    
-    ANIMATION_STYLES = {
-        'cinematic_space': 'Cinematic space with advanced lighting and effects',
-        'abstract_luxury': 'Abstract luxury with metallic materials',
-        'geometric_tech': 'Geometric tech with holographic effects',
-        'organic_nature': 'Organic nature with displacement',
-        'music_visualizer_pro': 'Professional music visualizer'
-    }
-    
-    def __init__(self, audio_features: Dict, style: str = 'cinematic_space'):
-        self.features = audio_features
-        self.style = style
-        self.total_frames = audio_features['total_frames']
-        self.fps = audio_features['fps']
-        self.duration = audio_features['duration']
-        
-    def generate_script(self, output_path: str, render_settings: Dict = None):
-        """Generate advanced Blender script with commercial-quality techniques."""
-        if render_settings is None:
-            render_settings = {
-                'resolution_x': 1920,
-                'resolution_y': 1080,
-                'engine': 'CYCLES',
-                'samples': 256,
-                'use_denoising': True,
-                'motion_blur': True,
-                'dof': True
-            }
-        
-        script = self._generate_header()
-        script += self._generate_professional_scene_setup(render_settings)
-        script += self._generate_advanced_compositor()
-        script += self._generate_cinematic_space()
-        script += self._generate_advanced_animation()
-        script += self._generate_footer(output_path)
-        
-        return script
-    
-    def _generate_header(self) -> str:
-        """Generate comprehensive header with utilities."""
-        # Compress audio data
-        audio_data = {
-            'duration': self.duration,
-            'fps': self.fps,
-            'total_frames': self.total_frames,
-            'bass': self.features.get('bass_energy', [])[:min(len(self.features.get('bass_energy', [])), 3000)],
-            'mid': self.features.get('mid_energy', [])[:min(len(self.features.get('mid_energy', [])), 3000)],
-            'high': self.features.get('high_energy', [])[:min(len(self.features.get('high_energy', [])), 3000)],
-        }
-        
-        return f'''import bpy
+import bpy
 import math
 from mathutils import Vector, Color, Euler
 
@@ -81,21 +8,21 @@ while bpy.data.objects:
     bpy.data.objects.remove(bpy.data.objects[0], do_unlink=True)
 
 # Constants
-FPS = {self.fps}
-TOTAL_FRAMES = {self.total_frames}
-DURATION = {self.duration}
+FPS = 30
+TOTAL_FRAMES = 31
+DURATION = 1.0448979591836736
 
 print("=" * 70)
 print("🎬 ADVANCED ANIMATION SYSTEM v3.0 - COMMERCIAL GRADE")
 print("=" * 70)
-print(f"📊 Duration: {{DURATION:.2f}}s | Frames: {{TOTAL_FRAMES}} | FPS: {{FPS}}")
-print(f"🎨 Style: {self.style}")
+print(f"📊 Duration: {DURATION:.2f}s | Frames: {TOTAL_FRAMES} | FPS: {FPS}")
+print(f"🎨 Style: cinematic_space")
 print(f"🎯 Quality: BROADCAST COMMERCIAL")
 print("=" * 70)
 
 # Audio data
-AUDIO_DATA = {json.dumps(audio_data)}
-_audio_cache = {{}}
+AUDIO_DATA = {"duration": 1.0448979591836736, "fps": 30, "total_frames": 31, "bass": [2.345697612327058e-05, 1.0, 0.016906607896089554, 0.06895529478788376, 0.1714523434638977, 0.04787541553378105, 0.08179507404565811, 0.04138064384460449, 0.026736067607998848, 0.02296135574579239, 0.015824919566512108, 0.008747700601816177, 0.008626723662018776, 0.005700703710317612, 0.0037563589867204428, 0.00443625170737505, 0.0032352320849895477, 0.003071158193051815, 0.003054235363379121, 0.002892162185162306, 0.0029815055895596743, 0.0027783233672380447, 0.002749684499576688, 0.00276047270745039, 0.002704444108530879, 0.0027051707729697227, 0.0026768764946609735, 0.0026712280232459307, 0.002667285967618227, 0.0026960582472383976, 0.0026632894296199083, 0.0021373233757913113], "mid": [5.490409876074409e-06, 0.9696077108383179, 0.5041308403015137, 0.47998046875, 0.3105263411998749, 0.23346905410289764, 1.0, 0.5896047353744507, 0.5438862442970276, 0.5447760820388794, 0.5273453593254089, 0.39295274019241333, 0.3212185502052307, 0.268297016620636, 0.2500913143157959, 0.20940318703651428, 0.15305796265602112, 0.10474405437707901, 0.06224926933646202, 0.027685018256306648, 0.02658822201192379, 0.027602259069681168, 0.02225923165678978, 0.0178687684237957, 0.0114750349894166, 0.0030762541573494673, 0.004167253617197275, 0.003365315729752183, 0.0007975605549290776, 0.0011837774654850364, 0.0008291953708976507, 0.00035374690196476877], "high": [0.002772595500573516, 1.0, 0.6157315969467163, 0.6602142453193665, 0.616361141204834, 0.6778060793876648, 0.6191003322601318, 0.6828063130378723, 0.5958099961280823, 0.5832908153533936, 0.6317632794380188, 0.64273601770401, 0.6051557064056396, 0.615166425704956, 0.6521349549293518, 0.6409928798675537, 0.6183737516403198, 0.6066061854362488, 0.6342032551765442, 0.6077463030815125, 0.59624844789505, 0.6075526475906372, 0.6382054686546326, 0.5900192260742188, 0.6305748820304871, 0.5694568753242493, 0.6860113739967346, 0.6204672455787659, 0.6580983996391296, 0.6142828464508057, 0.6289718747138977, 0.2600269615650177]}
+_audio_cache = {}
 
 def get_audio(channel, frame, smooth=20):
     key = (channel, frame, smooth)
@@ -123,19 +50,15 @@ def add_bezier_keyframe(obj, data_path, frame):
                         kp.handle_left_type = 'AUTO_CLAMPED'
                         kp.handle_right_type = 'AUTO_CLAMPED'
 
-'''
-    
-    def _generate_professional_scene_setup(self, settings: Dict) -> str:
-        """Setup professional render environment."""
-        return f'''# Scene Configuration
+# Scene Configuration
 scene = bpy.context.scene
 scene.frame_start = 1
 scene.frame_end = TOTAL_FRAMES
 scene.render.fps = FPS
-scene.render.resolution_x = {settings['resolution_x']}
-scene.render.resolution_y = {settings['resolution_y']}
+scene.render.resolution_x = 1920
+scene.render.resolution_y = 1080
 scene.render.resolution_percentage = 100
-scene.render.engine = '{settings['engine']}'
+scene.render.engine = 'CYCLES'
 
 # Video output
 scene.render.image_settings.file_format = 'FFMPEG'
@@ -146,15 +69,15 @@ scene.render.ffmpeg.ffmpeg_preset = 'BEST'
 
 # Render settings
 if scene.render.engine == 'CYCLES':
-    scene.cycles.samples = {settings['samples']}
-    scene.cycles.use_denoising = {str(settings['use_denoising'])}
+    scene.cycles.samples = 256
+    scene.cycles.use_denoising = True
     scene.cycles.denoiser = 'OPENIMAGEDENOISE'
     scene.cycles.device = 'GPU'
     scene.cycles.use_adaptive_sampling = True
-    scene.render.use_motion_blur = {str(settings.get('motion_blur', True))}
+    scene.render.use_motion_blur = True
     scene.render.motion_blur_shutter = 0.5
 else:
-    scene.eevee.taa_render_samples = {settings['samples']}
+    scene.eevee.taa_render_samples = 256
     scene.eevee.use_bloom = True
     scene.eevee.use_ssr = True
     scene.eevee.use_motion_blur = True
@@ -165,7 +88,7 @@ scene.view_settings.look = 'Very High Contrast'
 # Camera - FIXED POSITIONING FOR PROPER VISIBILITY
 camera_data = bpy.data.cameras.new('Camera')
 camera_data.lens = 45  # Balanced lens for good framing without too much zoom
-camera_data.dof.use_dof = {str(settings.get('dof', True))}
+camera_data.dof.use_dof = True
 camera_data.dof.aperture_fstop = 2.8
 camera_data.dof.focus_distance = 10  # Balanced focus distance
 
@@ -209,19 +132,15 @@ print("✅ Scene setup complete")
 
 # VERIFICATION: Ensure proper scene configuration
 print("🔍 Verifying scene configuration...")
-print(f"   Camera: {{'✅' if scene.camera else '❌'}} {{scene.camera.name if scene.camera else 'MISSING'}}")
-print(f"   Lights: {{len([obj for obj in scene.objects if obj.type == 'LIGHT'])}} lights")
-print(f"   Objects: {{len([obj for obj in scene.objects if obj.type == 'MESH'])}} meshes")
-print(f"   Render engine: {{scene.render.engine}}")
-print(f"   Samples: {{scene.cycles.samples if scene.render.engine == 'CYCLES' else 'N/A'}}")
-print(f"   Resolution: {{scene.render.resolution_x}}x{{scene.render.resolution_y}}")
+print(f"   Camera: {'✅' if scene.camera else '❌'} {scene.camera.name if scene.camera else 'MISSING'}")
+print(f"   Lights: {len([obj for obj in scene.objects if obj.type == 'LIGHT'])} lights")
+print(f"   Objects: {len([obj for obj in scene.objects if obj.type == 'MESH'])} meshes")
+print(f"   Render engine: {scene.render.engine}")
+print(f"   Samples: {scene.cycles.samples if scene.render.engine == 'CYCLES' else 'N/A'}")
+print(f"   Resolution: {scene.render.resolution_x}x{scene.render.resolution_y}")
 print("✅ Scene verification complete")
 
-'''
-    
-    def _generate_advanced_compositor(self) -> str:
-        """Create professional compositor."""
-        return '''# Compositor
+# Compositor
 scene.use_nodes = True
 tree = scene.node_tree
 nodes = tree.nodes
@@ -246,14 +165,10 @@ tree.links.new(color.outputs[0], comp.inputs[0])
 
 print("✅ Compositor configured")
 
-'''
-    
-    def _generate_cinematic_space(self) -> str:
-        """Generate advanced cinematic space scene with complex geometry."""
-        return '''# Advanced Cinematic Space Scene with Complex Geometry
+# Advanced Cinematic Space Scene with Complex Geometry
 print("Creating advanced scene...")
 
-def create_material(name, color, metallic=0.0, roughness=0.5, emission_strength=0.0, fresnel=False):
+def create_material(name, color, metallic=0.0, roughness=0.5, emission=0.0, fresnel=False):
     """Create advanced PBR material with optional fresnel."""
     mat = bpy.data.materials.new(name)
     mat.use_nodes = True
@@ -267,10 +182,10 @@ def create_material(name, color, metallic=0.0, roughness=0.5, emission_strength=
     mix_shader = nodes.new('ShaderNodeMixShader')
     mix_shader.location = (200, 0)
     
-    emission_node = nodes.new('ShaderNodeEmission')
-    emission_node.location = (0, 100)
-    emission_node.inputs['Color'].default_value = color
-    emission_node.inputs['Strength'].default_value = emission_strength
+    emission = nodes.new('ShaderNodeEmission')
+    emission.location = (0, 100)
+    emission.inputs['Color'].default_value = color
+    emission.inputs['Strength'].default_value = emission
     
     bsdf = nodes.new('ShaderNodeBsdfPrincipled')
     bsdf.location = (0, -100)
@@ -285,9 +200,9 @@ def create_material(name, color, metallic=0.0, roughness=0.5, emission_strength=
         fresnel_node.inputs['IOR'].default_value = 1.45
         links.new(fresnel_node.outputs['Fac'], mix_shader.inputs['Fac'])
     else:
-        mix_shader.inputs['Fac'].default_value = 0.7 if emission_strength > 0 else 0.0
+        mix_shader.inputs['Fac'].default_value = 0.7 if emission > 0 else 0.0
     
-    links.new(emission_node.outputs['Emission'], mix_shader.inputs[1])
+    links.new(emission.outputs['Emission'], mix_shader.inputs[1])
     links.new(bsdf.outputs['BSDF'], mix_shader.inputs[2])
     links.new(mix_shader.outputs['Shader'], output.inputs['Surface'])
     
@@ -430,14 +345,8 @@ for i in range(30):
     bpy.ops.object.shade_smooth()
 
 print("✅ Advanced scene with complex geometry created")
-print(f"🔍 Total objects created: {len(bpy.data.objects)}")
-print(f"🔍 Scene objects: {[obj.name for obj in bpy.data.objects[:10]]}")
 
-'''
-    
-    def _generate_advanced_animation(self) -> str:
-        """Generate highly responsive, complex animations."""
-        return '''# Advanced Audio-Reactive Animation System
+# Advanced Audio-Reactive Animation System
 print("Generating advanced animations...")
 import random
 
@@ -632,93 +541,36 @@ print("✅ Animation complete")
 print(f"   Animated objects: {len([obj for obj in bpy.data.objects if obj.animation_data])} objects with keyframes")
 print(f"   Total keyframes: {sum([len(obj.animation_data.action.fcurves) if obj.animation_data and obj.animation_data.action else 0 for obj in bpy.data.objects])}")
 
-'''
-    
-    def _generate_footer(self, output_path: str) -> str:
-        """Generate footer with proper path."""
-        return f'''# Set render output path
+# Set render output path
 import os
-output_dir = os.path.dirname("{output_path}")
+output_dir = os.path.dirname("/Users/admir/ai/AudioBlenderVideo/output/amazing_video.blend")
 if output_dir:
     os.makedirs(output_dir, exist_ok=True)
     scene.render.filepath = os.path.join(output_dir, "audio_reactive_animation")
-    print(f"🎬 Render output set to: {{scene.render.filepath}}")
+    print(f"🎬 Render output set to: {scene.render.filepath}")
 else:
     print("⚠️  Warning: No output directory specified for rendering")
 
 # Save blend file - CRITICAL
-blend_path = "{output_path}"
-print(f"🔍 Attempting to save blend file to: {{blend_path}}")
+blend_path = "/Users/admir/ai/AudioBlenderVideo/output/amazing_video.blend"
 if blend_path:
     blend_dir = os.path.dirname(blend_path)
-    print(f"🔍 Blend directory: {{blend_dir}}")
     if blend_dir:
-        try:
-            os.makedirs(blend_dir, exist_ok=True)
-            print(f"✅ Directory created/verified: {{blend_dir}}")
-        except Exception as e:
-            print(f"❌ ERROR creating directory: {{e}}")
+        os.makedirs(blend_dir, exist_ok=True)
     try:
-        print("🔍 Calling bpy.ops.wm.save_as_mainfile...")
         bpy.ops.wm.save_as_mainfile(filepath=blend_path)
-        print("🔍 Save operation completed")
-        
-        # Verify file exists
-        if os.path.exists(blend_path):
-            file_size = os.path.getsize(blend_path) / 1024 / 1024
-            print("=" * 70)
-            print("✅ COMMERCIAL-GRADE SCENE COMPLETE")
-            print(f"📁 Blend file saved: {{blend_path}}")
-            print(f"📁 File exists: True")
-            print(f"📁 File size: {{file_size:.2f}} MB")
-            if 'render.filepath' in dir(scene.render) and scene.render.filepath:
-                print(f"🎬 Render output: {{scene.render.filepath}}")
-            print("🚀 Ready to render!")
-            print("=" * 70)
-        else:
-            print("❌ ERROR: Blend file was not created after save operation!")
-            print(f"❌ Expected location: {{blend_path}}")
-            print(f"❌ Directory exists: {{os.path.exists(blend_dir)}}")
-            print(f"❌ Directory contents: {{os.listdir(blend_dir) if os.path.exists(blend_dir) else 'N/A'}}")
+        print("=" * 70)
+        print("✅ COMMERCIAL-GRADE SCENE COMPLETE")
+        print(f"📁 Blend file saved: {blend_path}")
+        print(f"📁 File exists: {os.path.exists(blend_path)}")
+        print(f"📁 File size: {os.path.getsize(blend_path) / 1024 / 1024:.2f} MB")
+        if 'render.filepath' in dir(scene.render) and scene.render.filepath:
+            print(f"🎬 Render output: {scene.render.filepath}")
+        print("🚀 Ready to render!")
+        print("=" * 70)
     except Exception as e:
-        print(f"❌ ERROR saving blend file: {{e}}")
-        print(f"❌ Error type: {{type(e).__name__}}")
+        print(f"❌ ERROR saving blend file: {e}")
         import traceback
-        print("❌ Full traceback:")
         traceback.print_exc()
 else:
     print("❌ ERROR: No blend file path specified!")
-'''
-    
-    def save_script(self, filepath: str, render_settings: Dict = None, blend_path: str = None):
-        """Save script with explicit blend path."""
-        if blend_path is None:
-            output_dir = os.path.dirname(filepath)
-            blend_path = os.path.join(output_dir, "scene.blend")
-        
-        # Ensure blend_path is absolute
-        blend_path = os.path.abspath(blend_path)
-        
-        script = self.generate_script(blend_path, render_settings)
-        
-        # Ensure output directory exists
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-        
-        with open(filepath, 'w') as f:
-            f.write(script)
-        print(f"✅ Advanced script: {filepath}")
-        print(f"🎬 Blend will be saved to: {blend_path}")
-        print(f"🎨 Style: {self.style}")
-        return filepath
-
-
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) > 1:
-        with open(sys.argv[1], 'r') as f:
-            features = json.load(f)
-        generator = AdvancedAnimator(features)
-        generator.save_script("blender_scene_advanced.py")
-        print("Advanced script generated!")
-    else:
-        print("Usage: python blender_animator_advanced.py <audio_analysis.json>")

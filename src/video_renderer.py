@@ -119,11 +119,16 @@ class UltraVideoRenderer:
                 print(f"✅ Blend file found: {blend_file_found} ({file_size:.2f} MB)")
                 return blend_file_found
             
-            # Print output to debug
+            # Print FULL output to debug
             print("🔍 Blender output for debugging:")
             print("=" * 50)
-            print(result.stdout[-2000:])  # Last 2000 chars
+            print(result.stdout)  # FULL output
             print("=" * 50)
+            if result.stderr:
+                print("🔍 Blender stderr:")
+                print("=" * 50)
+                print(result.stderr)
+                print("=" * 50)
             
             # List files in temp directory for debugging
             temp_dir = os.path.dirname(blend_output_path)
