@@ -108,21 +108,21 @@ class CommercialGradeAnimator:
                 'resolution_y': 1080,
                 'engine': 'CYCLES',
                 'device': 'GPU',
-                'samples': 512,       # High samples for commercial quality
+                'samples': 128,       # Optimized samples for performance
                 'use_denoising': True,
-                'motion_blur': True,
-                'dof': True,
+                'motion_blur': False,  # Disabled for performance
+                'dof': False,         # Disabled for performance
                 'use_adaptive_sampling': True,
-                'adaptive_threshold': 0.01,  # Lower threshold for quality
-                'max_bounces': 12,    # High bounces for quality
-                'diffuse_bounces': 4,
-                'glossy_bounces': 4,
-                'transmission_bounces': 12,
-                'volume_bounces': 2,
-                'caustics_reflective': True,
-                'caustics_refractive': True,
+                'adaptive_threshold': 0.02,  # Higher threshold for speed
+                'max_bounces': 4,     # Reduced bounces for performance
+                'diffuse_bounces': 2,
+                'glossy_bounces': 2,
+                'transmission_bounces': 4,
+                'volume_bounces': 1,
+                'caustics_reflective': False,  # Disabled for performance
+                'caustics_refractive': False,  # Disabled for performance
                 'use_gpu_denoising': True,
-                'use_geometry_nodes': True
+                'use_geometry_nodes': False  # Disabled for performance
             }
         
         script = self._generate_header()
@@ -444,28 +444,55 @@ scene.render.resolution_x = {settings['resolution_x']}
 scene.render.resolution_y = {settings['resolution_y']}
 scene.render.resolution_percentage = 100
 
-# COMMERCIAL RENDER ENGINE: Cycles for maximum quality
+# OPTIMIZED RENDER ENGINE: Cycles with performance optimizations
 scene.render.engine = '{settings['engine']}'
 scene.cycles.samples = {settings['samples']}
 scene.cycles.use_denoising = {settings['use_denoising']}
 scene.cycles.denoiser = 'OPENIMAGEDENOISE'
 scene.cycles.denoising_input_passes = 'RGB_ALBEDO_NORMAL'
-scene.cycles.device = 'GPU'
+
+# ADAPTIVE GPU/CPU DEVICE SELECTION
+gpu_devices = 0
+try:
+    # Try to enable GPU acceleration
+    if 'cycles' in bpy.context.preferences.addons:
+        prefs = bpy.context.preferences.addons['cycles'].preferences
+        prefs.compute_device_type = 'METAL'  # For macOS
+        prefs.get_devices()
+        
+        for device in prefs.devices:
+            if device.type in ['METAL', 'CUDA', 'OPTIX']:
+                device.use = True
+                gpu_devices += 1
+        
+        if gpu_devices > 0:
+            scene.cycles.device = 'GPU'
+            print("✅ GPU acceleration enabled (" + str(gpu_devices) + " devices)")
+        else:
+            scene.cycles.device = 'CPU'
+            print("⚠️  No GPU devices found, using CPU")
+    else:
+        scene.cycles.device = 'CPU'
+        print("⚠️  Cycles addon not available, using CPU")
+except Exception as e:
+    scene.cycles.device = 'CPU'
+    print("⚠️  GPU setup failed: " + str(e) + ", using CPU")
+
 scene.cycles.use_adaptive_sampling = {settings['use_adaptive_sampling']}
-scene.cycles.adaptive_threshold = 0.01
+scene.cycles.adaptive_threshold = {settings['adaptive_threshold']}
 
-# COMMERCIAL LIGHT PATHS for realistic rendering
-scene.cycles.max_bounces = 16
-scene.cycles.diffuse_bounces = 6
-scene.cycles.glossy_bounces = 6
-scene.cycles.transmission_bounces = 16
-scene.cycles.volume_bounces = 2
-scene.cycles.transparent_max_bounces = 12
+# OPTIMIZED LIGHT PATHS for performance
+scene.cycles.max_bounces = {settings['max_bounces']}
+scene.cycles.diffuse_bounces = {settings['diffuse_bounces']}
+scene.cycles.glossy_bounces = {settings['glossy_bounces']}
+scene.cycles.transmission_bounces = {settings['transmission_bounces']}
+scene.cycles.volume_bounces = {settings['volume_bounces']}
+scene.cycles.transparent_max_bounces = {settings['max_bounces']}
 
-# Caustics for dramatic reflections
-scene.cycles.caustics_reflective = True
-scene.cycles.caustics_refractive = True
-scene.cycles.blur_glossy = 0.3
+# OPTIMIZED CAUSTICS (disabled for performance)
+scene.cycles.caustics_reflective = {settings['caustics_reflective']}
+scene.cycles.caustics_refractive = {settings['caustics_refractive']}
+scene.cycles.blur_glossy = 0.5
 
 # Motion blur for commercial look
 scene.render.use_motion_blur = {settings['motion_blur']}
@@ -689,89 +716,78 @@ core_mat = create_commercial_material(
 core.data.materials.append(core_mat)
 bpy.ops.object.shade_smooth()
 
-# ENHANCED ORBITING PARTICLE SYSTEM - Multiple complex layers
-# Layer 1: Inner particles (close to core) - Enhanced
-for i in range(12):  # More particles for complexity
-    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=3, radius=0.4, location=(0, 0, 0))
+# OPTIMIZED ORBITING PARTICLE SYSTEM - Reduced complexity for performance
+# Layer 1: Inner particles (reduced count for performance)
+for i in range(6):  # Reduced from 12 to 6 particles
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=0.3, location=(0, 0, 0))  # Reduced subdivisions
     particle = bpy.context.active_object
     particle.name = f'InnerParticle{i}'
     
-    # Add subdivision for smoothness
+    # Simplified subdivision for performance
     subdiv = particle.modifiers.new('Subdiv', 'SUBSURF')
-    subdiv.levels = 2
+    subdiv.levels = 1  # Reduced from 2 to 1
     
-    angle = (i / 12) * 2 * math.pi
-    radius = 4.0  # Slightly further out
-    height = math.sin(angle * 2) * 0.5  # Add height variation
+    angle = (i / 6) * 2 * math.pi
+    radius = 4.0
+    height = math.sin(angle * 2) * 0.5
     particle.location = (math.cos(angle) * radius, math.sin(angle) * radius, height)
     
-    hue = i / 12
-    particle_mat = create_commercial_material(
-        f'InnerParticleMat{i}',
-        (0.6 + hue * 0.4, 0.7 + (1-hue) * 0.3, 1.0, 1.0),  # Ultra-bright colors
-        metallic=0.9, 
-        roughness=0.1, 
-        emission_strength=100.0,  # Ultra-high emission for maximum visibility
-        fresnel=True,
-        anisotropic=0.2
-    )
-    particle.data.materials.append(particle_mat)
+    # SHARED material for performance
+    particle.data.materials.append(core_mat)  # Reuse core material
     bpy.ops.object.shade_smooth()
 
-# Layer 2: Mid orbs - Enhanced with complex geometry
-for i in range(6):  # More mid orbs
-    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=4, radius=0.8, location=(0, 0, 0))
+# Layer 2: Mid orbs - Optimized for performance
+for i in range(3):  # Reduced from 6 to 3 orbs
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=2, radius=0.6, location=(0, 0, 0))  # Reduced subdivisions
     orb = bpy.context.active_object
     orb.name = f'MidOrb{i}'
     
-    # Enhanced subdivision
+    # Simplified subdivision for performance
     subdiv = orb.modifiers.new('Subdiv', 'SUBSURF')
-    subdiv.levels = 3
-    subdiv.render_levels = 4
+    subdiv.levels = 1  # Reduced from 3 to 1
+    subdiv.render_levels = 1  # Reduced from 4 to 1
     
-    # Add displacement for complexity
-    displace = orb.modifiers.new('Displace', 'DISPLACE')
-    tex = bpy.data.textures.new(f'MidOrbDisplace{i}', 'MUSGRAVE')
-    tex.noise_scale = 1.0
-    displace.texture = tex
-    displace.strength = 0.1
+    # Remove displacement for performance
+    # displace = orb.modifiers.new('Displace', 'DISPLACE')
+    # tex = bpy.data.textures.new(f'MidOrbDisplace{i}', 'MUSGRAVE')
+    # tex.noise_scale = 1.0
+    # displace.texture = tex
+    # displace.strength = 0.1
     
-    angle = (i / 6) * 2 * math.pi
+    angle = (i / 3) * 2 * math.pi
     radius = 6.0
     height = math.sin(angle * 3) * 1.0
     orb.location = (math.cos(angle) * radius, math.sin(angle) * radius, height)
     
-    hue = i / 6
+    # SHARED material for performance
     orb_mat = create_commercial_material(
-        f'MidOrbMat{i}',
-        (0.8, 0.6 + hue * 0.4, 0.9, 1.0),  # Ultra-bright colors
+        'MidOrbMat',  # Shared material name
+        (0.8, 0.6, 0.9, 1.0),  # Fixed color
         metallic=0.95, 
         roughness=0.05, 
-        emission_strength=120.0,  # Ultra-high emission
-        fresnel=True,
-        anisotropic=0.3,
-        clearcoat=0.2
+        emission_strength=80.0,  # Reduced emission
+        fresnel=True
     )
     orb.data.materials.append(orb_mat)
     bpy.ops.object.shade_smooth()
 
-# Layer 3: Complex energy rings - Enhanced
-for i in range(5):  # More rings for complexity
+# Layer 3: Optimized energy rings - Reduced complexity
+for i in range(2):  # Reduced from 5 to 2 rings
     bpy.ops.mesh.primitive_torus_add(
         major_radius=8.0 + i * 1.5,
-        minor_radius=0.3,
-        major_segments=128,  # Higher resolution
-        minor_segments=64,
+        minor_radius=0.2,  # Reduced thickness
+        major_segments=64,  # Reduced resolution
+        minor_segments=32,  # Reduced resolution
         location=(0, 0, 0)
     )
     ring = bpy.context.active_object
     ring.name = f'OuterRing{i}'
     
-    # Add subdivision for smoothness
+    # Simplified subdivision for performance
     subdiv = ring.modifiers.new('Subdiv', 'SUBSURF')
-    subdiv.levels = 2
+    subdiv.levels = 1  # Reduced from 2 to 1
     
-    # Add wave modifier for animation
+    # Simplified wave modifier for animation
     wave = ring.modifiers.new('Wave', 'WAVE')
     wave.height = 0.0  # Will be animated
     wave.width = 1.0 + i * 0.2
@@ -780,35 +796,28 @@ for i in range(5):  # More rings for complexity
     # Position rings at different angles
     if i == 0:
         ring.rotation_euler = (math.radians(90), 0, 0)
-    elif i == 1:
-        ring.rotation_euler = (0, math.radians(90), 0)
-    elif i == 2:
-        ring.rotation_euler = (0, 0, math.radians(45))
-    elif i == 3:
-        ring.rotation_euler = (math.radians(45), math.radians(45), 0)
     else:
-        ring.rotation_euler = (math.radians(30), 0, math.radians(60))
+        ring.rotation_euler = (0, math.radians(90), 0)
     
-    hue = i / 5
+    # SHARED material for performance
     ring_mat = create_commercial_material(
-        f'OuterRingMat{i}',
-        (0.9, 0.7 + hue * 0.3, 0.8, 1.0),  # Ultra-bright colors
+        'OuterRingMat',  # Shared material name
+        (0.9, 0.7, 0.8, 1.0),  # Fixed color
         metallic=0.9, 
         roughness=0.1, 
-        emission_strength=80.0,  # High emission
-        fresnel=True,
-        anisotropic=0.4
+        emission_strength=60.0,  # Reduced emission
+        fresnel=True
     )
     ring.data.materials.append(ring_mat)
     bpy.ops.object.shade_smooth()
 
-# Layer 4: Ambient particles - Enhanced
+# Layer 4: Optimized ambient particles - Reduced count
 import random
 random.seed(42)  # For consistent results
-for i in range(20):  # More ambient particles
+for i in range(8):  # Reduced from 20 to 8 particles
     bpy.ops.mesh.primitive_ico_sphere_add(
-        subdivisions=2,
-        radius=random.uniform(0.1, 0.3),
+        subdivisions=1,  # Reduced subdivisions
+        radius=random.uniform(0.1, 0.2),  # Smaller particles
         location=(0, 0, 0)
     )
     ambient = bpy.context.active_object
@@ -824,14 +833,13 @@ for i in range(20):  # More ambient particles
         height
     )
     
-    # Random material
-    hue = random.uniform(0, 1)
+    # SHARED material for performance
     ambient_mat = create_commercial_material(
-        f'AmbientMat{i}',
-        (0.7 + hue * 0.3, 0.8, 0.9, 1.0),  # Bright colors
+        'AmbientMat',  # Shared material name
+        (0.7, 0.8, 0.9, 1.0),  # Fixed color
         metallic=0.8, 
         roughness=0.2, 
-        emission_strength=40.0,  # Moderate emission
+        emission_strength=30.0,  # Reduced emission
         fresnel=True
     )
     ambient.data.materials.append(ambient_mat)
@@ -2628,8 +2636,8 @@ if blend_dir:
     try:
         os.makedirs(blend_dir, exist_ok=True)
         print(f"✅ Directory created: {blend_dir}")
-    except Exception as e:
-        print(f"❌ Directory creation error: {e}")
+    except Exception as dir_error:
+        print(f"❌ Directory creation error: {dir_error}")
 
 # Save the blend file
 try:
@@ -2644,8 +2652,8 @@ try:
     else:
         print("❌ Warning: Blend file not found after save operation")
         
-except Exception as e:
-    print(f"❌ Error saving blend file: {e}")
+except Exception as save_error:
+    print(f"❌ Error saving blend file: {save_error}")
 
 print("=" * 80)
 print("✅ V6.0 DRAMATICALLY IMPROVED SCENE READY FOR RENDERING!")

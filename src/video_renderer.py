@@ -252,11 +252,29 @@ except Exception as e:
 
 # MEMORY OPTIMIZATION: Set memory limits to prevent high CPU usage
 try:
-    bpy.context.preferences.system.memory_limit = 2048  # 2GB limit
+    # Adaptive memory limits based on available system resources
+    import psutil
+    available_memory = psutil.virtual_memory().available / (1024 * 1024)  # MB
+    
+    if available_memory > 8000:  # 8GB+ available
+        memory_limit = 4096  # 4GB limit
+    elif available_memory > 4000:  # 4GB+ available
+        memory_limit = 2048  # 2GB limit
+    else:  # Less than 4GB available
+        memory_limit = 1024  # 1GB limit
+    
+    bpy.context.preferences.system.memory_limit = memory_limit
     bpy.context.preferences.system.use_memory_limit = True
-    print("✅ Memory limit set to 2GB")
+    print(f"✅ Memory limit set to {memory_limit}MB (available: {available_memory:.0f}MB)")
 except Exception as e:
     print(f"⚠️  Could not set memory limit: {e}")
+    # Fallback to conservative limit
+    try:
+        bpy.context.preferences.system.memory_limit = 1024
+        bpy.context.preferences.system.use_memory_limit = True
+        print("✅ Fallback memory limit set to 1GB")
+    except:
+        print("⚠️  Could not set any memory limit")
 
 # Speed optimizations with memory management
 scene.render.use_persistent_data = True  # Reuse data
@@ -274,37 +292,42 @@ if gpu_enabled:
 else:
     scene.cycles.denoiser = 'OPENIMAGEDENOISE'  # Use CPU denoising
     print("✅ CPU denoising enabled (OpenImageDenoise)")
-# ULTRA-EFFICIENT SAMPLING: Drastically reduced for <50% CPU usage
+# ADAPTIVE SAMPLING: Smart CPU/GPU optimization based on available resources
 if gpu_enabled:
-    scene.cycles.samples = 64  # Ultra-low samples for GPU efficiency
+    # GPU-optimized settings for maximum performance
+    scene.cycles.samples = 128  # Balanced quality/performance for GPU
+    scene.cycles.preview_samples = 64
+    scene.cycles.max_bounces = 4  # Moderate bounces for GPU efficiency
+    scene.cycles.diffuse_bounces = 2
+    scene.cycles.glossy_bounces = 2
+    scene.cycles.transparent_max_bounces = 4
+    scene.cycles.transmission_bounces = 4
+    scene.cycles.volume_bounces = 2
+    print("✅ GPU-optimized sampling: 128 samples, 4 bounces")
+else:
+    # CPU-optimized settings to prevent 900% CPU usage
+    scene.cycles.samples = 64  # Reduced CPU samples to prevent overload
     scene.cycles.preview_samples = 32
-    scene.cycles.max_bounces = 2  # Minimal bounces for speed
+    scene.cycles.max_bounces = 2  # Minimal bounces for CPU efficiency
     scene.cycles.diffuse_bounces = 1
     scene.cycles.glossy_bounces = 1
     scene.cycles.transparent_max_bounces = 2
     scene.cycles.transmission_bounces = 2
     scene.cycles.volume_bounces = 1
-else:
-    # Even lower for CPU rendering
-    scene.cycles.samples = 32  # Ultra-low CPU samples
-    scene.cycles.preview_samples = 16
-    scene.cycles.max_bounces = 1  # Single bounce for CPU
-    scene.cycles.diffuse_bounces = 1
-    scene.cycles.glossy_bounces = 1
-    scene.cycles.transparent_max_bounces = 1
-    scene.cycles.transmission_bounces = 1
-    scene.cycles.volume_bounces = 1
+    print("✅ CPU-optimized sampling: 64 samples, 2 bounces")
 
 # Disable unnecessary features
 scene.render.use_compositing = False
 scene.render.use_sequencer = False
 scene.render.use_motion_blur = False
 
-# ULTRA-EFFICIENT MEMORY AND PERFORMANCE OPTIMIZATION
+# ADAPTIVE TILE SIZING: Optimize for CPU/GPU performance
 if gpu_enabled:
-    scene.cycles.tile_size = 256  # Smaller tiles for better CPU efficiency
+    scene.cycles.tile_size = 512  # Larger tiles for GPU efficiency
+    print("✅ GPU tile size: 512px (optimized for GPU)")
 else:
-    scene.cycles.tile_size = 64  # Very small tiles for CPU efficiency
+    scene.cycles.tile_size = 32  # Very small tiles for CPU efficiency
+    print("✅ CPU tile size: 32px (prevents CPU overload)")
 
 scene.cycles.use_progressive_refine = False  # Disable progressive rendering
 scene.cycles.debug_use_spatial_splits = False  # Disable spatial splits

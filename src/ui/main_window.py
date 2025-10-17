@@ -53,8 +53,8 @@ class VideoGenerationThread(QThread):
             analysis_path = os.path.join(self.config['temp_dir'], 'analysis.json')
             analyzer.save_analysis(analysis_path)
             
-            # Step 2: Generate commercial grade Blender script
-            self.progress.emit(20, "Generating commercial grade scene...")
+            # Step 2: Generate optimized Blender script based on performance mode
+            self.progress.emit(20, f"Generating {self.config.get('performance_mode', 'balanced')} scene...")
             generator = CommercialGradeAnimator(features)
             script_path = os.path.join(self.config['temp_dir'], 'commercial_scene.py')
             blend_path = os.path.join(self.config['temp_dir'], 'scene.blend')
@@ -62,8 +62,80 @@ class VideoGenerationThread(QThread):
             # Ensure temp directory exists
             os.makedirs(self.config['temp_dir'], exist_ok=True)
             
-            # Use the save_script method which properly handles blend file saving
-            generator.save_script(script_path, blend_path=blend_path)
+            # Use performance-optimized render settings
+            performance_mode = self.config.get('performance_mode', 'balanced')
+            if performance_mode == "ultra_fast":
+                # Ultra fast settings
+                render_settings = {
+                    'resolution_x': 1920,
+                    'resolution_y': 1080,
+                    'engine': 'CYCLES',
+                    'device': 'GPU',
+                    'samples': 64,
+                    'use_denoising': True,
+                    'motion_blur': False,
+                    'dof': False,
+                    'use_adaptive_sampling': True,
+                    'adaptive_threshold': 0.02,
+                    'max_bounces': 2,
+                    'diffuse_bounces': 1,
+                    'glossy_bounces': 1,
+                    'transmission_bounces': 2,
+                    'volume_bounces': 1,
+                    'caustics_reflective': False,
+                    'caustics_refractive': False,
+                    'use_gpu_denoising': True,
+                    'use_geometry_nodes': False
+                }
+            elif performance_mode == "balanced":
+                # Balanced settings
+                render_settings = {
+                    'resolution_x': 1920,
+                    'resolution_y': 1080,
+                    'engine': 'CYCLES',
+                    'device': 'GPU',
+                    'samples': 128,
+                    'use_denoising': True,
+                    'motion_blur': False,
+                    'dof': False,
+                    'use_adaptive_sampling': True,
+                    'adaptive_threshold': 0.02,
+                    'max_bounces': 4,
+                    'diffuse_bounces': 2,
+                    'glossy_bounces': 2,
+                    'transmission_bounces': 4,
+                    'volume_bounces': 1,
+                    'caustics_reflective': False,
+                    'caustics_refractive': False,
+                    'use_gpu_denoising': True,
+                    'use_geometry_nodes': False
+                }
+            else:  # commercial
+                # Commercial grade settings
+                render_settings = {
+                    'resolution_x': 1920,
+                    'resolution_y': 1080,
+                    'engine': 'CYCLES',
+                    'device': 'GPU',
+                    'samples': 256,
+                    'use_denoising': True,
+                    'motion_blur': True,
+                    'dof': True,
+                    'use_adaptive_sampling': True,
+                    'adaptive_threshold': 0.01,
+                    'max_bounces': 6,
+                    'diffuse_bounces': 3,
+                    'glossy_bounces': 3,
+                    'transmission_bounces': 6,
+                    'volume_bounces': 2,
+                    'caustics_reflective': True,
+                    'caustics_refractive': True,
+                    'use_gpu_denoising': True,
+                    'use_geometry_nodes': False
+                }
+            
+            # Use the save_script method with optimized settings
+            generator.save_script(script_path, render_settings=render_settings, blend_path=blend_path)
             
             # Step 3: Render video
             self.progress.emit(30, "Initializing commercial renderer...")
@@ -246,10 +318,21 @@ class MainWindow(QMainWindow):
         samples_layout.addWidget(self.samples_spin)
         samples_layout.addStretch()
         
-        # Fast Mode
-        self.fast_mode_check = QCheckBox("⚡ Fast Mode (10x Faster)")
+        # Performance Mode
+        self.performance_combo = QComboBox()
+        self.performance_combo.addItems([
+            "🎨 Commercial Grade (High Quality)",
+            "⚡ Balanced (Optimized)",
+            "🚀 Ultra Fast (Minimal CPU)"
+        ])
+        self.performance_combo.setCurrentText("⚡ Balanced (Optimized)")
+        self.performance_combo.setToolTip("Choose performance vs quality balance")
+        self.performance_combo.currentTextChanged.connect(self.on_performance_changed)
+        
+        # Fast Mode (legacy)
+        self.fast_mode_check = QCheckBox("⚡ Legacy Fast Mode")
         self.fast_mode_check.setChecked(False)
-        self.fast_mode_check.setToolTip("Use simple shapes and fast rendering for quick previews")
+        self.fast_mode_check.setToolTip("Legacy fast mode - use Performance Mode instead")
         self.fast_mode_check.toggled.connect(self.on_fast_mode_toggled)
         
         # Denoising
@@ -259,6 +342,8 @@ class MainWindow(QMainWindow):
         
         layout.addLayout(engine_layout)
         layout.addLayout(samples_layout)
+        layout.addWidget(QLabel("Performance Mode:"))
+        layout.addWidget(self.performance_combo)
         layout.addWidget(self.fast_mode_check)
         layout.addWidget(self.denoise_check)
         group.setLayout(layout)
@@ -286,20 +371,33 @@ class MainWindow(QMainWindow):
         
         return group
         
-    def on_fast_mode_toggled(self, checked):
-        """Handle fast mode toggle - auto-optimize settings."""
-        if checked:
-            # Auto-optimize for fast mode
-            self.engine_combo.setCurrentText("Eevee (Fast)")
-            self.samples_spin.setValue(64)
-            self.denoise_check.setChecked(False)
-            self.log_message("⚡ Fast mode enabled - settings optimized for speed!")
-        else:
-            # Reset to commercial grade settings
+    def on_performance_changed(self, mode):
+        """Handle performance mode change - auto-optimize settings."""
+        if "Commercial Grade" in mode:
+            # High quality settings
             self.engine_combo.setCurrentText("Cycles (High Quality)")
-            self.samples_spin.setValue(512)  # Commercial grade default
+            self.samples_spin.setValue(256)  # Reduced from 512 for performance
             self.denoise_check.setChecked(True)
-            self.log_message("🎨 Commercial grade mode enabled - maximum quality!")
+            self.log_message("🎨 Commercial Grade mode - High quality with optimizations!")
+        elif "Balanced" in mode:
+            # Balanced settings
+            self.engine_combo.setCurrentText("Cycles (High Quality)")
+            self.samples_spin.setValue(128)  # Optimized samples
+            self.denoise_check.setChecked(True)
+            self.log_message("⚡ Balanced mode - Optimized performance and quality!")
+        elif "Ultra Fast" in mode:
+            # Ultra fast settings
+            self.engine_combo.setCurrentText("Cycles (High Quality)")
+            self.samples_spin.setValue(64)  # Minimal samples
+            self.denoise_check.setChecked(True)
+            self.log_message("🚀 Ultra Fast mode - Minimal CPU usage!")
+            
+    def on_fast_mode_toggled(self, checked):
+        """Handle legacy fast mode toggle."""
+        if checked:
+            self.log_message("⚠️  Legacy fast mode - consider using Performance Mode instead")
+        else:
+            self.log_message("✅ Legacy fast mode disabled")
             
     def select_audio(self):
         """Open file dialog to select audio file."""
@@ -328,12 +426,22 @@ class MainWindow(QMainWindow):
         temp_dir = os.path.join(self.output_dir, "temp")
         os.makedirs(temp_dir, exist_ok=True)
         
+        # Determine performance mode
+        performance_mode = self.performance_combo.currentText()
+        if "Commercial Grade" in performance_mode:
+            quality_level = "commercial"
+        elif "Balanced" in performance_mode:
+            quality_level = "balanced"
+        else:  # Ultra Fast
+            quality_level = "ultra_fast"
+        
         config = {
             'audio_path': self.audio_path,
             'output_path': output_path,
             'temp_dir': temp_dir,
             'fps': self.fps_spin.value(),
             'fast_mode': self.fast_mode_check.isChecked(),
+            'performance_mode': quality_level,
             'render_settings': {
                 'resolution_x': 1920,
                 'resolution_y': 1080,
@@ -341,8 +449,8 @@ class MainWindow(QMainWindow):
                 'device': 'GPU',  # Add device parameter
                 'samples': self.samples_spin.value(),
                 'use_denoising': self.denoise_check.isChecked(),
-                'motion_blur': True,
-                'dof': True,
+                'motion_blur': quality_level != "ultra_fast",  # Disable for ultra fast
+                'dof': quality_level == "commercial",  # Only for commercial grade
                 'use_adaptive_sampling': True
             },
             'keep_temp': False
@@ -353,14 +461,17 @@ class MainWindow(QMainWindow):
         self.cancel_btn.setEnabled(True)
         self.progress_bar.setValue(0)
         self.status_text.clear()
-        self.log_message("🚀 Starting commercial-grade video generation...")
-        self.log_message(f"Style: Commercial-Grade (Professional Quality)")
+        self.log_message("🚀 Starting optimized video generation...")
+        self.log_message(f"Performance Mode: {performance_mode}")
         self.log_message(f"FPS: {self.fps_spin.value()}")
         self.log_message(f"Engine: {self.engine_combo.currentText()}")
-        if self.fast_mode_check.isChecked():
-            self.log_message("⚡ FAST MODE ENABLED - 10x faster rendering!")
+        self.log_message(f"Samples: {self.samples_spin.value()}")
+        if quality_level == "ultra_fast":
+            self.log_message("🚀 ULTRA FAST MODE - Minimal CPU usage!")
+        elif quality_level == "balanced":
+            self.log_message("⚡ BALANCED MODE - Optimized performance and quality!")
         else:
-            self.log_message("🎨 COMMERCIAL GRADE MODE - Maximum quality rendering")
+            self.log_message("🎨 COMMERCIAL GRADE MODE - High quality with optimizations!")
         
         # Start generation thread
         self.generation_thread = VideoGenerationThread(config)
