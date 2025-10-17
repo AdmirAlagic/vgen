@@ -16,9 +16,9 @@ from crewai.tools import BaseTool
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 try:
-    from commercial_grade_animator import CommercialGradeAnimator
+    from mutating_cube_animator import MutatingCubeAnimator
 except ImportError:
-    CommercialGradeAnimator = None
+    MutatingCubeAnimator = None
 
 class BlenderOptimizationTool(BaseTool):
     """Tool for optimizing Blender scene generation and animation for commercial quality."""
@@ -58,14 +58,14 @@ class BlenderOptimizationTool(BaseTool):
                 }
             
             # Initialize animator
-            if CommercialGradeAnimator is None:
+            if MutatingCubeAnimator is None:
                 return {
-                    "error": "CommercialGradeAnimator not available. Please check Blender integration.",
+                    "error": "MutatingCubeAnimator not available. Please check Blender integration.",
                     "status": "failed"
                 }
             
             # Create animator with optimized settings
-            animator = CommercialGradeAnimator(features)
+            animator = MutatingCubeAnimator(features)
             
             # Apply complexity settings
             self._configure_scene_complexity(animator, scene_complexity)

@@ -103,7 +103,7 @@
 
 ### Key Files Modified
 1. **`src/video_renderer.py`**: GPU acceleration and memory management
-2. **`src/commercial_grade_animator.py`**: Scene optimization and render settings
+2. **`src/mutating_cube_animator.py`**: Scene optimization and render settings
 3. **`src/ui/main_window.py`**: Performance mode selection and UI integration
 
 ### New Features

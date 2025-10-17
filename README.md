@@ -75,7 +75,7 @@ AudioBlenderVideo/
 │   ├── main.py                   # GUI application entry point
 │   ├── audio_analyzer.py         # Advanced audio analysis (librosa/scipy)
 │   ├── video_renderer.py         # Ultra-optimized Blender renderer
-│   ├── commercial_grade_animator.py  # Commercial-grade animation system
+│   ├── mutating_cube_animator.py  # Mutating cube animation system
 │   └── ui/                       # PyQt6 GUI components
 │       ├── main_window.py        # Main application window
 │       └── style.py              # UI styling and themes
@@ -134,7 +134,7 @@ AudioBlenderVideo/
 - **Frame Generation**: Audio features mapped to video frames
 - **Performance Optimized**: Efficient processing for real-time generation
 
-#### Commercial Grade Animator (`src/commercial_grade_animator.py`)
+#### Mutating Cube Animator (`src/mutating_cube_animator.py`)
 - **Scene Generation**: Complex 3D scenes with 30+ animated objects
 - **Asset Integration**: PolyHaven, Sketchfab, Hyper3D support
 - **Animation Styles**: Commercial-grade with enhanced complexity
@@ -164,15 +164,15 @@ AudioBlenderVideo/
 ```python
 from src.audio_analyzer import AudioAnalyzer
 from src.video_renderer import UltraVideoRenderer
-from src.commercial_grade_animator import CommercialGradeAnimator
+from src.mutating_cube_animator import MutatingCubeAnimator
 
 # Analyze audio
 analyzer = AudioAnalyzer("audio.mp3", fps=30)
 features = analyzer.analyze()
 
 # Create animation
-animator = CommercialGradeAnimator(features)
-script = animator.create_commercial_grade_scene()
+animator = MutatingCubeAnimator(features)
+script = animator.save_script("output/scene.py", "output/scene.blend")
 
 # Render video
 renderer = UltraVideoRenderer()
@@ -182,8 +182,8 @@ renderer.render_video(script, "output.mp4")
 ### Advanced Configuration
 ```python
 # Custom animation style
-animator = CommercialGradeAnimator(features)
-animator.set_animation_style('commercial_grade')
+animator = MutatingCubeAnimator(features)
+animator.set_animation_style('mutating_cube')
 
 # Asset integration
 animator.set_asset_source('polyhaven', enabled=True, assets={
@@ -299,7 +299,7 @@ This project is licensed under the terms specified in the LICENSE file.
 
 ### Getting Help
 - Check the test scripts in `output/test/` for examples
-- Review the commercial grade animator documentation
+- Review the mutating cube animator documentation
 - Examine the GUI application for configuration options
 
 ---

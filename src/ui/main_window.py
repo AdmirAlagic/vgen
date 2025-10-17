@@ -37,7 +37,7 @@ class VideoGenerationThread(QThread):
             print("💻 Using COMMERCIAL-GRADE RENDERING SYSTEM")
             from audio_analyzer import AudioAnalyzer
             from video_renderer import UltraVideoRenderer
-            from commercial_grade_animator import CommercialGradeAnimator
+            from mutating_cube_animator import MutatingCubeAnimator
             
             if self.config.get('performance_mode') == 'ultra_fast':
                 print("⚡ COMMERCIAL SYSTEM - ULTRA FAST MODE")
@@ -57,8 +57,8 @@ class VideoGenerationThread(QThread):
             
             # Step 2: Generate optimized Blender script based on performance mode
             self.progress.emit(20, f"Generating {self.config.get('performance_mode', 'balanced')} scene...")
-            generator = CommercialGradeAnimator(features)
-            script_path = os.path.join(self.config['temp_dir'], 'commercial_scene.py')
+            generator = MutatingCubeAnimator(features)
+            script_path = os.path.join(self.config['temp_dir'], 'mutating_cube_scene.py')
             blend_path = os.path.join(self.config['temp_dir'], 'scene.blend')
             
             # Ensure temp directory exists

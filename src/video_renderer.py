@@ -102,14 +102,13 @@ class UltraVideoRenderer:
                 progress_callback(30, f"Scene created in {elapsed:.1f}s")
             
             # Check for blend file in multiple possible locations
-            # The CommercialGradeAnimator saves to different paths depending on the script
+            # The MutatingCubeAnimator saves to different paths depending on the script
             possible_paths = [
                 blend_output_path,
                 os.path.join(os.path.dirname(blend_output_path), "scene.blend"),
-                os.path.join(os.path.dirname(blend_output_path), "commercial_scene.blend"),
+                # Also check the script directory for blend files saved by MutatingCubeAnimator
+                os.path.join(os.path.dirname(script_path), "test_mutating_cube_final.blend"),
                 os.path.join(os.path.dirname(script_path), "scene.blend"),
-                os.path.join(os.path.dirname(script_path), "commercial_scene.blend"),
-                os.path.join(os.path.dirname(script_path), "v6_dramatically_improved_scene.blend")
             ]
             
             # Remove duplicates while preserving order
@@ -208,6 +207,29 @@ scene.render.ffmpeg.codec = 'H264'
 scene.render.ffmpeg.constant_rate_factor = 'MEDIUM'
 scene.render.ffmpeg.ffmpeg_preset = 'GOOD'
 scene.render.ffmpeg.audio_codec = 'NONE'  # No audio in temp render
+
+# Set output path for video file
+import os
+output_dir = os.path.dirname(r"${OUTPUT_PATH}")
+output_file = os.path.basename(r"${OUTPUT_PATH}")
+# Remove .mp4 extension for Blender's filepath (it adds the extension automatically)
+scene.render.filepath = os.path.join(output_dir, output_file.replace('.mp4', ''))
+print(f"✅ Output path set to: {scene.render.filepath}")
+
+# Ensure output directory exists
+os.makedirs(output_dir, exist_ok=True)
+print(f"✅ Output directory created: {output_dir}")
+
+# Verify the path is writable
+try:
+    test_file = os.path.join(output_dir, "test_write.tmp")
+    with open(test_file, 'w') as f:
+        f.write("test")
+    os.remove(test_file)
+    print(f"✅ Output directory write permissions verified")
+except Exception as e:
+    print(f"❌ Output directory not writable: {e}")
+    raise Exception(f"Cannot write to output directory: {e}")
 
 # ULTRA-EFFICIENT GPU ACCELERATION with CPU monitoring
 gpu_enabled = False
@@ -356,15 +378,37 @@ if gpu_enabled:
 else:
     print("ℹ️  Skipping GPU memory optimization (using CPU)")
 
+# CRITICAL: Set frame range for rendering
+scene.frame_start = 1
+scene.frame_end = 60  # Default 2.5 seconds at 24fps
+scene.frame_current = 1
+print(f"✅ Frame range set: {scene.frame_start}-{scene.frame_end}")
+
+# Set resolution and FPS
+scene.render.resolution_x = 1920
+scene.render.resolution_y = 1080
+scene.render.fps = 24
+print(f"✅ Resolution: {scene.render.resolution_x}x{scene.render.resolution_y} @ {scene.render.fps}fps")
+
 print("✅ Ultra-fast optimizations applied")
 """
+        
+        # Create temporary script with output path substitution
+        temp_script_path = output_path.replace('.mp4', '_render_script.py')
+        final_script = optimization_script.replace('${OUTPUT_PATH}', output_path)
+        
+        print(f"🔧 Creating render script: {temp_script_path}")
+        print(f"🎯 Target output: {output_path}")
+        
+        with open(temp_script_path, 'w') as f:
+            f.write(final_script)
         
         # Execute optimization and render with memory limits
         cmd = [
             self.blender_path,
             "--background",
             blend_file,
-            "--render-output", output_path,
+            "--python", temp_script_path,
             "--render-anim"
         ]
         
@@ -421,10 +465,64 @@ print("✅ Ultra-fast optimizations applied")
             if progress_callback:
                 progress_callback(90, f"Rendered in {elapsed:.1f}s")
             
+            # Verify the output file was created
+            if os.path.exists(output_path):
+                file_size = os.path.getsize(output_path) / (1024 * 1024)
+                print(f"✅ Temp video created: {output_path} ({file_size:.2f} MB)")
+            else:
+                print(f"❌ Temp video NOT found: {output_path}")
+                
+                # Check for alternative output files (Blender might have created different names)
+                output_dir = os.path.dirname(output_path)
+                expected_base = os.path.basename(output_path).replace('.mp4', '')
+                
+                if os.path.exists(output_dir):
+                    print(f"📂 Files in {output_dir}:")
+                    found_video = False
+                    for f in os.listdir(output_dir):
+                        file_path = os.path.join(output_dir, f)
+                        if os.path.isfile(file_path):
+                            size = os.path.getsize(file_path) / 1024
+                            print(f"  📄 {f} ({size:.1f} KB)")
+                            
+                            # Check if this might be our video file
+                            if (f.endswith('.mp4') or f.endswith('.avi') or f.endswith('.mov')) and expected_base in f:
+                                print(f"🎯 Found potential video file: {f}")
+                                found_video = True
+                                # Try to rename it to the expected name
+                                try:
+                                    os.rename(file_path, output_path)
+                                    print(f"✅ Renamed {f} to {os.path.basename(output_path)}")
+                                    break
+                                except Exception as rename_error:
+                                    print(f"⚠️  Could not rename {f}: {rename_error}")
+                        else:
+                            print(f"  📁 {f}/")
+                    
+                    if not found_video:
+                        print(f"❌ No video files found matching pattern: {expected_base}")
+                else:
+                    print(f"❌ Output directory does not exist: {output_dir}")
+                
+                # Final check after potential rename
+                if not os.path.exists(output_path):
+                    raise RuntimeError(f"Temp video file not created: {output_path}")
+            
+            # Cleanup temporary script
+            try:
+                os.remove(temp_script_path)
+            except:
+                pass
+            
             return output_path
             
         except Exception as e:
             print(f"❌ Ultra-fast rendering failed: {e}")
+            # Cleanup temporary script on error
+            try:
+                os.remove(temp_script_path)
+            except:
+                pass
             raise RuntimeError(f"Ultra-fast rendering failed: {e}")
 
     def merge_video_with_audio_hwaccel(
@@ -447,49 +545,90 @@ print("✅ Ultra-fast optimizations applied")
         if not shutil.which("ffmpeg"):
             raise RuntimeError("FFmpeg not found. Install: brew install ffmpeg")
         
+        # Check if input files exist
+        if not os.path.exists(video_path):
+            print(f"❌ Video file not found: {video_path}")
+            # List files in the directory to debug
+            video_dir = os.path.dirname(video_path)
+            if os.path.exists(video_dir):
+                print(f"📂 Files in {video_dir}:")
+                for f in os.listdir(video_dir):
+                    file_path = os.path.join(video_dir, f)
+                    if os.path.isfile(file_path):
+                        size = os.path.getsize(file_path) / 1024
+                        print(f"  📄 {f} ({size:.1f} KB)")
+                    else:
+                        print(f"  📁 {f}/")
+            raise RuntimeError(f"Video file not found: {video_path}")
+        if not os.path.exists(audio_path):
+            raise RuntimeError(f"Audio file not found: {audio_path}")
+        
+        print(f"✅ Video file found: {video_path}")
+        print(f"✅ Audio file found: {audio_path}")
+        
         start_time = time.time()
+        
+        # Create output directory if it doesn't exist
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         
         # Try hardware acceleration first (macOS VideoToolbox)
         cmd_hwaccel = [
             "ffmpeg",
-            "-y",
+            "-y",  # Overwrite output file
             "-i", video_path,
             "-i", audio_path,
             "-c:v", "h264_videotoolbox",  # Hardware encoder (macOS)
             "-b:v", "5M",  # Bitrate
             "-c:a", "aac",
             "-b:a", "192k",
-            "-shortest",
-            "-movflags", "+faststart",
+            "-shortest",  # Stop when shortest input ends
+            "-movflags", "+faststart",  # Optimize for streaming
             output_path
         ]
         
         # Fallback command (software encoding)
         cmd_software = [
             "ffmpeg",
-            "-y",
+            "-y",  # Overwrite output file
             "-i", video_path,
             "-i", audio_path,
             "-c:v", "copy",  # Copy video (fastest)
             "-c:a", "aac",
             "-b:a", "192k",
-            "-shortest",
-            "-movflags", "+faststart",
+            "-shortest",  # Stop when shortest input ends
+            "-movflags", "+faststart",  # Optimize for streaming
+            output_path
+        ]
+        
+        # Simple fallback command (most compatible)
+        cmd_simple = [
+            "ffmpeg",
+            "-y",  # Overwrite output file
+            "-i", video_path,
+            "-i", audio_path,
+            "-c", "copy",  # Copy both video and audio
+            "-shortest",  # Stop when shortest input ends
             output_path
         ]
         
         # Try hardware acceleration first
         try:
+            print(f"🔧 Trying hardware acceleration...")
+            print(f"📹 Video: {video_path}")
+            print(f"🎵 Audio: {audio_path}")
+            print(f"📤 Output: {output_path}")
+            
             result = subprocess.run(
                 cmd_hwaccel,
                 capture_output=True,
                 text=True,
-                timeout=60,
+                timeout=120,  # Increased timeout
                 check=True
             )
             elapsed = time.time() - start_time
             print(f"✅ Merged with hardware acceleration in {elapsed:.2f}s")
-        except:
+        except subprocess.CalledProcessError as e:
+            print(f"⚠️  Hardware acceleration failed: {e.stderr[:200]}")
             # Fallback to software/copy
             print("⚠️  Hardware encoding not available, using stream copy...")
             try:
@@ -497,14 +636,31 @@ print("✅ Ultra-fast optimizations applied")
                     cmd_software,
                     capture_output=True,
                     text=True,
-                    timeout=60,
+                    timeout=120,  # Increased timeout
                     check=True
                 )
                 elapsed = time.time() - start_time
                 print(f"✅ Merged (stream copy) in {elapsed:.2f}s")
-            except subprocess.CalledProcessError as e:
-                print(f"❌ FFmpeg failed: {e.stderr[:500]}")
-                raise RuntimeError("Video merge failed")
+            except subprocess.CalledProcessError as e2:
+                print(f"⚠️  Stream copy failed: {e2.stderr[:200]}")
+                # Final fallback - simple copy
+                print("⚠️  Trying simple copy...")
+                try:
+                    result = subprocess.run(
+                        cmd_simple,
+                        capture_output=True,
+                        text=True,
+                        timeout=120,  # Increased timeout
+                        check=True
+                    )
+                    elapsed = time.time() - start_time
+                    print(f"✅ Merged (simple copy) in {elapsed:.2f}s")
+                except subprocess.CalledProcessError as e3:
+                    print(f"❌ All FFmpeg methods failed:")
+                    print(f"   Hardware: {e.stderr[:200]}")
+                    print(f"   Software: {e2.stderr[:200]}")
+                    print(f"   Simple: {e3.stderr[:200]}")
+                    raise RuntimeError("Video merge failed - all methods exhausted")
         
         if progress_callback:
             progress_callback(100, "Complete!")
@@ -540,7 +696,22 @@ print("✅ Ultra-fast optimizations applied")
         - Hardware acceleration where available
         """
         temp_dir = os.path.join(os.path.dirname(output_path), "temp")
-        os.makedirs(temp_dir, exist_ok=True)
+        
+        # Ensure temp directory exists with proper permissions
+        try:
+            os.makedirs(temp_dir, exist_ok=True)
+            print(f"✅ Temp directory created/verified: {temp_dir}")
+            
+            # Test write permissions
+            test_file = os.path.join(temp_dir, "test_write.tmp")
+            with open(test_file, 'w') as f:
+                f.write("test")
+            os.remove(test_file)
+            print(f"✅ Temp directory write permissions verified")
+            
+        except Exception as e:
+            print(f"❌ Failed to create/verify temp directory: {e}")
+            raise RuntimeError(f"Cannot create temp directory {temp_dir}: {e}")
         
         total_start = time.time()
         

@@ -52,18 +52,18 @@ def create_blender_script(features: Dict, output_path: str) -> str:
     temp_dir = Path(__file__).parent / "output" / "temp"
     temp_dir.mkdir(parents=True, exist_ok=True)
     
-    # Import the commercial grade animator
+    # Import the mutating cube animator
     sys.path.insert(0, str(Path(__file__).parent))
     try:
-        from src.commercial_grade_animator import CommercialGradeAnimator
+        from src.mutating_cube_animator import MutatingCubeAnimator
     except ImportError:
-        print("❌ Commercial grade animator not found. Please check src/commercial_grade_animator.py")
+        print("❌ Mutating cube animator not found. Please check src/mutating_cube_animator.py")
         sys.exit(1)
     
-    animator = CommercialGradeAnimator(features)
+    animator = MutatingCubeAnimator(features)
     
-    # Generate commercial-grade script
-    script_path = temp_dir / "commercial_grade_scene.py"
+    # Generate mutating cube script
+    script_path = temp_dir / "mutating_cube_scene.py"
     blend_path = temp_dir / "scene.blend"
     
     # Use the save_script method which properly handles blend file saving
