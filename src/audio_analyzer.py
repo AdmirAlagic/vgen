@@ -28,6 +28,7 @@ except ImportError:
 
 import json
 import math
+import random
 from typing import Dict, List, Tuple, Optional
 
 
@@ -104,7 +105,7 @@ class EnhancedAudioAnalyzer:
     
     def analyze_for_mutating_cube(self) -> Dict:
         """Comprehensive analysis optimized for mutating cube animations."""
-        print("🎵 Analyzing audio for mutating cube animation...")
+        print("🎵 Analyzing audio for ULTRA-SMOOTH mutating cube animation...")
         
         self.features = {
             'duration': self.duration,
@@ -121,7 +122,8 @@ class EnhancedAudioAnalyzer:
         # Generate shape key specific data
         self._generate_shape_key_mappings()
         
-        print(f"✅ Enhanced analysis complete: {self.duration:.2f}s, {self.total_frames} frames")
+        print(f"✅ ULTRA-SMOOTH analysis complete: {self.duration:.2f}s, {self.total_frames} frames")
+        print("🚀 Features: CONTINUOUS motion, FLOW smoothing, ORGANIC variation, DRIVER-ready data")
         return self.features
     
     def _analyze_with_librosa(self):
@@ -396,8 +398,8 @@ class EnhancedAudioAnalyzer:
                 # Scale to range
                 final_value = min_val + (max_val - min_val) * (combined_value ** sensitivity)
                 
-                # Add organic variation
-                organic_noise = 0.1 * math.sin(frame * 0.05) * math.cos(frame * 0.03)
+                # Add enhanced organic variation for continuous motion
+                organic_noise = self._generate_continuous_organic_variation(frame)
                 final_value += organic_noise
                 
                 # Clamp to range
@@ -437,13 +439,63 @@ class EnhancedAudioAnalyzer:
         self.features['frame_data'] = frame_data
     
     def _smooth_signal(self, signal: np.ndarray, window_size: int = 3) -> np.ndarray:
-        """Apply smoothing to reduce noise in audio features."""
+        """Apply ultra-smooth signal processing optimized for continuous abstract motion."""
         if len(signal) < window_size:
             return signal
         
-        # Simple moving average
-        smoothed = np.convolve(signal, np.ones(window_size)/window_size, mode='same')
+        # Apply multiple smoothing passes for ultra-smooth continuous motion
+        smoothed = signal.copy()
+        
+        # First pass: Basic smoothing with larger window for continuous flow
+        window_size = max(5, window_size * 2)  # Increased window for smoother results
+        smoothed = np.convolve(smoothed, np.ones(window_size)/window_size, mode='same')
+        
+        # Second pass: Gaussian-like smoothing for ultra-smooth continuous motion
+        if len(smoothed) > 10:
+            # Apply additional smoothing for continuous flow
+            smooth_kernel = np.array([0.1, 0.2, 0.4, 0.2, 0.1])  # Gaussian-like kernel
+            smoothed = np.convolve(smoothed, smooth_kernel, mode='same')
+        
+        # Third pass: Flow-based smoothing for seamless transitions
+        smoothed = self._apply_flow_smoothing(smoothed)
+        
         return smoothed
+    
+    def _apply_flow_smoothing(self, signal: np.ndarray) -> np.ndarray:
+        """Apply flow-based smoothing for seamless continuous motion."""
+        if len(signal) < 5:
+            return signal
+        
+        flow_smoothed = signal.copy()
+        flow_factor = 0.2  # Flow influence factor
+        
+        # Apply flow smoothing for continuous motion
+        for i in range(2, len(flow_smoothed) - 2):
+            # Calculate flow direction and apply smoothing
+            flow_influence = flow_factor * (
+                (flow_smoothed[i+1] - flow_smoothed[i-1]) * 0.1 +
+                (flow_smoothed[i+2] - flow_smoothed[i-2]) * 0.05
+            )
+            flow_smoothed[i] += flow_influence
+        
+        return flow_smoothed
+    
+    def _generate_continuous_organic_variation(self, frame: int) -> float:
+        """Generate continuous organic variation for natural abstract motion."""
+        # Multiple sine waves for complex continuous organic motion
+        organic_wave1 = 0.08 * math.sin(frame * 0.03)  # Slow wave
+        organic_wave2 = 0.05 * math.sin(frame * 0.07)  # Medium wave
+        organic_wave3 = 0.03 * math.sin(frame * 0.12)  # Fast wave
+        organic_wave4 = 0.02 * math.sin(frame * 0.18)  # Very fast wave
+        
+        # Combine waves for continuous organic motion
+        organic_variation = organic_wave1 + organic_wave2 + organic_wave3 + organic_wave4
+        
+        # Add subtle random variation for natural feel
+        if random.random() < 0.02:  # Very subtle random variations
+            organic_variation += random.uniform(-0.02, 0.02)
+        
+        return organic_variation
     
     def _normalize_feature(self, feature: np.ndarray) -> np.ndarray:
         """Normalize feature to 0-1 range."""

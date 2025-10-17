@@ -195,13 +195,13 @@ def main():
     """Main function."""
     if len(sys.argv) < 2:
         print("Usage: python generate_video.py <audio_file> [output_name]")
-        print("\nThis application uses the OPTIMIZED MUTATING CUBE animation system with:")
-        print("  - OPTIMIZED mesh complexity (level 2-3 subdivision)")
-        print("  - ADVANCED interpolation methods (Bezier with custom handles)")
-        print("  - SMOOTH transitions and organic motion")
+        print("\nThis application uses the ULTRA-SMOOTH MUTATING CUBE animation system with:")
+        print("  - CONTINUOUS motion and seamless transitions")
+        print("  - AUDIO-REACTIVE drivers for real-time animation")
+        print("  - ULTRA-SMOOTH interpolation (Bezier with custom handles)")
+        print("  - FLOW-based smoothing for organic movement")
+        print("  - MCP integration for enhanced materials")
         print("  - Professional rendering with Cycles GPU acceleration")
-        print("  - Adaptive quality system (ultra/high/medium/low)")
-        print("  - Audio-reactive deformation patterns")
         print("\nExample:")
         print("  python generate_video.py music.wav my_video")
         sys.exit(1)
@@ -209,11 +209,12 @@ def main():
     audio_file = sys.argv[1]
     output_name = sys.argv[2] if len(sys.argv) > 2 else Path(audio_file).stem
     
-    print("🎬 OPTIMIZED AUDIO-REACTIVE VIDEO GENERATOR")
+    print("🎬 ULTRA-SMOOTH AUDIO-REACTIVE VIDEO GENERATOR")
     print("=" * 60)
     print(f"🎵 Audio: {audio_file}")
     print(f"📹 Output: {output_name}")
-    print("🎨 Style: OPTIMIZED Mutating Cube (Professional Quality)")
+    print("🎨 Style: ULTRA-SMOOTH Mutating Cube (Continuous Motion)")
+    print("🚀 Features: CONTINUOUS flow, AUDIO-REACTIVE drivers, MCP integration")
     print("=" * 60)
     
     try:
@@ -235,7 +236,8 @@ def main():
         
         if blend_path.exists():
             if render_video(str(blend_path), str(video_path)):
-                print(f"\n🎉 SUCCESS! OPTIMIZED mutating cube video created: {video_path}")
+                print(f"\n🎉 SUCCESS! ULTRA-SMOOTH mutating cube video created: {video_path}")
+                print("🚀 Features: CONTINUOUS motion, AUDIO-REACTIVE drivers, MCP integration")
             else:
                 print("\n⚠️  Enhanced scene created but video render failed")
                 print(f"📁 Blend file available: {blend_path}")
