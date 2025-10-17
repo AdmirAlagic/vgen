@@ -9,12 +9,12 @@ import sys
 from pathlib import Path
 from PyQt6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QPushButton, QLabel, QComboBox, QSpinBox, QDoubleSpinBox,
+    QPushButton, QLabel, QComboBox, QSpinBox,
     QProgressBar, QFileDialog, QTextEdit, QGroupBox,
     QCheckBox, QMessageBox, QFrame
 )
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
-from PyQt6.QtGui import QFont, QIcon
+# QFont and QIcon removed - not used in current implementation
 
 from ui.style import get_theme
 
@@ -39,8 +39,10 @@ class VideoGenerationThread(QThread):
             from video_renderer import UltraVideoRenderer
             from commercial_grade_animator import CommercialGradeAnimator
             
-            if self.config.get('fast_mode', False):
-                print("⚡ COMMERCIAL SYSTEM - FAST MODE")
+            if self.config.get('performance_mode') == 'ultra_fast':
+                print("⚡ COMMERCIAL SYSTEM - ULTRA FAST MODE")
+            elif self.config.get('performance_mode') == 'balanced':
+                print("⚡ COMMERCIAL SYSTEM - BALANCED MODE")
             else:
                 print("🎬 COMMERCIAL SYSTEM - COMMERCIAL GRADE")
             
@@ -142,7 +144,7 @@ class VideoGenerationThread(QThread):
             
             # Use commercial renderer for all modes
             local_renderer = UltraVideoRenderer(self.config.get('blender_path'))
-            target_fps = min(self.config['fps'], 30) if self.config.get('fast_mode', False) else self.config['fps']
+            target_fps = min(self.config['fps'], 30) if self.config.get('performance_mode') == 'ultra_fast' else self.config['fps']
             
             output_video = local_renderer.generate_video_ultra_fast(
                 script_path=script_path,
@@ -329,11 +331,7 @@ class MainWindow(QMainWindow):
         self.performance_combo.setToolTip("Choose performance vs quality balance")
         self.performance_combo.currentTextChanged.connect(self.on_performance_changed)
         
-        # Fast Mode (legacy)
-        self.fast_mode_check = QCheckBox("⚡ Legacy Fast Mode")
-        self.fast_mode_check.setChecked(False)
-        self.fast_mode_check.setToolTip("Legacy fast mode - use Performance Mode instead")
-        self.fast_mode_check.toggled.connect(self.on_fast_mode_toggled)
+        # Legacy fast mode removed - use Performance Mode instead
         
         # Denoising
         self.denoise_check = QCheckBox("Use Denoising (Recommended)")
@@ -344,7 +342,6 @@ class MainWindow(QMainWindow):
         layout.addLayout(samples_layout)
         layout.addWidget(QLabel("Performance Mode:"))
         layout.addWidget(self.performance_combo)
-        layout.addWidget(self.fast_mode_check)
         layout.addWidget(self.denoise_check)
         group.setLayout(layout)
         
@@ -392,12 +389,7 @@ class MainWindow(QMainWindow):
             self.denoise_check.setChecked(True)
             self.log_message("🚀 Ultra Fast mode - Minimal CPU usage!")
             
-    def on_fast_mode_toggled(self, checked):
-        """Handle legacy fast mode toggle."""
-        if checked:
-            self.log_message("⚠️  Legacy fast mode - consider using Performance Mode instead")
-        else:
-            self.log_message("✅ Legacy fast mode disabled")
+    # Legacy fast mode handler removed - use Performance Mode instead
             
     def select_audio(self):
         """Open file dialog to select audio file."""
@@ -440,7 +432,6 @@ class MainWindow(QMainWindow):
             'output_path': output_path,
             'temp_dir': temp_dir,
             'fps': self.fps_spin.value(),
-            'fast_mode': self.fast_mode_check.isChecked(),
             'performance_mode': quality_level,
             'render_settings': {
                 'resolution_x': 1920,
