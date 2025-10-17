@@ -7,7 +7,7 @@ This script combines enhanced audio analysis with advanced Blender animation gen
 to create professional-quality audio-reactive videos using the enhanced mutating cube system.
 
 Usage:
-    python generate_video.py <audio_file> [output_name]
+    python generate_enhanced_audio_reactive_video.py <audio_file> [output_name]
 """
 
 import sys
@@ -21,9 +21,9 @@ from typing import Dict, Optional
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 try:
-    from src.audio_analyzer import EnhancedAudioAnalyzer
+    from src.enhanced_audio_analyzer import EnhancedAudioAnalyzer
 except ImportError:
-    print("❌ Audio analyzer not found. Please check src/audio_analyzer.py")
+    print("❌ Enhanced audio analyzer not found. Please check src/enhanced_audio_analyzer.py")
     sys.exit(1)
 
 def analyze_audio(audio_path: str, fps: int = 30) -> Dict:
@@ -56,25 +56,23 @@ def create_enhanced_blender_script(features: Dict, output_path: str) -> str:
     # Import the improved enhanced mutating cube animator with fixed shape keys
     sys.path.insert(0, str(Path(__file__).parent))
     try:
-        from src.animator import MutatingCubeAnimator
+        from src.enhanced_mutating_cube_animator_improved import ImprovedMutatingCubeAnimator
     except ImportError:
-        print("❌ Animator not found. Please check src/animator.py")
+        print("❌ Improved enhanced mutating cube animator not found. Please check src/enhanced_mutating_cube_animator_improved.py")
         sys.exit(1)
     
-    # Use high quality by default for professional output
-    quality_level = 'high'
-    animator = MutatingCubeAnimator(features, quality_level)
+    animator = ImprovedMutatingCubeAnimator(features)
     
     # Generate enhanced mutating cube script
     script_path = temp_dir / "enhanced_mutating_cube_scene.py"
     blend_path = temp_dir / "scene.blend"
     
-    # Use the save_script method which properly handles blend file saving with fixed shape keys
-    saved_script_path = animator.save_script(str(script_path), blend_path=str(blend_path))
+    # Use the save_improved_script method which properly handles blend file saving with fixed shape keys
+    saved_script_path = animator.save_improved_script(str(script_path), blend_path=str(blend_path))
     
-    print(f"✅ OPTIMIZED mutating cube Blender script created: {saved_script_path}")
+    print(f"✅ Enhanced mutating cube Blender script created: {saved_script_path}")
     print(f"🎬 Blend file will be saved to: {blend_path}")
-    print("🚀 Features: OPTIMIZED Mesh | ADVANCED Interpolation | SMOOTH Transitions | Professional Rendering")
+    print("🚀 Features: Enhanced Audio Analysis | Fixed Shape Key Deformation | Smooth Interpolation | 4K Rendering")
     return saved_script_path
 
 
@@ -194,26 +192,26 @@ def render_video(blend_path: str, output_path: str) -> bool:
 def main():
     """Main function."""
     if len(sys.argv) < 2:
-        print("Usage: python generate_video.py <audio_file> [output_name]")
-        print("\nThis application uses the OPTIMIZED MUTATING CUBE animation system with:")
-        print("  - OPTIMIZED mesh complexity (level 2-3 subdivision)")
-        print("  - ADVANCED interpolation methods (Bezier with custom handles)")
-        print("  - SMOOTH transitions and organic motion")
-        print("  - Professional rendering with Cycles GPU acceleration")
-        print("  - Adaptive quality system (ultra/high/medium/low)")
+        print("Usage: python generate_enhanced_audio_reactive_video.py <audio_file> [output_name]")
+        print("\nThis application uses the ENHANCED MUTATING CUBE animation system with:")
+        print("  - Advanced audio analysis with librosa")
+        print("  - Bounce interpolation for organic motion")
+        print("  - Fixed shape key deformation (actual geometry morphing)")
+        print("  - 4K rendering with Cycles GPU acceleration")
+        print("  - Professional lighting and camera setup")
         print("  - Audio-reactive deformation patterns")
         print("\nExample:")
-        print("  python generate_video.py music.wav my_video")
+        print("  python generate_enhanced_audio_reactive_video.py music.wav my_video")
         sys.exit(1)
     
     audio_file = sys.argv[1]
     output_name = sys.argv[2] if len(sys.argv) > 2 else Path(audio_file).stem
     
-    print("🎬 OPTIMIZED AUDIO-REACTIVE VIDEO GENERATOR")
+    print("🎬 ENHANCED AUDIO-REACTIVE VIDEO GENERATOR")
     print("=" * 60)
     print(f"🎵 Audio: {audio_file}")
     print(f"📹 Output: {output_name}")
-    print("🎨 Style: OPTIMIZED Mutating Cube (Professional Quality)")
+    print("🎨 Style: Enhanced Mutating Cube (Professional Quality)")
     print("=" * 60)
     
     try:
@@ -235,7 +233,7 @@ def main():
         
         if blend_path.exists():
             if render_video(str(blend_path), str(video_path)):
-                print(f"\n🎉 SUCCESS! OPTIMIZED mutating cube video created: {video_path}")
+                print(f"\n🎉 SUCCESS! Enhanced mutating cube video created: {video_path}")
             else:
                 print("\n⚠️  Enhanced scene created but video render failed")
                 print(f"📁 Blend file available: {blend_path}")

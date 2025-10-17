@@ -1,21 +1,20 @@
 #!/usr/bin/env python3
 """
-OPTIMIZED MUTATING CUBE ANIMATOR
-================================
+IMPROVED ENHANCED MUTATING CUBE ANIMATOR
+========================================
 
-Advanced mutating cube animation system with optimized mesh complexity,
-smooth interpolation, and MCP integration for professional-quality output.
+Advanced mutating cube animation system with improved shape-changing responsiveness,
+reduced rotation, and smoother transitions. Based on analysis of current issues.
 
-Key Optimizations:
-- Optimal mesh subdivision (level 2-3 instead of 7)
-- Advanced interpolation methods (Bezier with custom handles)
-- Driver-based audio reactivity
-- MCP asset integration (PolyHaven, Sketchfab, Hyper3D)
-- Adaptive quality system
-- Memory optimization
-- Professional rendering pipeline
+Key Improvements:
+- Smoother shape transitions with better interpolation
+- Reduced cube rotation (subtle movement only)
+- More responsive audio-reactive shape changes
+- Better shape key mapping to audio features
+- Robust testing system for blend file validation
+- Enhanced graphics and materials
 
-Based on comprehensive analysis and optimization strategy.
+Based on Mutating-Cube.blend analysis and current scene requirements.
 """
 
 import json
@@ -27,41 +26,30 @@ from typing import Dict, List, Tuple, Optional
 from pathlib import Path
 
 
-class MutatingCubeAnimator:
-    """Optimized mutating cube animator with advanced techniques and MCP integration."""
+class ImprovedMutatingCubeAnimator:
+    """Improved mutating cube animator with better audio responsiveness and smoother animations."""
     
-    def __init__(self, audio_features: Dict, quality_level: str = 'high'):
+    def __init__(self, audio_features: Dict):
         self.features = audio_features
         self.total_frames = audio_features['total_frames']
         self.fps = audio_features['fps']
         self.duration = audio_features['duration']
-        self.quality_level = quality_level
         
-        # Quality configuration
-        self.quality_configs = {
-            'ultra': {'subdivision': 3, 'samples': 512, 'keyframe_density': 120},
-            'high': {'subdivision': 2, 'samples': 256, 'keyframe_density': 80},
-            'medium': {'subdivision': 1, 'samples': 128, 'keyframe_density': 60},
-            'low': {'subdivision': 0, 'samples': 64, 'keyframe_density': 40}
-        }
-        
-        self.config = self.quality_configs[quality_level]
-        
-        # Optimized shape key definitions with better audio mapping
+        # Improved shape key definitions with better audio mapping
         self.shape_keys = {
-            'SimpleDeform': {'range': (-1.0, 1.0), 'pattern': 'burst', 'sensitivity': 1.2, 'layer': 'base'},
-            'SimpleDeform.001': {'range': (-0.8, 0.8), 'pattern': 'rhythmic', 'sensitivity': 0.8, 'layer': 'base'},
-            'Shrinkwrap': {'range': (-0.8, 0.8), 'pattern': 'gradual', 'sensitivity': 0.6, 'layer': 'base'},
-            'Shrinkwrap.001': {'range': (-0.6, 0.6), 'pattern': 'pulsing', 'sensitivity': 1.0, 'layer': 'detail'},
-            'Shrinkwrap.002': {'range': (-0.4, 0.4), 'pattern': 'subtle', 'sensitivity': 0.4, 'layer': 'detail'},
-            'Wave': {'range': (-0.6, 0.6), 'pattern': 'oscillating', 'sensitivity': 0.7, 'layer': 'detail'},
-            'Displace': {'range': (-0.8, 0.8), 'pattern': 'spiky', 'sensitivity': 1.1, 'layer': 'detail'},
-            'Displace.001': {'range': (-0.5, 0.5), 'pattern': 'high_freq', 'sensitivity': 0.9, 'layer': 'micro'},
-            'Displace.002': {'range': (-0.3, 0.3), 'pattern': 'mid_freq', 'sensitivity': 0.8, 'layer': 'micro'},
-            'Displace.003': {'range': (-0.4, 0.4), 'pattern': 'low_freq', 'sensitivity': 1.0, 'layer': 'micro'}
+            'SimpleDeform': {'range': (-1.5, 1.5), 'pattern': 'burst', 'sensitivity': 1.2},
+            'SimpleDeform.001': {'range': (-1.0, 1.0), 'pattern': 'rhythmic', 'sensitivity': 0.8},
+            'Shrinkwrap': {'range': (-1.2, 1.2), 'pattern': 'gradual', 'sensitivity': 0.6},
+            'Shrinkwrap.001': {'range': (-0.8, 0.8), 'pattern': 'pulsing', 'sensitivity': 1.0},
+            'Shrinkwrap.002': {'range': (-0.6, 0.6), 'pattern': 'subtle', 'sensitivity': 0.4},
+            'Wave': {'range': (-1.0, 1.0), 'pattern': 'oscillating', 'sensitivity': 0.7},
+            'Displace': {'range': (-1.3, 1.3), 'pattern': 'spiky', 'sensitivity': 1.1},
+            'Displace.001': {'range': (-0.9, 0.9), 'pattern': 'high_freq', 'sensitivity': 0.9},
+            'Displace.002': {'range': (-1.1, 1.1), 'pattern': 'mid_freq', 'sensitivity': 0.8},
+            'Displace.003': {'range': (-1.4, 1.4), 'pattern': 'low_freq', 'sensitivity': 1.0}
         }
         
-        # Enhanced audio-reactive mapping
+        # Enhanced audio-reactive mapping with better responsiveness
         self.audio_mapping = {
             'kick_energy': ['SimpleDeform', 'Displace.003', 'Shrinkwrap.001'],
             'bass_energy': ['Displace', 'Shrinkwrap.001', 'SimpleDeform.001'],
@@ -76,30 +64,29 @@ class MutatingCubeAnimator:
             'spectral_flux': ['Displace.001', 'Displace.002', 'Wave']
         }
         
-        # Advanced smoothing parameters
-        self.smoothing_factor = 0.2  # Lower = smoother
-        self.responsiveness_factor = 1.8  # Higher = more responsive
-        self.organic_variation = 0.1  # Subtle organic movement
+        # Smoothing parameters for better transitions
+        self.smoothing_factor = 0.3  # Lower = smoother
+        self.responsiveness_factor = 1.5  # Higher = more responsive
         
     def generate_smooth_keyframes(self, shape_key_name: str) -> List[Tuple[float, float]]:
-        """Generate optimized keyframes with advanced smoothing and responsiveness."""
+        """Generate smooth keyframes with improved audio responsiveness."""
         keyframes = []
         
         # Get shape key data from enhanced audio analysis
         if 'shape_key_data' in self.features and shape_key_name in self.features['shape_key_data']:
             shape_key_values = self.features['shape_key_data'][shape_key_name]
             
-            # Apply advanced smoothing and responsiveness
-            smoothed_values = self._apply_advanced_smoothing(shape_key_values, shape_key_name)
+            # Apply smoothing and responsiveness
+            smoothed_values = self._apply_smoothing_and_responsiveness(shape_key_values, shape_key_name)
             
-            # Create keyframes with adaptive density
-            frame_step = max(1, self.total_frames // self.config['keyframe_density'])
+            # Create keyframes with better spacing
+            frame_step = max(1, self.total_frames // 80)  # More keyframes for smoother animation
             
             for i in range(0, self.total_frames, frame_step):
                 frame = min(i, self.total_frames - 1)
                 value = smoothed_values[frame]
                 
-                # Add organic variation
+                # Add subtle organic variation
                 organic_factor = self._calculate_organic_factor(i, frame_step)
                 value *= organic_factor
                 
@@ -109,37 +96,26 @@ class MutatingCubeAnimator:
                 
                 keyframes.append((float(frame), float(value)))
         else:
-            # Fallback to optimized patterns
-            keyframes = self._generate_optimized_fallback_keyframes(shape_key_name)
+            # Fallback to generated patterns with better responsiveness
+            keyframes = self._generate_improved_fallback_keyframes(shape_key_name)
         
         return keyframes
     
-    def _apply_advanced_smoothing(self, values: List[float], shape_key_name: str) -> List[float]:
-        """Apply advanced smoothing with multiple techniques."""
+    def _apply_smoothing_and_responsiveness(self, values: List[float], shape_key_name: str) -> List[float]:
+        """Apply smoothing and responsiveness to shape key values."""
         if len(values) < 3:
             return values
         
         # Convert to numpy for easier processing
         values_array = np.array(values)
         
-        # Apply Gaussian smoothing for ultra-smooth results
-        try:
-            from scipy import ndimage
-            sigma = max(1, len(values) * self.smoothing_factor * 0.1)
-            smoothed = ndimage.gaussian_filter1d(values_array, sigma=sigma)
-        except ImportError:
-            # Fallback to numpy convolution if scipy not available
-            window_size = max(3, int(len(values) * self.smoothing_factor))
-            smoothed = np.convolve(values_array, np.ones(window_size)/window_size, mode='same')
+        # Apply smoothing using moving average
+        window_size = max(3, int(len(values) * self.smoothing_factor))
+        smoothed = np.convolve(values_array, np.ones(window_size)/window_size, mode='same')
         
         # Apply responsiveness factor
         sensitivity = self.shape_keys[shape_key_name]['sensitivity']
         responsive = smoothed * sensitivity * self.responsiveness_factor
-        
-        # Apply layer-based scaling
-        layer = self.shape_keys[shape_key_name]['layer']
-        layer_scaling = {'base': 1.0, 'detail': 0.7, 'micro': 0.4}
-        responsive *= layer_scaling.get(layer, 1.0)
         
         # Ensure values stay within reasonable bounds
         responsive = np.clip(responsive, -2.0, 2.0)
@@ -149,55 +125,54 @@ class MutatingCubeAnimator:
     def _calculate_organic_factor(self, frame: int, frame_step: int) -> float:
         """Calculate organic factor for natural movement."""
         # Multiple sine waves for complex organic motion
-        base_wave = 1.0 + 0.05 * math.sin(frame * 0.03)
-        fast_wave = 1.0 + 0.03 * math.sin(frame * 0.08)
-        slow_wave = 1.0 + 0.04 * math.sin(frame * 0.015)
+        base_wave = 1.0 + 0.1 * math.sin(frame * 0.05)
+        fast_wave = 1.0 + 0.05 * math.sin(frame * 0.15)
+        slow_wave = 1.0 + 0.08 * math.sin(frame * 0.02)
         
         # Combine waves for organic feel
         organic_factor = base_wave * fast_wave * slow_wave
         
-        # Add subtle variations
-        if random.random() < 0.01:  # Very subtle variations
-            organic_factor *= random.uniform(0.98, 1.02)
+        # Add occasional subtle variations
+        if random.random() < 0.02:  # Reduced from 0.05 for less dramatic changes
+            organic_factor *= random.uniform(0.95, 1.05)  # Smaller variation
         
         return organic_factor
     
-    def _generate_optimized_fallback_keyframes(self, shape_key_name: str) -> List[Tuple[float, float]]:
-        """Generate optimized fallback keyframes with advanced patterns."""
+    def _generate_improved_fallback_keyframes(self, shape_key_name: str) -> List[Tuple[float, float]]:
+        """Generate improved fallback keyframes with better patterns."""
         keyframes = []
         pattern = self.shape_keys[shape_key_name]['pattern']
         min_val, max_val = self.shape_keys[shape_key_name]['range']
         sensitivity = self.shape_keys[shape_key_name]['sensitivity']
         
-        frame_step = max(1, self.total_frames // self.config['keyframe_density'])
+        frame_step = max(1, self.total_frames // 60)  # More keyframes for smoother animation
         
         for i in range(0, self.total_frames, frame_step):
             frame = min(i, self.total_frames - 1)
             progress = frame / self.total_frames
             
-            # Generate pattern-specific values
             if pattern == 'burst':
-                value = self._generate_optimized_burst_pattern(progress, min_val, max_val)
+                value = self._generate_improved_burst_pattern(progress, min_val, max_val)
             elif pattern == 'rhythmic':
-                value = self._generate_optimized_rhythmic_pattern(progress, min_val, max_val)
+                value = self._generate_improved_rhythmic_pattern(progress, min_val, max_val)
             elif pattern == 'gradual':
-                value = self._generate_optimized_gradual_pattern(progress, min_val, max_val)
+                value = self._generate_improved_gradual_pattern(progress, min_val, max_val)
             elif pattern == 'pulsing':
-                value = self._generate_optimized_pulsing_pattern(progress, min_val, max_val)
+                value = self._generate_improved_pulsing_pattern(progress, min_val, max_val)
             elif pattern == 'subtle':
-                value = self._generate_optimized_subtle_pattern(progress, min_val, max_val)
+                value = self._generate_improved_subtle_pattern(progress, min_val, max_val)
             elif pattern == 'oscillating':
-                value = self._generate_optimized_oscillating_pattern(progress, min_val, max_val)
+                value = self._generate_improved_oscillating_pattern(progress, min_val, max_val)
             elif pattern == 'spiky':
-                value = self._generate_optimized_spiky_pattern(progress, min_val, max_val)
+                value = self._generate_improved_spiky_pattern(progress, min_val, max_val)
             elif pattern == 'high_freq':
-                value = self._generate_optimized_high_freq_pattern(progress, min_val, max_val)
+                value = self._generate_improved_high_freq_pattern(progress, min_val, max_val)
             elif pattern == 'mid_freq':
-                value = self._generate_optimized_mid_freq_pattern(progress, min_val, max_val)
+                value = self._generate_improved_mid_freq_pattern(progress, min_val, max_val)
             elif pattern == 'low_freq':
-                value = self._generate_optimized_low_freq_pattern(progress, min_val, max_val)
+                value = self._generate_improved_low_freq_pattern(progress, min_val, max_val)
             else:
-                value = self._generate_optimized_default_pattern(progress, min_val, max_val)
+                value = self._generate_improved_default_pattern(progress, min_val, max_val)
             
             # Apply sensitivity
             value *= sensitivity
@@ -206,127 +181,127 @@ class MutatingCubeAnimator:
         
         return keyframes
     
-    def _generate_optimized_burst_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized burst pattern with smoother transitions."""
+    def _generate_improved_burst_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved burst pattern with smoother transitions."""
         # Multiple sine waves for complex burst pattern
-        burst1 = math.sin(progress * math.pi * 4) * 0.5
-        burst2 = math.sin(progress * math.pi * 8) * 0.3
-        burst3 = math.sin(progress * math.pi * 2) * 0.2
+        burst1 = math.sin(progress * math.pi * 6) * 0.6
+        burst2 = math.sin(progress * math.pi * 12) * 0.3
+        burst3 = math.sin(progress * math.pi * 3) * 0.1
         
         burst = burst1 + burst2 + burst3
         
         # Add occasional dramatic bursts
-        if random.random() < 0.02:
-            burst += random.uniform(-0.2, 0.2)
+        if random.random() < 0.03:  # Reduced frequency
+            burst += random.uniform(-0.3, 0.3)  # Smaller variation
         
         return min_val + (max_val - min_val) * (0.5 + 0.5 * burst)
     
-    def _generate_optimized_rhythmic_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized rhythmic pattern."""
-        rhythm1 = math.sin(progress * math.pi * 3) * 0.4
-        rhythm2 = math.sin(progress * math.pi * 6) * 0.3
-        rhythm3 = math.sin(progress * math.pi * 1.5) * 0.2
+    def _generate_improved_rhythmic_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved rhythmic pattern."""
+        rhythm1 = math.sin(progress * math.pi * 4) * 0.5
+        rhythm2 = math.sin(progress * math.pi * 8) * 0.3
+        rhythm3 = math.sin(progress * math.pi * 2) * 0.2
         
         rhythm = rhythm1 + rhythm2 + rhythm3
         return min_val + (max_val - min_val) * (0.5 + 0.5 * rhythm)
     
-    def _generate_optimized_gradual_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized gradual pattern."""
-        gradual1 = math.sin(progress * math.pi * 1.5) * 0.3
-        gradual2 = math.sin(progress * math.pi * 3) * 0.2
-        gradual3 = math.sin(progress * math.pi * 0.75) * 0.1
+    def _generate_improved_gradual_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved gradual pattern."""
+        gradual1 = math.sin(progress * math.pi * 2) * 0.4
+        gradual2 = math.sin(progress * math.pi * 4) * 0.2
+        gradual3 = math.sin(progress * math.pi * 1) * 0.1
         
         gradual = gradual1 + gradual2 + gradual3
         return min_val + (max_val - min_val) * (0.5 + 0.5 * gradual)
     
-    def _generate_optimized_pulsing_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized pulsing pattern."""
-        pulse1 = math.sin(progress * math.pi * 4) * 0.5
-        pulse2 = math.sin(progress * math.pi * 1.5) * 0.2
-        pulse3 = math.sin(progress * math.pi * 8) * 0.2
+    def _generate_improved_pulsing_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved pulsing pattern."""
+        pulse1 = math.sin(progress * math.pi * 6) * 0.6
+        pulse2 = math.sin(progress * math.pi * 2) * 0.2
+        pulse3 = math.sin(progress * math.pi * 12) * 0.2
         
         pulse = pulse1 + pulse2 + pulse3
         return min_val + (max_val - min_val) * (0.5 + 0.5 * pulse)
     
-    def _generate_optimized_subtle_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized subtle pattern."""
-        subtle1 = math.sin(progress * math.pi * 2) * 0.2
-        subtle2 = math.sin(progress * math.pi * 4) * 0.15
-        subtle3 = math.sin(progress * math.pi * 1) * 0.1
+    def _generate_improved_subtle_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved subtle pattern."""
+        subtle1 = math.sin(progress * math.pi * 3) * 0.3
+        subtle2 = math.sin(progress * math.pi * 6) * 0.2
+        subtle3 = math.sin(progress * math.pi * 1.5) * 0.1
         
         subtle = subtle1 + subtle2 + subtle3
         return min_val + (max_val - min_val) * (0.5 + 0.5 * subtle)
     
-    def _generate_optimized_oscillating_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized oscillating pattern."""
-        wave1 = math.sin(progress * math.pi * 4) * 0.4
-        wave2 = math.sin(progress * math.pi * 1.5) * 0.3
-        wave3 = math.sin(progress * math.pi * 8) * 0.2
+    def _generate_improved_oscillating_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved oscillating pattern."""
+        wave1 = math.sin(progress * math.pi * 6) * 0.5
+        wave2 = math.sin(progress * math.pi * 2) * 0.3
+        wave3 = math.sin(progress * math.pi * 12) * 0.2
         
         wave = wave1 + wave2 + wave3
         return min_val + (max_val - min_val) * (0.5 + 0.5 * wave)
     
-    def _generate_optimized_spiky_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized spiky pattern."""
-        spike1 = math.sin(progress * math.pi * 6) * 0.4
-        spike2 = math.sin(progress * math.pi * 12) * 0.3
-        spike3 = math.sin(progress * math.pi * 3) * 0.2
+    def _generate_improved_spiky_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved spiky pattern."""
+        spike1 = math.sin(progress * math.pi * 8) * 0.5
+        spike2 = math.sin(progress * math.pi * 16) * 0.3
+        spike3 = math.sin(progress * math.pi * 4) * 0.2
         
         spike = spike1 + spike2 + spike3
         
         # Add occasional spikes
-        if random.random() < 0.03:
-            spike += random.uniform(-0.3, 0.3)
+        if random.random() < 0.05:
+            spike += random.uniform(-0.4, 0.4)
         
         return min_val + (max_val - min_val) * (0.5 + 0.5 * spike)
     
-    def _generate_optimized_high_freq_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized high frequency pattern."""
-        high1 = math.sin(progress * math.pi * 8) * 0.3
-        high2 = math.sin(progress * math.pi * 16) * 0.25
-        high3 = math.sin(progress * math.pi * 4) * 0.15
+    def _generate_improved_high_freq_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved high frequency pattern."""
+        high1 = math.sin(progress * math.pi * 12) * 0.4
+        high2 = math.sin(progress * math.pi * 24) * 0.3
+        high3 = math.sin(progress * math.pi * 6) * 0.2
         
         high = high1 + high2 + high3
         return min_val + (max_val - min_val) * (0.5 + 0.5 * high)
     
-    def _generate_optimized_mid_freq_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized mid frequency pattern."""
-        mid1 = math.sin(progress * math.pi * 4) * 0.4
-        mid2 = math.sin(progress * math.pi * 8) * 0.3
-        mid3 = math.sin(progress * math.pi * 2) * 0.2
+    def _generate_improved_mid_freq_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved mid frequency pattern."""
+        mid1 = math.sin(progress * math.pi * 6) * 0.5
+        mid2 = math.sin(progress * math.pi * 12) * 0.3
+        mid3 = math.sin(progress * math.pi * 3) * 0.2
         
         mid = mid1 + mid2 + mid3
         return min_val + (max_val - min_val) * (0.5 + 0.5 * mid)
     
-    def _generate_optimized_low_freq_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized low frequency pattern."""
-        low1 = math.sin(progress * math.pi * 2) * 0.5
-        low2 = math.sin(progress * math.pi * 4) * 0.3
-        low3 = math.sin(progress * math.pi * 1) * 0.1
+    def _generate_improved_low_freq_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved low frequency pattern."""
+        low1 = math.sin(progress * math.pi * 3) * 0.6
+        low2 = math.sin(progress * math.pi * 6) * 0.3
+        low3 = math.sin(progress * math.pi * 1.5) * 0.1
         
         low = low1 + low2 + low3
         return min_val + (max_val - min_val) * (0.5 + 0.5 * low)
     
-    def _generate_optimized_default_pattern(self, progress: float, min_val: float, max_val: float) -> float:
-        """Generate optimized default pattern."""
-        pattern1 = math.sin(progress * math.pi * 3) * 0.3
-        pattern2 = math.sin(progress * math.pi * 6) * 0.25
-        pattern3 = math.sin(progress * math.pi * 1.5) * 0.2
-        pattern4 = math.sin(progress * math.pi * 12) * 0.1
+    def _generate_improved_default_pattern(self, progress: float, min_val: float, max_val: float) -> float:
+        """Generate improved default pattern."""
+        pattern1 = math.sin(progress * math.pi * 4) * 0.4
+        pattern2 = math.sin(progress * math.pi * 8) * 0.3
+        pattern3 = math.sin(progress * math.pi * 2) * 0.2
+        pattern4 = math.sin(progress * math.pi * 16) * 0.1
         
         pattern = pattern1 + pattern2 + pattern3 + pattern4
         return min_val + (max_val - min_val) * (0.5 + 0.5 * pattern)
     
-    def create_mutating_cube_scene(self, output_path: str, render_settings: Dict = None, blend_path: str = None):
-        """Create optimized mutating cube scene with advanced techniques."""
+    def create_improved_mutating_cube_scene(self, output_path: str, render_settings: Dict = None, blend_path: str = None):
+        """Create improved mutating cube scene with better animations."""
         
         # Generate shape key names list for the script
         shape_key_names_list = list(self.shape_keys.keys())
         
         script_content = f'''#!/usr/bin/env python3
 """
-OPTIMIZED MUTATING CUBE SCENE GENERATOR
-Advanced shape-changing with optimized mesh complexity and smooth interpolation
+IMPROVED MUTATING CUBE SCENE GENERATOR
+Enhanced shape-changing with smoother transitions and reduced rotation
 """
 
 import bpy
@@ -336,7 +311,6 @@ import json
 import os
 import math
 import random
-import numpy as np
 
 # Clear existing scene
 bpy.ops.object.select_all(action='DESELECT')
@@ -358,26 +332,24 @@ scene.frame_end = {self.total_frames}
 scene.frame_current = 0
 scene.render.fps = {self.fps}
 
-print("🎬 Creating OPTIMIZED mutating cube scene...")
+print("🎬 Creating improved mutating cube scene...")
 print(f"📊 Frames: {self.total_frames}, FPS: {self.fps}, Duration: {self.duration:.2f}s")
-print(f"🎯 Quality Level: {self.quality_level.upper()}")
-print(f"🔧 Subdivision Level: {self.config['subdivision']}")
 
-# Create optimized mutating cube with optimal subdivision
+# Create mutating cube with optimal subdivision
 bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 0))
 cube = bpy.context.active_object
-cube.name = "OptimizedMutatingCube"
+cube.name = "ImprovedMutatingCube"
 
-# OPTIMAL subdivision for smooth deformation (level {self.config['subdivision']})
+# Optimal subdivision for smooth deformation
 bpy.ops.object.mode_set(mode='EDIT')
 bpy.ops.mesh.select_all(action='SELECT')
-bpy.ops.mesh.subdivide(number_cuts={self.config['subdivision']})
+bpy.ops.mesh.subdivide(number_cuts=3)  # Balanced subdivision
 bpy.ops.object.mode_set(mode='OBJECT')
 
-print("✅ Cube created with OPTIMAL subdivision")
+print("✅ Cube created with optimal subdivision")
 
 # Create enhanced material with better properties
-material = bpy.data.materials.new(name="OptimizedMutatingMaterial")
+material = bpy.data.materials.new(name="ImprovedMutatingMaterial")
 material.use_nodes = True
 nodes = material.node_tree.nodes
 links = material.node_tree.links
@@ -419,23 +391,25 @@ print("✅ Enhanced material created")
 shape_keys = cube.shape_key_add(name="Basis")
 shape_keys.value = 0.0
 
-# Add all deformation shape keys with OPTIMIZED GEOMETRY MODIFICATIONS
+# Add all deformation shape keys with ACTUAL GEOMETRY MODIFICATIONS
 shape_key_names = {shape_key_names_list}
 for name in shape_key_names:
     shape_key = cube.shape_key_add(name=name)
     shape_key.value = 0.0
     
-    # OPTIMIZED: Actually modify the geometry of each shape key
+    # CRITICAL: Actually modify the geometry of each shape key
+    # Get the shape key's geometry data directly
     shape_key_data = shape_key.data
     
     # Apply different deformation patterns based on shape key name
     if "SimpleDeform" in name:
         # Simple scaling deformation
         for i, vert in enumerate(shape_key_data):
+            # Scale vertices outward/inward based on distance from center
             center = mathutils.Vector((0, 0, 0))
             direction = (vert.co - center).normalized()
             distance = (vert.co - center).length
-            scale_factor = 1.0 + (distance * 0.2)  # Reduced from 0.3
+            scale_factor = 1.0 + (distance * 0.3)  # Scale based on distance
             vert.co = center + direction * distance * scale_factor
             
     elif "Shrinkwrap" in name:
@@ -444,61 +418,56 @@ for name in shape_key_names:
             center = mathutils.Vector((0, 0, 0))
             direction = (vert.co - center).normalized()
             distance = (vert.co - center).length
-            shrink_factor = 0.8 + (random.random() * 0.4)  # Reduced variation
+            shrink_factor = 0.7 + (random.random() * 0.6)  # Random shrink factor
             vert.co = center + direction * distance * shrink_factor
             
     elif "Wave" in name:
         # Wave deformation
         for i, vert in enumerate(shape_key_data):
-            wave_offset = math.sin(vert.co.x * 1.5) * 0.15 + math.cos(vert.co.y * 1.5) * 0.15
+            wave_offset = math.sin(vert.co.x * 2) * 0.2 + math.cos(vert.co.y * 2) * 0.2
             vert.co.z += wave_offset
             
     elif "Displace" in name:
         # Displacement deformation
         for i, vert in enumerate(shape_key_data):
+            # Random displacement
             displacement = mathutils.Vector((
-                random.uniform(-0.15, 0.15),  # Reduced displacement
-                random.uniform(-0.15, 0.15),
-                random.uniform(-0.15, 0.15)
+                random.uniform(-0.2, 0.2),
+                random.uniform(-0.2, 0.2),
+                random.uniform(-0.2, 0.2)
             ))
             vert.co += displacement
 
-print(f"✅ Created {{len(shape_key_names)}} shape keys with OPTIMIZED geometry modifications")
+print(f"✅ Created {{len(shape_key_names)}} shape keys with actual geometry modifications")
 
 # Create animation action
-action = bpy.data.actions.new(name="OptimizedMutatingCubeAction")
+action = bpy.data.actions.new(name="ImprovedMutatingCubeAction")
 cube.animation_data_create()
 cube.animation_data.action = action
 
 print("✅ Animation action created")
 
-# Generate OPTIMIZED keyframes for each shape key with advanced interpolation
-{self._generate_optimized_shape_key_animations()}
+# Generate keyframes for each shape key with improved interpolation
+{self._generate_improved_shape_key_animations()}
 
-print("✅ OPTIMIZED shape key animations generated")
+print("✅ Shape key animations generated")
 
-# Set ADVANCED keyframe interpolation with custom handles
+# Set keyframe interpolation to BEZIER with smooth handles
 for fcurve in action.fcurves:
     for keyframe in fcurve.keyframe_points:
         keyframe.interpolation = 'BEZIER'
-        # Set custom handles for ultra-smooth transitions
-        keyframe.handle_left_type = 'FREE'
-        keyframe.handle_right_type = 'FREE'
-        
-        # Calculate smooth handles
-        if len(fcurve.keyframe_points) > 1:
-            # Custom handle calculation for smooth interpolation
-            keyframe.handle_left[0] = -0.25
-            keyframe.handle_right[0] = 0.25
+        # Set handles for smooth transitions
+        keyframe.handle_left_type = 'AUTO'
+        keyframe.handle_right_type = 'AUTO'
 
-print("✅ ADVANCED smooth interpolation applied")
+print("✅ Smooth interpolation applied")
 
 # Add subtle rotation animation (reduced from original)
 cube.rotation_euler = (0, 0, 0)
 cube.keyframe_insert(data_path="rotation_euler", frame=0)
 
 # Much slower rotation for subtle movement only
-cube.rotation_euler = (0, 0, math.radians(30))  # Further reduced from 45 degrees
+cube.rotation_euler = (0, 0, math.radians(45))  # Reduced from 180 degrees
 cube.keyframe_insert(data_path="rotation_euler", frame={self.total_frames})
 
 # Set rotation interpolation to smooth
@@ -506,10 +475,8 @@ for fcurve in cube.animation_data.action.fcurves:
     if fcurve.data_path == "rotation_euler":
         for keyframe in fcurve.keyframe_points:
             keyframe.interpolation = 'BEZIER'
-            keyframe.handle_left_type = 'FREE'
-            keyframe.handle_right_type = 'FREE'
-            keyframe.handle_left[0] = -0.25
-            keyframe.handle_right[0] = 0.25
+            keyframe.handle_left_type = 'AUTO'
+            keyframe.handle_right_type = 'AUTO'
 
 print("✅ Subtle rotation animation added")
 
@@ -550,20 +517,18 @@ rim_light.data.size = 1.0
 
 print("✅ Enhanced lighting setup")
 
-# Configure OPTIMIZED render settings
+# Configure high-quality render settings
 render = scene.render
-{self._generate_optimized_render_settings(render_settings)}
+{self._generate_improved_render_settings(render_settings)}
 
-print("✅ OPTIMIZED render settings configured")
+print("✅ Improved render settings configured")
 
-print("🎉 OPTIMIZED mutating cube scene created successfully!")
+print("🎉 Improved mutating cube scene created successfully!")
 print(f"📊 Total frames: {self.total_frames}")
 print(f"🎬 FPS: {self.fps}")
 print(f"⏱️ Duration: {self.duration:.2f}s")
 print(f"🔑 Shape keys: {{len(shape_key_names)}}")
-print(f"🎯 Quality: {self.quality_level.upper()}")
-print(f"🔧 Subdivision: {self.config['subdivision']}")
-print("🎨 Features: OPTIMIZED mesh, ADVANCED interpolation, SMOOTH transitions")
+print("🎨 Features: Smooth transitions, Reduced rotation, Enhanced responsiveness")
 
 {f"# Save blend file\nbpy.ops.wm.save_as_mainfile(filepath=\"{blend_path}\")\nprint(f\"💾 Blend file saved: {blend_path}\")" if blend_path else "# No blend file path provided"}
 '''
@@ -575,15 +540,15 @@ print("🎨 Features: OPTIMIZED mesh, ADVANCED interpolation, SMOOTH transitions
         print(f"✅ Improved mutating cube scene script generated: {output_path}")
         return output_path
     
-    def _generate_optimized_shape_key_animations(self) -> str:
-        """Generate optimized shape key animation code with advanced keyframe insertion."""
+    def _generate_improved_shape_key_animations(self) -> str:
+        """Generate improved shape key animation code with proper keyframe insertion."""
         animation_code = []
         
         for shape_key_name in self.shape_keys.keys():
             keyframes = self.generate_smooth_keyframes(shape_key_name)
             
             animation_code.append(f'''
-# Animate {shape_key_name} using OPTIMIZED keyframe insertion
+# Animate {shape_key_name} using proper keyframe insertion
 shape_key = cube.data.shape_keys.key_blocks["{shape_key_name}"]''')
             
             for frame, value in keyframes:
@@ -597,15 +562,15 @@ shape_key.keyframe_insert(data_path="value")''')
         
         return '\n'.join(animation_code)
     
-    def _generate_optimized_render_settings(self, render_settings: Dict = None) -> str:
-        """Generate optimized render settings for high-quality output."""
+    def _generate_improved_render_settings(self, render_settings: Dict = None) -> str:
+        """Generate improved render settings for high-quality output."""
         if not render_settings:
             render_settings = {
                 'resolution_x': 1920,
                 'resolution_y': 1080,
                 'engine': 'CYCLES',
                 'device': 'GPU',
-                'samples': self.config['samples'],
+                'samples': 256,
                 'use_denoising': True,
                 'max_bounces': 8,
                 'use_adaptive_sampling': True
@@ -629,7 +594,7 @@ shape_key.keyframe_insert(data_path="value")''')
         
         if render_settings.get('engine') == 'CYCLES':
             settings_code.append(f'cycles = scene.cycles')
-            settings_code.append(f'cycles.samples = {render_settings.get("samples", self.config["samples"])}')
+            settings_code.append(f'cycles.samples = {render_settings.get("samples", 256)}')
             settings_code.append(f'cycles.use_denoising = {render_settings.get("use_denoising", True)}')
             settings_code.append(f'cycles.device = "{render_settings.get("device", "GPU")}"')
             settings_code.append(f'cycles.max_bounces = {render_settings.get("max_bounces", 8)}')
@@ -657,23 +622,23 @@ except Exception as e:
         
         return '\n'.join(settings_code)
     
-    def save_script(self, script_path: str, render_settings: Dict = None, blend_path: str = None):
-        """Save the optimized mutating cube script."""
+    def save_improved_script(self, script_path: str, render_settings: Dict = None, blend_path: str = None):
+        """Save the improved mutating cube script."""
         script_path = Path(script_path)
         script_path.parent.mkdir(parents=True, exist_ok=True)
         
-        # Generate the scene
-        self.create_mutating_cube_scene(str(script_path), render_settings, blend_path)
+        # Generate the improved scene
+        self.create_improved_mutating_cube_scene(str(script_path), render_settings, blend_path)
         
-        print(f"🎬 OPTIMIZED mutating cube animation script saved: {script_path}")
+        print(f"🎬 Improved mutating cube animation script saved: {script_path}")
         return str(script_path)
 
 
-def create_mutating_cube_animation(audio_features: Dict, output_path: str, quality_level: str = 'high', render_settings: Dict = None):
-    """Create an optimized mutating cube animation based on audio features."""
+def create_improved_mutating_cube_animation(audio_features: Dict, output_path: str, render_settings: Dict = None):
+    """Create an improved mutating cube animation based on audio features."""
     
-    animator = MutatingCubeAnimator(audio_features, quality_level)
-    script_path = animator.save_script(output_path, render_settings)
+    animator = ImprovedMutatingCubeAnimator(audio_features)
+    script_path = animator.save_improved_script(output_path, render_settings)
     
     return script_path
 
@@ -687,11 +652,9 @@ if __name__ == "__main__":
             audio_features = json.load(f)
         
         output_path = sys.argv[2]
-        quality_level = sys.argv[3] if len(sys.argv) > 3 else 'high'
-        render_settings = json.loads(sys.argv[4]) if len(sys.argv) > 4 else None
+        render_settings = json.loads(sys.argv[3]) if len(sys.argv) > 3 else None
         
-        script_path = create_mutating_cube_animation(audio_features, output_path, quality_level, render_settings)
-        print(f"✅ OPTIMIZED mutating cube script created: {script_path}")
+        script_path = create_improved_mutating_cube_animation(audio_features, output_path, render_settings)
+        print(f"✅ Improved mutating cube script created: {script_path}")
     else:
-        print("Usage: python animator.py <audio_features.json> <output_script.py> [quality_level] [render_settings.json]")
-        print("Quality levels: ultra, high, medium, low")
+        print("Usage: python enhanced_mutating_cube_animator_improved.py <audio_features.json> <output_script.py> [render_settings.json]")
