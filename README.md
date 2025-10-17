@@ -1,4 +1,4 @@
-# 🎬 AudioBlender - Professional Audio-Reactive Video Generator
+# 🎬 AudioBlender - Commercial-Grade Audio-Reactive Video Generator
 
 > Transform audio into stunning 3D animated videos with professional-grade Blender rendering
 
@@ -14,23 +14,34 @@
 - Spectral feature extraction
 - Precise audio-to-video frame synchronization
 
-### 🎨 **Professional 3D Animation**
-- 5 distinct animation styles (Cinematic Space, Abstract Luxury, Geometric Tech, etc.)
+### 🎨 **Commercial-Grade 3D Animation**
+- **COMMERCIAL-GRADE** animation system with enhanced complexity
 - Multi-layer complex geometry (55+ animated objects)
-- PBR materials with Fresnel effects
+- PBR materials with Fresnel effects and metallic properties
 - Smooth Bezier-curve interpolation
+- **PolyHaven HDRI environments** for professional lighting
+- **Advanced post-processing** with bloom and color grading
 
 ### 🎬 **Broadcast-Quality Rendering**
-- Cycles & Eevee render engines
-- Up to 4K resolution support
+- Cycles render engine with GPU acceleration
+- 4K resolution support
 - GPU acceleration (Metal, CUDA, OpenCL)
 - Advanced post-processing (glare, color grading, bloom)
+- **Professional lighting setup** with 4-point lighting system
 
 ### 💻 **Modern UI & CLI**
 - Professional PyQt6 dark-themed interface
 - Command-line tools for batch processing
 - Real-time progress tracking
-- Ultra-fast and Pro rendering modes
+- Commercial-grade rendering pipeline
+
+### ⚡ **Professional Features**
+- **PolyHaven HDRI integration** for studio-quality lighting
+- **PBR materials** with emission and metallic properties
+- **4K rendering** with Cycles GPU acceleration
+- **Post-processing effects** (bloom, color grading, glare)
+- **Professional camera setup** with depth of field
+- **Advanced audio reactivity** with smooth Bezier curves
 
 ## 📋 Table of Contents
 
@@ -126,43 +137,39 @@ python demo_test.py
 ### GUI Application Features
 
 - **File Selection**: Drag & drop or browse for audio files
-- **Style Selection**: Choose from 5 professional animation styles
-- **Render Quality**: Fast (ultra-optimized) or Pro (broadcast-quality)
+- **Commercial-Grade Quality**: Professional animation system with enhanced complexity
 - **Real-time Progress**: Live status updates during generation
 - **Output Management**: Automatic file organization in `output/` directory
 
 ### Command Line Options
 
 ```bash
-# Full pipeline with rendering
+# Full pipeline with commercial-grade rendering
 python generate_audio_reactive_video.py audio.wav output_name
 
-# Custom FPS (default: 30)
-python generate_audio_reactive_video.py audio.wav output_name --fps 60
-
-# Skip video rendering (create scene only)
-python generate_audio_reactive_video.py audio.wav output_name --no-render
+# Example usage
+python generate_audio_reactive_video.py music.wav my_video
 ```
 
 ### Python API
 
 ```python
 from src.audio_analyzer import AudioAnalyzer
-from src.blender_animator_advanced import AdvancedAnimator
+from src.commercial_grade_animator import CommercialGradeAnimator
 
 # Analyze audio
 analyzer = AudioAnalyzer('music.wav', fps=30)
 features = analyzer.analyze()
 
-# Create animator
-animator = AdvancedAnimator(features, style='cinematic_space')
+# Create commercial-grade animator
+animator = CommercialGradeAnimator(features)
 
 # Generate Blender script
 render_settings = {
     'resolution_x': 1920,
     'resolution_y': 1080,
     'engine': 'CYCLES',
-    'samples': 256,
+    'samples': 512,
     'use_denoising': True,
     'motion_blur': True,
     'dof': True
@@ -171,42 +178,27 @@ render_settings = {
 animator.save_script('script.py', render_settings, 'scene.blend')
 ```
 
-## 🎨 Animation Styles
+## 🎨 Commercial-Grade Animation System
 
-### 1. Cinematic Space
-**Perfect for**: Music videos, ambient visuals, space themes
-- Multi-layer geometry (core sphere + 55+ objects)
-- Metallic PBR materials with Fresnel
-- Orbital camera movements
-- Volumetric lighting effects
+### Professional Quality Features
+**Perfect for**: Commercial video production, music videos, professional presentations
+- **55+ animated objects** with complex geometry
+- **PolyHaven HDRI environments** for studio-quality lighting
+- **PBR materials** with emission and metallic properties
+- **4K rendering** with Cycles GPU acceleration
+- **Advanced post-processing** (bloom, color grading, glare effects)
+- **Professional lighting setup** with 4-point lighting system
+- **Smooth Bezier curves** for fluid animation
+- **Advanced audio reactivity** with frequency-specific controls
 
-### 2. Abstract Luxury
-**Perfect for**: Corporate videos, luxury brands
-- Gold/silver metallic materials
-- Elegant geometric forms
-- Warm luxurious lighting
-- Slow, graceful movements
-
-### 3. Geometric Tech
-**Perfect for**: Tech demos, futuristic content
-- Holographic shaders
-- Complex geometric patterns
-- Fast, precise animations
-- Digital glitch effects
-
-### 4. Organic Nature
-**Perfect for**: Nature documentaries, organic themes
-- Natural displacement textures
-- Flowing, organic forms
-- Subsurface scattering
-- Fluid animations
-
-### 5. Music Visualizer Pro
-**Perfect for**: Live performances, music production
-- High audio sensitivity
-- Beat-synchronized effects
-- Dynamic color mapping
-- Multi-layer particle systems
+### Technical Specifications
+- **Render Engine**: Cycles with GPU acceleration
+- **Resolution**: Up to 4K (3840x2160)
+- **Samples**: 512 for commercial quality
+- **Light Bounces**: 12 max bounces for realistic lighting
+- **Post-Processing**: Advanced compositor with bloom and color grading
+- **Audio Analysis**: Multi-band frequency analysis (Bass, Mid, High)
+- **Animation**: Smooth Bezier interpolation with auto-clamped handles
 
 ## 📁 Project Structure
 
@@ -215,7 +207,7 @@ AudioBlenderVideo/
 ├── src/                                    # Core application code
 │   ├── audio_analyzer.py                  # Advanced audio analysis (librosa)
 │   ├── audio_analyzer_simple.py           # Scipy fallback analyzer
-│   ├── blender_animator_advanced.py       # Professional animation engine
+│   ├── commercial_grade_animator.py       # Commercial-grade animation engine
 │   ├── video_renderer.py                  # Ultra-optimized rendering
 │   ├── distributed_renderer.py            # Multi-machine rendering
 │   ├── main.py                            # Application entry point
@@ -229,28 +221,11 @@ AudioBlenderVideo/
 │   │   ├── logs/                          # System logs
 │   │   └── videos/                        # Generated videos
 │   ├── *.blend                            # Blender scene files
-│   ├── *.mp4                              # Rendered videos
-│   └── *.json                             # Audio analysis data
+│   └── *.mp4                              # Generated videos
 │
-├── docker/                                 # Distributed rendering (optional)
-│   └── docker-compose.yml                 # Multi-node setup
-│
-├── crewai_config.py                       # CrewAI agent configurations
-├── self_improvement_system.py             # Autonomous learning system
-├── run_crewai_autonomous.py               # CrewAI autonomous runner
-├── crewai_crew.py                         # CrewAI crew command interface
-├── autonomous_development.py              # Main autonomous development script
-├── setup_crewai.py                        # CrewAI setup and installation
-├── crew                                   # CrewAI crew command alias
-├── requirements_crewai.txt                # CrewAI dependencies
-├── CREWAI_README.md                       # CrewAI documentation
-│
-├── generate_audio_reactive_video.py       # CLI video generator
-├── test_video_generation.py               # Comprehensive test suite
-├── run_test.py                            # Simple test runner
-├── demo_test.py                           # Quick demo script
-├── README.md                              # This file
-└── .gitignore                             # Git ignore patterns
+├── generate_audio_reactive_video.py       # Main CLI generator
+├── requirements.txt                        # Python dependencies
+└── README.md                              # This file
 ```
 
 ## 🤖 CrewAI Autonomous Development

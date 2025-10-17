@@ -33,119 +33,53 @@ class VideoGenerationThread(QThread):
     def run(self):
         """Run the video generation pipeline."""
         try:
-            # Try distributed rendering first, fallback to local
-            try:
-                from distributed_renderer import get_best_renderer
-            except ImportError:
-                print("⚠️  Distributed renderer not available, using local rendering")
-                get_best_renderer = None
+            # Use COMMERCIAL-GRADE RENDERING SYSTEM (single, reliable system)
+            print("💻 Using COMMERCIAL-GRADE RENDERING SYSTEM")
+            from audio_analyzer import AudioAnalyzer
+            from video_renderer import UltraVideoRenderer
+            from commercial_grade_animator import CommercialGradeAnimator
             
-            # Initialize hybrid renderer
-            if get_best_renderer:
-                renderer = get_best_renderer()
-                system_info = renderer.get_system_info()
-                
-                if system_info['type'] == 'distributed':
-                    print("🚀 Using DISTRIBUTED RENDERING SYSTEM")
-                    print(f"   Workers: {len(system_info['workers'])}")
-                    print(f"   Status: {system_info['status']['status']}")
-                    
-                    # Use distributed rendering
-                    output_video = renderer.render_video(
-                        audio_path=self.config['audio_path'],
-                        style=self.config['style'],
-                        output_path=self.config['output_path'],
-                        fps=self.config['fps'],
-                        quality=self.config.get('quality', 'balanced'),
-                        progress_callback=self.progress.emit
-                    )
-                else:
-                    print("💻 Using UNIFIED LOCAL RENDERING SYSTEM")
-                    # Use unified local rendering
-                    from audio_analyzer import AudioAnalyzer
-                    from video_renderer import UltraVideoRenderer
-                    from blender_animator_advanced import AdvancedAnimator
-                    
-                    if self.config.get('fast_mode', False):
-                        print("⚡ UNIFIED SYSTEM - FAST MODE")
-                    else:
-                        print("🎬 UNIFIED SYSTEM - COMMERCIAL GRADE")
-                    
-                    # Step 1: Analyze audio
-                    self.progress.emit(5, "Analyzing audio...")
-                    analyzer = AudioAnalyzer(self.config['audio_path'], fps=self.config['fps'])
-                    features = analyzer.analyze()
-                    
-                    # Save analysis
-                    analysis_path = os.path.join(self.config['temp_dir'], 'analysis.json')
-                    analyzer.save_analysis(analysis_path)
-                    
-                    # Step 2: Generate Blender script
-                    self.progress.emit(20, "Generating Blender scene...")
-                    generator = AdvancedAnimator(features, style=self.config['style'])
-                    script_path = os.path.join(self.config['temp_dir'], 'scene_script.py')
-                    blend_path = os.path.join(self.config['temp_dir'], 'scene.blend')
-                    generator.save_script(script_path, self.config['render_settings'], blend_path)
-                    
-                    # Step 3: Render video
-                    self.progress.emit(30, "Initializing unified renderer...")
-                    
-                    # Use unified renderer for all modes
-                    local_renderer = UltraVideoRenderer(self.config.get('blender_path'))
-                    target_fps = min(self.config['fps'], 30) if self.config.get('fast_mode', False) else self.config['fps']
-                    
-                    output_video = local_renderer.generate_video_ultra_fast(
-                        script_path=script_path,
-                        audio_path=self.config['audio_path'],
-                        output_path=self.config['output_path'],
-                        fps=target_fps,
-                        progress_callback=self.progress.emit,
-                        keep_temp_files=self.config.get('keep_temp', False)
-                    )
+            if self.config.get('fast_mode', False):
+                print("⚡ COMMERCIAL SYSTEM - FAST MODE")
             else:
-                # Fallback to local rendering when distributed renderer is not available
-                print("💻 Using LOCAL RENDERING SYSTEM")
-                # Use unified local rendering
-                from audio_analyzer import AudioAnalyzer
-                from video_renderer import UltraVideoRenderer
-                from blender_animator_advanced import AdvancedAnimator
-                
-                if self.config.get('fast_mode', False):
-                    print("⚡ LOCAL SYSTEM - FAST MODE")
-                else:
-                    print("🎬 LOCAL SYSTEM - COMMERCIAL GRADE")
-                
-                # Step 1: Analyze audio
-                self.progress.emit(5, "Analyzing audio...")
-                analyzer = AudioAnalyzer(self.config['audio_path'], fps=self.config['fps'])
-                features = analyzer.analyze()
-                
-                # Save analysis
-                analysis_path = os.path.join(self.config['temp_dir'], 'analysis.json')
-                analyzer.save_analysis(analysis_path)
-                
-                # Step 2: Generate Blender script
-                self.progress.emit(20, "Generating Blender scene...")
-                generator = AdvancedAnimator(features, style=self.config['style'])
-                script_path = os.path.join(self.config['temp_dir'], 'scene_script.py')
-                blend_path = os.path.join(self.config['temp_dir'], 'scene.blend')
-                generator.save_script(script_path, self.config['render_settings'], blend_path)
-                
-                # Step 3: Render video
-                self.progress.emit(30, "Initializing unified renderer...")
-                
-                # Use unified renderer for all modes
-                local_renderer = UltraVideoRenderer(self.config.get('blender_path'))
-                target_fps = min(self.config['fps'], 30) if self.config.get('fast_mode', False) else self.config['fps']
-                
-                output_video = local_renderer.generate_video_ultra_fast(
-                    script_path=script_path,
-                    audio_path=self.config['audio_path'],
-                    output_path=self.config['output_path'],
-                    fps=target_fps,
-                    progress_callback=self.progress.emit,
-                    keep_temp_files=self.config.get('keep_temp', False)
-                )
+                print("🎬 COMMERCIAL SYSTEM - COMMERCIAL GRADE")
+            
+            # Step 1: Analyze audio
+            self.progress.emit(5, "Analyzing audio...")
+            analyzer = AudioAnalyzer(self.config['audio_path'], fps=self.config['fps'])
+            features = analyzer.analyze()
+            
+            # Save analysis
+            analysis_path = os.path.join(self.config['temp_dir'], 'analysis.json')
+            analyzer.save_analysis(analysis_path)
+            
+            # Step 2: Generate commercial grade Blender script
+            self.progress.emit(20, "Generating commercial grade scene...")
+            generator = CommercialGradeAnimator(features)
+            script_path = os.path.join(self.config['temp_dir'], 'commercial_scene.py')
+            blend_path = os.path.join(self.config['temp_dir'], 'scene.blend')
+            
+            # Ensure temp directory exists
+            os.makedirs(self.config['temp_dir'], exist_ok=True)
+            
+            # Use the save_script method which properly handles blend file saving
+            generator.save_script(script_path, blend_path=blend_path)
+            
+            # Step 3: Render video
+            self.progress.emit(30, "Initializing commercial renderer...")
+            
+            # Use commercial renderer for all modes
+            local_renderer = UltraVideoRenderer(self.config.get('blender_path'))
+            target_fps = min(self.config['fps'], 30) if self.config.get('fast_mode', False) else self.config['fps']
+            
+            output_video = local_renderer.generate_video_ultra_fast(
+                script_path=script_path,
+                audio_path=self.config['audio_path'],
+                output_path=self.config['output_path'],
+                fps=target_fps,
+                progress_callback=self.progress.emit,
+                keep_temp_files=self.config.get('keep_temp', False)
+            )
             
             self.finished.emit(output_video)
             
@@ -268,22 +202,6 @@ class MainWindow(QMainWindow):
         group = QGroupBox("Animation Settings")
         layout = QVBoxLayout()
         
-        # Animation style
-        style_layout = QHBoxLayout()
-        style_layout.addWidget(QLabel("Style:"))
-        
-        self.style_combo = QComboBox()
-        self.style_combo.addItems([
-            "Cinematic Space",
-            "Abstract Luxury",
-            "Geometric Tech",
-            "Organic Nature",
-            "Music Visualizer Pro"
-        ])
-        self.style_combo.setToolTip("Choose the visual style for your animation")
-        style_layout.addWidget(self.style_combo)
-        style_layout.addStretch()
-        
         # FPS
         fps_layout = QHBoxLayout()
         fps_layout.addWidget(QLabel("Frame Rate:"))
@@ -296,7 +214,6 @@ class MainWindow(QMainWindow):
         fps_layout.addWidget(self.fps_spin)
         fps_layout.addStretch()
         
-        layout.addLayout(style_layout)
         layout.addLayout(fps_layout)
         group.setLayout(layout)
         
@@ -322,9 +239,9 @@ class MainWindow(QMainWindow):
         samples_layout.addWidget(QLabel("Samples:"))
         
         self.samples_spin = QSpinBox()
-        self.samples_spin.setRange(32, 512)
-        self.samples_spin.setValue(128)
-        self.samples_spin.setSingleStep(32)
+        self.samples_spin.setRange(64, 1024)
+        self.samples_spin.setValue(512)  # Commercial grade default
+        self.samples_spin.setSingleStep(64)
         self.samples_spin.setToolTip("Higher samples = better quality, longer render time")
         samples_layout.addWidget(self.samples_spin)
         samples_layout.addStretch()
@@ -374,15 +291,15 @@ class MainWindow(QMainWindow):
         if checked:
             # Auto-optimize for fast mode
             self.engine_combo.setCurrentText("Eevee (Fast)")
-            self.samples_spin.setValue(32)
+            self.samples_spin.setValue(64)
             self.denoise_check.setChecked(False)
             self.log_message("⚡ Fast mode enabled - settings optimized for speed!")
         else:
-            # Reset to quality settings
+            # Reset to commercial grade settings
             self.engine_combo.setCurrentText("Cycles (High Quality)")
-            self.samples_spin.setValue(128)
+            self.samples_spin.setValue(512)  # Commercial grade default
             self.denoise_check.setChecked(True)
-            self.log_message("🎨 Pro mode enabled - settings optimized for quality!")
+            self.log_message("🎨 Commercial grade mode enabled - maximum quality!")
             
     def select_audio(self):
         """Open file dialog to select audio file."""
@@ -405,15 +322,7 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "No Audio", "Please select an audio file first.")
             return
         
-        # Prepare configuration
-        style_map = {
-            "Cinematic Space": "cinematic_space",
-            "Abstract Luxury": "abstract_luxury",
-            "Geometric Tech": "geometric_tech",
-            "Organic Nature": "organic_nature",
-            "Music Visualizer Pro": "music_visualizer_pro"
-        }
-        
+        # Prepare configuration for commercial-grade rendering
         audio_name = Path(self.audio_path).stem
         output_path = os.path.join(self.output_dir, f"{audio_name}_video.mp4")
         temp_dir = os.path.join(self.output_dir, "temp")
@@ -423,15 +332,18 @@ class MainWindow(QMainWindow):
             'audio_path': self.audio_path,
             'output_path': output_path,
             'temp_dir': temp_dir,
-            'style': style_map[self.style_combo.currentText()],
             'fps': self.fps_spin.value(),
             'fast_mode': self.fast_mode_check.isChecked(),
             'render_settings': {
                 'resolution_x': 1920,
                 'resolution_y': 1080,
-                'engine': 'CYCLES' if 'Cycles' in self.engine_combo.currentText() else 'BLENDER_EEVEE',
+                'engine': 'CYCLES' if 'Cycles' in self.engine_combo.currentText() else 'BLENDER_EEVEE_NEXT',
+                'device': 'GPU',  # Add device parameter
                 'samples': self.samples_spin.value(),
-                'use_denoising': self.denoise_check.isChecked()
+                'use_denoising': self.denoise_check.isChecked(),
+                'motion_blur': True,
+                'dof': True,
+                'use_adaptive_sampling': True
             },
             'keep_temp': False
         }
@@ -441,14 +353,14 @@ class MainWindow(QMainWindow):
         self.cancel_btn.setEnabled(True)
         self.progress_bar.setValue(0)
         self.status_text.clear()
-        self.log_message("🚀 Starting video generation...")
-        self.log_message(f"Style: {self.style_combo.currentText()}")
+        self.log_message("🚀 Starting commercial-grade video generation...")
+        self.log_message(f"Style: Commercial-Grade (Professional Quality)")
         self.log_message(f"FPS: {self.fps_spin.value()}")
         self.log_message(f"Engine: {self.engine_combo.currentText()}")
         if self.fast_mode_check.isChecked():
             self.log_message("⚡ FAST MODE ENABLED - 10x faster rendering!")
         else:
-            self.log_message("🎨 PRO MODE - High quality rendering")
+            self.log_message("🎨 COMMERCIAL GRADE MODE - Maximum quality rendering")
         
         # Start generation thread
         self.generation_thread = VideoGenerationThread(config)

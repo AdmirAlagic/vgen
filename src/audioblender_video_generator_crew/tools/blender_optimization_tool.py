@@ -16,13 +16,9 @@ from crewai.tools import BaseTool
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 try:
-    from src.blender_animator_advanced import AdvancedAnimator
+    from commercial_grade_animator import CommercialGradeAnimator
 except ImportError:
-    # Fallback import
-    try:
-        from blender_animator_advanced import AdvancedAnimator
-    except ImportError:
-        AdvancedAnimator = None
+    CommercialGradeAnimator = None
 
 class BlenderOptimizationTool(BaseTool):
     """Tool for optimizing Blender scene generation and animation for commercial quality."""
@@ -62,14 +58,14 @@ class BlenderOptimizationTool(BaseTool):
                 }
             
             # Initialize animator
-            if AdvancedAnimator is None:
+            if CommercialGradeAnimator is None:
                 return {
-                    "error": "AdvancedAnimator not available. Please check Blender integration.",
+                    "error": "CommercialGradeAnimator not available. Please check Blender integration.",
                     "status": "failed"
                 }
             
             # Create animator with optimized settings
-            animator = AdvancedAnimator(features, style=style)
+            animator = CommercialGradeAnimator(features)
             
             # Apply complexity settings
             self._configure_scene_complexity(animator, scene_complexity)

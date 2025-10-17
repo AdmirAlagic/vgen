@@ -102,11 +102,18 @@ class UltraVideoRenderer:
                 progress_callback(30, f"Scene created in {elapsed:.1f}s")
             
             # Check for blend file in multiple possible locations
+            # The CommercialGradeAnimator saves to different paths depending on the script
             possible_paths = [
                 blend_output_path,
+                os.path.join(os.path.dirname(blend_output_path), "scene.blend"),
+                os.path.join(os.path.dirname(blend_output_path), "commercial_scene.blend"),
                 os.path.join(os.path.dirname(script_path), "scene.blend"),
-                os.path.join(os.path.dirname(blend_output_path), "scene.blend")
+                os.path.join(os.path.dirname(script_path), "commercial_scene.blend"),
+                os.path.join(os.path.dirname(script_path), "v6_dramatically_improved_scene.blend")
             ]
+            
+            # Remove duplicates while preserving order
+            possible_paths = list(dict.fromkeys(possible_paths))
             
             blend_file_found = None
             for path in possible_paths:
@@ -135,7 +142,26 @@ class UltraVideoRenderer:
             if os.path.exists(temp_dir):
                 print(f"📂 Files in {temp_dir}:")
                 for f in os.listdir(temp_dir):
-                    print(f"  - {f}")
+                    file_path = os.path.join(temp_dir, f)
+                    if os.path.isfile(file_path):
+                        size = os.path.getsize(file_path) / 1024
+                        print(f"  📄 {f} ({size:.1f} KB)")
+                    else:
+                        print(f"  📁 {f}/")
+            else:
+                print(f"❌ Temp directory does not exist: {temp_dir}")
+            
+            # Also check parent directories
+            script_dir = os.path.dirname(script_path)
+            if os.path.exists(script_dir):
+                print(f"📂 Files in script directory {script_dir}:")
+                for f in os.listdir(script_dir):
+                    file_path = os.path.join(script_dir, f)
+                    if os.path.isfile(file_path):
+                        size = os.path.getsize(file_path) / 1024
+                        print(f"  📄 {f} ({size:.1f} KB)")
+                    else:
+                        print(f"  📁 {f}/")
             
             raise RuntimeError(f"Blend file not found at any expected location: {possible_paths}")
             
@@ -183,54 +209,129 @@ scene.render.ffmpeg.constant_rate_factor = 'MEDIUM'
 scene.render.ffmpeg.ffmpeg_preset = 'GOOD'
 scene.render.ffmpeg.audio_codec = 'NONE'  # No audio in temp render
 
-# GPU acceleration
+# ULTRA-EFFICIENT GPU ACCELERATION with CPU monitoring
+gpu_enabled = False
 try:
-    prefs = bpy.context.preferences.addons['cycles'].preferences
-    prefs.compute_device_type = 'METAL'  # For macOS
-    prefs.get_devices()
-    for device in prefs.devices:
-        device.use = True
-    scene.cycles.device = 'GPU'
-    print("✅ GPU (Metal) enabled")
-except:
+    # Check if Cycles addon is available
+    if 'cycles' in bpy.context.preferences.addons:
+        prefs = bpy.context.preferences.addons['cycles'].preferences
+        
+        # Try to set compute device type for macOS
+        try:
+            prefs.compute_device_type = 'METAL'  # For macOS
+            prefs.get_devices()
+            
+            # Enable available GPU devices
+            gpu_devices_found = 0
+            for device in prefs.devices:
+                if device.type in ['METAL', 'CUDA', 'OPTIX']:
+                    device.use = True
+                    gpu_devices_found += 1
+                    print(f"✅ Enabled GPU device: {device.name} ({device.type})")
+            
+            if gpu_devices_found > 0:
+                scene.cycles.device = 'GPU'
+                gpu_enabled = True
+                print(f"✅ GPU acceleration enabled ({gpu_devices_found} devices)")
+            else:
+                raise Exception("No GPU devices available")
+                
+        except Exception as gpu_error:
+            print(f"⚠️  GPU setup failed: {str(gpu_error)}")
+            raise gpu_error
+            
+    else:
+        print("⚠️  Cycles addon not available")
+        raise Exception("Cycles addon not loaded")
+        
+except Exception as e:
+    # Fallback to CPU with ultra-efficient settings
     scene.cycles.device = 'CPU'
-    print("⚠️  GPU not available, using CPU")
+    print(f"⚠️  GPU not available ({str(e)}), using ultra-efficient CPU")
+    gpu_enabled = False
+
+# MEMORY OPTIMIZATION: Set memory limits to prevent high CPU usage
+try:
+    bpy.context.preferences.system.memory_limit = 2048  # 2GB limit
+    bpy.context.preferences.system.use_memory_limit = True
+    print("✅ Memory limit set to 2GB")
+except Exception as e:
+    print(f"⚠️  Could not set memory limit: {e}")
 
 # Speed optimizations with memory management
 scene.render.use_persistent_data = True  # Reuse data
 scene.render.use_simplify = True  # Simplify geometry
 scene.render.simplify_subdivision = 0  # Disable subdivision
-scene.cycles.use_denoising = False  # Disable denoising for speed
-scene.cycles.samples = 8  # Ultra-low samples for stability
-scene.cycles.preview_samples = 4
-scene.cycles.max_bounces = 1  # Minimal bounces for stability
-scene.cycles.diffuse_bounces = 1
-scene.cycles.glossy_bounces = 1
-scene.cycles.transparent_max_bounces = 1
-scene.cycles.transmission_bounces = 1
-scene.cycles.volume_bounces = 0
+scene.cycles.use_denoising = True  # Enable denoising for better quality
+# Set denoiser based on available GPU
+if gpu_enabled:
+    try:
+        scene.cycles.denoiser = 'OPTIX'  # Use GPU denoising when available
+        print("✅ GPU denoising enabled (OPTIX)")
+    except:
+        scene.cycles.denoiser = 'OPENIMAGEDENOISE'  # Fallback to CPU denoising
+        print("✅ CPU denoising enabled (OpenImageDenoise)")
+else:
+    scene.cycles.denoiser = 'OPENIMAGEDENOISE'  # Use CPU denoising
+    print("✅ CPU denoising enabled (OpenImageDenoise)")
+# ULTRA-EFFICIENT SAMPLING: Drastically reduced for <50% CPU usage
+if gpu_enabled:
+    scene.cycles.samples = 64  # Ultra-low samples for GPU efficiency
+    scene.cycles.preview_samples = 32
+    scene.cycles.max_bounces = 2  # Minimal bounces for speed
+    scene.cycles.diffuse_bounces = 1
+    scene.cycles.glossy_bounces = 1
+    scene.cycles.transparent_max_bounces = 2
+    scene.cycles.transmission_bounces = 2
+    scene.cycles.volume_bounces = 1
+else:
+    # Even lower for CPU rendering
+    scene.cycles.samples = 32  # Ultra-low CPU samples
+    scene.cycles.preview_samples = 16
+    scene.cycles.max_bounces = 1  # Single bounce for CPU
+    scene.cycles.diffuse_bounces = 1
+    scene.cycles.glossy_bounces = 1
+    scene.cycles.transparent_max_bounces = 1
+    scene.cycles.transmission_bounces = 1
+    scene.cycles.volume_bounces = 1
 
 # Disable unnecessary features
 scene.render.use_compositing = False
 scene.render.use_sequencer = False
 scene.render.use_motion_blur = False
 
-# Memory and performance optimization
-scene.cycles.tile_size = 512  # Larger tiles for GPU efficiency
+# ULTRA-EFFICIENT MEMORY AND PERFORMANCE OPTIMIZATION
+if gpu_enabled:
+    scene.cycles.tile_size = 256  # Smaller tiles for better CPU efficiency
+else:
+    scene.cycles.tile_size = 64  # Very small tiles for CPU efficiency
+
 scene.cycles.use_progressive_refine = False  # Disable progressive rendering
 scene.cycles.debug_use_spatial_splits = False  # Disable spatial splits
 scene.cycles.debug_use_hair_bvh = False  # Disable hair BVH
 
-# GPU memory optimization
-try:
-    prefs = bpy.context.preferences.addons['cycles'].preferences
-    for device in prefs.devices:
-        if device.type == 'CUDA' or device.type == 'OPTIX' or device.type == 'METAL':
-            device.use = True
-        else:
-            device.use = False
-except:
-    pass
+# ADDITIONAL CPU EFFICIENCY OPTIMIZATIONS
+scene.cycles.use_adaptive_sampling = False  # Disable adaptive sampling for speed
+scene.cycles.sample_clamp = 10.0  # Clamp samples to prevent noise
+scene.cycles.bake_type = 'COMBINED'  # Optimize baking
+scene.cycles.debug_use_spatial_splits = False
+scene.cycles.debug_use_hair_bvh = False
+scene.cycles.debug_bvh_type = 'DYNAMIC_BVH'
+
+# GPU memory optimization (only if GPU was successfully enabled)
+if gpu_enabled:
+    try:
+        prefs = bpy.context.preferences.addons['cycles'].preferences
+        for device in prefs.devices:
+            if device.type in ['CUDA', 'OPTIX', 'METAL']:
+                device.use = True
+            else:
+                device.use = False
+        print("✅ GPU memory optimization applied")
+    except Exception as e:
+        print(f"⚠️  GPU memory optimization failed: {str(e)}")
+else:
+    print("ℹ️  Skipping GPU memory optimization (using CPU)")
 
 print("✅ Ultra-fast optimizations applied")
 """
