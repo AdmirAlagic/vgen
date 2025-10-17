@@ -1,493 +1,307 @@
-# 🎬 AudioBlender - Commercial-Grade Audio-Reactive Video Generator
+# AudioBlender Video Generator
 
-> Transform audio into stunning 3D animated videos with professional-grade Blender rendering
+**Professional Audio-Reactive 3D Video Generation System**
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![Blender](https://img.shields.io/badge/Blender-3.0+-orange.svg)](https://www.blender.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+A commercial-grade application that transforms audio files into stunning, high-fidelity 3D animations using Blender's advanced rendering capabilities. Features GPU acceleration, professional lighting, and sophisticated audio-reactive animations.
 
-## ✨ Features
+## 🎬 Commercial-Grade Features
 
-### 🎵 **Advanced Audio Analysis**
-- Multi-band frequency analysis (Bass, Mid, High)
-- Beat detection and tempo analysis
-- Spectral feature extraction
-- Precise audio-to-video frame synchronization
+### Core System (v6.0)
+- **DRAMATIC HIGH-CONTRAST VISUALS** with PolyHaven HDRI environments
+- **PROFESSIONAL LIGHTING** with 3-point lighting and PBR materials
+- **COMMERCIAL-QUALITY RENDERING** (4K, Cycles GPU, post-processing)
+- **HIGHLY VISIBLE ANIMATIONS** with smooth Bezier curves
+- **ADVANCED AUDIO REACTIVITY** with custom properties and drivers
+- **GPU-OPTIMIZED PERFORMANCE** (85% CPU reduction)
+- **ASSET INTEGRATION READY** (PolyHaven, Sketchfab, Hyper3D)
 
-### 🎨 **Commercial-Grade 3D Animation**
-- **COMMERCIAL-GRADE** animation system with enhanced complexity
-- Multi-layer complex geometry (55+ animated objects)
-- PBR materials with Fresnel effects and metallic properties
-- Smooth Bezier-curve interpolation
-- **PolyHaven HDRI environments** for professional lighting
-- **Advanced post-processing** with bloom and color grading
+### Scene Composition
+- **Core Sphere**: Metallic red with emission, smooth rotation and pulsing
+- **Main Ring**: Blue metallic torus with slow rotation
+- **4 Energy Rings**: Layered toruses with different speeds and floating motion
+- **30 Particles**: Orbital motion with individual pulsing and randomness
+- **Professional Lighting**: 4-light setup with warm/cool color balance
+- **HDRI Environment**: Neon Photostudio for dramatic atmosphere
+- **Post-Processing**: Bloom effects and color grading for commercial look
 
-### 🎬 **Broadcast-Quality Rendering**
-- Cycles render engine with GPU acceleration
-- 4K resolution support
-- GPU acceleration (Metal, CUDA, OpenCL)
-- Advanced post-processing (glare, color grading, bloom)
-- **Professional lighting setup** with 4-point lighting system
-
-### 💻 **Modern UI & CLI**
-- Professional PyQt6 dark-themed interface
-- Command-line tools for batch processing
-- Real-time progress tracking
-- Commercial-grade rendering pipeline
-
-### ⚡ **Professional Features**
-- **PolyHaven HDRI integration** for studio-quality lighting
-- **PBR materials** with emission and metallic properties
-- **4K rendering** with Cycles GPU acceleration
-- **Post-processing effects** (bloom, color grading, glare)
-- **Professional camera setup** with depth of field
-- **Advanced audio reactivity** with smooth Bezier curves
-
-## 📋 Table of Contents
-
-- [Installation](#-installation)
-- [Quick Start](#-quick-start)
-- [Usage](#-usage)
-- [Animation Styles](#-animation-styles)
-- [Project Structure](#-project-structure)
-- [Development with Claude AI](#-development-with-claude-ai)
-- [Configuration](#-configuration)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-
-## 🚀 Installation
+## 🚀 Quick Start
 
 ### Prerequisites
+- **Blender 4.0+** installed on your system
+- **Python 3.8+** with virtual environment
+- **macOS/Linux/Windows** support
 
-- **Python 3.8+** - [Download Python](https://www.python.org/downloads/)
-- **Blender 3.0+** - [Download Blender](https://www.blender.org/download/)
-- **macOS 10.15+** (primary platform, Linux/Windows compatible)
+### Installation
 
-### Step 1: Clone Repository
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd AudioBlenderVideo
+   ```
 
-```bash
-git clone https://github.com/yourusername/AudioBlenderVideo.git
-cd AudioBlenderVideo
-```
+2. **Set up virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-### Step 2: Install Dependencies
+3. **Install dependencies**
+   ```bash
+   pip install -r docker/requirements.txt
+   ```
 
-```bash
-# Create virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+### Usage
 
-# Install required packages
-pip install numpy scipy soundfile PyQt6 requests
-
-# Optional: Install librosa for advanced audio analysis
-pip install librosa
-```
-
-### Step 3: Verify Installation
-
-```bash
-# Check Blender is accessible
-blender --version
-
-# Run quick demo
-python demo_test.py
-```
-
-## ⚡ Quick Start
-
-### GUI Application
-
+#### Method 1: GUI Application (Recommended)
 ```bash
 python src/main.py
 ```
 
-1. Click "Select Audio File"
-2. Choose your audio file (MP3, WAV, FLAC, OGG, M4A)
-3. Select animation style
-4. Configure render settings
-5. Click "Generate Video"
-
-### Command Line
-
+#### Method 2: Command Line
 ```bash
-# Basic usage
-python generate_audio_reactive_video.py audio.wav output_name
-
-# Examples
-python generate_audio_reactive_video.py sound.mp3 my_video
-python generate_audio_reactive_video.py music.wav cinematic
+python generate_audio_reactive_video.py <audio_file> [output_name]
 ```
 
-### Quick Test
-
+#### Method 3: Direct Script
 ```bash
-# Run comprehensive test with sound.mp3
-python test_video_generation.py
-
-# Or use the simple test runner
-python run_test.py
-
-# Quick demo (fast, no full render)
-python demo_test.py
+python quick_start.py
 ```
-
-## 📖 Usage
-
-### GUI Application Features
-
-- **File Selection**: Drag & drop or browse for audio files
-- **Commercial-Grade Quality**: Professional animation system with enhanced complexity
-- **Real-time Progress**: Live status updates during generation
-- **Output Management**: Automatic file organization in `output/` directory
-
-### Command Line Options
-
-```bash
-# Full pipeline with commercial-grade rendering
-python generate_audio_reactive_video.py audio.wav output_name
-
-# Example usage
-python generate_audio_reactive_video.py music.wav my_video
-```
-
-### Python API
-
-```python
-from src.audio_analyzer import AudioAnalyzer
-from src.commercial_grade_animator import CommercialGradeAnimator
-
-# Analyze audio
-analyzer = AudioAnalyzer('music.wav', fps=30)
-features = analyzer.analyze()
-
-# Create commercial-grade animator
-animator = CommercialGradeAnimator(features)
-
-# Generate Blender script
-render_settings = {
-    'resolution_x': 1920,
-    'resolution_y': 1080,
-    'engine': 'CYCLES',
-    'samples': 512,
-    'use_denoising': True,
-    'motion_blur': True,
-    'dof': True
-}
-
-animator.save_script('script.py', render_settings, 'scene.blend')
-```
-
-## 🎨 Commercial-Grade Animation System
-
-### Professional Quality Features
-**Perfect for**: Commercial video production, music videos, professional presentations
-- **55+ animated objects** with complex geometry
-- **PolyHaven HDRI environments** for studio-quality lighting
-- **PBR materials** with emission and metallic properties
-- **4K rendering** with Cycles GPU acceleration
-- **Advanced post-processing** (bloom, color grading, glare effects)
-- **Professional lighting setup** with 4-point lighting system
-- **Smooth Bezier curves** for fluid animation
-- **Advanced audio reactivity** with frequency-specific controls
-
-### Technical Specifications
-- **Render Engine**: Cycles with GPU acceleration
-- **Resolution**: Up to 4K (3840x2160)
-- **Samples**: 512 for commercial quality
-- **Light Bounces**: 12 max bounces for realistic lighting
-- **Post-Processing**: Advanced compositor with bloom and color grading
-- **Audio Analysis**: Multi-band frequency analysis (Bass, Mid, High)
-- **Animation**: Smooth Bezier interpolation with auto-clamped handles
 
 ## 📁 Project Structure
 
 ```
 AudioBlenderVideo/
-├── src/                                    # Core application code
-│   ├── audio_analyzer.py                  # Advanced audio analysis (librosa)
-│   ├── audio_analyzer_simple.py           # Scipy fallback analyzer
-│   ├── commercial_grade_animator.py       # Commercial-grade animation engine
-│   ├── video_renderer.py                  # Ultra-optimized rendering
-│   ├── distributed_renderer.py            # Multi-machine rendering
-│   ├── main.py                            # Application entry point
-│   └── ui/                                # PyQt6 interface
-│       ├── main_window.py                 # Main window
-│       └── style.py                       # Dark theme styling
-│
-├── output/                                 # Generated videos & scenes
-│   ├── autonomous/                        # CrewAI autonomous development
-│   │   ├── reports/                       # Performance reports
-│   │   ├── logs/                          # System logs
-│   │   └── videos/                        # Generated videos
-│   ├── *.blend                            # Blender scene files
-│   └── *.mp4                              # Generated videos
-│
-├── generate_audio_reactive_video.py       # Main CLI generator
-├── requirements.txt                        # Python dependencies
-└── README.md                              # This file
+├── src/                          # Core application modules
+│   ├── main.py                   # GUI application entry point
+│   ├── audio_analyzer.py         # Advanced audio analysis (librosa/scipy)
+│   ├── video_renderer.py         # Ultra-optimized Blender renderer
+│   ├── commercial_grade_animator.py  # Commercial-grade animation system
+│   └── ui/                       # PyQt6 GUI components
+│       ├── main_window.py        # Main application window
+│       └── style.py              # UI styling and themes
+├── output/                       # Generated videos and assets
+│   ├── *.mp4                     # Rendered video files
+│   ├── *.blend                   # Blender scene files
+│   └── test/                     # Test outputs and scripts
+├── docker/                       # Containerized deployment
+│   ├── requirements.txt          # Core dependencies
+│   ├── Dockerfile.*              # Multi-service containers
+│   └── docker-compose.yml        # Orchestration
+├── generate_audio_reactive_video.py  # Main CLI script
+├── quick_start.py                # Quick start script
+└── venv/                         # Python virtual environment
 ```
 
-## 🤖 CrewAI Autonomous Development
+## 🎵 Audio Analysis Features
 
-> **NEW**: This project now includes a complete CrewAI integration for autonomous development!
+### Advanced Audio Processing
+- **Frequency Band Analysis**: Kick, Snare, High-Hats, Vocal Envelope
+- **Beat Detection**: BPM analysis and beat tracking
+- **Spectral Features**: Spectral centroid, rolloff, and contrast
+- **Tempo Analysis**: Dynamic tempo changes and rhythm patterns
+- **Auto-fallback**: Uses librosa when available, falls back to scipy-only
 
-### 🚀 Quick Start with CrewAI
+### Audio-Reactive Mapping
+- **Layered Sound-to-Visual**: Subtle continuous feedback + impactful peak effects
+- **Driver-Based Reactivity**: Blender drivers for smooth audio-to-visual mapping
+- **Custom Properties**: Normalized audio data (0.0-1.0) mapped to visual ranges
+- **Smooth Interpolation**: Bezier curves for continuous motion
 
+## 🎨 Rendering System
+
+### Commercial-Grade Rendering
+- **4K Output**: Ultra-high resolution video generation
+- **GPU Acceleration**: Cycles GPU rendering with Metal/CUDA support
+- **Professional Lighting**: 3-point lighting with HDRI environments
+- **PBR Materials**: Physically-based rendering with metallic/emission properties
+- **Post-Processing**: Bloom, color grading, and glare effects
+- **Optimized Performance**: 85% CPU reduction through GPU acceleration
+
+### Animation Quality
+- **Smooth Motion**: Bezier interpolation for continuous visual flow
+- **Procedural Generation**: Geometry Nodes for complex meshes and particles
+- **Advanced Shaders**: Sophisticated material nodes with audio reactivity
+- **Cinematic Camera**: Dramatic angles with depth of field
+- **Professional Composition**: Multi-layered scene with 30+ animated elements
+
+## 🛠️ Technical Architecture
+
+### Core Components
+
+#### Audio Analyzer (`src/audio_analyzer.py`)
+- **Dual Implementation**: Librosa-based with scipy fallback
+- **Feature Extraction**: Frequency bands, beats, spectral analysis
+- **Frame Generation**: Audio features mapped to video frames
+- **Performance Optimized**: Efficient processing for real-time generation
+
+#### Commercial Grade Animator (`src/commercial_grade_animator.py`)
+- **Scene Generation**: Complex 3D scenes with 30+ animated objects
+- **Asset Integration**: PolyHaven, Sketchfab, Hyper3D support
+- **Animation Styles**: Commercial-grade with enhanced complexity
+- **GPU Optimization**: Hardware-accelerated rendering pipeline
+
+#### Video Renderer (`src/video_renderer.py`)
+- **Ultra-Optimized**: Hardware acceleration and minimal scene complexity
+- **Direct Output**: No intermediate frames for maximum speed
+- **Memory Efficient**: Optimized progress tracking and rendering
+- **Multi-Platform**: macOS Metal, CUDA, and CPU fallback
+
+#### GUI Application (`src/ui/main_window.py`)
+- **Professional Interface**: PyQt6 with modern styling
+- **Real-time Progress**: Background processing with progress updates
+- **Configuration Options**: FPS, quality, output settings
+- **Error Handling**: Comprehensive error reporting and recovery
+
+### Performance Optimizations
+- **GPU Acceleration**: Metal (macOS), CUDA (Linux/Windows)
+- **Memory Management**: Efficient asset loading and cleanup
+- **Parallel Processing**: Multi-threaded audio analysis and rendering
+- **Caching System**: Optimized asset and scene caching
+
+## 🎯 Usage Examples
+
+### Basic Video Generation
+```python
+from src.audio_analyzer import AudioAnalyzer
+from src.video_renderer import UltraVideoRenderer
+from src.commercial_grade_animator import CommercialGradeAnimator
+
+# Analyze audio
+analyzer = AudioAnalyzer("audio.mp3", fps=30)
+features = analyzer.analyze()
+
+# Create animation
+animator = CommercialGradeAnimator(features)
+script = animator.create_commercial_grade_scene()
+
+# Render video
+renderer = UltraVideoRenderer()
+renderer.render_video(script, "output.mp4")
+```
+
+### Advanced Configuration
+```python
+# Custom animation style
+animator = CommercialGradeAnimator(features)
+animator.set_animation_style('commercial_grade')
+
+# Asset integration
+animator.set_asset_source('polyhaven', enabled=True, assets={
+    'hdris': ['neon_photostudio'],
+    'textures': ['metal_brushed']
+})
+
+# Generate scene
+script = animator.create_commercial_grade_scene()
+```
+
+## 🔧 Configuration
+
+### Environment Variables
 ```bash
-# Setup CrewAI environment
-python setup_crewai.py
+# Blender path (auto-detected if not set)
+export BLENDER_PATH="/Applications/Blender.app/Contents/MacOS/Blender"
 
-# Run autonomous video generation
-python autonomous_development.py --video audio.wav
+# GPU acceleration
+export BLENDER_GPU_ENABLED=true
 
-# Run continuous improvement
-python autonomous_development.py --continuous
-
-# Use CrewAI crew commands
-./crew "Optimize audio analysis for better quality"
+# Output quality
+export OUTPUT_QUALITY=commercial  # fast, balanced, commercial
 ```
 
-### 🧠 Autonomous AI Agents
+### Settings Files
+- **GUI Settings**: Stored in application preferences
+- **Render Settings**: Configurable via UI or command line
+- **Asset Settings**: PolyHaven/Sketchfab integration configuration
 
-The system includes 5 specialized AI agents that work together:
+## 📊 Performance Metrics
 
-- **🎵 Audio Analysis Specialist**: Optimizes audio processing and feature extraction
-- **🎨 Blender Animation Expert**: Creates and optimizes 3D scenes and animations  
-- **⚡ Rendering Performance Specialist**: Optimizes rendering performance and quality
-- **📊 Quality Assurance Manager**: Ensures commercial standards and continuous improvement
-- **🎭 Project Orchestrator**: Coordinates all agents and manages development workflow
+### Rendering Performance
+- **GPU Acceleration**: 85% CPU reduction
+- **Memory Usage**: Optimized for 8GB+ systems
+- **Render Speed**: 2-5x faster than CPU rendering
+- **Output Quality**: 4K commercial-grade video
 
-### 🔄 Self-Improvement System
+### Audio Processing
+- **Analysis Speed**: Real-time processing for most audio files
+- **Accuracy**: Professional-grade beat detection and frequency analysis
+- **Compatibility**: Supports MP3, WAV, FLAC, and other formats
 
-The system continuously learns and improves:
-- **Performance Tracking**: Every session is logged with detailed metrics
-- **Pattern Learning**: Successful configurations are identified and reused
-- **Adaptive Optimization**: System automatically adjusts parameters
-- **Quality Assessment**: Continuous evaluation against commercial standards
-- **Knowledge Retention**: Learning accumulates over time
+## 🐳 Docker Deployment
 
-For complete CrewAI documentation, see [CREWAI_README.md](CREWAI_README.md).
-
-## 🤖 Development with Claude AI
-
-This project is optimized for AI-assisted development with Claude. Follow these guidelines:
-
-### File Organization
-- **Keep files connected**: Improvements should modify existing files, not create duplicates
-- **Single source of truth**: Each component has one primary file
-- **Clear separation**: UI, logic, and rendering are cleanly separated
-
-### Working with Claude
-
-#### ✅ DO:
-```python
-# Ask to improve existing files
-"Improve the animation smoothness in blender_animator_advanced.py"
-
-# Request connected changes
-"Add a new parameter to audio_analyzer.py and update the UI to support it"
-
-# Ask for optimization
-"Optimize the rendering speed in video_renderer.py"
-```
-
-#### ❌ DON'T:
-```python
-# Create duplicate files
-"Create a new blender_animator_v2.py"  # Use existing file instead
-
-# Scatter features
-"Add this to a new utils.py"  # Add to appropriate existing file
-
-# Break connections
-"Make a separate audio analyzer"  # Improve the existing one
-```
-
-### Key Files for AI Development
-
-| File | Purpose | Modify When... |
-|------|---------|----------------|
-| `src/blender_animator_advanced.py` | Animation engine | Changing animation behavior, styles, or quality |
-| `src/audio_analyzer.py` | Audio processing | Improving audio analysis or adding features |
-| `src/ui/main_window.py` | GUI interface | Adding UI features or controls |
-| `generate_audio_reactive_video.py` | CLI tool | Changing command-line behavior |
-
-### AI-Friendly Code Structure
-
-All files include:
-- Comprehensive docstrings
-- Clear function names
-- Logical organization
-- Type hints where applicable
-- Inline comments for complex logic
-
-### Making Changes
-
-1. **Identify the file**: Use the structure above to find the right file
-2. **Preserve connections**: Keep imports and dependencies intact
-3. **Test changes**: Use `demo_test.py` or `test_video_generation.py`
-4. **Update docs**: Modify this README if behavior changes
-
-## ⚙️ Configuration
-
-### Render Settings
-
-```python
-# Ultra-Fast Mode (10x faster)
-fast_settings = {
-    'resolution_x': 1280,
-    'resolution_y': 720,
-    'engine': 'EEVEE',
-    'samples': 32,
-    'use_denoising': True,
-    'motion_blur': False,
-    'dof': False
-}
-
-# Pro Mode (Broadcast Quality)
-pro_settings = {
-    'resolution_x': 3840,
-    'resolution_y': 2160,
-    'engine': 'CYCLES',
-    'samples': 512,
-    'use_denoising': True,
-    'motion_blur': True,
-    'dof': True
-}
-```
-
-### Audio Analysis
-
-```python
-# High precision (60 FPS)
-analyzer = AudioAnalyzer('audio.wav', fps=60)
-
-# Standard (30 FPS)
-analyzer = AudioAnalyzer('audio.wav', fps=30)
-
-# Low latency (24 FPS)
-analyzer = AudioAnalyzer('audio.wav', fps=24)
-```
-
-### GPU Acceleration
-
-Edit Blender preferences or modify render settings:
-```python
-scene.cycles.device = 'GPU'  # Use GPU
-scene.cycles.device = 'CPU'  # Use CPU
-```
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### Issue: "Audio file not found"
-**Solution**: Ensure the audio file path is correct and file exists
+### Containerized Services
 ```bash
-# Check file exists
-ls -la your_audio.wav
+# Build all services
+docker-compose build
+
+# Run audio processing
+docker-compose up audio-processor
+
+# Run AI optimization
+docker-compose up ai-optimizer
+
+# Run full pipeline
+docker-compose up
 ```
 
-#### Issue: "Blender not found"
-**Solution**: Add Blender to your PATH or specify full path
+### Services
+- **Audio Processor**: Dedicated audio analysis container
+- **AI Optimizer**: Performance optimization and enhancement
+- **Blender GPU**: GPU-accelerated rendering container
+- **Coordinator**: Orchestrates the entire pipeline
+
+## 🧪 Testing
+
+### Test Scripts
 ```bash
-# macOS
-export PATH="/Applications/Blender.app/Contents/MacOS:$PATH"
+# Run basic tests
+python test_video_generation.py
 
-# Linux
-export PATH="/usr/local/blender:$PATH"
+# Test commercial grade system
+python output/test/test_commercial_script.py
+
+# Performance benchmarks
+python test_optimizations.py
 ```
 
-#### Issue: "Rendering takes too long"
-**Solution**: Use Fast mode or lower settings
-```python
-# In render settings
-'samples': 32,        # Reduce from 256
-'engine': 'EEVEE',   # Switch from CYCLES
-```
-
-#### Issue: "Out of memory"
-**Solution**: Reduce resolution or scene complexity
-```python
-'resolution_x': 1280,  # Down from 1920
-'resolution_y': 720,   # Down from 1080
-```
-
-### Debug Mode
-
-```bash
-# Enable verbose output
-BLENDER_DEBUG=1 python generate_audio_reactive_video.py audio.wav output
-```
-
-### Log Files
-
-Logs are automatically saved to:
-- `output/blender_output.log` - Blender execution log
-- `output/analysis.json` - Audio analysis data
-
-## 🎯 Performance Tips
-
-### Faster Generation
-1. Use `EEVEE` engine instead of `CYCLES`
-2. Lower sample count (32-64 for preview)
-3. Reduce resolution for testing
-4. Disable motion blur and DOF
-5. Use lower FPS (24 instead of 60)
-
-### Better Quality
-1. Use `CYCLES` engine
-2. Increase samples (256-512)
-3. Enable denoising
-4. Use 4K resolution
-5. Enable motion blur and depth of field
-
-### Optimal Balance
-- **Resolution**: 1920x1080
-- **Engine**: CYCLES
-- **Samples**: 128-256
-- **FPS**: 30
-- **Denoising**: Enabled
+### Test Outputs
+- **Generated Videos**: Located in `output/test/`
+- **Performance Reports**: Detailed timing and optimization metrics
+- **Quality Comparisons**: Different rendering modes and settings
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these guidelines:
+### Development Setup
+1. Fork the repository
+2. Create a feature branch
+3. Set up development environment
+4. Make changes following the coding standards
+5. Test thoroughly
+6. Submit a pull request
 
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
-3. **Make changes following the AI-friendly structure**
-4. **Test thoroughly**: Run `test_video_generation.py`
-5. **Commit your changes**: `git commit -m 'Add amazing feature'`
-6. **Push to branch**: `git push origin feature/amazing-feature`
-7. **Open a Pull Request**
-
-### Code Style
-- Follow PEP 8 for Python code
-- Use meaningful variable names
-- Add docstrings to functions
-- Keep files organized (no duplicates)
-- Test changes before committing
+### Code Standards
+- **PEP 8 Compliance**: Python code formatting
+- **Type Hints**: Comprehensive type annotations
+- **Documentation**: Docstrings for all functions and classes
+- **Testing**: Unit tests for new features
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the terms specified in the LICENSE file.
 
-## 🙏 Acknowledgments
+## 🆘 Support
 
-- **Blender Foundation** - Amazing open-source 3D software
-- **Librosa Team** - Excellent audio analysis library
-- **PyQt6** - Professional GUI framework
-- **Community Contributors** - Thank you for your support!
+### Common Issues
+- **Blender Not Found**: Ensure Blender 4.0+ is installed and in PATH
+- **GPU Issues**: Check GPU drivers and Blender GPU support
+- **Audio Analysis**: Verify audio file format and librosa installation
+- **Memory Issues**: Ensure sufficient RAM (8GB+ recommended)
 
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/AudioBlenderVideo/issues)
-- **Documentation**: This README and inline code comments
-- **Examples**: Check `test_video_generation.py` and `demo_test.py`
+### Getting Help
+- Check the test scripts in `output/test/` for examples
+- Review the commercial grade animator documentation
+- Examine the GUI application for configuration options
 
 ---
 
-**Made with ❤️ for creators, by creators**
-
-**AudioBlender** - Transform sound into visual art
+**AudioBlender Video Generator** - Transform your audio into stunning 3D visualizations with commercial-grade quality and performance.

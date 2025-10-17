@@ -68,4 +68,5 @@ alwaysApply: true
 - **Tags:** documentation, clarity
 
 -Output renders in this project output folder
--use venv when making tests
+-Use venv when making tests
+- Update existing rendering system and style instead of adding new ones.

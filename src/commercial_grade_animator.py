@@ -133,25 +133,7 @@ class CommercialGradeAnimator:
         script += self._generate_footer(output_path)
         
         return script
-    
-    def generate_v6_script(self, output_path: str) -> str:
-        """Generate v6.0 dramatically improved script with PolyHaven assets and advanced features."""
-        print("🚀 Generating v6.0 dramatically improved script...")
-        
-        # Create v6.0 script with all improvements
-        script = self._generate_v6_header()
-        script += self._generate_v6_asset_integration()
-        script += self._generate_v6_scene_setup()
-        script += self._generate_v6_materials()
-        script += self._generate_v6_geometry()
-        script += self._generate_v6_lighting()
-        script += self._generate_v6_camera()
-        script += self._generate_v6_animation()
-        script += self._generate_v6_render_settings()
-        script += self._generate_v6_post_processing()
-        script += self._generate_v6_footer(output_path)
-        
-        return script
+   
     
     def _generate_asset_integration_setup(self) -> str:
         """Generate asset integration setup for external 3D models."""
@@ -522,17 +504,34 @@ scene.sequencer_colorspace_settings.name = 'Linear Rec.709'
 
 # DRAMATICALLY IMPROVED CAMERA SETUP
 camera_data = bpy.data.cameras.new('Camera')
-camera_data.lens = 35  # Wide angle for dramatic framing
+camera_data.lens = 28  # Wider angle to show more of the scene including outer ring
 camera_data.dof.use_dof = {settings['dof']}
 camera_data.dof.aperture_fstop = 2.8
-camera_data.dof.focus_distance = 8  # Closer focus for dramatic effect
+camera_data.dof.focus_distance = 18  # Increased focus distance for wider view
 
 camera_obj = bpy.data.objects.new('Camera', camera_data)
 scene.collection.objects.link(camera_obj)
 
-# FIXED: Proper camera positioning for maximum visibility
-camera_obj.location = (0, -6, 3)  # Much closer for better visibility
-camera_obj.rotation_euler = (math.radians(60), 0, 0)  # Better viewing angle
+# FIXED: Proper camera positioning for maximum visibility with look-at - ZOOMED OUT
+camera_obj.location = (6, -10, 4)  # Further back to show full scene including outer ring
+
+# CRITICAL FIX: Make camera look at scene center (0, 0, 0)
+import mathutils
+from mathutils import Vector
+
+# Calculate direction from camera to scene center
+scene_center = Vector((0, 0, 0))
+camera_location = Vector(camera_obj.location)
+direction = scene_center - camera_location
+
+# Calculate rotation to look at scene center
+rot_quat = direction.to_track_quat('-Z', 'Y')
+camera_obj.rotation_euler = rot_quat.to_euler()
+
+# Add slight upward tilt and rotate right for better composition
+camera_obj.rotation_euler.x += 0.1
+camera_obj.rotation_euler.z += 0.2  # Rotate to the right
+
 scene.camera = camera_obj
 
 # COMMERCIAL-GRADE LIGHTING SYSTEM
@@ -1261,17 +1260,34 @@ scene.sequencer_colorspace_settings.name = 'sRGB'
 
 # OPTIMIZED CAMERA SETUP
 camera_data = bpy.data.cameras.new('Camera')
-camera_data.lens = 35
+camera_data.lens = 28  # Wider angle to show more of the scene including outer ring
 camera_data.dof.use_dof = {settings['dof']}
 camera_data.dof.aperture_fstop = 2.8
-camera_data.dof.focus_distance = 8
+camera_data.dof.focus_distance = 12  # Increased focus distance for wider view
 
 camera_obj = bpy.data.objects.new('Camera', camera_data)
 scene.collection.objects.link(camera_obj)
 
-# OPTIMIZED camera positioning - FIXED for visibility
-camera_obj.location = (0, -6, 3)  # Much closer for better visibility
-camera_obj.rotation_euler = (math.radians(60), 0, 0)  # Better viewing angle
+# OPTIMIZED camera positioning - FIXED for visibility with look-at - ZOOMED OUT
+camera_obj.location = (5, -9, 3.5)  # Further back to show full scene including outer ring
+
+# CRITICAL FIX: Make camera look at scene center (0, 0, 0)
+import mathutils
+from mathutils import Vector
+
+# Calculate direction from camera to scene center
+scene_center = Vector((0, 0, 0))
+camera_location = Vector(camera_obj.location)
+direction = scene_center - camera_location
+
+# Calculate rotation to look at scene center
+rot_quat = direction.to_track_quat('-Z', 'Y')
+camera_obj.rotation_euler = rot_quat.to_euler()
+
+# Add slight upward tilt and rotate right for better composition
+camera_obj.rotation_euler.x += 0.1
+camera_obj.rotation_euler.z += 0.25  # Rotate to the right
+
 scene.camera = camera_obj
 
 # OPTIMIZED LIGHTING SYSTEM - Reduced to 3 lights instead of 4
@@ -2398,29 +2414,48 @@ print("   ✅ v6.0 professional lighting setup completed")
 print("📹 Setting up v6.0 cinematic camera...")
 
 def setup_cinematic_camera():
-    """Setup camera for dramatic cinematic shots"""
+    """Setup camera for dramatic cinematic shots with proper look-at functionality"""
     
-    # Create camera
-    bpy.ops.object.camera_add(location=(3, -8, 2))
+    # Create camera - MOVED FURTHER BACK AND TO THE RIGHT
+    bpy.ops.object.camera_add(location=(8, -12, 4))
     camera = bpy.context.active_object
     camera.name = "Camera"
     
-    # Position camera for dramatic angle
-    camera.rotation_euler = (1.2, 0, 0.4)  # Dramatic angle
-    
-    # Set camera settings for cinematic look
-    camera.data.lens = 50  # 50mm lens for cinematic look
+    # Set camera settings for cinematic look - WIDER LENS for more scene coverage
+    camera.data.lens = 35  # Wider lens to show more of the scene
     camera.data.dof.use_dof = True
-    camera.data.dof.focus_distance = 10.0
+    camera.data.dof.focus_distance = 15.0  # Increased focus distance
     camera.data.dof.aperture_fstop = 2.8
+    
+    # CRITICAL FIX: Make camera look at the scene center (0, 0, 0)
+    import mathutils
+    from mathutils import Vector
+    
+    # Calculate direction from camera to scene center
+    scene_center = Vector((0, 0, 0))
+    camera_location = Vector(camera.location)
+    direction = scene_center - camera_location
+    
+    # Calculate rotation to look at scene center
+    rot_quat = direction.to_track_quat('-Z', 'Y')
+    camera.rotation_euler = rot_quat.to_euler()
+    
+    # Add slight tilt for dramatic effect and rotate right
+    camera.rotation_euler.x += 0.15  # Slight upward tilt
+    camera.rotation_euler.z += 0.3   # Rotate to the right for better composition
     
     # Set as active camera
     bpy.context.scene.camera = camera
+    
+    print(f"   📹 Camera positioned at: {camera.location}")
+    print(f"   📹 Camera rotation: {camera.rotation_euler}")
+    print(f"   📹 Camera looking at scene center: (0, 0, 0)")
+    print(f"   📹 Camera distance: {camera_location.length:.1f} units from center")
 
 # Apply camera setup
 setup_cinematic_camera()
 
-print("   ✅ v6.0 cinematic camera setup completed")
+print("   ✅ v6.0 cinematic camera setup completed with proper look-at")
 
 '''
 
@@ -2664,23 +2699,8 @@ print("=" * 80)
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) > 1:
-        with open(sys.argv[1], 'r') as f:
-            features = json.load(f)
-        
-        # Use v6.0 dramatically improved style by default for maximum quality
-        generator = CommercialGradeAnimator(features)
-        
-        # Generate the new v6.0 dramatically improved script
-        v6_script = generator.generate_v6_script("v6_dramatically_improved_scene.py")
-        with open("v6_dramatically_improved_scene.py", 'w') as f:
-            f.write(v6_script)
-        print("\n🎉 V6.0 DRAMATICALLY IMPROVED SCRIPT GENERATED!")
-        print("🚀 Features: PolyHaven HDRI | PBR Materials | 4K Rendering | Post-Processing")
-        print("⚡ Performance: GPU Accelerated | Cinematic Lighting | Smooth Animation")
-        print("📊 Output: Commercial-grade 4K video ready for broadcast")
-    else:
-        print("Usage: python commercial_grade_animator.py <audio_analysis.json>")
-        print("Available styles:")
-        for style, description in CommercialGradeAnimator.ANIMATION_STYLES.items():
-            print(f"  {style}: {description}")
+    
+    print("Usage: python commercial_grade_animator.py <audio_analysis.json>")
+    print("Available styles:")
+    for style, description in CommercialGradeAnimator.ANIMATION_STYLES.items():
+        print(f"  {style}: {description}")
