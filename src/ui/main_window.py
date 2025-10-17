@@ -31,132 +31,80 @@ class VideoGenerationThread(QThread):
         self.config = config
         
     def run(self):
-        """Run the video generation pipeline."""
+        """Run the video generation pipeline using enhanced generator."""
         try:
-            # Use COMMERCIAL-GRADE RENDERING SYSTEM (single, reliable system)
-            print("💻 Using COMMERCIAL-GRADE RENDERING SYSTEM")
-            from audio_analyzer import AudioAnalyzer
-            from video_renderer import UltraVideoRenderer
-            from mutating_cube_animator import MutatingCubeAnimator
+            # Use ENHANCED AUDIO REACTIVE VIDEO GENERATOR
+            print("💻 Using ENHANCED AUDIO REACTIVE VIDEO GENERATOR")
             
-            if self.config.get('performance_mode') == 'ultra_fast':
-                print("⚡ COMMERCIAL SYSTEM - ULTRA FAST MODE")
-            elif self.config.get('performance_mode') == 'balanced':
-                print("⚡ COMMERCIAL SYSTEM - BALANCED MODE")
-            else:
-                print("🎬 COMMERCIAL SYSTEM - COMMERCIAL GRADE")
+            import subprocess
+            import sys
+            from pathlib import Path
             
-            # Step 1: Analyze audio
-            self.progress.emit(5, "Analyzing audio...")
-            analyzer = AudioAnalyzer(self.config['audio_path'], fps=self.config['fps'])
-            features = analyzer.analyze()
+            # Get the path to the enhanced generator
+            project_root = Path(__file__).parent.parent.parent
+            enhanced_script = project_root / "generate_video.py"
             
-            # Save analysis
-            analysis_path = os.path.join(self.config['temp_dir'], 'analysis.json')
-            analyzer.save_analysis(analysis_path)
+            if not enhanced_script.exists():
+                raise FileNotFoundError(f"Enhanced generator script not found: {enhanced_script}")
             
-            # Step 2: Generate optimized Blender script based on performance mode
-            self.progress.emit(20, f"Generating {self.config.get('performance_mode', 'balanced')} scene...")
-            generator = MutatingCubeAnimator(features)
-            script_path = os.path.join(self.config['temp_dir'], 'mutating_cube_scene.py')
-            blend_path = os.path.join(self.config['temp_dir'], 'scene.blend')
+            # Prepare output name
+            audio_name = Path(self.config['audio_path']).stem
+            output_name = f"{audio_name}_enhanced"
             
-            # Ensure temp directory exists
-            os.makedirs(self.config['temp_dir'], exist_ok=True)
-            
-            # Use performance-optimized render settings
+            # Performance mode logging
             performance_mode = self.config.get('performance_mode', 'balanced')
-            if performance_mode == "ultra_fast":
-                # Ultra fast settings
-                render_settings = {
-                    'resolution_x': 1920,
-                    'resolution_y': 1080,
-                    'engine': 'CYCLES',
-                    'device': 'GPU',
-                    'samples': 64,
-                    'use_denoising': True,
-                    'motion_blur': False,
-                    'dof': False,
-                    'use_adaptive_sampling': True,
-                    'adaptive_threshold': 0.02,
-                    'max_bounces': 2,
-                    'diffuse_bounces': 1,
-                    'glossy_bounces': 1,
-                    'transmission_bounces': 2,
-                    'volume_bounces': 1,
-                    'caustics_reflective': False,
-                    'caustics_refractive': False,
-                    'use_gpu_denoising': True,
-                    'use_geometry_nodes': False
-                }
-            elif performance_mode == "balanced":
-                # Balanced settings
-                render_settings = {
-                    'resolution_x': 1920,
-                    'resolution_y': 1080,
-                    'engine': 'CYCLES',
-                    'device': 'GPU',
-                    'samples': 128,
-                    'use_denoising': True,
-                    'motion_blur': False,
-                    'dof': False,
-                    'use_adaptive_sampling': True,
-                    'adaptive_threshold': 0.02,
-                    'max_bounces': 4,
-                    'diffuse_bounces': 2,
-                    'glossy_bounces': 2,
-                    'transmission_bounces': 4,
-                    'volume_bounces': 1,
-                    'caustics_reflective': False,
-                    'caustics_refractive': False,
-                    'use_gpu_denoising': True,
-                    'use_geometry_nodes': False
-                }
-            else:  # commercial
-                # Commercial grade settings
-                render_settings = {
-                    'resolution_x': 1920,
-                    'resolution_y': 1080,
-                    'engine': 'CYCLES',
-                    'device': 'GPU',
-                    'samples': 256,
-                    'use_denoising': True,
-                    'motion_blur': True,
-                    'dof': True,
-                    'use_adaptive_sampling': True,
-                    'adaptive_threshold': 0.01,
-                    'max_bounces': 6,
-                    'diffuse_bounces': 3,
-                    'glossy_bounces': 3,
-                    'transmission_bounces': 6,
-                    'volume_bounces': 2,
-                    'caustics_reflective': True,
-                    'caustics_refractive': True,
-                    'use_gpu_denoising': True,
-                    'use_geometry_nodes': False
-                }
+            if performance_mode == 'ultra_fast':
+                print("⚡ ENHANCED SYSTEM - ULTRA FAST MODE")
+            elif performance_mode == 'balanced':
+                print("⚡ ENHANCED SYSTEM - BALANCED MODE")
+            else:
+                print("🎬 ENHANCED SYSTEM - COMMERCIAL GRADE")
             
-            # Use the save_script method with optimized settings
-            generator.save_script(script_path, render_settings=render_settings, blend_path=blend_path)
+            # Run the enhanced generator script
+            self.progress.emit(10, "Starting enhanced video generation...")
             
-            # Step 3: Render video
-            self.progress.emit(30, "Initializing commercial renderer...")
+            cmd = [
+                sys.executable,
+                str(enhanced_script),
+                self.config['audio_path'],
+                output_name
+            ]
             
-            # Use commercial renderer for all modes
-            local_renderer = UltraVideoRenderer(self.config.get('blender_path'))
-            target_fps = min(self.config['fps'], 30) if self.config.get('performance_mode') == 'ultra_fast' else self.config['fps']
+            print(f"🚀 Running enhanced generator: {' '.join(cmd)}")
             
-            output_video = local_renderer.generate_video_ultra_fast(
-                script_path=script_path,
-                audio_path=self.config['audio_path'],
-                output_path=self.config['output_path'],
-                fps=target_fps,
-                progress_callback=self.progress.emit,
-                keep_temp_files=self.config.get('keep_temp', False)
+            # Run the enhanced script
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                cwd=str(project_root),
+                timeout=1800  # 30 minutes timeout
             )
             
-            self.finished.emit(output_video)
+            if result.returncode == 0:
+                # Success - find the output video
+                output_dir = project_root / "output"
+                video_path = output_dir / f"{output_name}_enhanced.mp4"
+                
+                if video_path.exists():
+                    self.progress.emit(100, "Enhanced video generation complete!")
+                    self.finished.emit(str(video_path))
+                else:
+                    # Try alternative naming
+                    alt_video_path = output_dir / f"{output_name}.mp4"
+                    if alt_video_path.exists():
+                        self.progress.emit(100, "Enhanced video generation complete!")
+                        self.finished.emit(str(alt_video_path))
+                    else:
+                        raise FileNotFoundError("Enhanced video output not found")
+            else:
+                error_msg = f"Enhanced generator failed with return code {result.returncode}"
+                if result.stderr:
+                    error_msg += f"\nError output: {result.stderr}"
+                raise RuntimeError(error_msg)
             
+        except subprocess.TimeoutExpired:
+            self.error.emit("Enhanced video generation timed out (30 minutes)")
         except Exception as e:
             self.error.emit(str(e))
 
@@ -176,7 +124,7 @@ class MainWindow(QMainWindow):
         
     def init_ui(self):
         """Initialize the user interface."""
-        self.setWindowTitle("AudioBlender Video Generator")
+        self.setWindowTitle("Enhanced AudioBlender Video Generator")
         self.setMinimumSize(900, 800)
         
         # Apply theme
@@ -193,11 +141,11 @@ class MainWindow(QMainWindow):
         
         # Header
         header_layout = QVBoxLayout()
-        title = QLabel("AudioBlender Video Generator")
+        title = QLabel("Enhanced AudioBlender Video Generator")
         title.setObjectName("title")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        subtitle = QLabel("Create stunning audio-reactive 3D videos with Blender")
+        subtitle = QLabel("Create professional audio-reactive 3D videos with enhanced mutating cube system")
         subtitle.setObjectName("subtitle")
         subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
@@ -452,11 +400,12 @@ class MainWindow(QMainWindow):
         self.cancel_btn.setEnabled(True)
         self.progress_bar.setValue(0)
         self.status_text.clear()
-        self.log_message("🚀 Starting optimized video generation...")
+        self.log_message("🚀 Starting ENHANCED video generation...")
         self.log_message(f"Performance Mode: {performance_mode}")
         self.log_message(f"FPS: {self.fps_spin.value()}")
         self.log_message(f"Engine: {self.engine_combo.currentText()}")
         self.log_message(f"Samples: {self.samples_spin.value()}")
+        self.log_message("🎬 Using Enhanced Audio-Reactive Video Generator")
         if quality_level == "ultra_fast":
             self.log_message("🚀 ULTRA FAST MODE - Minimal CPU usage!")
         elif quality_level == "balanced":

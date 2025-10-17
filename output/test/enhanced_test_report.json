@@ -1,0 +1,268 @@
+{
+  "test_name": "enhanced_test",
+  "audio_file": "sound.mp3",
+  "timestamp": "2025-10-17 23:27:48",
+  "validation_results": {
+    "blend_file_exists": true,
+    "blend_file_size": 619592,
+    "animation_frames": 0,
+    "shape_keys_count": 0,
+    "rotation_valid": false,
+    "materials_valid": false,
+    "lighting_valid": false,
+    "camera_valid": false,
+    "performance_score": 100.0,
+    "quality_score": 100.0,
+    "errors": [],
+    "warnings": [],
+    "scene_info": {
+      "frame_start": 0,
+      "frame_end": 31,
+      "fps": 30,
+      "frame_current": 0,
+      "objects_count": 10
+    },
+    "objects": {
+      "cube": {
+        "name": "EnhancedMutatingCube",
+        "type": "MESH",
+        "location": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation_euler": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "modifiers_count": 10,
+        "shape_keys_count": 11,
+        "shape_keys": [
+          {
+            "name": "Basis",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "SimpleDeform",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "SimpleDeform.001",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "Shrinkwrap",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "Shrinkwrap.001",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "Shrinkwrap.002",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "Wave",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "Displace",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "Displace.001",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "Displace.002",
+            "value": 0.0,
+            "frame": 0
+          },
+          {
+            "name": "Displace.003",
+            "value": 0.0,
+            "frame": 0
+          }
+        ],
+        "modifiers": [
+          {
+            "name": "SimpleDeform",
+            "type": "SIMPLE_DEFORM"
+          },
+          {
+            "name": "SimpleDeform.001",
+            "type": "SIMPLE_DEFORM"
+          },
+          {
+            "name": "Wave",
+            "type": "WAVE"
+          },
+          {
+            "name": "Displace",
+            "type": "DISPLACE"
+          },
+          {
+            "name": "Displace.001",
+            "type": "DISPLACE"
+          },
+          {
+            "name": "Displace.002",
+            "type": "DISPLACE"
+          },
+          {
+            "name": "Displace.003",
+            "type": "DISPLACE"
+          },
+          {
+            "name": "Shrinkwrap",
+            "type": "SHRINKWRAP"
+          },
+          {
+            "name": "Shrinkwrap.001",
+            "type": "SHRINKWRAP"
+          },
+          {
+            "name": "Shrinkwrap.002",
+            "type": "SHRINKWRAP"
+          }
+        ]
+      }
+    },
+    "materials": {
+      "count": 1,
+      "materials": [
+        {
+          "name": "EnhancedMutatingMaterial",
+          "nodes_count": 10,
+          "has_bsdf": true,
+          "has_emission": false
+        }
+      ]
+    },
+    "lighting": {
+      "count": 6,
+      "lights": [
+        {
+          "name": "Light",
+          "type": "POINT",
+          "energy": 1000.0,
+          "color": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "name": "KeyLight",
+          "type": "SUN",
+          "energy": 6.0,
+          "color": [
+            1.0,
+            0.949999988079071,
+            0.8500000238418579
+          ]
+        },
+        {
+          "name": "FillLight",
+          "type": "AREA",
+          "energy": 3.0,
+          "color": [
+            0.699999988079071,
+            0.8500000238418579,
+            1.0
+          ]
+        },
+        {
+          "name": "RimLight",
+          "type": "AREA",
+          "energy": 4.0,
+          "color": [
+            1.0,
+            0.699999988079071,
+            0.4000000059604645
+          ]
+        },
+        {
+          "name": "BackLight",
+          "type": "AREA",
+          "energy": 2.0,
+          "color": [
+            0.800000011920929,
+            0.6000000238418579,
+            1.0
+          ]
+        },
+        {
+          "name": "AmbientLight",
+          "type": "AREA",
+          "energy": 1.5,
+          "color": [
+            0.8999999761581421,
+            0.8999999761581421,
+            0.949999988079071
+          ]
+        }
+      ]
+    },
+    "animation": {
+      "action": {
+        "name": "EnhancedMutatingCubeAction",
+        "fcurves_count": 13
+      },
+      "rotation": {
+        "x": {
+          "keyframes": 31,
+          "min_rotation": -4.494073228571629,
+          "max_rotation": 4.578012411489678,
+          "rotation_range": 9.072085640061308
+        },
+        "y": {
+          "keyframes": 31,
+          "min_rotation": 1.6667076704649775,
+          "max_rotation": 19.356597305917933,
+          "rotation_range": 17.689889635452957
+        },
+        "z": {
+          "keyframes": 31,
+          "min_rotation": -3.949075359223387,
+          "max_rotation": 4.197452627069962,
+          "rotation_range": 8.14652798629335
+        }
+      }
+    },
+    "camera": {
+      "name": "Camera.001",
+      "location": [
+        6.0,
+        -6.0,
+        4.0
+      ],
+      "rotation_euler": [
+        1.0471975803375244,
+        0.0,
+        0.7853981852531433
+      ],
+      "type": "PERSP"
+    }
+  },
+  "recommendations": [
+    "\ud83d\udca1 Consider adding more shape keys for richer animation."
+  ],
+  "overall_score": 100.0
+}

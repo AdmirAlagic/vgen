@@ -16,9 +16,9 @@ from crewai.tools import BaseTool
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 try:
-    from mutating_cube_animator import MutatingCubeAnimator
+    from src.enhanced_mutating_cube_animator import EnhancedMutatingCubeAnimator
 except ImportError:
-    MutatingCubeAnimator = None
+    EnhancedMutatingCubeAnimator = None
 
 class BlenderOptimizationTool(BaseTool):
     """Tool for optimizing Blender scene generation and animation for commercial quality."""

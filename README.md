@@ -52,17 +52,24 @@ A commercial-grade application that transforms audio files into stunning, high-f
 
 ### Usage
 
-#### Method 1: GUI Application (Recommended)
+#### Method 1: Main Entry Point (Recommended)
+```bash
+python main.py                    # Run GUI application
+python main.py <audio_file>       # Generate video from audio file
+python main.py <audio_file> <output_name>  # Generate video with custom name
+```
+
+#### Method 2: GUI Application
 ```bash
 python src/main.py
 ```
 
-#### Method 2: Command Line
+#### Method 3: Command Line
 ```bash
-python generate_audio_reactive_video.py <audio_file> [output_name]
+python generate_video.py <audio_file> [output_name]
 ```
 
-#### Method 3: Direct Script
+#### Method 4: Direct Script
 ```bash
 python quick_start.py
 ```
@@ -71,25 +78,25 @@ python quick_start.py
 
 ```
 AudioBlenderVideo/
-├── src/                          # Core application modules
-│   ├── main.py                   # GUI application entry point
-│   ├── audio_analyzer.py         # Advanced audio analysis (librosa/scipy)
-│   ├── video_renderer.py         # Ultra-optimized Blender renderer
-│   ├── mutating_cube_animator.py  # Mutating cube animation system
-│   └── ui/                       # PyQt6 GUI components
-│       ├── main_window.py        # Main application window
-│       └── style.py              # UI styling and themes
-├── output/                       # Generated videos and assets
-│   ├── *.mp4                     # Rendered video files
-│   ├── *.blend                   # Blender scene files
-│   └── test/                     # Test outputs and scripts
-├── docker/                       # Containerized deployment
-│   ├── requirements.txt          # Core dependencies
-│   ├── Dockerfile.*              # Multi-service containers
-│   └── docker-compose.yml        # Orchestration
-├── generate_audio_reactive_video.py  # Main CLI script
-├── quick_start.py                # Quick start script
-└── venv/                         # Python virtual environment
+├── main.py                         # Main entry point (GUI or CLI)
+├── src/                            # Core application modules
+│   ├── main.py                     # GUI application entry point
+│   ├── audio_analyzer.py           # Advanced audio analysis (librosa/scipy)
+│   ├── animator.py                 # Mutating cube animation system
+│   └── ui/                         # PyQt6 GUI components
+│       ├── main_window.py          # Main application window
+│       └── style.py                # UI styling and themes
+├── output/                         # Generated videos and assets
+│   ├── *.mp4                       # Rendered video files
+│   ├── *.blend                     # Blender scene files
+│   └── temp/                       # Temporary files
+├── docker/                         # Containerized deployment
+│   ├── requirements.txt            # Core dependencies
+│   ├── Dockerfile.*                # Multi-service containers
+│   └── docker-compose.yml          # Orchestration
+├── generate_video.py               # Main CLI script
+├── quick_start.py                  # Quick start script
+└── venv/                           # Python virtual environment
 ```
 
 ## 🎵 Audio Analysis Features
@@ -134,11 +141,12 @@ AudioBlenderVideo/
 - **Frame Generation**: Audio features mapped to video frames
 - **Performance Optimized**: Efficient processing for real-time generation
 
-#### Mutating Cube Animator (`src/mutating_cube_animator.py`)
-- **Scene Generation**: Complex 3D scenes with 30+ animated objects
-- **Asset Integration**: PolyHaven, Sketchfab, Hyper3D support
-- **Animation Styles**: Commercial-grade with enhanced complexity
+#### Mutating Cube Animator (`src/animator.py`)
+- **Advanced Scene Generation**: Complex 3D scenes with enhanced shape key animations
+- **Bounce Interpolation**: Organic motion with professional bounce effects
+- **Audio-Reactive Mapping**: Sophisticated audio-to-visual transformation
 - **GPU Optimization**: Hardware-accelerated rendering pipeline
+- **Professional Materials**: Enhanced PBR materials with emission properties
 
 #### Video Renderer (`src/video_renderer.py`)
 - **Ultra-Optimized**: Hardware acceleration and minimal scene complexity
@@ -162,37 +170,29 @@ AudioBlenderVideo/
 
 ### Basic Video Generation
 ```python
-from src.audio_analyzer import AudioAnalyzer
-from src.video_renderer import UltraVideoRenderer
-from src.mutating_cube_animator import MutatingCubeAnimator
+from src.audio_analyzer import EnhancedAudioAnalyzer
+from src.animator import MutatingCubeAnimator
 
-# Analyze audio
-analyzer = AudioAnalyzer("audio.mp3", fps=30)
-features = analyzer.analyze()
+# Analyze audio with enhanced system
+analyzer = EnhancedAudioAnalyzer("audio.mp3", fps=30)
+features = analyzer.analyze_for_mutating_cube()
 
-# Create animation
+# Create enhanced animation
 animator = MutatingCubeAnimator(features)
-script = animator.save_script("output/scene.py", "output/scene.blend")
+script = animator.save_script("output/scene.py", blend_path="output/scene.blend")
 
-# Render video
-renderer = UltraVideoRenderer()
-renderer.render_video(script, "output.mp4")
+# Use the main generator for rendering
+import subprocess
+subprocess.run(["python", "generate_video.py", "audio.mp3", "output"])
 ```
 
 ### Advanced Configuration
 ```python
-# Custom animation style
+# Enhanced animation with advanced features
 animator = MutatingCubeAnimator(features)
-animator.set_animation_style('mutating_cube')
 
-# Asset integration
-animator.set_asset_source('polyhaven', enabled=True, assets={
-    'hdris': ['neon_photostudio'],
-    'textures': ['metal_brushed']
-})
-
-# Generate scene
-script = animator.create_commercial_grade_scene()
+# Generate enhanced scene with bounce interpolation
+script = animator.save_script("output/enhanced_scene.py", blend_path="output/enhanced_scene.blend")
 ```
 
 ## 🔧 Configuration
@@ -250,25 +250,6 @@ docker-compose up
 - **Blender GPU**: GPU-accelerated rendering container
 - **Coordinator**: Orchestrates the entire pipeline
 
-## 🧪 Testing
-
-### Test Scripts
-```bash
-# Run basic tests
-python test_video_generation.py
-
-# Test commercial grade system
-python output/test/test_commercial_script.py
-
-# Performance benchmarks
-python test_optimizations.py
-```
-
-### Test Outputs
-- **Generated Videos**: Located in `output/test/`
-- **Performance Reports**: Detailed timing and optimization metrics
-- **Quality Comparisons**: Different rendering modes and settings
-
 ## 🤝 Contributing
 
 ### Development Setup
@@ -298,8 +279,8 @@ This project is licensed under the terms specified in the LICENSE file.
 - **Memory Issues**: Ensure sufficient RAM (8GB+ recommended)
 
 ### Getting Help
-- Check the test scripts in `output/test/` for examples
-- Review the mutating cube animator documentation
+- Check the main.py script for usage examples
+- Review the animator documentation
 - Examine the GUI application for configuration options
 
 ---
