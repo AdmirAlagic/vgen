@@ -827,34 +827,37 @@ print("✅ Audio-reactive drivers setup complete")
         return min_val + (max_val - min_val) * (0.5 + 0.5 * pattern)
     
     def generate_advanced_color_animations(self) -> str:
-        """Generate enhanced musical-responsive color animations with frequency-specific responses."""
+        """Generate ENHANCED musical-responsive color animations with sophisticated frequency mapping and harmonic relationships."""
         color_animation_code = []
         
         # Get audio features for color reactivity
         audio_features = self.features.get('audio_features', {})
         
         color_animation_code.append('''
-# ENHANCED FREQUENCY-RESPONSIVE COLOR ANIMATION SYSTEM
-print("🎨 Creating enhanced frequency-responsive color animations...")
+# ENHANCED FREQUENCY-RESPONSIVE COLOR ANIMATION SYSTEM WITH HARMONIC RELATIONSHIPS
+print("🎨 Creating ENHANCED harmonic frequency-responsive color animations...")
 
 # Create enhanced material action for dynamic color changes
-material_action = bpy.data.actions.new(name="FrequencyResponsiveColorAnimation")
+material_action = bpy.data.actions.new(name="EnhancedHarmonicColorAnimation")
 material.animation_data_create()
 material.animation_data.action = material_action
 
 # Get audio feature data for color reactivity
 audio_features = ''' + json.dumps(audio_features, indent=2) + '''
 
-# Enhanced color animation parameters with frequency-specific responsiveness
-color_transition_speed = 1.2  # Speed of color transitions
-color_intensity_boost = 2.0  # Intensity multiplier for audio-reactive colors
-color_smoothness = 0.9       # Smoothness of color transitions
-frequency_color_mixing = 0.8  # Mix frequency-based colors
-musical_responsiveness = 1.0  # Musical responsiveness factor
-frequency_dominance = 0.7    # How much frequency colors dominate over time-based colors
-beat_response_intensity = 1.5 # Intensity of beat-responsive color changes
+# ENHANCED color animation parameters with harmonic relationships
+color_transition_speed = 1.5  # Enhanced speed for more dynamic changes
+color_intensity_boost = 2.5  # Increased intensity multiplier
+color_smoothness = 0.95      # Higher smoothness for seamless transitions
+frequency_color_mixing = 0.9  # Enhanced frequency-based color mixing
+musical_responsiveness = 1.2  # Increased musical responsiveness
+frequency_dominance = 0.8    # Higher frequency color dominance
+beat_response_intensity = 2.0 # Enhanced beat-responsive changes
+harmonic_color_blending = 0.7  # New: Harmonic color relationship blending
+spectral_harmony_factor = 0.6  # New: Spectral harmony influence
+tempo_based_color_rhythm = 1.0  # New: Tempo-based color rhythm
 
-# Generate dynamic color keyframes based on audio and time
+# ENHANCED: Generate sophisticated color keyframes with harmonic relationships
 if audio_features and len(audio_features) > 0:
     # Get enhanced audio data arrays with all frequency bands
     kick_data = audio_features.get('kick_energy', [0.0] * ''' + str(self.total_frames) + ''')
@@ -875,47 +878,58 @@ if audio_features and len(audio_features) > 0:
     beat_data = audio_features.get('beat_strength', [0.0] * ''' + str(self.total_frames) + ''')
     onset_data = audio_features.get('onset_strength', [0.0] * ''' + str(self.total_frames) + ''')
     
-    # Enhanced color palette with frequency-specific colors
-    primary_palette = [
-        (0.2, 0.1, 0.6, 1.0),  # Deep cosmic purple
-        (0.0, 0.6, 1.0, 1.0),  # Bright cyan
-        (0.8, 0.2, 0.8, 1.0),  # Magenta
-        (0.1, 0.8, 0.4, 1.0),  # Electric green
-        (1.0, 0.4, 0.2, 1.0),  # Orange
-        (0.6, 0.1, 0.9, 1.0),  # Violet
-        (0.9, 0.1, 0.3, 1.0),  # Deep red
-        (0.1, 0.3, 0.9, 1.0),  # Deep blue
-        (0.8, 0.8, 0.1, 1.0),  # Bright yellow
-        (0.3, 0.1, 0.1, 1.0)   # Dark crimson
+    # ENHANCED: Sophisticated color palette with harmonic relationships
+    harmonic_palette = [
+        # Primary harmonic colors (major chord: C-E-G)
+        (0.8, 0.2, 0.2, 1.0),  # C - Deep red
+        (0.2, 0.8, 0.2, 1.0),  # E - Deep green  
+        (0.2, 0.2, 0.8, 1.0),  # G - Deep blue
+        
+        # Secondary harmonic colors (minor chord: A-C-E)
+        (0.6, 0.4, 0.2, 1.0),  # A - Orange
+        (0.4, 0.6, 0.2, 1.0),  # C - Yellow-green
+        (0.2, 0.6, 0.4, 1.0),  # E - Teal
+        
+        # Tertiary harmonic colors (diminished chord: B-D-F)
+        (0.8, 0.4, 0.6, 1.0),  # B - Pink
+        (0.6, 0.2, 0.8, 1.0),  # D - Purple
+        (0.4, 0.8, 0.6, 1.0),  # F - Cyan
+        
+        # Extended harmonic colors (augmented chord: C-E-G#)
+        (0.9, 0.1, 0.3, 1.0),  # C - Crimson
+        (0.1, 0.9, 0.3, 1.0),  # E - Lime
+        (0.3, 0.1, 0.9, 1.0),  # G# - Indigo
     ]
     
-    # Enhanced frequency-specific color mapping
-    frequency_colors = {
-        # Low frequencies - warm, deep colors
-        'kick': (0.9, 0.2, 0.1, 1.0),      # Deep red for kick
-        'bass': (0.5, 0.1, 0.8, 1.0),      # Deep purple for bass
-        'sub_bass': (0.8, 0.1, 0.2, 1.0),  # Dark crimson for sub-bass
-        'mid_bass': (0.6, 0.2, 0.7, 1.0),  # Purple-red for mid-bass
+    # ENHANCED: Sophisticated frequency-specific color mapping with harmonic relationships
+    harmonic_frequency_colors = {
+        # Low frequencies - warm harmonic colors (root notes)
+        'kick': (0.9, 0.2, 0.1, 1.0),      # Root - Deep red for kick
+        'bass': (0.5, 0.1, 0.8, 1.0),      # Fifth - Deep purple for bass
+        'sub_bass': (0.8, 0.1, 0.2, 1.0),  # Octave - Dark crimson for sub-bass
+        'mid_bass': (0.6, 0.2, 0.7, 1.0),  # Third - Purple-red for mid-bass
         
-        # Mid frequencies - bright, energetic colors
-        'snare': (1.0, 0.9, 0.1, 1.0),     # Bright yellow for snare
-        'mid': (0.8, 0.6, 0.1, 1.0),        # Golden yellow for mid
-        'low_mid': (0.9, 0.5, 0.1, 1.0),   # Orange-yellow for low-mid
-        'vocal': (0.9, 0.3, 0.8, 1.0),     # Bright magenta for vocal
-        'high_mid': (0.8, 0.4, 0.9, 1.0),  # Pink-purple for high-mid
+        # Mid frequencies - bright harmonic colors (third and fifth)
+        'snare': (1.0, 0.9, 0.1, 1.0),     # Third - Bright yellow for snare
+        'mid': (0.8, 0.6, 0.1, 1.0),        # Fifth - Golden yellow for mid
+        'low_mid': (0.9, 0.5, 0.1, 1.0),   # Seventh - Orange-yellow for low-mid
+        'vocal': (0.9, 0.3, 0.8, 1.0),     # Ninth - Bright magenta for vocal
+        'high_mid': (0.8, 0.4, 0.9, 1.0),  # Eleventh - Pink-purple for high-mid
         
-        # High frequencies - cool, crisp colors
-        'hihat': (0.1, 0.9, 1.0, 1.0),      # Bright cyan for hihat
-        'presence': (0.2, 0.8, 1.0, 1.0),   # Sky blue for presence
-        'brilliance': (0.3, 0.7, 1.0, 1.0), # Light blue for brilliance
-        'air': (0.4, 0.6, 0.9, 1.0),        # Soft blue for air
-        'ultra_high': (0.5, 0.5, 0.8, 1.0), # Lavender for ultra-high
+        # High frequencies - cool harmonic colors (extensions)
+        'hihat': (0.1, 0.9, 1.0, 1.0),      # Thirteenth - Bright cyan for hihat
+        'presence': (0.2, 0.8, 1.0, 1.0),   # Ninth - Sky blue for presence
+        'brilliance': (0.3, 0.7, 1.0, 1.0), # Eleventh - Light blue for brilliance
+        'air': (0.4, 0.6, 0.9, 1.0),        # Thirteenth - Soft blue for air
+        'ultra_high': (0.5, 0.5, 0.8, 1.0), # Fifteenth - Lavender for ultra-high
         
-        # Special frequency combinations
-        'beat_drop': (1.0, 0.1, 0.1, 1.0),  # Bright red for beat drops
-        'build_up': (0.8, 0.8, 0.1, 1.0),   # Bright yellow for build-ups
-        'breakdown': (0.1, 0.1, 0.8, 1.0),  # Deep blue for breakdowns
-        'transition': (0.6, 0.1, 0.6, 1.0)  # Purple for transitions
+        # Special harmonic combinations
+        'beat_drop': (1.0, 0.1, 0.1, 1.0),  # Root - Bright red for beat drops
+        'build_up': (0.8, 0.8, 0.1, 1.0),   # Fifth - Bright yellow for build-ups
+        'breakdown': (0.1, 0.1, 0.8, 1.0),  # Third - Deep blue for breakdowns
+        'transition': (0.6, 0.1, 0.6, 1.0), # Seventh - Purple for transitions
+        'harmonic_resolution': (0.4, 0.8, 0.4, 1.0),  # New: Green for harmonic resolution
+        'dissonance': (0.8, 0.2, 0.8, 1.0),  # New: Magenta for dissonance
     }
     
     # Create base color animation curves
@@ -934,8 +948,8 @@ if audio_features and len(audio_features) > 0:
         emission_available = False
         print("⚠️  Emission animation not available in this Blender version")
     
-    # Generate enhanced color keyframes with musical responsiveness
-    frame_step = max(1, ''' + str(self.total_frames) + ''' // 80)  # More keyframes for smoother color changes
+    # ENHANCED: Generate sophisticated color keyframes with harmonic relationships
+    frame_step = max(1, ''' + str(self.total_frames) + ''' // 100)  # More keyframes for smoother harmonic changes
     
     for i in range(0, ''' + str(self.total_frames) + ''', frame_step):
         frame = min(i, ''' + str(self.total_frames) + ''' - 1)
@@ -960,100 +974,100 @@ if audio_features and len(audio_features) > 0:
         beat_val = beat_data[min(frame, len(beat_data) - 1)] if beat_data else 0.0
         onset_val = onset_data[min(frame, len(onset_data) - 1)] if onset_data else 0.0
         
-        # Calculate enhanced dynamic color based on audio and time
-        # Time-based color cycling with musical responsiveness
-        time_color_index = int((progress * len(primary_palette) * color_transition_speed) % len(primary_palette))
-        next_color_index = (time_color_index + 1) % len(primary_palette)
-        time_blend = (progress * len(primary_palette) * color_transition_speed) % 1.0
+        # ENHANCED: Calculate harmonic color relationships
+        # Time-based harmonic color cycling with musical responsiveness
+        harmonic_color_index = int((progress * len(harmonic_palette) * color_transition_speed) % len(harmonic_palette))
+        next_harmonic_index = (harmonic_color_index + 1) % len(harmonic_palette)
+        harmonic_blend = (progress * len(harmonic_palette) * color_transition_speed) % 1.0
         
-        # Enhanced audio-reactive color calculation with frequency-specific weighting
-        # Low frequency dominance (kick, bass, sub-bass)
-        low_freq_intensity = (kick_val * 1.5 + bass_val * 1.2 + sub_bass_val * 1.0 + mid_bass_val * 0.8) / 4.0
+        # ENHANCED: Sophisticated audio-reactive color calculation with harmonic weighting
+        # Low frequency harmonic dominance (root and fifth)
+        low_freq_harmonic_intensity = (kick_val * 2.0 + bass_val * 1.8 + sub_bass_val * 1.5 + mid_bass_val * 1.2) / 4.0
         
-        # Mid frequency dominance (snare, mid, vocal)
-        mid_freq_intensity = (snare_val * 1.3 + mid_val * 1.1 + low_mid_val * 1.0 + vocal_val * 1.2 + high_mid_val * 0.9) / 5.0
+        # Mid frequency harmonic dominance (third and seventh)
+        mid_freq_harmonic_intensity = (snare_val * 1.8 + mid_val * 1.6 + low_mid_val * 1.4 + vocal_val * 1.7 + high_mid_val * 1.3) / 5.0
         
-        # High frequency dominance (hihat, presence, brilliance, air)
-        high_freq_intensity = (hihat_val * 1.1 + presence_val * 1.0 + brilliance_val * 0.9 + air_val * 0.8 + ultra_high_val * 0.7) / 5.0
+        # High frequency harmonic dominance (ninth, eleventh, thirteenth)
+        high_freq_harmonic_intensity = (hihat_val * 1.5 + presence_val * 1.4 + brilliance_val * 1.3 + air_val * 1.2 + ultra_high_val * 1.1) / 5.0
         
-        # Overall audio intensity
-        audio_intensity = (low_freq_intensity + mid_freq_intensity + high_freq_intensity) / 3.0
-        spectral_shift = spectral_val * 0.6
-        beat_influence = beat_val * beat_response_intensity
-        onset_influence = onset_val * 0.8
+        # Overall harmonic audio intensity
+        harmonic_audio_intensity = (low_freq_harmonic_intensity + mid_freq_harmonic_intensity + high_freq_harmonic_intensity) / 3.0
+        spectral_harmony = spectral_val * spectral_harmony_factor
+        beat_harmonic_influence = beat_val * beat_response_intensity
+        onset_harmonic_influence = onset_val * 1.0
         
-        # Enhanced frequency-specific color mixing with weighted contributions
-        freq_r = (
-            kick_val * frequency_colors['kick'][0] * 1.5 +
-            bass_val * frequency_colors['bass'][0] * 1.2 +
-            sub_bass_val * frequency_colors['sub_bass'][0] * 1.0 +
-            mid_bass_val * frequency_colors['mid_bass'][0] * 0.8 +
-            snare_val * frequency_colors['snare'][0] * 1.3 +
-            mid_val * frequency_colors['mid'][0] * 1.1 +
-            low_mid_val * frequency_colors['low_mid'][0] * 1.0 +
-            vocal_val * frequency_colors['vocal'][0] * 1.2 +
-            high_mid_val * frequency_colors['high_mid'][0] * 0.9 +
-            hihat_val * frequency_colors['hihat'][0] * 1.1 +
-            presence_val * frequency_colors['presence'][0] * 1.0 +
-            brilliance_val * frequency_colors['brilliance'][0] * 0.9 +
-            air_val * frequency_colors['air'][0] * 0.8 +
-            ultra_high_val * frequency_colors['ultra_high'][0] * 0.7
-        ) / 14.0
+        # ENHANCED: Sophisticated harmonic color mixing with weighted contributions
+        harmonic_r = (
+            kick_val * harmonic_frequency_colors['kick'][0] * 2.0 +
+            bass_val * harmonic_frequency_colors['bass'][0] * 1.8 +
+            sub_bass_val * harmonic_frequency_colors['sub_bass'][0] * 1.5 +
+            mid_bass_val * harmonic_frequency_colors['mid_bass'][0] * 1.2 +
+            snare_val * harmonic_frequency_colors['snare'][0] * 1.8 +
+            mid_val * harmonic_frequency_colors['mid'][0] * 1.6 +
+            low_mid_val * harmonic_frequency_colors['low_mid'][0] * 1.4 +
+            vocal_val * harmonic_frequency_colors['vocal'][0] * 1.7 +
+            high_mid_val * harmonic_frequency_colors['high_mid'][0] * 1.3 +
+            hihat_val * harmonic_frequency_colors['hihat'][0] * 1.5 +
+            presence_val * harmonic_frequency_colors['presence'][0] * 1.4 +
+            brilliance_val * harmonic_frequency_colors['brilliance'][0] * 1.3 +
+            air_val * harmonic_frequency_colors['air'][0] * 1.2 +
+            ultra_high_val * harmonic_frequency_colors['ultra_high'][0] * 1.1
+        ) / 16.0
         
-        freq_g = (
-            kick_val * frequency_colors['kick'][1] * 1.5 +
-            bass_val * frequency_colors['bass'][1] * 1.2 +
-            sub_bass_val * frequency_colors['sub_bass'][1] * 1.0 +
-            mid_bass_val * frequency_colors['mid_bass'][1] * 0.8 +
-            snare_val * frequency_colors['snare'][1] * 1.3 +
-            mid_val * frequency_colors['mid'][1] * 1.1 +
-            low_mid_val * frequency_colors['low_mid'][1] * 1.0 +
-            vocal_val * frequency_colors['vocal'][1] * 1.2 +
-            high_mid_val * frequency_colors['high_mid'][1] * 0.9 +
-            hihat_val * frequency_colors['hihat'][1] * 1.1 +
-            presence_val * frequency_colors['presence'][1] * 1.0 +
-            brilliance_val * frequency_colors['brilliance'][1] * 0.9 +
-            air_val * frequency_colors['air'][1] * 0.8 +
-            ultra_high_val * frequency_colors['ultra_high'][1] * 0.7
-        ) / 14.0
+        harmonic_g = (
+            kick_val * harmonic_frequency_colors['kick'][1] * 2.0 +
+            bass_val * harmonic_frequency_colors['bass'][1] * 1.8 +
+            sub_bass_val * harmonic_frequency_colors['sub_bass'][1] * 1.5 +
+            mid_bass_val * harmonic_frequency_colors['mid_bass'][1] * 1.2 +
+            snare_val * harmonic_frequency_colors['snare'][1] * 1.8 +
+            mid_val * harmonic_frequency_colors['mid'][1] * 1.6 +
+            low_mid_val * harmonic_frequency_colors['low_mid'][1] * 1.4 +
+            vocal_val * harmonic_frequency_colors['vocal'][1] * 1.7 +
+            high_mid_val * harmonic_frequency_colors['high_mid'][1] * 1.3 +
+            hihat_val * harmonic_frequency_colors['hihat'][1] * 1.5 +
+            presence_val * harmonic_frequency_colors['presence'][1] * 1.4 +
+            brilliance_val * harmonic_frequency_colors['brilliance'][1] * 1.3 +
+            air_val * harmonic_frequency_colors['air'][1] * 1.2 +
+            ultra_high_val * harmonic_frequency_colors['ultra_high'][1] * 1.1
+        ) / 16.0
         
-        freq_b = (
-            kick_val * frequency_colors['kick'][2] * 1.5 +
-            bass_val * frequency_colors['bass'][2] * 1.2 +
-            sub_bass_val * frequency_colors['sub_bass'][2] * 1.0 +
-            mid_bass_val * frequency_colors['mid_bass'][2] * 0.8 +
-            snare_val * frequency_colors['snare'][2] * 1.3 +
-            mid_val * frequency_colors['mid'][2] * 1.1 +
-            low_mid_val * frequency_colors['low_mid'][2] * 1.0 +
-            vocal_val * frequency_colors['vocal'][2] * 1.2 +
-            high_mid_val * frequency_colors['high_mid'][2] * 0.9 +
-            hihat_val * frequency_colors['hihat'][2] * 1.1 +
-            presence_val * frequency_colors['presence'][2] * 1.0 +
-            brilliance_val * frequency_colors['brilliance'][2] * 0.9 +
-            air_val * frequency_colors['air'][2] * 0.8 +
-            ultra_high_val * frequency_colors['ultra_high'][2] * 0.7
-        ) / 14.0
+        harmonic_b = (
+            kick_val * harmonic_frequency_colors['kick'][2] * 2.0 +
+            bass_val * harmonic_frequency_colors['bass'][2] * 1.8 +
+            sub_bass_val * harmonic_frequency_colors['sub_bass'][2] * 1.5 +
+            mid_bass_val * harmonic_frequency_colors['mid_bass'][2] * 1.2 +
+            snare_val * harmonic_frequency_colors['snare'][2] * 1.8 +
+            mid_val * harmonic_frequency_colors['mid'][2] * 1.6 +
+            low_mid_val * harmonic_frequency_colors['low_mid'][2] * 1.4 +
+            vocal_val * harmonic_frequency_colors['vocal'][2] * 1.7 +
+            high_mid_val * harmonic_frequency_colors['high_mid'][2] * 1.3 +
+            hihat_val * harmonic_frequency_colors['hihat'][2] * 1.5 +
+            presence_val * harmonic_frequency_colors['presence'][2] * 1.4 +
+            brilliance_val * harmonic_frequency_colors['brilliance'][2] * 1.3 +
+            air_val * harmonic_frequency_colors['air'][2] * 1.2 +
+            ultra_high_val * harmonic_frequency_colors['ultra_high'][2] * 1.1
+        ) / 16.0
         
-        # Blend colors based on time and audio with enhanced mixing
-        base_color = primary_palette[time_color_index]
-        next_color = primary_palette[next_color_index]
+        # ENHANCED: Blend harmonic colors with sophisticated mixing
+        base_harmonic_color = harmonic_palette[harmonic_color_index]
+        next_harmonic_color = harmonic_palette[next_harmonic_index]
         
-        # Smooth color interpolation with musical responsiveness
-        r = base_color[0] + (next_color[0] - base_color[0]) * time_blend
-        g = base_color[1] + (next_color[1] - base_color[1]) * time_blend
-        b = base_color[2] + (next_color[2] - base_color[2]) * time_blend
+        # Smooth harmonic color interpolation with musical responsiveness
+        r = base_harmonic_color[0] + (next_harmonic_color[0] - base_harmonic_color[0]) * harmonic_blend
+        g = base_harmonic_color[1] + (next_harmonic_color[1] - base_harmonic_color[1]) * harmonic_blend
+        b = base_harmonic_color[2] + (next_harmonic_color[2] - base_harmonic_color[2]) * harmonic_blend
         
-        # Apply enhanced audio-reactive color shifts with frequency dominance
-        r += (freq_r * frequency_dominance) + (spectral_shift * 0.3) + (beat_influence * 0.2) + (onset_influence * 0.1)
-        g += (freq_g * frequency_dominance) + (spectral_shift * 0.2) + (beat_influence * 0.1) + (onset_influence * 0.1)
-        b += (freq_b * frequency_dominance) + (spectral_shift * 0.4) + (beat_influence * 0.3) + (onset_influence * 0.2)
+        # ENHANCED: Apply sophisticated harmonic color shifts with enhanced mixing
+        r += (harmonic_r * frequency_dominance) + (spectral_harmony * 0.4) + (beat_harmonic_influence * 0.3) + (onset_harmonic_influence * 0.2)
+        g += (harmonic_g * frequency_dominance) + (spectral_harmony * 0.3) + (beat_harmonic_influence * 0.2) + (onset_harmonic_influence * 0.2)
+        b += (harmonic_b * frequency_dominance) + (spectral_harmony * 0.5) + (beat_harmonic_influence * 0.4) + (onset_harmonic_influence * 0.3)
         
-        # Apply musical responsiveness factor
+        # Apply enhanced musical responsiveness factor
         r *= musical_responsiveness
         g *= musical_responsiveness
         b *= musical_responsiveness
         
-        # Clamp color values with enhanced bounds
+        # ENHANCED: Clamp color values with sophisticated bounds
         r = max(0.0, min(1.0, r))
         g = max(0.0, min(1.0, g))
         b = max(0.0, min(1.0, b))
@@ -1063,75 +1077,80 @@ if audio_features and len(audio_features) > 0:
         base_color_g.keyframe_points.insert(frame, g)
         base_color_b.keyframe_points.insert(frame, b)
         
-        # Insert enhanced emission color keyframes if available
+        # ENHANCED: Insert sophisticated emission color keyframes if available
         if emission_available:
-            # Enhanced emission colors with frequency-specific brightness
-            kick_brightness = kick_val * 2.0
-            bass_brightness = bass_val * 1.8
-            snare_brightness = snare_val * 1.6
-            hihat_brightness = hihat_val * 1.4
-            vocal_brightness = vocal_val * 1.5
-            air_brightness = air_val * 1.2
+            # Enhanced emission colors with harmonic brightness
+            kick_harmonic_brightness = kick_val * 2.5
+            bass_harmonic_brightness = bass_val * 2.2
+            snare_harmonic_brightness = snare_val * 2.0
+            hihat_harmonic_brightness = hihat_val * 1.8
+            vocal_harmonic_brightness = vocal_val * 2.1
+            air_harmonic_brightness = air_val * 1.6
             
-            # Calculate frequency-weighted emission brightness
-            emission_brightness = (kick_brightness + bass_brightness + snare_brightness + 
-                                 hihat_brightness + vocal_brightness + air_brightness) / 6.0
+            # Calculate harmonic-weighted emission brightness
+            harmonic_emission_brightness = (kick_harmonic_brightness + bass_harmonic_brightness + snare_harmonic_brightness + 
+                                         hihat_harmonic_brightness + vocal_harmonic_brightness + air_harmonic_brightness) / 6.0
             
-            # Enhanced emission colors with musical responsiveness
-            emission_r_val = min(1.0, r * (1.5 + emission_brightness * 0.5))
-            emission_g_val = min(1.0, g * (1.5 + emission_brightness * 0.5))
-            emission_b_val = min(1.0, b * (1.5 + emission_brightness * 0.5))
+            # Enhanced emission colors with harmonic responsiveness
+            emission_r_val = min(1.0, r * (1.8 + harmonic_emission_brightness * 0.6))
+            emission_g_val = min(1.0, g * (1.8 + harmonic_emission_brightness * 0.6))
+            emission_b_val = min(1.0, b * (1.8 + harmonic_emission_brightness * 0.6))
             
-            # Dynamic emission strength based on audio intensity
-            emission_strength_val = 0.3 + (audio_intensity * color_intensity_boost) + (beat_val * 0.3)
+            # Dynamic emission strength based on harmonic audio intensity
+            emission_strength_val = 0.4 + (harmonic_audio_intensity * color_intensity_boost) + (beat_val * 0.4)
             
             emission_r.keyframe_points.insert(frame, emission_r_val)
             emission_g.keyframe_points.insert(frame, emission_g_val)
             emission_b.keyframe_points.insert(frame, emission_b_val)
             emission_strength.keyframe_points.insert(frame, emission_strength_val)
     
-    # Apply smooth interpolation to all color curves
+    # ENHANCED: Apply sophisticated interpolation to all color curves
     for fcurve in material_action.fcurves:
         for keyframe in fcurve.keyframe_points:
             keyframe.interpolation = 'BEZIER'
             keyframe.handle_left_type = 'FREE'
             keyframe.handle_right_type = 'FREE'
+            # Enhanced handle adjustment for smoother harmonic transitions
+            keyframe.handle_left[0] = -0.3
+            keyframe.handle_right[0] = 0.3
+            keyframe.handle_left[1] = keyframe.co[1] * 0.1
+            keyframe.handle_right[1] = keyframe.co[1] * 0.1
     
-    print("✅ Advanced color animations created with audio reactivity")
+    print("✅ ENHANCED harmonic color animations created with sophisticated audio reactivity and musical relationships")
 else:
-    print("⚠️  No audio data available for color animation, using time-based colors only")
+    print("⚠️  No audio data available for harmonic color animation, using time-based harmonic colors only")
     
-    # Fallback: Simple time-based color cycling
-    color_palette = [
-        (0.2, 0.1, 0.6, 1.0),  # Deep cosmic purple
-        (0.0, 0.6, 1.0, 1.0),  # Bright cyan
+    # ENHANCED: Fallback harmonic color cycling
+    harmonic_color_palette = [
+        (0.8, 0.2, 0.2, 1.0),  # Deep red
+        (0.2, 0.8, 0.2, 1.0),  # Deep green
+        (0.2, 0.2, 0.8, 1.0),  # Deep blue
+        (0.8, 0.8, 0.2, 1.0),  # Yellow
         (0.8, 0.2, 0.8, 1.0),  # Magenta
-        (0.1, 0.8, 0.4, 1.0),  # Electric green
-        (1.0, 0.4, 0.2, 1.0),  # Orange
-        (0.6, 0.1, 0.9, 1.0)   # Violet
+        (0.2, 0.8, 0.8, 1.0)   # Cyan
     ]
     
     base_color_r = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=0)
     base_color_g = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=1)
     base_color_b = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=2)
     
-    frame_step = max(1, ''' + str(self.total_frames) + ''' // 30)
+    frame_step = max(1, ''' + str(self.total_frames) + ''' // 40)
     
     for i in range(0, ''' + str(self.total_frames) + ''', frame_step):
         frame = min(i, ''' + str(self.total_frames) + ''' - 1)
         progress = frame / ''' + str(self.total_frames) + '''
         
-        # Simple color cycling
-        color_index = int(progress * len(color_palette)) % len(color_palette)
-        color = color_palette[color_index]
+        # Enhanced harmonic color cycling
+        harmonic_color_index = int(progress * len(harmonic_color_palette)) % len(harmonic_color_palette)
+        harmonic_color = harmonic_color_palette[harmonic_color_index]
         
-        base_color_r.keyframe_points.insert(frame, color[0])
-        base_color_g.keyframe_points.insert(frame, color[1])
-        base_color_b.keyframe_points.insert(frame, color[2])
+        base_color_r.keyframe_points.insert(frame, harmonic_color[0])
+        base_color_g.keyframe_points.insert(frame, harmonic_color[1])
+        base_color_b.keyframe_points.insert(frame, harmonic_color[2])
     
-    print("✅ Time-based color cycling created")
+    print("✅ ENHANCED harmonic color cycling created")
 
-print("🎨 Advanced color animation system complete")
+print("🎨 ENHANCED harmonic color animation system complete")
 ''')
         
         return '\n'.join(color_animation_code)
@@ -1294,9 +1313,9 @@ print("🎨 MCP enhancements complete")
         # Generate shape key names list for the script
         shape_key_names_list = list(self.shape_keys.keys())
         
-        # Calculate dynamic orbit radius for camera animation
-        orbit_radius = 8.0
-        padding_factor = 1.2
+        # Calculate dynamic orbit radius for camera animation - SLIGHTLY ZOOMED IN
+        orbit_radius = 12.0  # Slightly closer distance for better focus
+        padding_factor = 1.3  # Slightly less padding for tighter view
         # Estimate cube size (will be calculated in the script)
         estimated_cube_size = 2.0  # Default cube size
         dynamic_orbit_radius = max(orbit_radius, estimated_cube_size * padding_factor)
@@ -1561,7 +1580,7 @@ cube.rotation_euler = (0, 0, 0)
 cube.keyframe_insert(data_path="rotation_euler", frame=0)
 
 # Much slower rotation for subtle movement only
-cube.rotation_euler = (0, 0, math.radians(30))  # Further reduced from 45 degrees
+cube.rotation_euler = (0, 0, math.radians(8))  # Much slower rotation - only 8 degrees over entire duration
 cube.keyframe_insert(data_path="rotation_euler", frame={self.total_frames})
 
 # Set rotation interpolation to smooth
@@ -1590,11 +1609,15 @@ if main_camera:
     main_camera.animation_data_create()
     main_camera.animation_data.action = camera_action
     
-    # Camera movement parameters
-    orbit_radius = 8.0  # Distance from center
-    orbit_height = 4.0  # Height above center
-    orbit_speed = 0.5   # Slow rotation speed (degrees per frame)
-    padding_factor = 1.2  # Extra padding to ensure model stays in view
+gi    # Camera movement parameters - SLIGHTLY ZOOMED IN for better focus
+    orbit_radius = 12.0  # Slightly closer distance from center (reduced from 15.0)
+    orbit_height = 6.0   # Slightly lower position for better focus (reduced from 8.0)
+    orbit_speed = 0.15  # Much slower rotation speed (degrees per frame) - reduced from 0.5
+    padding_factor = 1.3  # Slightly less padding for tighter view (reduced from 1.5)
+    
+    # Set camera field of view for slightly tighter angle
+    main_camera.data.lens = 24.0  # Slightly tighter lens (increased from 18.0)
+    main_camera.data.sensor_width = 36.0  # Full frame sensor for maximum field of view
     
     # Calculate bounding box of the cube for dynamic framing
     cube_bbox = cube.bound_box
@@ -1649,11 +1672,15 @@ if main_camera:
 else:
     print("⚠️  No camera found for enhanced movement")
 
-# Setup professional camera (only if no camera exists)
+# Setup professional camera (only if no camera exists) - SLIGHTLY ZOOMED IN
 if not bpy.data.objects.get("Camera") and not bpy.data.objects.get("Camera.001"):
-    bpy.ops.object.camera_add(location=(6, -6, 4))
+    bpy.ops.object.camera_add(location=(10, -10, 6))  # Slightly closer for better focus
     camera = bpy.context.active_object
     camera.rotation_euler = (math.radians(60), 0, math.radians(45))
+    
+    # Set slightly tighter lens for better focus
+    camera.data.lens = 24.0  # Slightly tighter lens
+    camera.data.sensor_width = 36.0  # Full frame sensor
     
     # Set camera as active
     scene.camera = camera
@@ -1661,8 +1688,8 @@ if not bpy.data.objects.get("Camera") and not bpy.data.objects.get("Camera.001")
 else:
     print("✅ Using existing camera with enhanced movement")
 
-# OPTIMIZED SPACE ENVIRONMENT SETUP - IMMERSIVE COSMIC BACKGROUND
-print("🌌 Creating OPTIMIZED immersive cosmic space environment...")
+# ENHANCED SPACE ENVIRONMENT SETUP - MULTI-LAYER COSMIC BACKGROUND
+print("🌌 Creating ENHANCED multi-layer cosmic space environment...")
 
 # Setup World Shader for advanced space background
 world = bpy.context.scene.world
@@ -1683,160 +1710,395 @@ world_output.location = (500, 0)
 
 # Add Texture Coordinate
 tex_coord = world_nodes.new(type='ShaderNodeTexCoord')
-tex_coord.location = (-1400, 0)
+tex_coord.location = (-1800, 0)
 
-# Add Mapping for animated space texture coordinates
-mapping = world_nodes.new(type='ShaderNodeMapping')
-mapping.location = (-1100, 0)
+# ENHANCED: Add multiple mapping nodes for different layers
+mapping_nebula1 = world_nodes.new(type='ShaderNodeMapping')
+mapping_nebula1.location = (-1500, 200)
+mapping_nebula1.name = "NebulaMapping1"
 
-# Add second mapping for different texture scales
-mapping2 = world_nodes.new(type='ShaderNodeMapping')
-mapping2.location = (-1100, -200)
+mapping_nebula2 = world_nodes.new(type='ShaderNodeMapping')
+mapping_nebula2.location = (-1500, 0)
+mapping_nebula2.name = "NebulaMapping2"
 
-# Add Noise Texture for deep space nebula
-nebula_noise = world_nodes.new(type='ShaderNodeTexNoise')
-nebula_noise.location = (-800, 100)
-nebula_noise.inputs['Scale'].default_value = 0.03  # Large scale for deep space
-nebula_noise.inputs['Detail'].default_value = 15.0
-nebula_noise.inputs['Roughness'].default_value = 0.7
+mapping_nebula3 = world_nodes.new(type='ShaderNodeMapping')
+mapping_nebula3.location = (-1500, -200)
+mapping_nebula3.name = "NebulaMapping3"
 
-# Add second Noise Texture for space dust
-dust_noise = world_nodes.new(type='ShaderNodeTexNoise')
-dust_noise.location = (-800, -100)
-dust_noise.inputs['Scale'].default_value = 0.1  # Medium scale for dust
-dust_noise.inputs['Detail'].default_value = 8.0
-dust_noise.inputs['Roughness'].default_value = 0.5
+mapping_dust = world_nodes.new(type='ShaderNodeMapping')
+mapping_dust.location = (-1500, -400)
+mapping_dust.name = "DustMapping"
 
-# Add Voronoi Texture for star field
-star_voronoi = world_nodes.new(type='ShaderNodeTexVoronoi')
-star_voronoi.location = (-800, -300)
-star_voronoi.inputs['Scale'].default_value = 150.0  # Dense star field
-star_voronoi.inputs['Randomness'].default_value = 0.95
+mapping_stars = world_nodes.new(type='ShaderNodeMapping')
+mapping_stars.location = (-1500, -600)
+mapping_stars.name = "StarMapping"
 
-# Add ColorRamp for nebula gradient (deep space to cosmic colors)
-nebula_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
-nebula_colorramp.location = (-500, 100)
+# ENHANCED: Add multiple nebula noise textures for depth layers
+nebula_noise1 = world_nodes.new(type='ShaderNodeTexNoise')
+nebula_noise1.location = (-1200, 200)
+nebula_noise1.inputs['Scale'].default_value = 0.02  # Large scale for deep background nebula
+nebula_noise1.inputs['Detail'].default_value = 20.0
+nebula_noise1.inputs['Roughness'].default_value = 0.8
+nebula_noise1.name = "DeepNebulaNoise"
 
-# Add ColorRamp for space dust
-dust_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
-dust_colorramp.location = (-500, -100)
+nebula_noise2 = world_nodes.new(type='ShaderNodeTexNoise')
+nebula_noise2.location = (-1200, 0)
+nebula_noise2.inputs['Scale'].default_value = 0.05  # Medium scale for mid-layer nebula
+nebula_noise2.inputs['Detail'].default_value = 15.0
+nebula_noise2.inputs['Roughness'].default_value = 0.7
+nebula_noise2.name = "MidNebulaNoise"
 
-# Add ColorRamp for star field
-star_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
-star_colorramp.location = (-500, -300)
+nebula_noise3 = world_nodes.new(type='ShaderNodeTexNoise')
+nebula_noise3.location = (-1200, -200)
+nebula_noise3.inputs['Scale'].default_value = 0.1  # Small scale for foreground nebula
+nebula_noise3.inputs['Detail'].default_value = 12.0
+nebula_noise3.inputs['Roughness'].default_value = 0.6
+nebula_noise3.name = "ForegroundNebulaNoise"
+
+# ENHANCED: Add additional noise texture for more complex nebula patterns (Musgrave replacement)
+nebula_musgrave = world_nodes.new(type='ShaderNodeTexNoise')
+nebula_musgrave.location = (-1200, -100)
+nebula_musgrave.inputs['Scale'].default_value = 0.08
+nebula_musgrave.inputs['Detail'].default_value = 10.0
+nebula_musgrave.inputs['Roughness'].default_value = 0.8
+nebula_musgrave.name = "NebulaMusgrave"
+
+# Enhanced space dust with multiple layers
+dust_noise1 = world_nodes.new(type='ShaderNodeTexNoise')
+dust_noise1.location = (-1200, -400)
+dust_noise1.inputs['Scale'].default_value = 0.15  # Large dust particles
+dust_noise1.inputs['Detail'].default_value = 6.0
+dust_noise1.inputs['Roughness'].default_value = 0.4
+dust_noise1.name = "LargeDustNoise"
+
+dust_noise2 = world_nodes.new(type='ShaderNodeTexNoise')
+dust_noise2.location = (-1200, -500)
+dust_noise2.inputs['Scale'].default_value = 0.3  # Small dust particles
+dust_noise2.inputs['Detail'].default_value = 8.0
+dust_noise2.inputs['Roughness'].default_value = 0.5
+dust_noise2.name = "SmallDustNoise"
+
+# Enhanced star field with multiple scales
+star_voronoi1 = world_nodes.new(type='ShaderNodeTexVoronoi')
+star_voronoi1.location = (-1200, -600)
+star_voronoi1.inputs['Scale'].default_value = 200.0  # Bright stars
+star_voronoi1.inputs['Randomness'].default_value = 0.98
+star_voronoi1.name = "BrightStars"
+
+star_voronoi2 = world_nodes.new(type='ShaderNodeTexVoronoi')
+star_voronoi2.location = (-1200, -700)
+star_voronoi2.inputs['Scale'].default_value = 500.0  # Dim stars
+star_voronoi2.inputs['Randomness'].default_value = 0.95
+star_voronoi2.name = "DimStars"
+
+# ENHANCED: Add multiple color ramps for different nebula layers
+nebula_colorramp1 = world_nodes.new(type='ShaderNodeValToRGB')
+nebula_colorramp1.location = (-900, 200)
+nebula_colorramp1.name = "DeepNebulaColorRamp"
+
+nebula_colorramp2 = world_nodes.new(type='ShaderNodeValToRGB')
+nebula_colorramp2.location = (-900, 0)
+nebula_colorramp2.name = "MidNebulaColorRamp"
+
+nebula_colorramp3 = world_nodes.new(type='ShaderNodeValToRGB')
+nebula_colorramp3.location = (-900, -200)
+nebula_colorramp3.name = "ForegroundNebulaColorRamp"
+
+# Enhanced Musgrave color ramp
+musgrave_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
+musgrave_colorramp.location = (-900, -100)
+musgrave_colorramp.name = "MusgraveColorRamp"
+
+# Enhanced dust color ramps
+dust_colorramp1 = world_nodes.new(type='ShaderNodeValToRGB')
+dust_colorramp1.location = (-900, -400)
+dust_colorramp1.name = "LargeDustColorRamp"
+
+dust_colorramp2 = world_nodes.new(type='ShaderNodeValToRGB')
+dust_colorramp2.location = (-900, -500)
+dust_colorramp2.name = "SmallDustColorRamp"
+
+# Enhanced star field color ramps
+star_colorramp1 = world_nodes.new(type='ShaderNodeValToRGB')
+star_colorramp1.location = (-900, -600)
+star_colorramp1.name = "BrightStarsColorRamp"
+
+star_colorramp2 = world_nodes.new(type='ShaderNodeValToRGB')
+star_colorramp2.location = (-900, -700)
+star_colorramp2.name = "DimStarsColorRamp"
 
 # Add final Mix Shader to combine everything with stars (not used anymore)
 # final_mix = world_nodes.new(type='ShaderNodeMixShader')
 # final_mix.location = (200, 0)
 
-# Connect space environment nodes
-world_links.new(tex_coord.outputs['Generated'], mapping.inputs['Vector'])
-world_links.new(tex_coord.outputs['Generated'], mapping2.inputs['Vector'])
-world_links.new(mapping.outputs['Vector'], nebula_noise.inputs['Vector'])
-world_links.new(mapping2.outputs['Vector'], dust_noise.inputs['Vector'])
-world_links.new(mapping2.outputs['Vector'], star_voronoi.inputs['Vector'])
+# ENHANCED: Connect texture coordinates to all mapping nodes
+world_links.new(tex_coord.outputs['Generated'], mapping_nebula1.inputs['Vector'])
+world_links.new(tex_coord.outputs['Generated'], mapping_nebula2.inputs['Vector'])
+world_links.new(tex_coord.outputs['Generated'], mapping_nebula3.inputs['Vector'])
+world_links.new(tex_coord.outputs['Generated'], mapping_dust.inputs['Vector'])
+world_links.new(tex_coord.outputs['Generated'], mapping_stars.inputs['Vector'])
 
-# Configure nebula gradient colors (deep space to cosmic nebula)
-nebula_colorramp.color_ramp.elements[0].color = (0.005, 0.005, 0.02, 1.0)  # Deep space black
-nebula_colorramp.color_ramp.elements[1].color = (0.2, 0.05, 0.4, 1.0)     # Purple nebula
-nebula_colorramp.color_ramp.elements[0].position = 0.0
-nebula_colorramp.color_ramp.elements[1].position = 0.8
+# ENHANCED: Connect mappings to texture nodes
+world_links.new(mapping_nebula1.outputs['Vector'], nebula_noise1.inputs['Vector'])
+world_links.new(mapping_nebula2.outputs['Vector'], nebula_noise2.inputs['Vector'])
+world_links.new(mapping_nebula3.outputs['Vector'], nebula_noise3.inputs['Vector'])
+world_links.new(mapping_nebula2.outputs['Vector'], nebula_musgrave.inputs['Vector'])
+world_links.new(mapping_dust.outputs['Vector'], dust_noise1.inputs['Vector'])
+world_links.new(mapping_dust.outputs['Vector'], dust_noise2.inputs['Vector'])
+world_links.new(mapping_stars.outputs['Vector'], star_voronoi1.inputs['Vector'])
+world_links.new(mapping_stars.outputs['Vector'], star_voronoi2.inputs['Vector'])
+
+# ENHANCED: Configure deep nebula gradient colors (deepest space)
+nebula_colorramp1.color_ramp.elements[0].color = (0.002, 0.002, 0.01, 1.0)  # Deepest space black
+nebula_colorramp1.color_ramp.elements[1].color = (0.1, 0.02, 0.2, 1.0)     # Deep purple nebula
+nebula_colorramp1.color_ramp.elements[0].position = 0.0
+nebula_colorramp1.color_ramp.elements[1].position = 0.9
 
 # Add third color element for cosmic highlights
-nebula_colorramp.color_ramp.elements.new(0.6)
-nebula_colorramp.color_ramp.elements[2].color = (0.1, 0.3, 0.6, 1.0)     # Cosmic blue
-nebula_colorramp.color_ramp.elements[2].position = 0.6
+nebula_colorramp1.color_ramp.elements.new(0.7)
+nebula_colorramp1.color_ramp.elements[2].color = (0.05, 0.15, 0.3, 1.0)   # Deep cosmic blue
+nebula_colorramp1.color_ramp.elements[2].position = 0.7
 
-# Configure space dust colors
-dust_colorramp.color_ramp.elements[0].color = (0.01, 0.01, 0.03, 1.0)   # Dark dust
-dust_colorramp.color_ramp.elements[1].color = (0.05, 0.02, 0.08, 1.0)   # Light dust
-dust_colorramp.color_ramp.elements[0].position = 0.7
-dust_colorramp.color_ramp.elements[1].position = 1.0
+# ENHANCED: Configure mid-layer nebula gradient colors
+nebula_colorramp2.color_ramp.elements[0].color = (0.01, 0.01, 0.03, 1.0)   # Dark space
+nebula_colorramp2.color_ramp.elements[1].color = (0.3, 0.1, 0.5, 1.0)     # Purple nebula
+nebula_colorramp2.color_ramp.elements[0].position = 0.2
+nebula_colorramp2.color_ramp.elements[1].position = 0.8
 
-# Configure star field with more realistic distribution
-star_colorramp.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)      # Black space
-star_colorramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)      # White stars
-star_colorramp.color_ramp.elements[0].position = 0.97  # Most space is black
-star_colorramp.color_ramp.elements[1].position = 1.0
+# Add cosmic highlights
+nebula_colorramp2.color_ramp.elements.new(0.6)
+nebula_colorramp2.color_ramp.elements[2].color = (0.2, 0.4, 0.7, 1.0)     # Cosmic blue
+nebula_colorramp2.color_ramp.elements[2].position = 0.6
 
-# Add colored stars for more realism
-star_colorramp.color_ramp.elements.new(0.985)
-star_colorramp.color_ramp.elements[2].color = (0.8, 0.9, 1.0, 1.0)      # Blue stars
-star_colorramp.color_ramp.elements[2].position = 0.985
+# ENHANCED: Configure foreground nebula gradient colors
+nebula_colorramp3.color_ramp.elements[0].color = (0.02, 0.02, 0.05, 1.0)  # Dark space
+nebula_colorramp3.color_ramp.elements[1].color = (0.5, 0.2, 0.8, 1.0)     # Bright purple nebula
+nebula_colorramp3.color_ramp.elements[0].position = 0.3
+nebula_colorramp3.color_ramp.elements[1].position = 0.7
 
-# Mix nebula and dust (both are colors, so use Add node instead of Mix Shader)
-nebula_add = world_nodes.new(type='ShaderNodeMixRGB')
-nebula_add.location = (-200, 0)
-nebula_add.blend_type = 'ADD'
+# Add bright highlights
+nebula_colorramp3.color_ramp.elements.new(0.5)
+nebula_colorramp3.color_ramp.elements[2].color = (0.4, 0.6, 1.0, 1.0)     # Bright cosmic blue
+nebula_colorramp3.color_ramp.elements[2].position = 0.5
 
-# Final mix with stars (also use MixRGB for color mixing)
-final_add = world_nodes.new(type='ShaderNodeMixRGB')
-final_add.location = (200, 0)
-final_add.blend_type = 'ADD'
+# ENHANCED: Configure Musgrave texture colors
+musgrave_colorramp.color_ramp.elements[0].color = (0.01, 0.01, 0.02, 1.0)  # Dark space
+musgrave_colorramp.color_ramp.elements[1].color = (0.2, 0.1, 0.4, 1.0)    # Purple nebula
+musgrave_colorramp.color_ramp.elements[0].position = 0.4
+musgrave_colorramp.color_ramp.elements[1].position = 0.8
 
-# Connect textures to color ramps
-world_links.new(nebula_noise.outputs['Fac'], nebula_colorramp.inputs['Fac'])
-world_links.new(dust_noise.outputs['Fac'], dust_colorramp.inputs['Fac'])
-world_links.new(star_voronoi.outputs['Distance'], star_colorramp.inputs['Fac'])
+# Add cosmic highlights
+musgrave_colorramp.color_ramp.elements.new(0.6)
+musgrave_colorramp.color_ramp.elements[2].color = (0.1, 0.3, 0.6, 1.0)   # Cosmic blue
+musgrave_colorramp.color_ramp.elements[2].position = 0.6
 
-# Mix nebula and dust colors
-world_links.new(nebula_colorramp.outputs['Color'], nebula_add.inputs[1])
-world_links.new(dust_colorramp.outputs['Color'], nebula_add.inputs[2])
+# ENHANCED: Configure space dust colors with multiple layers
+dust_colorramp1.color_ramp.elements[0].color = (0.01, 0.01, 0.03, 1.0)   # Dark dust
+dust_colorramp1.color_ramp.elements[1].color = (0.05, 0.02, 0.08, 1.0)   # Light dust
+dust_colorramp1.color_ramp.elements[0].position = 0.7
+dust_colorramp1.color_ramp.elements[1].position = 1.0
 
-# Final mix with stars
-world_links.new(nebula_add.outputs['Color'], final_add.inputs[1])
-world_links.new(star_colorramp.outputs['Color'], final_add.inputs[2])
+dust_colorramp2.color_ramp.elements[0].color = (0.005, 0.005, 0.015, 1.0)  # Very dark dust
+dust_colorramp2.color_ramp.elements[1].color = (0.03, 0.01, 0.05, 1.0)    # Dim dust
+dust_colorramp2.color_ramp.elements[0].position = 0.8
+dust_colorramp2.color_ramp.elements[1].position = 1.0
 
-# Connect to background
-world_links.new(final_add.outputs['Color'], background_node.inputs['Color'])
+# ENHANCED: Configure star field with multiple brightness levels
+star_colorramp1.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)      # Black space
+star_colorramp1.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)      # Bright white stars
+star_colorramp1.color_ramp.elements[0].position = 0.98  # Most space is black
+star_colorramp1.color_ramp.elements[1].position = 1.0
+
+# Add colored bright stars
+star_colorramp1.color_ramp.elements.new(0.99)
+star_colorramp1.color_ramp.elements[2].color = (0.8, 0.9, 1.0, 1.0)      # Blue bright stars
+star_colorramp1.color_ramp.elements[2].position = 0.99
+
+star_colorramp2.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)      # Black space
+star_colorramp2.color_ramp.elements[1].color = (0.6, 0.6, 0.6, 1.0)      # Dim stars
+star_colorramp2.color_ramp.elements[0].position = 0.95  # Most space is black
+star_colorramp2.color_ramp.elements[1].position = 1.0
+
+# Add colored dim stars
+star_colorramp2.color_ramp.elements.new(0.97)
+star_colorramp2.color_ramp.elements[2].color = (0.5, 0.6, 0.8, 1.0)      # Blue dim stars
+star_colorramp2.color_ramp.elements[2].position = 0.97
+
+# ENHANCED: Create sophisticated mixing system for multi-layer background
+# Mix deep nebula layers
+deep_nebula_mix = world_nodes.new(type='ShaderNodeMixRGB')
+deep_nebula_mix.location = (-600, 100)
+deep_nebula_mix.blend_type = 'ADD'
+deep_nebula_mix.name = "DeepNebulaMix"
+
+# Mix mid-layer nebula
+mid_nebula_mix = world_nodes.new(type='ShaderNodeMixRGB')
+mid_nebula_mix.location = (-600, 0)
+mid_nebula_mix.blend_type = 'ADD'
+mid_nebula_mix.name = "MidNebulaMix"
+
+# Mix foreground nebula
+foreground_nebula_mix = world_nodes.new(type='ShaderNodeMixRGB')
+foreground_nebula_mix.location = (-600, -100)
+foreground_nebula_mix.blend_type = 'ADD'
+foreground_nebula_mix.name = "ForegroundNebulaMix"
+
+# Mix dust layers
+dust_mix = world_nodes.new(type='ShaderNodeMixRGB')
+dust_mix.location = (-600, -400)
+dust_mix.blend_type = 'ADD'
+dust_mix.name = "DustMix"
+
+# Mix star layers
+star_mix = world_nodes.new(type='ShaderNodeMixRGB')
+star_mix.location = (-600, -600)
+star_mix.blend_type = 'ADD'
+star_mix.name = "StarMix"
+
+# Final nebula combination
+final_nebula_mix = world_nodes.new(type='ShaderNodeMixRGB')
+final_nebula_mix.location = (-300, 0)
+final_nebula_mix.blend_type = 'ADD'
+final_nebula_mix.name = "FinalNebulaMix"
+
+# Final background combination
+final_background_mix = world_nodes.new(type='ShaderNodeMixRGB')
+final_background_mix.location = (200, 0)
+final_background_mix.blend_type = 'ADD'
+final_background_mix.name = "FinalBackgroundMix"
+
+# ENHANCED: Connect textures to color ramps
+world_links.new(nebula_noise1.outputs['Fac'], nebula_colorramp1.inputs['Fac'])
+world_links.new(nebula_noise2.outputs['Fac'], nebula_colorramp2.inputs['Fac'])
+world_links.new(nebula_noise3.outputs['Fac'], nebula_colorramp3.inputs['Fac'])
+world_links.new(nebula_musgrave.outputs['Fac'], musgrave_colorramp.inputs['Fac'])
+world_links.new(dust_noise1.outputs['Fac'], dust_colorramp1.inputs['Fac'])
+world_links.new(dust_noise2.outputs['Fac'], dust_colorramp2.inputs['Fac'])
+world_links.new(star_voronoi1.outputs['Distance'], star_colorramp1.inputs['Fac'])
+world_links.new(star_voronoi2.outputs['Distance'], star_colorramp2.inputs['Fac'])
+
+# ENHANCED: Mix nebula layers with depth-based blending
+world_links.new(nebula_colorramp1.outputs['Color'], deep_nebula_mix.inputs[1])
+world_links.new(musgrave_colorramp.outputs['Color'], deep_nebula_mix.inputs[2])
+
+world_links.new(nebula_colorramp2.outputs['Color'], mid_nebula_mix.inputs[1])
+world_links.new(nebula_colorramp3.outputs['Color'], mid_nebula_mix.inputs[2])
+
+world_links.new(nebula_colorramp3.outputs['Color'], foreground_nebula_mix.inputs[1])
+world_links.new(musgrave_colorramp.outputs['Color'], foreground_nebula_mix.inputs[2])
+
+# Mix dust layers
+world_links.new(dust_colorramp1.outputs['Color'], dust_mix.inputs[1])
+world_links.new(dust_colorramp2.outputs['Color'], dust_mix.inputs[2])
+
+# Mix star layers
+world_links.new(star_colorramp1.outputs['Color'], star_mix.inputs[1])
+world_links.new(star_colorramp2.outputs['Color'], star_mix.inputs[2])
+
+# Combine all nebula layers
+world_links.new(deep_nebula_mix.outputs['Color'], final_nebula_mix.inputs[1])
+world_links.new(mid_nebula_mix.outputs['Color'], final_nebula_mix.inputs[2])
+
+# Final background combination
+world_links.new(final_nebula_mix.outputs['Color'], final_background_mix.inputs[1])
+world_links.new(dust_mix.outputs['Color'], final_background_mix.inputs[2])
+
+# Add stars on top
+world_links.new(final_background_mix.outputs['Color'], background_node.inputs['Color'])
+world_links.new(star_mix.outputs['Color'], background_node.inputs['Color'])
+
+# Connect to world output
 world_links.new(background_node.outputs['Background'], world_output.inputs['Surface'])
 
 # Set world strength for proper space atmosphere
 background_node.inputs['Strength'].default_value = 1.2  # Slightly enhanced for better visibility
 
-# Add subtle animation to space background for dynamic feel
-print("🌌 Adding subtle space background animation...")
+# ENHANCED: Add sophisticated animation to multi-layer space background
+print("🌌 Adding ENHANCED multi-layer space background animation...")
 
-# Create space animation action
-space_action = bpy.data.actions.new(name="SpaceBackgroundAnimation")
+# Create enhanced space animation action
+space_action = bpy.data.actions.new(name="EnhancedSpaceBackgroundAnimation")
 world.animation_data_create()
 world.animation_data.action = space_action
 
-# Animate mapping rotation for subtle movement
-mapping_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["Mapping"].inputs[2].default_value', index=0)
-mapping_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["Mapping"].inputs[2].default_value', index=1)
-mapping_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["Mapping"].inputs[2].default_value', index=2)
+# ENHANCED: Animate all mapping nodes with different movement patterns
+# Deep nebula mapping (slowest, cosmic time scale)
+nebula1_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping1"].inputs[2].default_value', index=0)
+nebula1_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping1"].inputs[2].default_value', index=1)
+nebula1_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping1"].inputs[2].default_value', index=2)
 
-# Animate second mapping for different movement
-mapping2_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["mapping2"].inputs[2].default_value', index=0)
-mapping2_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["mapping2"].inputs[2].default_value', index=1)
-mapping2_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["mapping2"].inputs[2].default_value', index=2)
+# Mid-layer nebula mapping (medium speed)
+nebula2_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping2"].inputs[2].default_value', index=0)
+nebula2_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping2"].inputs[2].default_value', index=1)
+nebula2_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping2"].inputs[2].default_value', index=2)
 
-# Create slow, subtle rotation keyframes
-frame_step = max(1, self.total_frames // 20)  # 20 keyframes for smooth space movement
+# Foreground nebula mapping (faster movement)
+nebula3_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping3"].inputs[2].default_value', index=0)
+nebula3_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping3"].inputs[2].default_value', index=1)
+nebula3_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping3"].inputs[2].default_value', index=2)
 
-for i in range(0, self.total_frames, frame_step):
-    frame = min(i, self.total_frames - 1)
-    progress = frame / self.total_frames
+# Dust mapping (particle-like movement)
+dust_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["DustMapping"].inputs[2].default_value', index=0)
+dust_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["DustMapping"].inputs[2].default_value', index=1)
+dust_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["DustMapping"].inputs[2].default_value', index=2)
+
+# Star mapping (very slow, stellar movement)
+star_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["StarMapping"].inputs[2].default_value', index=0)
+star_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["StarMapping"].inputs[2].default_value', index=1)
+star_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["StarMapping"].inputs[2].default_value', index=2)
+
+# ENHANCED: Create complex movement keyframes with different speeds and patterns
+frame_step = max(1, {self.total_frames} // 30)  # More keyframes for smoother movement
+
+for i in range(0, {self.total_frames}, frame_step):
+    frame = min(i, {self.total_frames} - 1)
+    progress = frame / {self.total_frames}
     
-    # Very slow rotation for nebula (cosmic time scale)
-    nebula_rot_x = progress * 0.1  # Very slow X rotation
-    nebula_rot_y = progress * 0.05  # Even slower Y rotation
-    nebula_rot_z = progress * 0.15  # Slightly faster Z rotation
+    # Deep nebula: Much slower cosmic movement (reduced by ~70%)
+    nebula1_rot_x = progress * 0.015  # Much slower X rotation
+    nebula1_rot_y = progress * 0.009  # Much slower Y rotation
+    nebula1_rot_z = progress * 0.024  # Much slower Z rotation
     
-    # Different rotation for dust and stars
-    dust_rot_x = progress * 0.08
-    dust_rot_y = progress * 0.12
-    dust_rot_z = progress * 0.06
+    # Mid-layer nebula: Much slower cosmic movement (reduced by ~70%)
+    nebula2_rot_x = progress * 0.03   # Much slower X rotation
+    nebula2_rot_y = progress * 0.024  # Much slower Y rotation
+    nebula2_rot_z = progress * 0.036  # Much slower Z rotation
     
-    # Insert keyframes
-    mapping_rotation_x.keyframe_points.insert(frame, nebula_rot_x)
-    mapping_rotation_y.keyframe_points.insert(frame, nebula_rot_y)
-    mapping_rotation_z.keyframe_points.insert(frame, nebula_rot_z)
+    # Foreground nebula: Much slower movement (reduced by ~70%)
+    nebula3_rot_x = progress * 0.045  # Much slower X rotation
+    nebula3_rot_y = progress * 0.036  # Much slower Y rotation
+    nebula3_rot_z = progress * 0.054  # Much slower Z rotation
     
-    mapping2_rotation_x.keyframe_points.insert(frame, dust_rot_x)
-    mapping2_rotation_y.keyframe_points.insert(frame, dust_rot_y)
-    mapping2_rotation_z.keyframe_points.insert(frame, dust_rot_z)
+    # Dust: Much slower particle-like movement with reduced turbulence (reduced by ~70%)
+    dust_rot_x = progress * 0.06 + math.sin(progress * math.pi * 4) * 0.015  # Much slower turbulent X
+    dust_rot_y = progress * 0.054 + math.cos(progress * math.pi * 3) * 0.012  # Much slower turbulent Y
+    dust_rot_z = progress * 0.048 + math.sin(progress * math.pi * 5) * 0.009  # Much slower turbulent Z
+    
+    # Stars: Much slower stellar movement (reduced by ~70%)
+    star_rot_x = progress * 0.006  # Much slower X rotation
+    star_rot_y = progress * 0.009  # Much slower Y rotation
+    star_rot_z = progress * 0.012  # Much slower Z rotation
+    
+    # Insert keyframes for all mapping nodes
+    nebula1_rotation_x.keyframe_points.insert(frame, nebula1_rot_x)
+    nebula1_rotation_y.keyframe_points.insert(frame, nebula1_rot_y)
+    nebula1_rotation_z.keyframe_points.insert(frame, nebula1_rot_z)
+    
+    nebula2_rotation_x.keyframe_points.insert(frame, nebula2_rot_x)
+    nebula2_rotation_y.keyframe_points.insert(frame, nebula2_rot_y)
+    nebula2_rotation_z.keyframe_points.insert(frame, nebula2_rot_z)
+    
+    nebula3_rotation_x.keyframe_points.insert(frame, nebula3_rot_x)
+    nebula3_rotation_y.keyframe_points.insert(frame, nebula3_rot_y)
+    nebula3_rotation_z.keyframe_points.insert(frame, nebula3_rot_z)
+    
+    dust_rotation_x.keyframe_points.insert(frame, dust_rot_x)
+    dust_rotation_y.keyframe_points.insert(frame, dust_rot_y)
+    dust_rotation_z.keyframe_points.insert(frame, dust_rot_z)
+    
+    star_rotation_x.keyframe_points.insert(frame, star_rot_x)
+    star_rotation_y.keyframe_points.insert(frame, star_rot_y)
+    star_rotation_z.keyframe_points.insert(frame, star_rot_z)
 
 # Apply smooth interpolation to space animation
 for fcurve in space_action.fcurves:
@@ -1845,7 +2107,7 @@ for fcurve in space_action.fcurves:
         keyframe.handle_left_type = 'AUTO'
         keyframe.handle_right_type = 'AUTO'
 
-print("✅ OPTIMIZED immersive cosmic space environment created with animated nebula, dust, and star field")
+print("✅ ENHANCED multi-layer cosmic space environment created with sophisticated nebula layers, dynamic star fields, and complex atmospheric effects")
 
 # OPTIMIZED STARFIELD CREATION - EFFICIENT AND IMMERSIVE
 print("⭐ Creating OPTIMIZED immersive starfield...")
@@ -1853,13 +2115,13 @@ print("⭐ Creating OPTIMIZED immersive starfield...")
 # Create multiple star objects for better visibility with optimized distribution
 star_positions = []
 # Create stars in a spherical distribution around the scene
-for i in range(150):  # Increased to 150 stars for better coverage
+for i in range(4):  # Absolute minimum - just 4 stars around the cube
     # Random positions in a large sphere around the scene
     # Use spherical distribution for more natural star field
     phi = random.uniform(0, 2 * math.pi)  # Azimuthal angle
     costheta = random.uniform(-1, 1)      # Cosine of polar angle
     theta = math.acos(costheta)           # Polar angle
-    r = random.uniform(40, 80)            # Distance from center
+    r = random.uniform(15, 25)            # Closer distance from center (reduced from 40-80)
     
     x = r * math.sin(theta) * math.cos(phi)
     y = r * math.sin(theta) * math.sin(phi)
@@ -1879,7 +2141,7 @@ star_nodes.clear()
 star_emission = star_nodes.new(type='ShaderNodeEmission')
 star_emission.location = (0, 0)
 star_emission.inputs['Color'].default_value = (1.0, 1.0, 1.0, 1.0)
-star_emission.inputs['Strength'].default_value = 8.0  # Optimized brightness
+star_emission.inputs['Strength'].default_value = 0.8  # Absolute minimum brightness
 
 # Add Output
 star_output = star_nodes.new(type='ShaderNodeOutputMaterial')
@@ -1922,7 +2184,7 @@ for i, pos in enumerate(star_positions):
         star_color_variation * random.uniform(0.8, 1.2),
         1.0
     )
-    star_emission.inputs['Strength'].default_value = random.uniform(6.0, 10.0)  # Varying brightness
+    star_emission.inputs['Strength'].default_value = random.uniform(0.5, 1.0)  # Absolute minimum brightness range
     
     # Assign individual star material
     star.data.materials.append(individual_star_material)
@@ -1938,8 +2200,8 @@ print("⭐ Adding audio-reactive star animations...")
 # Create audio-reactive animations for stars
 star_audio_action = bpy.data.actions.new(name="StarAudioReactiveAnimation")
 
-# Animate a subset of stars for performance (every 5th star)
-stars_to_animate = [f"Star_{{i:03d}}" for i in range(0, 150, 5)]  # 30 stars total
+# Animate absolute minimum stars - just 2 stars for subtle effect
+stars_to_animate = [f"Star_{{i:03d}}" for i in range(0, 4, 2)]  # 2 stars total (absolute minimum)
 
 for star_name in stars_to_animate:
     if star_name in bpy.data.objects:
@@ -1966,18 +2228,19 @@ for star_name in stars_to_animate:
                     )
                     
                     # Create keyframes based on audio
-                    frame_step = max(1, self.total_frames // self.config['keyframe_density'])
+                    frame_step = max(1, {self.total_frames} // {self.config['keyframe_density']})
                     
-                    for i in range(0, self.total_frames, frame_step):
-                        frame = min(i, self.total_frames - 1)
+                    for i in range(0, {self.total_frames}, frame_step):
+                        frame = min(i, {self.total_frames} - 1)
                         
                         # Get audio features for this frame
-                        audio_frame_data = self._get_audio_frame_data(frame)
+                        hihat_energy = audio_features.get('hihat_energy', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('hihat_energy', [0.0] * {self.total_frames})) - 1)] if audio_features.get('hihat_energy') else 0.0
+                        beat_strength = audio_features.get('beat_strength', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('beat_strength', [0.0] * {self.total_frames})) - 1)] if audio_features.get('beat_strength') else 0.0
                         
-                        # Calculate star brightness based on audio
-                        base_brightness = random.uniform(6.0, 10.0)  # Random base brightness
-                        audio_brightness = audio_frame_data.get('hihat_energy', 0.0) * 2.0  # High freq affects stars
-                        beat_brightness = audio_frame_data.get('beat_strength', 0.0) * 1.5  # Beats make stars pulse
+                        # Calculate star brightness based on audio - absolute minimum for ultra-subtle stars
+                        base_brightness = random.uniform(0.5, 1.0)  # Absolute minimum base brightness
+                        audio_brightness = hihat_energy * 0.2  # Minimal audio reactivity
+                        beat_brightness = beat_strength * 1.5  # Beats make stars pulse
                         
                         total_brightness = base_brightness + audio_brightness + beat_brightness
                         
@@ -2077,18 +2340,19 @@ for i in range(4):  # We have 4 nebula volumes
                     )
                     
                     # Create keyframes based on audio
-                    frame_step = max(1, self.total_frames // self.config['keyframe_density'])
+                    frame_step = max(1, {self.total_frames} // {self.config['keyframe_density']})
                     
-                    for j in range(0, self.total_frames, frame_step):
-                        frame = min(j, self.total_frames - 1)
+                    for j in range(0, {self.total_frames}, frame_step):
+                        frame = min(j, {self.total_frames} - 1)
                         
                         # Get audio features for this frame
-                        audio_frame_data = self._get_audio_frame_data(frame)
+                        bass_energy = audio_features.get('bass_energy', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('bass_energy', [0.0] * {self.total_frames})) - 1)] if audio_features.get('bass_energy') else 0.0
+                        beat_strength = audio_features.get('beat_strength', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('beat_strength', [0.0] * {self.total_frames})) - 1)] if audio_features.get('beat_strength') else 0.0
                         
                         # Calculate nebula density based on audio
                         base_density = 0.2  # Base density
-                        audio_density = audio_frame_data.get('bass_energy', 0.0) * 0.3  # Bass affects nebula
-                        beat_density = audio_frame_data.get('beat_strength', 0.0) * 0.2  # Beats make nebula pulse
+                        audio_density = bass_energy * 0.3  # Bass affects nebula
+                        beat_density = beat_strength * 0.2  # Beats make nebula pulse
                         
                         total_density = base_density + audio_density + beat_density
                         
@@ -2113,24 +2377,33 @@ world.animation_data_create()
 world.animation_data.action = space_audio_action
 
 # Audio-reactive nebula color intensity
-nebula_intensity_curve = space_audio_action.fcurves.new(data_path='node_tree.nodes["Background"].inputs[1].default_value', index=0)
+try:
+    nebula_intensity_curve = space_audio_action.fcurves.new(data_path='node_tree.nodes["Background"].inputs[1].default_value', index=0)
+except:
+    # F-Curve already exists, find it
+    nebula_intensity_curve = None
+    for fcurve in space_audio_action.fcurves:
+        if fcurve.data_path == 'node_tree.nodes["Background"].inputs[1].default_value' and fcurve.array_index == 0:
+            nebula_intensity_curve = fcurve
+            break
 
-# Audio-reactive star brightness (affects world strength)
-world_strength_curve = space_audio_action.fcurves.new(data_path='node_tree.nodes["Background"].inputs[1].default_value', index=0)
+# Audio-reactive star brightness (affects world strength) - use the same curve as nebula
+world_strength_curve = nebula_intensity_curve
 
 # Create audio-reactive keyframes based on audio features
-frame_step = max(1, self.total_frames // self.config['keyframe_density'])
+frame_step = max(1, {self.total_frames} // {self.config['keyframe_density']})
 
-for i in range(0, self.total_frames, frame_step):
-    frame = min(i, self.total_frames - 1)
+for i in range(0, {self.total_frames}, frame_step):
+    frame = min(i, {self.total_frames} - 1)
     
     # Get audio features for this frame
-    audio_frame_data = self._get_audio_frame_data(frame)
+    rms_energy = audio_features.get('rms_energy', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('rms_energy', [0.0] * {self.total_frames})) - 1)] if audio_features.get('rms_energy') else 0.0
+    beat_strength = audio_features.get('beat_strength', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('beat_strength', [0.0] * {self.total_frames})) - 1)] if audio_features.get('beat_strength') else 0.0
     
     # Calculate space background reactivity
     base_intensity = 1.2  # Base world strength
-    audio_intensity = audio_frame_data.get('rms_energy', 0.0) * 0.5  # Scale down for subtlety
-    beat_boost = audio_frame_data.get('beat_strength', 0.0) * 0.3  # Beat-responsive boost
+    audio_intensity = rms_energy * 0.5  # Scale down for subtlety
+    beat_boost = beat_strength * 0.3  # Beat-responsive boost
     
     # Combine audio features for space background intensity
     total_intensity = base_intensity + audio_intensity + beat_boost
@@ -2322,7 +2595,7 @@ print("✅ Space background performance optimizations applied")
 # PROFESSIONAL RENDER SETTINGS: Cinematic quality output
 {self._generate_professional_render_settings(render_settings)}
 
-{f"# Save blend file\nbpy.ops.wm.save_as_mainfile(filepath=\"{blend_path}\")\nprint(f\"💾 Blend file saved: {blend_path}\")" if blend_path else "# No blend file path provided"}
+{f"# Save blend file\nbpy.ops.wm.save_as_mainfile(filepath=\"{blend_path}\")\nprint(\"💾 Blend file saved: {blend_path}\")" if blend_path else "# No blend file path provided"}
 '''
 
         # Write script to file
@@ -2391,35 +2664,72 @@ except:
 if "available" in polyhaven_status:
     print("🎨 Applying PolyHaven texture enhancements...")
     # Enhanced material with professional textures
-    material.node_tree.nodes["Principled BSDF"].inputs[0].default_value = (0.2, 0.4, 0.8, 1.0)  # Enhanced base color
-    material.node_tree.nodes["Principled BSDF"].inputs[7].default_value = 0.8  # Enhanced metallic
-    material.node_tree.nodes["Principled BSDF"].inputs[9].default_value = 0.3  # Enhanced roughness
-    print("✅ PolyHaven material enhancements applied")
+    try:
+        # Get the main material from the cube
+        cube = bpy.data.objects.get("OptimizedMutatingCube")
+        if cube and cube.data.materials:
+            material = cube.data.materials[0]
+            if material.use_nodes:
+                # Find Principled BSDF node
+                principled_node = None
+                for node in material.node_tree.nodes:
+                    if node.type == 'BSDF_PRINCIPLED':
+                        principled_node = node
+                        break
+                
+                if principled_node:
+                    try:
+                        # Set base color using input name (safer approach)
+                        if 'Base Color' in principled_node.inputs:
+                            principled_node.inputs['Base Color'].default_value = (0.2, 0.4, 0.8, 1.0)
+                        # Set metallic using input name
+                        if 'Metallic' in principled_node.inputs:
+                            principled_node.inputs['Metallic'].default_value = 0.8
+                        # Set roughness using input name
+                        if 'Roughness' in principled_node.inputs:
+                            principled_node.inputs['Roughness'].default_value = 0.3
+                        print("✅ PolyHaven material enhancements applied")
+                    except Exception as e:
+                        print(f"⚠️ Material enhancement skipped: {e}")
+                else:
+                    print("⚠️ Principled BSDF node not found")
+            else:
+                print("⚠️ Material does not use nodes")
+        else:
+            print("⚠️ Cube or material not found")
+    except Exception as e:
+        print(f"⚠️ Material enhancement failed: {e}")
 
 # PROFESSIONAL LIGHTING ENHANCEMENT: Apply MCP HDRIs if available
 if "available" in polyhaven_status:
     print("🌟 Applying PolyHaven HDRI environment...")
-    # Enhanced world shader with professional HDRI
-    world = bpy.context.scene.world
-    world.use_nodes = True
-    world_nodes = world.node_tree.nodes
-    world_nodes.clear()
-    
-    # Add Background shader
-    bg_shader = world_nodes.new(type='ShaderNodeBackground')
-    bg_shader.location = (0, 0)
-    
-    # Add World Output
-    world_output = world_nodes.new(type='ShaderNodeOutputWorld')
-    world_output.location = (200, 0)
-    
-    # Connect nodes
-    world.node_tree.links.new(bg_shader.outputs[0], world_output.inputs[0])
-    
-    # Enhanced environment settings
-    bg_shader.inputs[0].default_value = (0.1, 0.15, 0.3, 1.0)  # Professional dark blue
-    bg_shader.inputs[1].default_value = 0.5  # Enhanced strength
-    print("✅ PolyHaven HDRI environment applied")
+    try:
+        # Enhanced world shader with professional HDRI
+        world = bpy.context.scene.world
+        if world:
+            world.use_nodes = True
+            world_nodes = world.node_tree.nodes
+            world_nodes.clear()
+            
+            # Add Background shader
+            bg_shader = world_nodes.new(type='ShaderNodeBackground')
+            bg_shader.location = (0, 0)
+            
+            # Add World Output
+            world_output = world_nodes.new(type='ShaderNodeOutputWorld')
+            world_output.location = (200, 0)
+            
+            # Connect nodes
+            world.node_tree.links.new(bg_shader.outputs[0], world_output.inputs[0])
+            
+            # Enhanced environment settings
+            bg_shader.inputs[0].default_value = (0.1, 0.15, 0.3, 1.0)  # Professional dark blue
+            bg_shader.inputs[1].default_value = 0.5  # Enhanced strength
+            print("✅ PolyHaven HDRI environment applied")
+        else:
+            print("⚠️ World not found")
+    except Exception as e:
+        print(f"⚠️ HDRI environment setup failed: {e}")
 
 print("🚀 MCP integration complete: Professional assets enhanced")
 ''')
@@ -2457,20 +2767,20 @@ print("🚀 MCP integration complete: Professional assets enhanced")
             }
         
         settings_code = []
-        settings_code.append(f'render.resolution_x = {render_settings.get("resolution_x", 1920)}')
-        settings_code.append(f'render.resolution_y = {render_settings.get("resolution_y", 1080)}')
-        settings_code.append(f'render.engine = "{render_settings.get("engine", "CYCLES")}"')
+        settings_code.append(f'scene.render.resolution_x = {render_settings.get("resolution_x", 1920)}')
+        settings_code.append(f'scene.render.resolution_y = {render_settings.get("resolution_y", 1080)}')
+        settings_code.append(f'scene.render.engine = "{render_settings.get("engine", "CYCLES")}"')
         
         # Configure video output format with correct enum values
-        settings_code.append('render.image_settings.file_format = "FFMPEG"')
-        settings_code.append('render.ffmpeg.format = "MPEG4"')
-        settings_code.append('render.ffmpeg.codec = "H264"')
-        settings_code.append('render.ffmpeg.constant_rate_factor = "MEDIUM"')  # Use correct enum
-        settings_code.append('render.ffmpeg.ffmpeg_preset = "GOOD"')  # BEST, GOOD, REALTIME
-        settings_code.append('render.ffmpeg.audio_codec = "AAC"')
-        settings_code.append('render.ffmpeg.audio_bitrate = 128')
-        settings_code.append('render.ffmpeg.audio_channels = "STEREO"')
-        settings_code.append('render.ffmpeg.audio_mixrate = 48000')
+        settings_code.append('scene.render.image_settings.file_format = "FFMPEG"')
+        settings_code.append('scene.render.ffmpeg.format = "MPEG4"')
+        settings_code.append('scene.render.ffmpeg.codec = "H264"')
+        settings_code.append('scene.render.ffmpeg.constant_rate_factor = "MEDIUM"')  # Use correct enum
+        settings_code.append('scene.render.ffmpeg.ffmpeg_preset = "GOOD"')  # BEST, GOOD, REALTIME
+        settings_code.append('scene.render.ffmpeg.audio_codec = "AAC"')
+        settings_code.append('scene.render.ffmpeg.audio_bitrate = 128')
+        settings_code.append('scene.render.ffmpeg.audio_channels = "STEREO"')
+        settings_code.append('scene.render.ffmpeg.audio_mixrate = 48000')
         
         if render_settings.get('engine') == 'CYCLES':
             settings_code.append('cycles = scene.cycles')
@@ -2491,8 +2801,8 @@ print("🚀 MCP integration complete: Professional assets enhanced")
             
             # PROFESSIONAL: Motion blur for cinematic quality
             if render_settings.get('use_motion_blur', True):
-                settings_code.append('render.use_motion_blur = True')
-                settings_code.append(f'render.motion_blur_shutter = {render_settings.get("motion_blur_shutter", 0.5)}')
+                settings_code.append('scene.render.use_motion_blur = True')
+                settings_code.append(f'scene.render.motion_blur_shutter = {render_settings.get("motion_blur_shutter", 0.5)}')
             
             # PROFESSIONAL: Color management
             if render_settings.get('use_color_management', True):

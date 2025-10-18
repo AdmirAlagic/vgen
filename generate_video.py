@@ -73,7 +73,7 @@ def create_enhanced_blender_script(features: Dict, output_path: str) -> str:
     blend_path = temp_dir / "scene.blend"
     
     # Use the save_script method with optimized settings
-    saved_script_path = animator.save_script(str(script_path), blend_path=str(blend_path))
+    saved_script_path = animator.save_script(str(script_path), None, str(blend_path))
     
     print(f"✅ OPTIMIZED mutating cube Blender script created: {saved_script_path}")
     print(f"🎬 Blend file will be saved to: {blend_path}")
@@ -190,7 +190,7 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
     
     # Quality-based settings with correct Blender enum values
     quality_settings = {
-        'ultra_fast': {'samples': 32, 'resolution': (1280, 720), 'crf': 'LOWEST', 'preset': 'REALTIME'},
+        'ultra_fast': {'samples': 32, 'resolution': (720, 480), 'crf': 'LOWEST', 'preset': 'REALTIME'},
         'fast': {'samples': 64, 'resolution': (1280, 720), 'crf': 'VERYLOW', 'preset': 'REALTIME'},
         'balanced': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'GOOD'},
         'high': {'samples': 256, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'},
