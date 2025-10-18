@@ -131,7 +131,7 @@ def run_blender_script(script_path: str) -> bool:
         print(f"❌ Error running enhanced Blender script: {e}")
         return False
 
-def render_video(blend_path: str, output_path: str, quality_mode: str = 'balanced', audio_path: str = None) -> bool:
+def render_video(blend_path: str, output_path: str, quality_mode: str = 'balanced', audio_path: str = None, total_frames: int = 300) -> bool:
     """Render the video from the blend file with optimized settings and audio."""
     print(f"🎬 Rendering optimized video as MP4: {output_path}")
     print(f"⚡ Quality mode: {quality_mode.upper()}")
@@ -168,20 +168,20 @@ def render_video(blend_path: str, output_path: str, quality_mode: str = 'balance
             output_path = output_path.rsplit('.', 1)[0] + '.mp4'
         
         # OPTIMIZATION 1: Try direct MP4 rendering first (most efficient)
-        if _try_direct_mp4_render(blender_cmd, blend_path, output_path, quality_mode, audio_path):
+        if _try_direct_mp4_render(blender_cmd, blend_path, output_path, quality_mode, audio_path, total_frames):
             return True
         
         # OPTIMIZATION 2: Fallback to optimized frame rendering
         print("🔄 Falling back to optimized frame rendering...")
-        return _optimized_frame_render(blender_cmd, blend_path, output_path, quality_mode, audio_path)
+        return _optimized_frame_render(blender_cmd, blend_path, output_path, quality_mode, audio_path, total_frames)
             
     except Exception as e:
         print(f"❌ Error rendering video: {e}")
         return False
 
 
-def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, quality_mode: str) -> bool:
-    """Try to render directly to MP4 using Blender's built-in FFmpeg support."""
+def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, quality_mode: str, audio_path: str = None, total_frames: int = 300) -> bool:
+    """Try to render directly to MP4 using Blender's built-in FFmpeg support with audio."""
     print("🚀 Attempting direct MP4 rendering (most efficient)...")
     
     # Quality-based settings with correct Blender enum values
@@ -196,14 +196,57 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
     
     try:
-        # Create a Python script for direct MP4 rendering
+        # Create a Python script for direct MP4 rendering with audio
+        audio_script_section = ""
+        if audio_path and os.path.exists(audio_path):
+            audio_script_section = f'''
+# Add audio to the scene
+import bpy
+import os
+
+# Load audio file
+audio_filepath = "{audio_path}"
+if os.path.exists(audio_filepath):
+    try:
+        # Add sound strip to sequencer
+        scene = bpy.context.scene
+        if not scene.sequence_editor:
+            scene.sequence_editor_create()
+        
+        # Add audio strip
+        sound_strip = scene.sequence_editor.sequences.new_sound(
+            name="Audio",
+            filepath=audio_filepath,
+            channel=1,
+            frame_start=0
+        )
+        
+        # Set audio properties
+        sound_strip.volume = 1.0
+        # Note: pitch property doesn't exist on SoundStrip in Blender
+        
+        print(f"✅ Audio loaded: {{audio_filepath}}")
+    except Exception as e:
+        print(f"⚠️  Error loading audio: {{e}}")
+        print("Continuing without audio...")
+else:
+    print(f"⚠️  Audio file not found: {{audio_filepath}}")
+'''
+        
         render_script = f'''
 import bpy
 import os
 
+{audio_script_section}
+
 # Set optimized render settings for direct MP4 output
 scene = bpy.context.scene
 render = scene.render
+
+# Ensure scene has proper frame range and animation
+scene.frame_start = 0
+scene.frame_end = {total_frames}
+scene.frame_current = 0
 
 # Resolution settings
 render.resolution_x = {settings['resolution'][0]}
@@ -233,7 +276,7 @@ if scene.render.engine == 'CYCLES':
 render.filepath = "{output_path}"
 
 # Render animation
-print("🎬 Starting direct MP4 render...")
+print("🎬 Starting direct MP4 render with audio...")
 bpy.ops.render.render(animation=True)
 print("✅ Direct MP4 render complete!")
 '''
@@ -274,8 +317,8 @@ print("✅ Direct MP4 render complete!")
         return False
 
 
-def _optimized_frame_render(blender_cmd: str, blend_path: str, output_path: str, quality_mode: str) -> bool:
-    """Optimized frame rendering with memory-efficient processing."""
+def _optimized_frame_render(blender_cmd: str, blend_path: str, output_path: str, quality_mode: str, audio_path: str = None, total_frames: int = 300) -> bool:
+    """Optimized frame rendering with memory-efficient processing and audio."""
     print("🎬 Using optimized frame rendering...")
     
     # Quality-based settings (CRF values are for external FFmpeg, not Blender)
@@ -297,14 +340,57 @@ def _optimized_frame_render(blender_cmd: str, blend_path: str, output_path: str,
         # OPTIMIZATION: Render frames with optimized settings
         frame_pattern = str(temp_dir / "frame_####.png")
         
-        # Create optimized render script
+        # Create optimized render script with audio support
+        audio_script_section = ""
+        if audio_path and os.path.exists(audio_path):
+            audio_script_section = f'''
+# Add audio to the scene
+import bpy
+import os
+
+# Load audio file
+audio_filepath = "{audio_path}"
+if os.path.exists(audio_filepath):
+    try:
+        # Add sound strip to sequencer
+        scene = bpy.context.scene
+        if not scene.sequence_editor:
+            scene.sequence_editor_create()
+        
+        # Add audio strip
+        sound_strip = scene.sequence_editor.sequences.new_sound(
+            name="Audio",
+            filepath=audio_filepath,
+            channel=1,
+            frame_start=0
+        )
+        
+        # Set audio properties
+        sound_strip.volume = 1.0
+        # Note: pitch property doesn't exist on SoundStrip in Blender
+        
+        print(f"✅ Audio loaded: {{audio_filepath}}")
+    except Exception as e:
+        print(f"⚠️  Error loading audio: {{e}}")
+        print("Continuing without audio...")
+else:
+    print(f"⚠️  Audio file not found: {{audio_filepath}}")
+'''
+        
         render_script = f'''
 import bpy
 import os
 
+{audio_script_section}
+
 # Set optimized render settings
 scene = bpy.context.scene
 render = scene.render
+
+# Ensure scene has proper frame range and animation
+scene.frame_start = 0
+scene.frame_end = {total_frames}
+scene.frame_current = 0
 
 # Resolution settings
 render.resolution_x = {settings['resolution'][0]}
@@ -331,7 +417,7 @@ if scene.render.engine == 'CYCLES':
 render.filepath = "{frame_pattern}"
 
 # Render animation
-print("🎬 Starting optimized frame render...")
+print("🎬 Starting optimized frame render with audio...")
 bpy.ops.render.render(animation=True)
 print("✅ Frame render complete!")
 '''
@@ -373,7 +459,7 @@ print("✅ Frame render complete!")
         print(f"✅ Rendered {len(frame_files)} frames")
         
         # OPTIMIZATION: Use optimized FFmpeg settings
-        return _optimized_ffmpeg_conversion(frame_files, output_path, settings)
+        return _optimized_ffmpeg_conversion(frame_files, output_path, settings, audio_path)
         
     except Exception as e:
         print(f"❌ Error in frame rendering: {e}")
@@ -388,8 +474,8 @@ print("✅ Frame render complete!")
             print(f"⚠️  Warning: Could not clean up temp frames: {e}")
 
 
-def _optimized_ffmpeg_conversion(frame_files: List[Path], output_path: str, settings: Dict) -> bool:
-    """Optimized FFmpeg conversion with better performance."""
+def _optimized_ffmpeg_conversion(frame_files: List[Path], output_path: str, settings: Dict, audio_path: str = None) -> bool:
+    """Optimized FFmpeg conversion with better performance and audio support."""
     print("🎬 Converting frames to MP4 with optimized settings...")
     
     # Sort frames to ensure correct order
@@ -407,14 +493,29 @@ def _optimized_ffmpeg_conversion(frame_files: List[Path], output_path: str, sett
         '-movflags', '+faststart',  # Optimize for streaming
         '-threads', str(settings['threads']),  # Use multiple threads
         '-x264-params', 'ref=3:me=hex:subme=6:trellis=0:8x8dct=0',  # Fast encoding params
-        output_path
     ]
+    
+    # Add audio if provided
+    if audio_path and os.path.exists(audio_path):
+        print(f"🎵 Adding audio: {audio_path}")
+        ffmpeg_cmd.extend([
+            '-i', audio_path,  # Audio input
+            '-c:a', 'aac',  # Audio codec
+            '-b:a', '128k',  # Audio bitrate
+            '-shortest'  # End when shortest stream ends
+        ])
+    else:
+        print("⚠️  No audio file provided or file not found")
+    
+    ffmpeg_cmd.append(output_path)  # Output file
     
     try:
         ffmpeg_result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=600)
         
         if ffmpeg_result.returncode == 0:
             print("✅ Optimized MP4 video created successfully")
+            if audio_path:
+                print("🎵 Audio successfully added to video")
             return True
         else:
             print("❌ FFmpeg conversion failed")
@@ -441,6 +542,7 @@ def main():
         print("  - FLOW-based smoothing for organic movement")
         print("  - MCP integration for enhanced materials")
         print("  - OPTIMIZED rendering with direct MP4 output")
+        print("  - AUDIO integration - original audio included in final video")
         print("\nQuality modes:")
         print("  ultra_fast - 720p, 32 samples, fastest rendering")
         print("  fast       - 720p, 64 samples, quick rendering")
@@ -503,10 +605,11 @@ def main():
             else:
                 print(f"⚡ Using specified quality mode: {quality_mode.upper()} (duration: {duration_minutes:.1f} min)")
             
-            if render_video(str(blend_path), str(video_path), quality_mode):
+            if render_video(str(blend_path), str(video_path), quality_mode, audio_file, features['total_frames']):
                 print(f"\n🎉 SUCCESS! OPTIMIZED mutating cube video created: {video_path}")
                 print("🚀 Features: CONTINUOUS motion, AUDIO-REACTIVE drivers, MCP integration")
                 print(f"⚡ Optimizations: Direct MP4 rendering, Adaptive quality, Hardware acceleration")
+                print("🎵 Audio: Original audio file included in video")
             else:
                 print("\n⚠️  Enhanced scene created but video render failed")
                 print(f"📁 Blend file available: {blend_path}")

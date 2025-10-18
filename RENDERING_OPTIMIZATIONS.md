@@ -72,12 +72,21 @@ This document outlines the major optimizations implemented to reduce resource us
 - Auto-tiling: Enabled (memory efficiency)
 - Denoiser: OPTIX for high samples, OpenImageDenoise for lower samples
 
-### 6. Enhanced Error Handling & Fallbacks 🛡️
+### 6. Audio Integration 🎵
+**Problem**: Previous system only generated video without audio.
+
+**Solution**:
+- **Direct MP4 rendering**: Audio added via Blender sequencer
+- **Fallback rendering**: Audio added via FFmpeg during conversion
+- **Automatic audio sync**: Original audio file included in final video
+- **High-quality audio**: AAC codec, 128k bitrate
+
+### 7. Enhanced Error Handling & Fallbacks 🛡️
 **Problem**: Single rendering method with no fallbacks.
 
 **Solution**:
-- Primary: Direct MP4 rendering
-- Fallback: Optimized frame rendering
+- Primary: Direct MP4 rendering with audio
+- Fallback: Optimized frame rendering with audio
 - Better error messages and recovery
 - Timeout handling (20 minutes max)
 
@@ -135,14 +144,15 @@ render_video(blend_path, output_path, quality_mode='balanced')
 ## Technical Details
 
 ### Direct MP4 Rendering Process
-1. Create optimized Blender Python script
-2. Set FFmpeg output format directly in Blender
-3. Render animation directly to MP4 file
-4. Clean up temporary script
+1. Create optimized Blender Python script with audio support
+2. Add original audio file to Blender sequencer
+3. Set FFmpeg output format directly in Blender
+4. Render animation with audio directly to MP4 file
+5. Clean up temporary script
 
 ### Fallback Frame Rendering Process
-1. Render frames with optimized PNG settings
-2. Use optimized FFmpeg conversion
+1. Render frames with optimized PNG settings and audio in sequencer
+2. Use optimized FFmpeg conversion with audio input
 3. Multi-threaded processing
 4. Automatic cleanup
 
