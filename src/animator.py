@@ -41,7 +41,7 @@ class MutatingCubeAnimator:
         self.quality_configs = {
             'ultra_fast': {'subdivision': 1, 'samples': 32, 'keyframe_density': 30, 'max_bounces': 4},
             'fast': {'subdivision': 1, 'samples': 64, 'keyframe_density': 40, 'max_bounces': 5},
-            'ultra': {'subdivision': 3, 'samples': 256, 'keyframe_density': 80, 'max_bounces': 8},  # Reduced from 512
+            'ultra': {'subdivision': 2, 'samples': 128, 'keyframe_density': 60, 'max_bounces': 6},  # Optimized for stability
             'high': {'subdivision': 2, 'samples': 128, 'keyframe_density': 60, 'max_bounces': 6},  # Reduced from 256
             'medium': {'subdivision': 1, 'samples': 64, 'keyframe_density': 40, 'max_bounces': 4},  # Reduced from 128
             'low': {'subdivision': 0, 'samples': 32, 'keyframe_density': 20, 'max_bounces': 3}     # Reduced from 64
@@ -63,19 +63,38 @@ class MutatingCubeAnimator:
             'Displace.003': {'range': (-0.4, 0.4), 'pattern': 'low_freq', 'sensitivity': 1.0, 'layer': 'micro'}
         }
         
-        # Enhanced audio-reactive mapping
+        # ENHANCED audio-reactive mapping with better frequency response
         self.audio_mapping = {
+            # Low frequencies - dramatic base deformations
             'kick_energy': ['SimpleDeform', 'Displace.003', 'Shrinkwrap.001'],
             'bass_energy': ['Displace', 'Shrinkwrap.001', 'SimpleDeform.001'],
+            'sub_bass_energy': ['SimpleDeform', 'Displace.003'],
+            'mid_bass_energy': ['Displace', 'Shrinkwrap.001'],
+            
+            # Mid frequencies - rhythmic and vocal responses
             'snare_energy': ['SimpleDeform.001', 'Displace.002', 'Wave'],
-            'hihat_energy': ['Displace.001', 'Shrinkwrap.002', 'Wave'],
+            'mid_energy': ['SimpleDeform.001', 'Displace.002'],
+            'low_mid_energy': ['Displace.002', 'Shrinkwrap.001'],
             'vocal_energy': ['Wave', 'Shrinkwrap', 'Displace.001'],
+            'high_mid_energy': ['Wave', 'Displace.001'],
+            
+            # High frequencies - detailed surface variations
+            'hihat_energy': ['Displace.001', 'Shrinkwrap.002', 'Wave'],
+            'presence_energy': ['Displace.001', 'Shrinkwrap.002'],
+            'brilliance_energy': ['Displace.001', 'Shrinkwrap.002'],
             'air_energy': ['Displace.001', 'Shrinkwrap.002'],
+            'ultra_high_energy': ['Displace.001'],
+            
+            # Beat and onset patterns
             'beat_strength': ['SimpleDeform', 'SimpleDeform.001', 'Displace'],
             'onset_strength': ['Displace.002', 'Displace.003', 'Shrinkwrap.001'],
-            'spectral_centroid': ['Wave', 'Displace.001'],
+            
+            # Spectral features for complex responses
+            'spectral_centroid': ['Wave', 'Displace.001', 'Shrinkwrap'],
             'spectral_contrast': ['Shrinkwrap', 'Shrinkwrap.001', 'SimpleDeform.001'],
-            'spectral_flux': ['Displace.001', 'Displace.002', 'Wave']
+            'spectral_flux': ['Displace.001', 'Displace.002', 'Wave'],
+            'spectral_rolloff': ['Shrinkwrap.002', 'Displace.001'],
+            'rms_energy': ['Displace.003', 'SimpleDeform', 'Shrinkwrap.001']
         }
         
         # Enhanced color animation system with musical responsiveness
@@ -117,12 +136,31 @@ class MutatingCubeAnimator:
                 (0.6, 0.2, 0.2, 1.0)   # Bright crimson
             ],
             'frequency_colors': {
-                'kick': (0.8, 0.1, 0.3, 1.0),      # Deep red for kick
-                'bass': (0.4, 0.1, 0.8, 1.0),      # Deep purple for bass
-                'snare': (0.8, 0.8, 0.2, 1.0),     # Bright yellow for snare
-                'hihat': (0.2, 0.8, 1.0, 1.0),     # Bright cyan for hihat
-                'vocal': (0.8, 0.3, 0.8, 1.0),     # Bright magenta for vocal
-                'air': (0.3, 0.8, 0.8, 1.0)        # Bright teal for air
+                # Low frequencies - warm, deep colors
+                'kick': (0.9, 0.2, 0.1, 1.0),      # Deep red for kick
+                'bass': (0.5, 0.1, 0.8, 1.0),      # Deep purple for bass
+                'sub_bass': (0.8, 0.1, 0.2, 1.0),  # Dark crimson for sub-bass
+                'mid_bass': (0.6, 0.2, 0.7, 1.0),  # Purple-red for mid-bass
+                
+                # Mid frequencies - bright, energetic colors
+                'snare': (1.0, 0.9, 0.1, 1.0),     # Bright yellow for snare
+                'mid': (0.8, 0.6, 0.1, 1.0),        # Golden yellow for mid
+                'low_mid': (0.9, 0.5, 0.1, 1.0),   # Orange-yellow for low-mid
+                'vocal': (0.9, 0.3, 0.8, 1.0),     # Bright magenta for vocal
+                'high_mid': (0.8, 0.4, 0.9, 1.0),  # Pink-purple for high-mid
+                
+                # High frequencies - cool, crisp colors
+                'hihat': (0.1, 0.9, 1.0, 1.0),      # Bright cyan for hihat
+                'presence': (0.2, 0.8, 1.0, 1.0),   # Sky blue for presence
+                'brilliance': (0.3, 0.7, 1.0, 1.0), # Light blue for brilliance
+                'air': (0.4, 0.6, 0.9, 1.0),        # Soft blue for air
+                'ultra_high': (0.5, 0.5, 0.8, 1.0), # Lavender for ultra-high
+                
+                # Special frequency combinations
+                'beat_drop': (1.0, 0.1, 0.1, 1.0),  # Bright red for beat drops
+                'build_up': (0.8, 0.8, 0.1, 1.0),   # Bright yellow for build-ups
+                'breakdown': (0.1, 0.1, 0.8, 1.0),  # Deep blue for breakdowns
+                'transition': (0.6, 0.1, 0.6, 1.0)  # Purple for transitions
             }
         }
         
@@ -148,7 +186,7 @@ class MutatingCubeAnimator:
         self.continuous_flow = True  # Enable continuous flow interpolation
         
     def generate_smooth_keyframes(self, shape_key_name: str) -> List[Tuple[float, float]]:
-        """Generate optimized keyframes with advanced smoothing and responsiveness."""
+        """Generate optimized keyframes with enhanced audio responsiveness."""
         keyframes = []
         
         # Get shape key data from enhanced audio analysis
@@ -193,10 +231,72 @@ class MutatingCubeAnimator:
             
             print(f"✅ Generated {len(keyframes)} dynamic keyframes for {shape_key_name}")
         else:
-            print(f"⚠️  No shape key data for {shape_key_name}, using fallback patterns")
-            # Fallback to optimized patterns
-            keyframes = self._generate_optimized_fallback_keyframes(shape_key_name)
+            # ENHANCED FALLBACK: Generate audio-reactive patterns using available audio data
+            print(f"⚠️  No shape key data for {shape_key_name}, generating audio-reactive fallback")
+            keyframes = self._generate_audio_reactive_fallback_keyframes(shape_key_name)
         
+        return keyframes
+    
+    def _generate_audio_reactive_fallback_keyframes(self, shape_key_name: str) -> List[Tuple[float, float]]:
+        """Generate audio-reactive fallback keyframes using available audio data."""
+        keyframes = []
+        pattern = self.shape_keys[shape_key_name]['pattern']
+        min_val, max_val = self.shape_keys[shape_key_name]['range']
+        sensitivity = self.shape_keys[shape_key_name]['sensitivity']
+        
+        frame_step = max(1, self.total_frames // self.config['keyframe_density'])
+        
+        # Get audio data for this shape key based on mapping
+        audio_data = []
+        for audio_feature, shape_keys in self.audio_mapping.items():
+            if shape_key_name in shape_keys:
+                if audio_feature in self.features:
+                    audio_data.append(self.features[audio_feature])
+        
+        for i in range(0, self.total_frames, frame_step):
+            frame = min(i, self.total_frames - 1)
+            progress = frame / self.total_frames
+            
+            # Generate pattern-specific values with audio influence
+            if pattern == 'burst':
+                value = self._generate_optimized_burst_pattern(progress, min_val, max_val)
+            elif pattern == 'rhythmic':
+                value = self._generate_optimized_rhythmic_pattern(progress, min_val, max_val)
+            elif pattern == 'gradual':
+                value = self._generate_optimized_gradual_pattern(progress, min_val, max_val)
+            elif pattern == 'pulsing':
+                value = self._generate_optimized_pulsing_pattern(progress, min_val, max_val)
+            elif pattern == 'subtle':
+                value = self._generate_optimized_subtle_pattern(progress, min_val, max_val)
+            elif pattern == 'oscillating':
+                value = self._generate_optimized_oscillating_pattern(progress, min_val, max_val)
+            elif pattern == 'spiky':
+                value = self._generate_optimized_spiky_pattern(progress, min_val, max_val)
+            elif pattern == 'high_freq':
+                value = self._generate_optimized_high_freq_pattern(progress, min_val, max_val)
+            elif pattern == 'mid_freq':
+                value = self._generate_optimized_mid_freq_pattern(progress, min_val, max_val)
+            elif pattern == 'low_freq':
+                value = self._generate_optimized_low_freq_pattern(progress, min_val, max_val)
+            else:
+                value = self._generate_optimized_default_pattern(progress, min_val, max_val)
+            
+            # Apply audio influence if available
+            if audio_data:
+                audio_influence = 0.0
+                for data in audio_data:
+                    if frame < len(data):
+                        audio_influence += data[frame]
+                audio_influence /= len(audio_data)
+                # Blend pattern with audio influence
+                value = value * 0.7 + audio_influence * 0.3
+            
+            # Apply sensitivity
+            value *= sensitivity
+            
+            keyframes.append((float(frame), float(value)))
+        
+        print(f"✅ Generated {len(keyframes)} audio-reactive fallback keyframes for {shape_key_name}")
         return keyframes
     
     def _apply_advanced_smoothing(self, values: List[float], shape_key_name: str) -> List[float]:
@@ -607,42 +707,53 @@ print("✅ Audio-reactive drivers setup complete")
         return min_val + (max_val - min_val) * (0.5 + 0.5 * pattern)
     
     def generate_advanced_color_animations(self) -> str:
-        """Generate enhanced musical-responsive color animations."""
+        """Generate enhanced musical-responsive color animations with frequency-specific responses."""
         color_animation_code = []
         
         # Get audio features for color reactivity
         audio_features = self.features.get('audio_features', {})
         
         color_animation_code.append('''
-# ENHANCED MUSICAL-RESPONSIVE COLOR ANIMATION SYSTEM
-print("🎨 Creating enhanced musical-responsive color animations...")
+# ENHANCED FREQUENCY-RESPONSIVE COLOR ANIMATION SYSTEM
+print("🎨 Creating enhanced frequency-responsive color animations...")
 
 # Create enhanced material action for dynamic color changes
-material_action = bpy.data.actions.new(name="MusicalColorAnimation")
+material_action = bpy.data.actions.new(name="FrequencyResponsiveColorAnimation")
 material.animation_data_create()
 material.animation_data.action = material_action
 
 # Get audio feature data for color reactivity
 audio_features = ''' + json.dumps(audio_features, indent=2) + '''
 
-# Enhanced color animation parameters
-color_transition_speed = 1.0  # Speed of color transitions
-color_intensity_boost = 1.5  # Intensity multiplier for audio-reactive colors
-color_smoothness = 0.8       # Smoothness of color transitions
-frequency_color_mixing = 0.6  # Mix frequency-based colors
-musical_responsiveness = 0.8  # Musical responsiveness factor
+# Enhanced color animation parameters with frequency-specific responsiveness
+color_transition_speed = 1.2  # Speed of color transitions
+color_intensity_boost = 2.0  # Intensity multiplier for audio-reactive colors
+color_smoothness = 0.9       # Smoothness of color transitions
+frequency_color_mixing = 0.8  # Mix frequency-based colors
+musical_responsiveness = 1.0  # Musical responsiveness factor
+frequency_dominance = 0.7    # How much frequency colors dominate over time-based colors
+beat_response_intensity = 1.5 # Intensity of beat-responsive color changes
 
 # Generate dynamic color keyframes based on audio and time
 if audio_features and len(audio_features) > 0:
-    # Get enhanced audio data arrays
+    # Get enhanced audio data arrays with all frequency bands
     kick_data = audio_features.get('kick_energy', [0.0] * ''' + str(self.total_frames) + ''')
     bass_data = audio_features.get('bass_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    sub_bass_data = audio_features.get('sub_bass_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    mid_bass_data = audio_features.get('mid_bass_energy', [0.0] * ''' + str(self.total_frames) + ''')
     snare_data = audio_features.get('snare_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    mid_data = audio_features.get('mid_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    low_mid_data = audio_features.get('low_mid_energy', [0.0] * ''' + str(self.total_frames) + ''')
     hihat_data = audio_features.get('hihat_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    presence_data = audio_features.get('presence_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    brilliance_data = audio_features.get('brilliance_energy', [0.0] * ''' + str(self.total_frames) + ''')
     vocal_data = audio_features.get('vocal_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    high_mid_data = audio_features.get('high_mid_energy', [0.0] * ''' + str(self.total_frames) + ''')
     air_data = audio_features.get('air_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    ultra_high_data = audio_features.get('ultra_high_energy', [0.0] * ''' + str(self.total_frames) + ''')
     spectral_data = audio_features.get('spectral_centroid', [0.0] * ''' + str(self.total_frames) + ''')
     beat_data = audio_features.get('beat_strength', [0.0] * ''' + str(self.total_frames) + ''')
+    onset_data = audio_features.get('onset_strength', [0.0] * ''' + str(self.total_frames) + ''')
     
     # Enhanced color palette with frequency-specific colors
     primary_palette = [
@@ -658,14 +769,33 @@ if audio_features and len(audio_features) > 0:
         (0.3, 0.1, 0.1, 1.0)   # Dark crimson
     ]
     
-    # Frequency-specific color mapping
+    # Enhanced frequency-specific color mapping
     frequency_colors = {
-        'kick': (0.8, 0.1, 0.3, 1.0),      # Deep red for kick
-        'bass': (0.4, 0.1, 0.8, 1.0),      # Deep purple for bass
-        'snare': (0.8, 0.8, 0.2, 1.0),     # Bright yellow for snare
-        'hihat': (0.2, 0.8, 1.0, 1.0),     # Bright cyan for hihat
-        'vocal': (0.8, 0.3, 0.8, 1.0),     # Bright magenta for vocal
-        'air': (0.3, 0.8, 0.8, 1.0)        # Bright teal for air
+        # Low frequencies - warm, deep colors
+        'kick': (0.9, 0.2, 0.1, 1.0),      # Deep red for kick
+        'bass': (0.5, 0.1, 0.8, 1.0),      # Deep purple for bass
+        'sub_bass': (0.8, 0.1, 0.2, 1.0),  # Dark crimson for sub-bass
+        'mid_bass': (0.6, 0.2, 0.7, 1.0),  # Purple-red for mid-bass
+        
+        # Mid frequencies - bright, energetic colors
+        'snare': (1.0, 0.9, 0.1, 1.0),     # Bright yellow for snare
+        'mid': (0.8, 0.6, 0.1, 1.0),        # Golden yellow for mid
+        'low_mid': (0.9, 0.5, 0.1, 1.0),   # Orange-yellow for low-mid
+        'vocal': (0.9, 0.3, 0.8, 1.0),     # Bright magenta for vocal
+        'high_mid': (0.8, 0.4, 0.9, 1.0),  # Pink-purple for high-mid
+        
+        # High frequencies - cool, crisp colors
+        'hihat': (0.1, 0.9, 1.0, 1.0),      # Bright cyan for hihat
+        'presence': (0.2, 0.8, 1.0, 1.0),   # Sky blue for presence
+        'brilliance': (0.3, 0.7, 1.0, 1.0), # Light blue for brilliance
+        'air': (0.4, 0.6, 0.9, 1.0),        # Soft blue for air
+        'ultra_high': (0.5, 0.5, 0.8, 1.0), # Lavender for ultra-high
+        
+        # Special frequency combinations
+        'beat_drop': (1.0, 0.1, 0.1, 1.0),  # Bright red for beat drops
+        'build_up': (0.8, 0.8, 0.1, 1.0),   # Bright yellow for build-ups
+        'breakdown': (0.1, 0.1, 0.8, 1.0),  # Deep blue for breakdowns
+        'transition': (0.6, 0.1, 0.6, 1.0)  # Purple for transitions
     }
     
     # Create base color animation curves
@@ -694,12 +824,21 @@ if audio_features and len(audio_features) > 0:
         # Get enhanced audio values for this frame
         kick_val = kick_data[min(frame, len(kick_data) - 1)] if kick_data else 0.0
         bass_val = bass_data[min(frame, len(bass_data) - 1)] if bass_data else 0.0
+        sub_bass_val = sub_bass_data[min(frame, len(sub_bass_data) - 1)] if sub_bass_data else 0.0
+        mid_bass_val = mid_bass_data[min(frame, len(mid_bass_data) - 1)] if mid_bass_data else 0.0
         snare_val = snare_data[min(frame, len(snare_data) - 1)] if snare_data else 0.0
+        mid_val = mid_data[min(frame, len(mid_data) - 1)] if mid_data else 0.0
+        low_mid_val = low_mid_data[min(frame, len(low_mid_data) - 1)] if low_mid_data else 0.0
         hihat_val = hihat_data[min(frame, len(hihat_data) - 1)] if hihat_data else 0.0
+        presence_val = presence_data[min(frame, len(presence_data) - 1)] if presence_data else 0.0
+        brilliance_val = brilliance_data[min(frame, len(brilliance_data) - 1)] if brilliance_data else 0.0
         vocal_val = vocal_data[min(frame, len(vocal_data) - 1)] if vocal_data else 0.0
+        high_mid_val = high_mid_data[min(frame, len(high_mid_data) - 1)] if high_mid_data else 0.0
         air_val = air_data[min(frame, len(air_data) - 1)] if air_data else 0.0
+        ultra_high_val = ultra_high_data[min(frame, len(ultra_high_data) - 1)] if ultra_high_data else 0.0
         spectral_val = spectral_data[min(frame, len(spectral_data) - 1)] if spectral_data else 0.0
         beat_val = beat_data[min(frame, len(beat_data) - 1)] if beat_data else 0.0
+        onset_val = onset_data[min(frame, len(onset_data) - 1)] if onset_data else 0.0
         
         # Calculate enhanced dynamic color based on audio and time
         # Time-based color cycling with musical responsiveness
@@ -707,32 +846,73 @@ if audio_features and len(audio_features) > 0:
         next_color_index = (time_color_index + 1) % len(primary_palette)
         time_blend = (progress * len(primary_palette) * color_transition_speed) % 1.0
         
-        # Enhanced audio-reactive color calculation
-        audio_intensity = (kick_val + bass_val + snare_val + hihat_val + vocal_val + air_val) / 6.0
+        # Enhanced audio-reactive color calculation with frequency-specific weighting
+        # Low frequency dominance (kick, bass, sub-bass)
+        low_freq_intensity = (kick_val * 1.5 + bass_val * 1.2 + sub_bass_val * 1.0 + mid_bass_val * 0.8) / 4.0
+        
+        # Mid frequency dominance (snare, mid, vocal)
+        mid_freq_intensity = (snare_val * 1.3 + mid_val * 1.1 + low_mid_val * 1.0 + vocal_val * 1.2 + high_mid_val * 0.9) / 5.0
+        
+        # High frequency dominance (hihat, presence, brilliance, air)
+        high_freq_intensity = (hihat_val * 1.1 + presence_val * 1.0 + brilliance_val * 0.9 + air_val * 0.8 + ultra_high_val * 0.7) / 5.0
+        
+        # Overall audio intensity
+        audio_intensity = (low_freq_intensity + mid_freq_intensity + high_freq_intensity) / 3.0
         spectral_shift = spectral_val * 0.6
-        beat_influence = beat_val * 0.4
+        beat_influence = beat_val * beat_response_intensity
+        onset_influence = onset_val * 0.8
         
-        # Frequency-specific color mixing
-        freq_r = (kick_val * frequency_colors['kick'][0] + 
-                 bass_val * frequency_colors['bass'][0] + 
-                 snare_val * frequency_colors['snare'][0] + 
-                 hihat_val * frequency_colors['hihat'][0] + 
-                 vocal_val * frequency_colors['vocal'][0] + 
-                 air_val * frequency_colors['air'][0]) / 6.0
+        # Enhanced frequency-specific color mixing with weighted contributions
+        freq_r = (
+            kick_val * frequency_colors['kick'][0] * 1.5 +
+            bass_val * frequency_colors['bass'][0] * 1.2 +
+            sub_bass_val * frequency_colors['sub_bass'][0] * 1.0 +
+            mid_bass_val * frequency_colors['mid_bass'][0] * 0.8 +
+            snare_val * frequency_colors['snare'][0] * 1.3 +
+            mid_val * frequency_colors['mid'][0] * 1.1 +
+            low_mid_val * frequency_colors['low_mid'][0] * 1.0 +
+            vocal_val * frequency_colors['vocal'][0] * 1.2 +
+            high_mid_val * frequency_colors['high_mid'][0] * 0.9 +
+            hihat_val * frequency_colors['hihat'][0] * 1.1 +
+            presence_val * frequency_colors['presence'][0] * 1.0 +
+            brilliance_val * frequency_colors['brilliance'][0] * 0.9 +
+            air_val * frequency_colors['air'][0] * 0.8 +
+            ultra_high_val * frequency_colors['ultra_high'][0] * 0.7
+        ) / 14.0
         
-        freq_g = (kick_val * frequency_colors['kick'][1] + 
-                 bass_val * frequency_colors['bass'][1] + 
-                 snare_val * frequency_colors['snare'][1] + 
-                 hihat_val * frequency_colors['hihat'][1] + 
-                 vocal_val * frequency_colors['vocal'][1] + 
-                 air_val * frequency_colors['air'][1]) / 6.0
+        freq_g = (
+            kick_val * frequency_colors['kick'][1] * 1.5 +
+            bass_val * frequency_colors['bass'][1] * 1.2 +
+            sub_bass_val * frequency_colors['sub_bass'][1] * 1.0 +
+            mid_bass_val * frequency_colors['mid_bass'][1] * 0.8 +
+            snare_val * frequency_colors['snare'][1] * 1.3 +
+            mid_val * frequency_colors['mid'][1] * 1.1 +
+            low_mid_val * frequency_colors['low_mid'][1] * 1.0 +
+            vocal_val * frequency_colors['vocal'][1] * 1.2 +
+            high_mid_val * frequency_colors['high_mid'][1] * 0.9 +
+            hihat_val * frequency_colors['hihat'][1] * 1.1 +
+            presence_val * frequency_colors['presence'][1] * 1.0 +
+            brilliance_val * frequency_colors['brilliance'][1] * 0.9 +
+            air_val * frequency_colors['air'][1] * 0.8 +
+            ultra_high_val * frequency_colors['ultra_high'][1] * 0.7
+        ) / 14.0
         
-        freq_b = (kick_val * frequency_colors['kick'][2] + 
-                 bass_val * frequency_colors['bass'][2] + 
-                 snare_val * frequency_colors['snare'][2] + 
-                 hihat_val * frequency_colors['hihat'][2] + 
-                 vocal_val * frequency_colors['vocal'][2] + 
-                 air_val * frequency_colors['air'][2]) / 6.0
+        freq_b = (
+            kick_val * frequency_colors['kick'][2] * 1.5 +
+            bass_val * frequency_colors['bass'][2] * 1.2 +
+            sub_bass_val * frequency_colors['sub_bass'][2] * 1.0 +
+            mid_bass_val * frequency_colors['mid_bass'][2] * 0.8 +
+            snare_val * frequency_colors['snare'][2] * 1.3 +
+            mid_val * frequency_colors['mid'][2] * 1.1 +
+            low_mid_val * frequency_colors['low_mid'][2] * 1.0 +
+            vocal_val * frequency_colors['vocal'][2] * 1.2 +
+            high_mid_val * frequency_colors['high_mid'][2] * 0.9 +
+            hihat_val * frequency_colors['hihat'][2] * 1.1 +
+            presence_val * frequency_colors['presence'][2] * 1.0 +
+            brilliance_val * frequency_colors['brilliance'][2] * 0.9 +
+            air_val * frequency_colors['air'][2] * 0.8 +
+            ultra_high_val * frequency_colors['ultra_high'][2] * 0.7
+        ) / 14.0
         
         # Blend colors based on time and audio with enhanced mixing
         base_color = primary_palette[time_color_index]
@@ -743,10 +923,10 @@ if audio_features and len(audio_features) > 0:
         g = base_color[1] + (next_color[1] - base_color[1]) * time_blend
         b = base_color[2] + (next_color[2] - base_color[2]) * time_blend
         
-        # Apply enhanced audio-reactive color shifts
-        r += (kick_val * 0.4) + (spectral_shift * 0.3) + (beat_influence * 0.2) + (freq_r * frequency_color_mixing)
-        g += (vocal_val * 0.4) + (spectral_shift * 0.2) + (beat_influence * 0.1) + (freq_g * frequency_color_mixing)
-        b += (bass_val * 0.4) + (spectral_shift * 0.4) + (beat_influence * 0.3) + (freq_b * frequency_color_mixing)
+        # Apply enhanced audio-reactive color shifts with frequency dominance
+        r += (freq_r * frequency_dominance) + (spectral_shift * 0.3) + (beat_influence * 0.2) + (onset_influence * 0.1)
+        g += (freq_g * frequency_dominance) + (spectral_shift * 0.2) + (beat_influence * 0.1) + (onset_influence * 0.1)
+        b += (freq_b * frequency_dominance) + (spectral_shift * 0.4) + (beat_influence * 0.3) + (onset_influence * 0.2)
         
         # Apply musical responsiveness factor
         r *= musical_responsiveness
@@ -979,6 +1159,13 @@ print("🎨 MCP enhancements complete")
         
         # Generate shape key names list for the script
         shape_key_names_list = list(self.shape_keys.keys())
+        
+        # Calculate dynamic orbit radius for camera animation
+        orbit_radius = 8.0
+        padding_factor = 1.2
+        # Estimate cube size (will be calculated in the script)
+        estimated_cube_size = 2.0  # Default cube size
+        dynamic_orbit_radius = max(orbit_radius, estimated_cube_size * padding_factor)
         
         script_content = f'''#!/usr/bin/env python3
 """
@@ -1228,15 +1415,90 @@ for fcurve in cube.animation_data.action.fcurves:
 
 print("✅ Subtle rotation animation added")
 
-# Setup professional camera
-bpy.ops.object.camera_add(location=(6, -6, 4))
-camera = bpy.context.active_object
-camera.rotation_euler = (math.radians(60), 0, math.radians(45))
+# ENHANCED CAMERA MOVEMENT SYSTEM: Slow rotation with model tracking
+print("📹 Setting up enhanced camera movement system...")
 
-# Set camera as active
-scene.camera = camera
+# Get the main camera (Camera.001 is the professional one)
+main_camera = bpy.data.objects.get("Camera.001")
+if not main_camera:
+    main_camera = bpy.data.objects.get("Camera")
 
-print("✅ Professional camera setup")
+if main_camera:
+    # Create camera animation action
+    camera_action = bpy.data.actions.new(name="EnhancedCameraMovement")
+    main_camera.animation_data_create()
+    main_camera.animation_data.action = camera_action
+    
+    # Camera movement parameters
+    orbit_radius = 8.0  # Distance from center
+    orbit_height = 4.0  # Height above center
+    orbit_speed = 0.5   # Slow rotation speed (degrees per frame)
+    padding_factor = 1.2  # Extra padding to ensure model stays in view
+    
+    # Calculate bounding box of the cube for dynamic framing
+    cube_bbox = cube.bound_box
+    cube_size = max(
+        abs(cube_bbox[6][0] - cube_bbox[0][0]),  # X size
+        abs(cube_bbox[6][1] - cube_bbox[0][1]),  # Y size
+        abs(cube_bbox[6][2] - cube_bbox[0][2])   # Z size
+    )
+    
+    # Dynamic orbit radius based on cube size
+    dynamic_orbit_radius = max(orbit_radius, cube_size * padding_factor)
+    
+    print(f"📹 Camera orbit radius: {dynamic_orbit_radius:.1f} units")
+    
+    # Create camera position keyframes for smooth orbital motion
+    frame_step = max(1, {self.total_frames} // 60)  # 60 keyframes for smooth motion
+    
+    for i in range(0, {self.total_frames}, frame_step):
+        frame = min(i, {self.total_frames} - 1)
+        progress = frame / {self.total_frames}
+        
+        # Calculate orbital position
+        angle = progress * 2 * math.pi * orbit_speed  # Full rotation over duration
+        x = {dynamic_orbit_radius} * math.cos(angle)
+        y = {dynamic_orbit_radius} * math.sin(angle)
+        z = orbit_height
+        
+        # Set camera position
+        main_camera.location = (x, y, z)
+        main_camera.keyframe_insert(data_path="location", frame=frame)
+        
+        # Calculate look-at direction (always point at cube center)
+        look_direction = mathutils.Vector((0, 0, 0)) - mathutils.Vector(main_camera.location)
+        look_direction.normalize()
+        
+        # Convert to rotation (simplified look-at)
+        camera_rotation = look_direction.to_track_quat('-Z', 'Y')
+        main_camera.rotation_euler = camera_rotation.to_euler()
+        main_camera.keyframe_insert(data_path="rotation_euler", frame=frame)
+    
+    # Apply smooth interpolation to camera animation
+    for fcurve in camera_action.fcurves:
+        for keyframe in fcurve.keyframe_points:
+            keyframe.interpolation = 'BEZIER'
+            keyframe.handle_left_type = 'AUTO'
+            keyframe.handle_right_type = 'AUTO'
+    
+    # Set camera as active camera
+    scene.camera = main_camera
+    
+    print("✅ Enhanced camera movement: smooth orbital rotation with model tracking")
+else:
+    print("⚠️  No camera found for enhanced movement")
+
+# Setup professional camera (only if no camera exists)
+if not bpy.data.objects.get("Camera") and not bpy.data.objects.get("Camera.001"):
+    bpy.ops.object.camera_add(location=(6, -6, 4))
+    camera = bpy.context.active_object
+    camera.rotation_euler = (math.radians(60), 0, math.radians(45))
+    
+    # Set camera as active
+    scene.camera = camera
+    print("✅ Professional camera setup")
+else:
+    print("✅ Using existing camera with enhanced movement")
 
 # SPACE ENVIRONMENT SETUP
 print("🌌 Creating immersive space environment...")
@@ -1535,7 +1797,7 @@ cube.data.materials.append(material)
 
 print("✅ ULTRA-SMOOTH enhanced material created with MCP integration support")
 
-print("🌌 COMMERCIAL-GRADE MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
+print("🌌 ENHANCED AUDIO-REACTIVE MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
 print(f"📊 Total frames: {self.total_frames}")
 print(f"🎬 FPS: {self.fps}")
 print(f"⏱️ Duration: {self.duration:.2f}s")
@@ -1543,10 +1805,14 @@ print(f"🔑 Shape keys: {{len(shape_key_names)}}")
 print(f"🎯 Quality: {self.quality_level.upper()}")
 print(f"🔧 Subdivision: {self.config['subdivision']}")
 print("🌌 Environment: Dark space background with subtle ambient lighting")
-print("🎨 Premium Material: Sophisticated node setup with noise textures, fresnel effects, and emission")
+print("🎨 Enhanced Material: Sophisticated node setup with noise textures, fresnel effects, and emission")
 print("💡 Professional Lighting: Three-point area lighting system")
+print("📹 Enhanced Camera: Slow orbital movement with model tracking and dynamic framing")
+print("🎵 Audio Features: ENHANCED frequency-responsive color system, audio-reactive shape keys, musical responsiveness")
 print("🚀 Features: COMMERCIAL-GRADE geometry, PREMIUM materials, ANTI-FLICKER system, smooth interpolation")
 print("✨ Optimizations: Beveled edges, subdivision surface, smooth shading, professional lighting, flicker prevention")
+print("🎨 Color System: Frequency-specific colors, beat-responsive changes, spectral influence, enhanced mixing")
+print("📹 Camera System: Dynamic orbital movement, model tracking, smooth interpolation, padding for full view")
 
 {f"# Save blend file\nbpy.ops.wm.save_as_mainfile(filepath=\"{blend_path}\")\nprint(f\"💾 Blend file saved: {blend_path}\")" if blend_path else "# No blend file path provided"}
 '''

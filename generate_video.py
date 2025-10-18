@@ -194,7 +194,7 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
         'fast': {'samples': 64, 'resolution': (1280, 720), 'crf': 'VERYLOW', 'preset': 'REALTIME'},
         'balanced': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'GOOD'},
         'high': {'samples': 256, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'},
-        'ultra': {'samples': 512, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'BEST'}
+        'ultra': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'}
     }
     
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
@@ -354,7 +354,7 @@ print("✅ Direct MP4 render complete!")
             'fast': 1.0,
             'balanced': 2.0,
             'high': 4.0,
-            'ultra': 8.0
+            'ultra': 3.0
         }
         estimated_total_time = estimated_time_per_frame.get(quality_mode, 2.0) * total_frames
         print(f"⏰ Estimated render time: ~{estimated_total_time/60:.1f} minutes")
@@ -454,7 +454,7 @@ def _optimized_frame_render(blender_cmd: str, blend_path: str, output_path: str,
         'fast': {'samples': 64, 'resolution': (1280, 720), 'crf': '21', 'threads': 4},
         'balanced': {'samples': 128, 'resolution': (1920, 1080), 'crf': '20', 'threads': 6},
         'high': {'samples': 256, 'resolution': (1920, 1080), 'crf': '18', 'threads': 8},
-        'ultra': {'samples': 512, 'resolution': (1920, 1080), 'crf': '16', 'threads': 8}
+        'ultra': {'samples': 128, 'resolution': (1920, 1080), 'crf': '18', 'threads': 6}
     }
     
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
