@@ -132,8 +132,8 @@ def run_blender_script(script_path: str) -> bool:
         return False
 
 def render_video(blend_path: str, output_path: str) -> bool:
-    """Render the video from the blend file."""
-    print(f"🎬 Rendering enhanced video: {output_path}")
+    """Render the video from the blend file directly as MP4."""
+    print(f"🎬 Rendering enhanced video as MP4: {output_path}")
     
     # Try to find Blender executable
     blender_paths = [
@@ -164,31 +164,85 @@ def render_video(blend_path: str, output_path: str) -> bool:
         if not output_path.endswith('.mp4'):
             output_path = output_path.rsplit('.', 1)[0] + '.mp4'
         
+        # Create temp directory for frames
+        temp_dir = Path(output_path).parent / "temp_frames"
+        temp_dir.mkdir(exist_ok=True)
+        
+        # Render frames to temp directory
+        frame_pattern = str(temp_dir / "frame_####.png")
+        
         cmd = [
             blender_cmd,
             '--background',
             blend_path,
-            '--render-output', output_path,
+            '--render-output', frame_pattern,
             '--render-anim'
         ]
         
+        print("🎬 Rendering frames...")
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)  # 30 minutes
         
-        if result.returncode == 0:
-            print("✅ Enhanced video rendered successfully")
-            return True
-        else:
-            print("❌ Enhanced video render failed")
+        if result.returncode != 0:
+            print("❌ Frame rendering failed")
             print(f"Return code: {result.returncode}")
             print("\n📊 Error output:")
             print(result.stderr)
             return False
+        
+        # Check if frames were created and rename them properly
+        frame_files = list(temp_dir.glob("frame_*.png"))
+        if not frame_files:
+            print("❌ No frames were rendered")
+            return False
+        
+        print(f"✅ Rendered {len(frame_files)} frames")
+        
+        # Rename frames to proper format for FFmpeg
+        print("🔄 Renaming frames for FFmpeg...")
+        frame_files.sort()  # Sort to ensure correct order
+        for i, frame_file in enumerate(frame_files):
+            new_name = temp_dir / f"frame_{i:04d}.png"
+            frame_file.rename(new_name)
+        
+        # Convert frames to MP4 using FFmpeg
+        print("🎬 Converting frames to MP4...")
+        ffmpeg_cmd = [
+            'ffmpeg', '-y',  # Overwrite output file
+            '-framerate', '30',  # 30 FPS
+            '-i', str(temp_dir / 'frame_%04d.png'),  # Input pattern
+            '-c:v', 'libx264',  # H.264 codec
+            '-pix_fmt', 'yuv420p',  # Pixel format for compatibility
+            '-crf', '18',  # High quality
+            output_path
+        ]
+        
+        ffmpeg_result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=600)
+        
+        if ffmpeg_result.returncode == 0:
+            print("✅ MP4 video created successfully")
+            
+            # Clean up temp frames
+            try:
+                for frame_file in frame_files:
+                    frame_file.unlink()
+                temp_dir.rmdir()
+                print("✅ Temporary frames cleaned up")
+            except Exception as e:
+                print(f"⚠️  Warning: Could not clean up temp frames: {e}")
+            
+            return True
+        else:
+            print("❌ FFmpeg conversion failed")
+            print(f"Return code: {ffmpeg_result.returncode}")
+            print("\n📊 FFmpeg error output:")
+            print(ffmpeg_result.stderr)
+            return False
             
     except subprocess.TimeoutExpired:
-        print("❌ Enhanced video render timed out (30 minutes)")
+        print("❌ Video render timed out")
         return False
     except Exception as e:
-        print(f"❌ Error rendering enhanced video: {e}")
+        print(f"❌ Error rendering video: {e}")
         return False
 
 def main():

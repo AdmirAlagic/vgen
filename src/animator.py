@@ -524,8 +524,8 @@ bpy.ops.object.mode_set(mode='OBJECT')
 
 print("✅ Cube created with OPTIMAL subdivision")
 
-# Create enhanced material with better properties
-material = bpy.data.materials.new(name="OptimizedMutatingMaterial")
+# Create realistic water/liquid material with advanced shader nodes
+material = bpy.data.materials.new(name="LiquidWaterMaterial")
 material.use_nodes = True
 nodes = material.node_tree.nodes
 links = material.node_tree.links
@@ -533,35 +533,138 @@ links = material.node_tree.links
 # Clear default nodes
 nodes.clear()
 
-# Add Principled BSDF
+# Add Principled BSDF (main shader)
 bsdf = nodes.new(type='ShaderNodeBsdfPrincipled')
 bsdf.location = (0, 0)
 
 # Add Output
 output = nodes.new(type='ShaderNodeOutputMaterial')
-output.location = (400, 0)
+output.location = (600, 0)
 
-# Connect nodes
-links.new(bsdf.outputs['BSDF'], output.inputs['Surface'])
+# Add Volume Principled for volumetric liquid effects
+volume_principled = nodes.new(type='ShaderNodeVolumePrincipled')
+volume_principled.location = (0, -400)
 
-# Enhanced material properties for better visual appeal
-bsdf.inputs['Base Color'].default_value = (0.8, 0.3, 0.2, 1.0)  # Warm orange-red
-bsdf.inputs['Metallic'].default_value = 0.7
-bsdf.inputs['Roughness'].default_value = 0.2
+# Add Glass BSDF for water-like transparency
+glass = nodes.new(type='ShaderNodeBsdfGlass')
+glass.location = (0, -200)
 
-# Handle emission for Blender 4.5
+# Add Mix Shader to blend Principled and Glass
+mix_shader = nodes.new(type='ShaderNodeMixShader')
+mix_shader.location = (300, 0)
+
+# Add Fresnel node for realistic water edges
+fresnel = nodes.new(type='ShaderNodeFresnel')
+fresnel.location = (-300, 0)
+fresnel.inputs['IOR'].default_value = 1.33  # Water's IOR
+
+# Add ColorRamp for caustics effect
+colorramp = nodes.new(type='ShaderNodeValToRGB')
+colorramp.location = (-600, 0)
+
+# Add Wave Texture for water surface distortion
+wave_tex = nodes.new(type='ShaderNodeTexWave')
+wave_tex.location = (-900, 0)
+wave_tex.wave_type = 'BANDS'
+wave_tex.wave_profile = 'SAW'
+wave_tex.inputs['Scale'].default_value = 5.0
+wave_tex.inputs['Distortion'].default_value = 2.0
+wave_tex.inputs['Detail'].default_value = 15.0
+wave_tex.inputs['Detail Scale'].default_value = 2.0
+wave_tex.inputs['Detail Roughness'].default_value = 0.5
+
+# Add Noise Texture for additional surface detail
+noise_tex = nodes.new(type='ShaderNodeTexNoise')
+noise_tex.location = (-900, -200)
+noise_tex.inputs['Scale'].default_value = 10.0
+noise_tex.inputs['Detail'].default_value = 15.0
+noise_tex.inputs['Roughness'].default_value = 0.7
+
+# Add Mapping node for texture animation
+mapping = nodes.new(type='ShaderNodeMapping')
+mapping.location = (-1200, 0)
+
+# Add Texture Coordinate
+tex_coord = nodes.new(type='ShaderNodeTexCoord')
+tex_coord.location = (-1500, 0)
+
+# Add Time node for animation
+time_node = nodes.new(type='ShaderNodeValue')
+time_node.location = (-1500, -200)
+
+# Connect nodes for water caustics effect
+links.new(tex_coord.outputs['Generated'], mapping.inputs['Vector'])
+links.new(time_node.outputs['Value'], mapping.inputs['Location'])
+links.new(mapping.outputs['Vector'], wave_tex.inputs['Vector'])
+links.new(mapping.outputs['Vector'], noise_tex.inputs['Vector'])
+
+# Connect wave texture directly to colorramp for caustics
+links.new(wave_tex.outputs['Color'], colorramp.inputs['Fac'])
+
+# Set up ColorRamp for caustics
+colorramp.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)  # Black
+colorramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)  # White
+colorramp.color_ramp.elements[0].position = 0.3
+colorramp.color_ramp.elements[1].position = 0.7
+
+# Connect to Fresnel
+links.new(colorramp.outputs['Color'], fresnel.inputs['Normal'])
+
+# Configure Principled BSDF for water properties
+bsdf.inputs['Base Color'].default_value = (0.1, 0.3, 0.8, 1.0)  # Deep blue water
+bsdf.inputs['Metallic'].default_value = 0.0  # No metallic for water
+bsdf.inputs['Roughness'].default_value = 0.0  # Smooth water surface
+bsdf.inputs['IOR'].default_value = 1.33  # Water's index of refraction
 try:
-    bsdf.inputs['Emission Color'].default_value = (0.3, 0.1, 0.05, 1.0)
-    bsdf.inputs['Emission Strength'].default_value = 0.5
-    print("✅ Emission set using Blender 4.5 style")
+    bsdf.inputs['Transmission Weight'].default_value = 1.0  # Full transmission
+    bsdf.inputs['Transmission Roughness'].default_value = 0.0  # Clear water
+except KeyError:
+    # Use alternative input names for different Blender versions
+    try:
+        bsdf.inputs['Transmission'].default_value = 1.0  # Full transmission
+    except KeyError:
+        print("⚠️  Transmission inputs not available in this Blender version")
+
+# Add subsurface scattering for realistic liquid depth
+try:
+    bsdf.inputs['Subsurface Weight'].default_value = 0.8  # Strong subsurface scattering
+    bsdf.inputs['Subsurface Color'].default_value = (0.2, 0.4, 0.8, 1.0)  # Blue subsurface
+    bsdf.inputs['Subsurface Radius'].default_value = (1.0, 0.2, 0.1)  # Water-like scattering
+except KeyError:
+    print("⚠️  Subsurface inputs not available, using standard transmission")
+
+# Configure Glass BSDF
+glass.inputs['Color'].default_value = (0.8, 0.9, 1.0, 1.0)  # Slightly blue tint
+glass.inputs['Roughness'].default_value = 0.0
+glass.inputs['IOR'].default_value = 1.33
+
+# Configure Volume Principled for liquid volume
+volume_principled.inputs['Color'].default_value = (0.1, 0.3, 0.8, 1.0)  # Water color
+volume_principled.inputs['Density'].default_value = 0.5  # Moderate density
+volume_principled.inputs['Anisotropy'].default_value = 0.0  # Isotropic scattering
+
+# Connect shaders
+links.new(fresnel.outputs['Fac'], mix_shader.inputs['Fac'])
+links.new(bsdf.outputs['BSDF'], mix_shader.inputs[1])
+links.new(glass.outputs['BSDF'], mix_shader.inputs[2])
+links.new(mix_shader.outputs['Shader'], output.inputs['Surface'])
+
+# Connect volume shader
+links.new(volume_principled.outputs['Volume'], output.inputs['Volume'])
+
+# Handle emission for subtle glow (Blender 4.5 compatibility)
+try:
+    bsdf.inputs['Emission Color'].default_value = (0.0, 0.1, 0.2, 1.0)  # Subtle blue glow
+    bsdf.inputs['Emission Strength'].default_value = 0.1
+    print("✅ Water emission set using Blender 4.5 style")
 except KeyError:
     print("⚠️  Emission input not found, using enhanced base color")
-    bsdf.inputs['Base Color'].default_value = (1.0, 0.4, 0.3, 1.0)
+    bsdf.inputs['Base Color'].default_value = (0.15, 0.35, 0.85, 1.0)
 
 # Assign material
 cube.data.materials.append(material)
 
-print("✅ Enhanced material created")
+print("✅ Realistic water/liquid material created with caustics, wave effects, subsurface scattering, and volumetric effects")
 
 # Create shape keys for deformation
 shape_keys = cube.shape_key_add(name="Basis")
@@ -624,6 +727,105 @@ print("✅ Animation action created")
 {self._generate_optimized_shape_key_animations()}
 
 print("✅ OPTIMIZED shape key animations generated")
+
+# AUDIO-REACTIVE MATERIAL COLOR ANIMATION
+print("🎨 Creating audio-reactive water color animation...")
+
+# Create material action for color changes
+material_action = bpy.data.actions.new(name="LiquidWaterColorAction")
+material.animation_data_create()
+material.animation_data.action = material_action
+
+# Get audio feature data for color animation
+audio_features = {json.dumps(self.features.get('audio_features', {}), indent=2)}
+
+# Create color animation based on audio features
+if 'kick_energy' in audio_features and 'bass_energy' in audio_features:
+    kick_data = audio_features['kick_energy']
+    bass_data = audio_features['bass_energy']
+    vocal_data = audio_features.get('vocal_energy', [0.0] * len(kick_data))
+    
+    # Animate base color (water color shifts)
+    base_color_fcurve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=0)
+    base_color_fcurve.keyframe_points.add(len(kick_data))
+    
+    for i, (kick, bass, vocal) in enumerate(zip(kick_data, bass_data, vocal_data)):
+        frame = i + 1
+        
+        # Dynamic color shifts based on audio
+        # Blue base (0.1, 0.3, 0.8) shifts to:
+        # - Cyan on kick (0.0, 0.6, 0.9) 
+        # - Purple on bass (0.2, 0.2, 0.9)
+        # - Green on vocal (0.0, 0.8, 0.6)
+        
+        r = 0.1 + (kick * 0.1) + (vocal * 0.1)  # Red component
+        g = 0.3 + (kick * 0.3) + (bass * -0.1) + (vocal * 0.5)  # Green component  
+        b = 0.8 + (kick * 0.1) + (bass * 0.1) + (vocal * -0.2)  # Blue component
+        
+        # Clamp values
+        r = max(0.0, min(1.0, r))
+        g = max(0.0, min(1.0, g))
+        b = max(0.0, min(1.0, b))
+        
+        base_color_fcurve.keyframe_points[i].co = (frame, r)
+    
+    # Animate green component
+    green_fcurve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=1)
+    green_fcurve.keyframe_points.add(len(kick_data))
+    
+    for i, (kick, bass, vocal) in enumerate(zip(kick_data, bass_data, vocal_data)):
+        frame = i + 1
+        g = 0.3 + (kick * 0.3) + (bass * -0.1) + (vocal * 0.5)
+        g = max(0.0, min(1.0, g))
+        green_fcurve.keyframe_points[i].co = (frame, g)
+    
+    # Animate blue component
+    blue_fcurve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=2)
+    blue_fcurve.keyframe_points.add(len(kick_data))
+    
+    for i, (kick, bass, vocal) in enumerate(zip(kick_data, bass_data, vocal_data)):
+        frame = i + 1
+        b = 0.8 + (kick * 0.1) + (bass * 0.1) + (vocal * -0.2)
+        b = max(0.0, min(1.0, b))
+        blue_fcurve.keyframe_points[i].co = (frame, b)
+    
+    # Animate wave texture scale for dynamic surface movement
+    wave_scale_fcurve = material_action.fcurves.new(data_path='node_tree.nodes["Wave Texture"].inputs[1].default_value')
+    wave_scale_fcurve.keyframe_points.add(len(kick_data))
+    
+    for i, (kick, bass) in enumerate(zip(kick_data, bass_data)):
+        frame = i + 1
+        # Wave scale changes with audio energy
+        base_scale = 5.0
+        scale_variation = (kick + bass) * 3.0  # 0-6 variation
+        wave_scale = base_scale + scale_variation
+        wave_scale_fcurve.keyframe_points[i].co = (frame, wave_scale)
+    
+    # Animate emission strength for subtle glow changes
+    try:
+        emission_fcurve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[19].default_value')
+        emission_fcurve.keyframe_points.add(len(kick_data))
+        
+        for i, (kick, vocal) in enumerate(zip(kick_data, vocal_data)):
+            frame = i + 1
+            # Emission pulses with kick and vocal energy
+            base_emission = 0.1
+            emission_boost = (kick * 0.3) + (vocal * 0.2)
+            emission_strength = base_emission + emission_boost
+            emission_fcurve.keyframe_points[i].co = (frame, emission_strength)
+    except:
+        print("⚠️  Emission animation skipped (Blender version compatibility)")
+    
+    # Apply smooth interpolation to material animations
+    for fcurve in material_action.fcurves:
+        for keyframe in fcurve.keyframe_points:
+            keyframe.interpolation = 'BEZIER'
+            keyframe.handle_left_type = 'FREE'
+            keyframe.handle_right_type = 'FREE'
+    
+    print("✅ Audio-reactive water color animation created")
+else:
+    print("⚠️  No audio feature data available for material animation")
 
 # Set ULTRA-SMOOTH keyframe interpolation optimized for continuous abstract shape changing
 for fcurve in action.fcurves:
