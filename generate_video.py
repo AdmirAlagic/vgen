@@ -27,8 +27,8 @@ except ImportError:
     sys.exit(1)
 
 def analyze_audio(audio_path: str, fps: int = 30) -> Dict:
-    """Analyze audio file and extract enhanced features."""
-    print(f"🎵 Analyzing audio with enhanced system: {audio_path}")
+    """Analyze audio file and extract enhanced features with optimized responsiveness."""
+    print(f"🎵 Analyzing audio with OPTIMIZED enhanced system: {audio_path}")
     
     if not os.path.exists(audio_path):
         raise FileNotFoundError(f"Audio file not found: {audio_path}")
@@ -36,24 +36,26 @@ def analyze_audio(audio_path: str, fps: int = 30) -> Dict:
     analyzer = EnhancedAudioAnalyzer(audio_path, fps=fps)
     features = analyzer.analyze_for_mutating_cube()
     
-    print(f"✅ Enhanced audio analysis complete:")
+    print(f"✅ OPTIMIZED audio analysis complete:")
     print(f"   Duration: {features['duration']:.2f}s")
     print(f"   Frames: {features['total_frames']}")
     print(f"   FPS: {features['fps']}")
     print(f"   Tempo: {features.get('tempo', 'N/A')} BPM")
     print(f"   Shape keys: {len(features.get('shape_key_data', {}))}")
+    print(f"   Frequency bands: {len([k for k in features.keys() if k.endswith('_energy')])}")
+    print("🚀 Features: Enhanced frequency analysis, Musical smoothing, Response-type processing")
     
     return features
 
 def create_enhanced_blender_script(features: Dict, output_path: str) -> str:
-    """Create enhanced Blender script with advanced audio features."""
-    print("🚀 Creating enhanced mutating cube Blender script")
+    """Create OPTIMIZED Blender script with enhanced audio responsiveness and smooth animations."""
+    print("🚀 Creating OPTIMIZED mutating cube Blender script with enhanced responsiveness")
     
     # Create temp directory if it doesn't exist
     temp_dir = Path(__file__).parent / "output" / "temp"
     temp_dir.mkdir(parents=True, exist_ok=True)
     
-    # Import the improved enhanced mutating cube animator with fixed shape keys
+    # Import the optimized mutating cube animator
     sys.path.insert(0, str(Path(__file__).parent))
     try:
         from src.animator import MutatingCubeAnimator
@@ -61,20 +63,21 @@ def create_enhanced_blender_script(features: Dict, output_path: str) -> str:
         print("❌ Animator not found. Please check src/animator.py")
         sys.exit(1)
     
-    # Use high quality by default for professional output
+    # Use high quality by default for professional output with optimized settings
     quality_level = 'high'
     animator = MutatingCubeAnimator(features, quality_level)
     
-    # Generate enhanced mutating cube script
-    script_path = temp_dir / "enhanced_mutating_cube_scene.py"
+    # Generate optimized mutating cube script
+    script_path = temp_dir / "optimized_mutating_cube_scene.py"
     blend_path = temp_dir / "scene.blend"
     
-    # Use the save_script method which properly handles blend file saving with fixed shape keys
+    # Use the save_script method with optimized settings
     saved_script_path = animator.save_script(str(script_path), blend_path=str(blend_path))
     
     print(f"✅ OPTIMIZED mutating cube Blender script created: {saved_script_path}")
     print(f"🎬 Blend file will be saved to: {blend_path}")
-    print("🚀 Features: OPTIMIZED Mesh | ADVANCED Interpolation | SMOOTH Transitions | Professional Rendering")
+    print("🚀 Features: ENHANCED Audio Responsiveness | ULTRA-SMOOTH Animations | MUSICAL Color Transitions")
+    print("🎵 Optimizations: Multi-stage smoothing, Musical-aware processing, Frequency-specific colors")
     return saved_script_path
 
 
@@ -604,11 +607,11 @@ def main():
     if len(sys.argv) < 2:
         print("Usage: python generate_video.py <audio_file> [output_name] [quality_mode]")
         print("\nThis application uses the OPTIMIZED MUTATING CUBE animation system with:")
-        print("  - CONTINUOUS motion and seamless transitions")
-        print("  - AUDIO-REACTIVE drivers for real-time animation")
-        print("  - ULTRA-SMOOTH interpolation (Bezier with custom handles)")
-        print("  - FLOW-based smoothing for organic movement")
-        print("  - MCP integration for enhanced materials")
+        print("  - ENHANCED audio responsiveness with multi-frequency analysis")
+        print("  - ULTRA-SMOOTH animations with musical-aware smoothing")
+        print("  - MUSICAL color transitions with frequency-specific colors")
+        print("  - RESPONSE-TYPE processing for different musical elements")
+        print("  - MULTI-STAGE smoothing for seamless transitions")
         print("  - OPTIMIZED rendering with direct MP4 output")
         print("  - AUDIO integration - original audio included in final video")
         print("\nQuality modes:")
@@ -632,12 +635,13 @@ def main():
         print(f"Valid modes: {', '.join(valid_modes)}")
         sys.exit(1)
     
-    print("🎬 ULTRA-SMOOTH AUDIO-REACTIVE VIDEO GENERATOR")
+    print("🎬 OPTIMIZED AUDIO-REACTIVE VIDEO GENERATOR")
     print("=" * 60)
     print(f"🎵 Audio: {audio_file}")
     print(f"📹 Output: {output_name}")
-    print("🎨 Style: ULTRA-SMOOTH Mutating Cube (Continuous Motion)")
-    print("🚀 Features: CONTINUOUS flow, AUDIO-REACTIVE drivers, MCP integration")
+    print("🎨 Style: OPTIMIZED Mutating Cube (Enhanced Responsiveness)")
+    print("🚀 Features: ENHANCED Audio Analysis, ULTRA-SMOOTH Animations, MUSICAL Color Transitions")
+    print("🎵 Optimizations: Multi-frequency bands, Musical smoothing, Response-type processing")
     print("=" * 60)
     
     try:
@@ -675,8 +679,9 @@ def main():
             
             if render_video(str(blend_path), str(video_path), quality_mode, audio_file, features['total_frames']):
                 print(f"\n🎉 SUCCESS! OPTIMIZED mutating cube video created: {video_path}")
-                print("🚀 Features: CONTINUOUS motion, AUDIO-REACTIVE drivers, MCP integration")
-                print(f"⚡ Optimizations: Direct MP4 rendering, Adaptive quality, Hardware acceleration")
+                print("🚀 Features: ENHANCED Audio Responsiveness, ULTRA-SMOOTH Animations, MUSICAL Color Transitions")
+                print("🎵 Optimizations: Multi-frequency analysis, Musical smoothing, Response-type processing")
+                print(f"⚡ Performance: Direct MP4 rendering, Adaptive quality, Hardware acceleration")
                 print("🎵 Audio: Original audio file included in video")
             else:
                 print("\n⚠️  Enhanced scene created but video render failed")

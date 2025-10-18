@@ -155,31 +155,55 @@ class EnhancedAudioAnalyzer:
         self._generate_frame_data()
     
     def _analyze_frequency_bands(self, magnitude: np.ndarray, freqs: np.ndarray):
-        """Analyze specific frequency bands for different shape keys."""
+        """Analyze specific frequency bands for different shape keys with enhanced responsiveness."""
         
-        # Define frequency bands based on Mutating-Cube.blend analysis
+        # Enhanced frequency bands with more granular analysis for better music responsiveness
         bands = {
             'kick': (20, 80),      # Sub-bass for SimpleDeform
             'bass': (80, 250),     # Bass for Displace
             'snare': (250, 2000),  # Mid for Wave
             'hihat': (2000, 8000), # High for Shrinkwrap
             'vocal': (2000, 4000), # Vocal range for special effects
-            'air': (8000, 20000)   # Air/high frequencies
+            'air': (8000, 20000),  # Air/high frequencies
+            # NEW: Additional frequency bands for enhanced responsiveness
+            'sub_bass': (20, 40),   # Ultra-low for dramatic effects
+            'mid_bass': (40, 120),  # Mid-bass for smoother transitions
+            'low_mid': (120, 500),  # Low-mid for organic movement
+            'mid': (500, 2000),     # Mid frequencies for balanced response
+            'high_mid': (2000, 4000), # High-mid for vocal clarity
+            'presence': (4000, 8000), # Presence frequencies for brightness
+            'brilliance': (8000, 16000), # Brilliance for sparkle effects
+            'ultra_high': (16000, 20000) # Ultra-high for air and space
         }
         
         for band_name, (low_freq, high_freq) in bands.items():
-            # Create frequency mask
+            # Create frequency mask with smooth transitions
             freq_mask = (freqs >= low_freq) & (freqs <= high_freq)
             
-            # Extract energy for this band
+            # Extract energy for this band with enhanced weighting
             band_energy = np.sum(magnitude[freq_mask, :], axis=0)
             
-            # Normalize to 0-1 range
-            if np.max(band_energy) > 0:
-                band_energy = band_energy / np.max(band_energy)
+            # Apply frequency-dependent weighting for better music response
+            if band_name in ['kick', 'sub_bass']:
+                # Boost low frequencies for better kick response
+                band_energy *= 1.5
+            elif band_name in ['vocal', 'high_mid']:
+                # Boost vocal frequencies for better vocal tracking
+                band_energy *= 1.3
+            elif band_name in ['hihat', 'presence', 'brilliance']:
+                # Boost high frequencies for better detail response
+                band_energy *= 1.2
             
-            # Apply smoothing for more organic motion
-            band_energy = self._smooth_signal(band_energy, window_size=3)
+            # Normalize to 0-1 range with dynamic range compression
+            if np.max(band_energy) > 0:
+                # Apply gentle compression for more consistent response
+                band_energy = np.power(band_energy / np.max(band_energy), 0.8)
+            
+            # Apply enhanced smoothing for more organic motion
+            band_energy = self._smooth_signal(band_energy, window_size=5)
+            
+            # Apply additional musical responsiveness smoothing
+            band_energy = self._apply_musical_smoothing(band_energy, band_name)
             
             self.features[f'{band_name}_energy'] = band_energy.tolist()
     
@@ -273,15 +297,26 @@ class EnhancedAudioAnalyzer:
         """Fallback analysis for systems without librosa."""
         print("⚠️  Using fallback analysis...")
         
-        # Generate synthetic features without numpy dependency
+        # Generate synthetic features with enhanced frequency bands
         self.features.update({
             'tempo': 120.0,
+            # Original frequency bands
             'kick_energy': [float(0.5 + 0.3 * math.sin(i * 0.1)) for i in range(self.total_frames)],
             'bass_energy': [float(0.4 + 0.2 * math.sin(i * 0.15)) for i in range(self.total_frames)],
             'snare_energy': [float(0.3 + 0.4 * math.sin(i * 0.2)) for i in range(self.total_frames)],
             'hihat_energy': [float(0.2 + 0.3 * math.sin(i * 0.25)) for i in range(self.total_frames)],
             'vocal_energy': [float(0.3 + 0.2 * math.sin(i * 0.18)) for i in range(self.total_frames)],
             'air_energy': [float(0.1 + 0.2 * math.sin(i * 0.3)) for i in range(self.total_frames)],
+            # Enhanced frequency bands
+            'sub_bass_energy': [float(0.6 + 0.2 * math.sin(i * 0.08)) for i in range(self.total_frames)],
+            'mid_bass_energy': [float(0.45 + 0.25 * math.sin(i * 0.12)) for i in range(self.total_frames)],
+            'low_mid_energy': [float(0.35 + 0.3 * math.sin(i * 0.16)) for i in range(self.total_frames)],
+            'mid_energy': [float(0.4 + 0.25 * math.sin(i * 0.18)) for i in range(self.total_frames)],
+            'high_mid_energy': [float(0.25 + 0.3 * math.sin(i * 0.22)) for i in range(self.total_frames)],
+            'presence_energy': [float(0.2 + 0.25 * math.sin(i * 0.28)) for i in range(self.total_frames)],
+            'brilliance_energy': [float(0.15 + 0.2 * math.sin(i * 0.32)) for i in range(self.total_frames)],
+            'ultra_high_energy': [float(0.1 + 0.15 * math.sin(i * 0.35)) for i in range(self.total_frames)],
+            # Spectral features
             'beat_strength': [float(0.8 if i % 24 == 0 else 0.1) for i in range(self.total_frames)],
             'spectral_centroid': [float(0.5 + 0.2 * math.sin(i * 0.12)) for i in range(self.total_frames)],
             'spectral_rolloff': [float(0.5 + 0.3 * math.sin(i * 0.08)) for i in range(self.total_frames)],
@@ -295,98 +330,159 @@ class EnhancedAudioAnalyzer:
         })
     
     def _generate_shape_key_mappings(self):
-        """Generate specific mappings for each shape key based on Mutating-Cube.blend."""
+        """Generate specific mappings for each shape key with enhanced audio responsiveness."""
         
-        # Shape key mappings based on Mutating-Cube.blend analysis
+        # Enhanced shape key mappings with more sophisticated audio analysis
         shape_key_mappings = {
             'SimpleDeform': {
                 'primary': 'kick_energy',
-                'secondary': 'bass_energy',
+                'secondary': 'sub_bass_energy',
+                'tertiary': 'bass_energy',
                 'modifier': 'beat_strength',
                 'range': (-2.0, 2.0),
-                'sensitivity': 1.5
+                'sensitivity': 1.6,
+                'response_type': 'punchy'
             },
             'SimpleDeform.001': {
                 'primary': 'snare_energy',
-                'secondary': 'spectral_contrast',
+                'secondary': 'mid_energy',
+                'tertiary': 'spectral_contrast',
                 'modifier': 'onset_strength',
                 'range': (-2.0, 2.0),
-                'sensitivity': 1.2
+                'sensitivity': 1.3,
+                'response_type': 'rhythmic'
             },
             'Wave': {
                 'primary': 'vocal_energy',
-                'secondary': 'spectral_centroid',
+                'secondary': 'high_mid_energy',
+                'tertiary': 'spectral_centroid',
                 'modifier': 'spectral_flux',
                 'range': (-2.0, 2.0),
-                'sensitivity': 1.0
+                'sensitivity': 1.1,
+                'response_type': 'flowing'
             },
             'Displace': {
                 'primary': 'bass_energy',
-                'secondary': 'kick_energy',
+                'secondary': 'mid_bass_energy',
+                'tertiary': 'kick_energy',
                 'modifier': 'beat_strength',
                 'range': (-2.0, 2.0),
-                'sensitivity': 1.3
+                'sensitivity': 1.4,
+                'response_type': 'pulsing'
             },
             'Displace.001': {
                 'primary': 'hihat_energy',
-                'secondary': 'air_energy',
+                'secondary': 'presence_energy',
+                'tertiary': 'air_energy',
                 'modifier': 'spectral_rolloff',
                 'range': (-2.0, 2.0),
-                'sensitivity': 0.8
+                'sensitivity': 0.9,
+                'response_type': 'sparkly'
             },
             'Displace.002': {
                 'primary': 'snare_energy',
-                'secondary': 'spectral_contrast',
+                'secondary': 'low_mid_energy',
+                'tertiary': 'spectral_contrast',
                 'modifier': 'onset_strength',
                 'range': (-2.0, 2.0),
-                'sensitivity': 1.1
+                'sensitivity': 1.2,
+                'response_type': 'crisp'
             },
             'Displace.003': {
                 'primary': 'rms_energy',
-                'secondary': 'spectral_flux',
+                'secondary': 'mid_energy',
+                'tertiary': 'spectral_flux',
                 'modifier': 'beat_strength',
                 'range': (-2.0, 2.0),
-                'sensitivity': 1.4
+                'sensitivity': 1.5,
+                'response_type': 'dynamic'
             },
             'Shrinkwrap': {
                 'primary': 'vocal_energy',
-                'secondary': 'spectral_centroid',
+                'secondary': 'high_mid_energy',
+                'tertiary': 'spectral_centroid',
                 'modifier': 'spectral_rolloff',
                 'range': (-2.0, 2.0),
-                'sensitivity': 0.9
+                'sensitivity': 1.0,
+                'response_type': 'organic'
             },
             'Shrinkwrap.001': {
                 'primary': 'bass_energy',
-                'secondary': 'kick_energy',
+                'secondary': 'mid_bass_energy',
+                'tertiary': 'kick_energy',
                 'modifier': 'beat_strength',
                 'range': (-2.0, 2.0),
-                'sensitivity': 1.2
+                'sensitivity': 1.3,
+                'response_type': 'deep'
             },
             'Shrinkwrap.002': {
                 'primary': 'hihat_energy',
-                'secondary': 'air_energy',
+                'secondary': 'brilliance_energy',
+                'tertiary': 'air_energy',
                 'modifier': 'spectral_flux',
                 'range': (-2.0, 2.0),
-                'sensitivity': 0.7
+                'sensitivity': 0.8,
+                'response_type': 'ethereal'
             }
         }
         
-        # Generate shape key data for each frame
+        # Generate shape key data for each frame with enhanced audio responsiveness
         for shape_key_name, mapping in shape_key_mappings.items():
             self.shape_key_data[shape_key_name] = []
             
             for frame in range(self.total_frames):
-                # Get audio values for this frame
+                # Get audio values for this frame with enhanced weighting
                 primary_val = self.features[mapping['primary']][frame]
                 secondary_val = self.features[mapping['secondary']][frame]
+                tertiary_val = self.features[mapping['tertiary']][frame]
                 modifier_val = self.features[mapping['modifier']][frame]
                 
-                # Combine values with organic variation
-                combined_value = (
-                    primary_val * 0.6 +
-                    secondary_val * 0.3 +
-                    modifier_val * 0.1
-                )
+                # Enhanced combination with response type awareness
+                response_type = mapping.get('response_type', 'balanced')
+                
+                if response_type == 'punchy':
+                    # Emphasize transients and peaks
+                    combined_value = (
+                        primary_val * 0.7 +
+                        secondary_val * 0.2 +
+                        tertiary_val * 0.05 +
+                        modifier_val * 0.05
+                    )
+                elif response_type == 'flowing':
+                    # Smooth, continuous response
+                    combined_value = (
+                        primary_val * 0.5 +
+                        secondary_val * 0.3 +
+                        tertiary_val * 0.15 +
+                        modifier_val * 0.05
+                    )
+                elif response_type == 'sparkly':
+                    # High-frequency detail response
+                    combined_value = (
+                        primary_val * 0.6 +
+                        secondary_val * 0.25 +
+                        tertiary_val * 0.1 +
+                        modifier_val * 0.05
+                    )
+                elif response_type == 'dynamic':
+                    # Full spectrum response
+                    combined_value = (
+                        primary_val * 0.4 +
+                        secondary_val * 0.3 +
+                        tertiary_val * 0.2 +
+                        modifier_val * 0.1
+                    )
+                else:
+                    # Default balanced response
+                    combined_value = (
+                        primary_val * 0.5 +
+                        secondary_val * 0.25 +
+                        tertiary_val * 0.15 +
+                        modifier_val * 0.1
+                    )
+                
+                # Apply response type specific processing
+                combined_value = self._apply_response_type_processing(combined_value, response_type)
                 
                 # Apply sensitivity and range
                 min_val, max_val = mapping['range']
@@ -395,8 +491,8 @@ class EnhancedAudioAnalyzer:
                 # Ensure combined_value is real and positive for power operation
                 combined_value = abs(float(combined_value))
                 
-                # Scale to range
-                final_value = min_val + (max_val - min_val) * (combined_value ** sensitivity)
+                # Scale to range with enhanced sensitivity curve
+                final_value = min_val + (max_val - min_val) * (combined_value ** (1.0 / sensitivity))
                 
                 # Add enhanced organic variation for continuous motion
                 organic_noise = self._generate_continuous_organic_variation(frame)
@@ -421,8 +517,10 @@ class EnhancedAudioAnalyzer:
                 'is_onset': frame in self.features.get('onset_frames', [])
             }
             
-            # Add all frequency band energies
-            for band in ['kick', 'bass', 'snare', 'hihat', 'vocal', 'air']:
+            # Add all frequency band energies (original + enhanced)
+            for band in ['kick', 'bass', 'snare', 'hihat', 'vocal', 'air', 
+                        'sub_bass', 'mid_bass', 'low_mid', 'mid', 'high_mid', 
+                        'presence', 'brilliance', 'ultra_high']:
                 frame_info[f'{band}_energy'] = self.features[f'{band}_energy'][frame]
             
             # Add spectral features
@@ -479,6 +577,102 @@ class EnhancedAudioAnalyzer:
             flow_smoothed[i] += flow_influence
         
         return flow_smoothed
+    
+    def _apply_musical_smoothing(self, signal: np.ndarray, band_name: str) -> np.ndarray:
+        """Apply musical-aware smoothing for better responsiveness to music structure."""
+        if len(signal) < 3:
+            return signal
+        
+        musical_smoothed = signal.copy()
+        
+        # Different smoothing strategies based on frequency band characteristics
+        if band_name in ['kick', 'sub_bass']:
+            # Low frequencies: Preserve transients but smooth sustain
+            window_size = 3
+            musical_smoothed = np.convolve(musical_smoothed, np.ones(window_size)/window_size, mode='same')
+            
+        elif band_name in ['snare', 'mid']:
+            # Mid frequencies: Moderate smoothing for balanced response
+            window_size = 5
+            musical_smoothed = np.convolve(musical_smoothed, np.ones(window_size)/window_size, mode='same')
+            
+        elif band_name in ['hihat', 'presence', 'brilliance']:
+            # High frequencies: Light smoothing to preserve detail
+            window_size = 2
+            musical_smoothed = np.convolve(musical_smoothed, np.ones(window_size)/window_size, mode='same')
+            
+        else:
+            # Default smoothing for other bands
+            window_size = 4
+            musical_smoothed = np.convolve(musical_smoothed, np.ones(window_size)/window_size, mode='same')
+        
+        # Apply musical envelope smoothing
+        musical_smoothed = self._apply_envelope_smoothing(musical_smoothed)
+        
+        return musical_smoothed
+    
+    def _apply_envelope_smoothing(self, signal: np.ndarray) -> np.ndarray:
+        """Apply envelope-based smoothing for musical responsiveness."""
+        if len(signal) < 5:
+            return signal
+        
+        envelope_smoothed = signal.copy()
+        
+        # Apply attack/release envelope smoothing
+        for i in range(1, len(envelope_smoothed) - 1):
+            # Detect attack (rising) and release (falling) phases
+            if envelope_smoothed[i] > envelope_smoothed[i-1]:
+                # Attack phase: preserve sharpness
+                attack_factor = 0.1
+                envelope_smoothed[i] = envelope_smoothed[i-1] + attack_factor * (envelope_smoothed[i] - envelope_smoothed[i-1])
+            else:
+                # Release phase: smooth decay
+                release_factor = 0.3
+                envelope_smoothed[i] = envelope_smoothed[i-1] + release_factor * (envelope_smoothed[i] - envelope_smoothed[i-1])
+        
+        return envelope_smoothed
+    
+    def _apply_response_type_processing(self, value: float, response_type: str) -> float:
+        """Apply response type specific processing for enhanced musical responsiveness."""
+        
+        if response_type == 'punchy':
+            # Apply transient enhancement for punchy response
+            if value > 0.5:
+                # Boost high values for more dramatic response
+                value = value ** 0.7
+            else:
+                # Smooth low values
+                value = value ** 1.2
+                
+        elif response_type == 'flowing':
+            # Apply smooth curve for flowing response
+            value = value ** 0.9
+            
+        elif response_type == 'sparkly':
+            # Apply high-frequency emphasis for sparkly response
+            value = value ** 0.8
+            
+        elif response_type == 'dynamic':
+            # Apply full-range response for dynamic response
+            value = value ** 0.85
+            
+        elif response_type == 'rhythmic':
+            # Apply rhythmic emphasis
+            value = value ** 0.9
+            
+        elif response_type == 'organic':
+            # Apply natural curve for organic response
+            value = value ** 1.0
+            
+        elif response_type == 'ethereal':
+            # Apply gentle curve for ethereal response
+            value = value ** 1.1
+            
+        else:
+            # Default processing
+            value = value ** 0.95
+        
+        return value
     
     def _generate_continuous_organic_variation(self, frame: int) -> float:
         """Generate continuous organic variation for natural abstract motion."""

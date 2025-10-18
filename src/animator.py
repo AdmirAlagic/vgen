@@ -78,7 +78,7 @@ class MutatingCubeAnimator:
             'spectral_flux': ['Displace.001', 'Displace.002', 'Wave']
         }
         
-        # Advanced color animation system
+        # Enhanced color animation system with musical responsiveness
         self.color_animations = {
             'primary_colors': [
                 (0.2, 0.1, 0.6, 1.0),  # Deep cosmic purple
@@ -86,7 +86,11 @@ class MutatingCubeAnimator:
                 (0.8, 0.2, 0.8, 1.0),  # Magenta
                 (0.1, 0.8, 0.4, 1.0),  # Electric green
                 (1.0, 0.4, 0.2, 1.0),  # Orange
-                (0.6, 0.1, 0.9, 1.0)   # Violet
+                (0.6, 0.1, 0.9, 1.0),  # Violet
+                (0.9, 0.1, 0.3, 1.0),  # Deep red
+                (0.1, 0.3, 0.9, 1.0),  # Deep blue
+                (0.8, 0.8, 0.1, 1.0),  # Bright yellow
+                (0.3, 0.1, 0.1, 1.0)   # Dark crimson
             ],
             'secondary_colors': [
                 (0.4, 0.0, 0.8, 1.0),  # Bright purple
@@ -94,7 +98,11 @@ class MutatingCubeAnimator:
                 (0.8, 0.0, 0.4, 1.0),  # Red
                 (0.2, 0.8, 0.6, 1.0),  # Teal
                 (0.9, 0.6, 0.1, 1.0),  # Gold
-                (0.5, 0.2, 0.8, 1.0)   # Lavender
+                (0.5, 0.2, 0.8, 1.0),  # Lavender
+                (0.7, 0.3, 0.1, 1.0),  # Bronze
+                (0.1, 0.7, 0.3, 1.0),  # Emerald
+                (0.6, 0.1, 0.4, 1.0),  # Burgundy
+                (0.2, 0.5, 0.8, 1.0)   # Sky blue
             ],
             'emission_colors': [
                 (0.5, 0.2, 1.0, 1.0),  # Bright cosmic purple
@@ -102,8 +110,20 @@ class MutatingCubeAnimator:
                 (1.0, 0.3, 0.8, 1.0),  # Bright magenta
                 (0.3, 1.0, 0.5, 1.0),  # Bright green
                 (1.0, 0.6, 0.3, 1.0),  # Bright orange
-                (0.7, 0.3, 1.0, 1.0)   # Bright violet
-            ]
+                (0.7, 0.3, 1.0, 1.0),  # Bright violet
+                (1.0, 0.2, 0.4, 1.0),  # Bright red
+                (0.2, 0.4, 1.0, 1.0),  # Bright blue
+                (1.0, 1.0, 0.2, 1.0),  # Bright yellow
+                (0.6, 0.2, 0.2, 1.0)   # Bright crimson
+            ],
+            'frequency_colors': {
+                'kick': (0.8, 0.1, 0.3, 1.0),      # Deep red for kick
+                'bass': (0.4, 0.1, 0.8, 1.0),      # Deep purple for bass
+                'snare': (0.8, 0.8, 0.2, 1.0),     # Bright yellow for snare
+                'hihat': (0.2, 0.8, 1.0, 1.0),     # Bright cyan for hihat
+                'vocal': (0.8, 0.3, 0.8, 1.0),     # Bright magenta for vocal
+                'air': (0.3, 0.8, 0.8, 1.0)        # Bright teal for air
+            }
         }
         
         # Color transition patterns
@@ -115,10 +135,12 @@ class MutatingCubeAnimator:
             'organic_flow': {'speed': 0.4, 'smoothness': 0.8, 'intensity': 0.9}
         }
         
-        # Advanced smoothing parameters optimized for continuous abstract motion
-        self.smoothing_factor = 0.05  # Much lower = smoother (optimized for continuous motion)
-        self.responsiveness_factor = 1.0  # Lower responsiveness to preserve original values
-        self.organic_variation = 0.05  # Reduced organic movement to preserve audio data
+        # Enhanced smoothing parameters optimized for ultra-smooth continuous motion
+        self.smoothing_factor = 0.03  # Even lower for ultra-smooth motion
+        self.responsiveness_factor = 0.8  # Balanced responsiveness for musical feel
+        self.organic_variation = 0.03  # Reduced for smoother motion
+        self.flow_smoothing = 0.4  # Enhanced flow smoothing factor
+        self.musical_smoothing = 0.6  # Musical-aware smoothing factor
         
         # Driver-based animation parameters
         self.use_drivers = False  # Disable drivers to use keyframe animations instead
@@ -185,19 +207,14 @@ class MutatingCubeAnimator:
         # Convert to numpy for easier processing
         values_array = np.array(values)
         
-        # Apply gentle smoothing to preserve original audio data
-        try:
-            from scipy import ndimage
-            # Gentle smoothing to preserve audio characteristics
-            sigma = max(0.5, len(values) * self.smoothing_factor * 0.05)
-            smoothed = ndimage.gaussian_filter1d(values_array, sigma=sigma)
-        except ImportError:
-            # Fallback to numpy convolution with smaller window to preserve data
-            window_size = max(3, int(len(values) * self.smoothing_factor * 0.5))
-            smoothed = np.convolve(values_array, np.ones(window_size)/window_size, mode='same')
+        # Apply multi-stage smoothing for ultra-smooth motion
+        smoothed = self._apply_multi_stage_smoothing(values_array, shape_key_name)
         
         # Apply continuous flow smoothing for seamless transitions
         smoothed = self._apply_continuous_flow_smoothing(smoothed, shape_key_name)
+        
+        # Apply musical-aware smoothing
+        smoothed = self._apply_musical_aware_smoothing(smoothed, shape_key_name)
         
         # Apply responsiveness factor with organic variation
         sensitivity = self.shape_keys[shape_key_name]['sensitivity']
@@ -210,6 +227,9 @@ class MutatingCubeAnimator:
         
         # Add organic variation for natural continuous motion
         responsive = self._add_organic_continuous_variation(responsive, shape_key_name)
+        
+        # Apply final smoothing pass for ultra-smooth results
+        responsive = self._apply_final_smoothing_pass(responsive)
         
         # Ensure values stay within reasonable bounds
         responsive = np.clip(responsive, -2.0, 2.0)
@@ -236,6 +256,89 @@ class MutatingCubeAnimator:
             smoothed[i] += flow_influence
         
         return smoothed
+    
+    def _apply_multi_stage_smoothing(self, values: np.ndarray, shape_key_name: str) -> np.ndarray:
+        """Apply multi-stage smoothing for ultra-smooth motion."""
+        smoothed = values.copy()
+        
+        # Stage 1: Gentle Gaussian smoothing
+        try:
+            from scipy import ndimage
+            sigma = max(0.3, len(values) * self.smoothing_factor * 0.03)
+            smoothed = ndimage.gaussian_filter1d(smoothed, sigma=sigma)
+        except ImportError:
+            # Fallback to numpy convolution
+            window_size = max(3, int(len(values) * self.smoothing_factor * 0.3))
+            smoothed = np.convolve(smoothed, np.ones(window_size)/window_size, mode='same')
+        
+        # Stage 2: Adaptive smoothing based on shape key type
+        pattern = self.shape_keys[shape_key_name]['pattern']
+        if pattern in ['burst', 'spiky']:
+            # Preserve transients for burst patterns
+            window_size = max(2, int(len(values) * 0.01))
+        elif pattern in ['gradual', 'flowing']:
+            # More smoothing for gradual patterns
+            window_size = max(5, int(len(values) * 0.05))
+        else:
+            # Default smoothing
+            window_size = max(3, int(len(values) * 0.03))
+        
+        smoothed = np.convolve(smoothed, np.ones(window_size)/window_size, mode='same')
+        
+        return smoothed
+    
+    def _apply_musical_aware_smoothing(self, values: np.ndarray, shape_key_name: str) -> np.ndarray:
+        """Apply musical-aware smoothing for better responsiveness to music structure."""
+        if len(values) < 5:
+            return values
+        
+        musical_smoothed = values.copy()
+        
+        # Apply different smoothing strategies based on shape key characteristics
+        layer = self.shape_keys[shape_key_name]['layer']
+        
+        if layer == 'base':
+            # Base layer: More smoothing for stable foundation
+            smoothing_factor = self.musical_smoothing * 1.2
+        elif layer == 'detail':
+            # Detail layer: Moderate smoothing for balanced response
+            smoothing_factor = self.musical_smoothing
+        else:  # micro layer
+            # Micro layer: Light smoothing to preserve detail
+            smoothing_factor = self.musical_smoothing * 0.7
+        
+        # Apply musical envelope smoothing
+        for i in range(1, len(musical_smoothed) - 1):
+            # Detect musical phrases and apply appropriate smoothing
+            if musical_smoothed[i] > musical_smoothed[i-1]:
+                # Attack phase: preserve sharpness
+                attack_factor = smoothing_factor * 0.3
+                musical_smoothed[i] = musical_smoothed[i-1] + attack_factor * (musical_smoothed[i] - musical_smoothed[i-1])
+            else:
+                # Release phase: smooth decay
+                release_factor = smoothing_factor * 0.7
+                musical_smoothed[i] = musical_smoothed[i-1] + release_factor * (musical_smoothed[i] - musical_smoothed[i-1])
+        
+        return musical_smoothed
+    
+    def _apply_final_smoothing_pass(self, values: np.ndarray) -> np.ndarray:
+        """Apply final smoothing pass for ultra-smooth results."""
+        if len(values) < 3:
+            return values
+        
+        final_smoothed = values.copy()
+        
+        # Apply gentle final smoothing with smaller window
+        window_size = max(2, int(len(values) * 0.01))
+        final_smoothed = np.convolve(final_smoothed, np.ones(window_size)/window_size, mode='same')
+        
+        # Apply edge smoothing to prevent artifacts
+        if len(final_smoothed) > 4:
+            # Smooth edges
+            final_smoothed[0] = (final_smoothed[0] + final_smoothed[1]) / 2
+            final_smoothed[-1] = (final_smoothed[-1] + final_smoothed[-2]) / 2
+        
+        return final_smoothed
     
     def _add_organic_continuous_variation(self, values: np.ndarray, shape_key_name: str) -> np.ndarray:
         """Add organic variation for natural continuous abstract motion."""
@@ -504,50 +607,66 @@ print("✅ Audio-reactive drivers setup complete")
         return min_val + (max_val - min_val) * (0.5 + 0.5 * pattern)
     
     def generate_advanced_color_animations(self) -> str:
-        """Generate advanced time-based color changing animations for visual appeal."""
+        """Generate enhanced musical-responsive color animations."""
         color_animation_code = []
         
         # Get audio features for color reactivity
         audio_features = self.features.get('audio_features', {})
         
         color_animation_code.append('''
-# ADVANCED COLOR ANIMATION SYSTEM
-print("🎨 Creating advanced time-based color animations...")
+# ENHANCED MUSICAL-RESPONSIVE COLOR ANIMATION SYSTEM
+print("🎨 Creating enhanced musical-responsive color animations...")
 
 # Create enhanced material action for dynamic color changes
-material_action = bpy.data.actions.new(name="AdvancedColorAnimation")
+material_action = bpy.data.actions.new(name="MusicalColorAnimation")
 material.animation_data_create()
 material.animation_data.action = material_action
 
 # Get audio feature data for color reactivity
 audio_features = ''' + json.dumps(audio_features, indent=2) + '''
 
-# Color animation parameters
-color_transition_speed = 0.8  # Speed of color transitions
-color_intensity_boost = 1.2  # Intensity multiplier for audio-reactive colors
-color_smoothness = 0.7       # Smoothness of color transitions
+# Enhanced color animation parameters
+color_transition_speed = 1.0  # Speed of color transitions
+color_intensity_boost = 1.5  # Intensity multiplier for audio-reactive colors
+color_smoothness = 0.8       # Smoothness of color transitions
+frequency_color_mixing = 0.6  # Mix frequency-based colors
+musical_responsiveness = 0.8  # Musical responsiveness factor
 
 # Generate dynamic color keyframes based on audio and time
 if audio_features and len(audio_features) > 0:
-    # Get audio data arrays
+    # Get enhanced audio data arrays
     kick_data = audio_features.get('kick_energy', [0.0] * ''' + str(self.total_frames) + ''')
     bass_data = audio_features.get('bass_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    snare_data = audio_features.get('snare_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    hihat_data = audio_features.get('hihat_energy', [0.0] * ''' + str(self.total_frames) + ''')
     vocal_data = audio_features.get('vocal_energy', [0.0] * ''' + str(self.total_frames) + ''')
+    air_data = audio_features.get('air_energy', [0.0] * ''' + str(self.total_frames) + ''')
     spectral_data = audio_features.get('spectral_centroid', [0.0] * ''' + str(self.total_frames) + ''')
+    beat_data = audio_features.get('beat_strength', [0.0] * ''' + str(self.total_frames) + ''')
     
-    # Color palette for dynamic changes
-    color_palette = [
+    # Enhanced color palette with frequency-specific colors
+    primary_palette = [
         (0.2, 0.1, 0.6, 1.0),  # Deep cosmic purple
         (0.0, 0.6, 1.0, 1.0),  # Bright cyan
         (0.8, 0.2, 0.8, 1.0),  # Magenta
         (0.1, 0.8, 0.4, 1.0),  # Electric green
         (1.0, 0.4, 0.2, 1.0),  # Orange
         (0.6, 0.1, 0.9, 1.0),  # Violet
-        (0.4, 0.0, 0.8, 1.0),  # Bright purple
-        (0.0, 0.4, 0.8, 1.0),  # Blue
-        (0.8, 0.0, 0.4, 1.0),  # Red
-        (0.2, 0.8, 0.6, 1.0)   # Teal
+        (0.9, 0.1, 0.3, 1.0),  # Deep red
+        (0.1, 0.3, 0.9, 1.0),  # Deep blue
+        (0.8, 0.8, 0.1, 1.0),  # Bright yellow
+        (0.3, 0.1, 0.1, 1.0)   # Dark crimson
     ]
+    
+    # Frequency-specific color mapping
+    frequency_colors = {
+        'kick': (0.8, 0.1, 0.3, 1.0),      # Deep red for kick
+        'bass': (0.4, 0.1, 0.8, 1.0),      # Deep purple for bass
+        'snare': (0.8, 0.8, 0.2, 1.0),     # Bright yellow for snare
+        'hihat': (0.2, 0.8, 1.0, 1.0),     # Bright cyan for hihat
+        'vocal': (0.8, 0.3, 0.8, 1.0),     # Bright magenta for vocal
+        'air': (0.3, 0.8, 0.8, 1.0)        # Bright teal for air
+    }
     
     # Create base color animation curves
     base_color_r = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=0)
@@ -565,44 +684,76 @@ if audio_features and len(audio_features) > 0:
         emission_available = False
         print("⚠️  Emission animation not available in this Blender version")
     
-    # Generate color keyframes
-    frame_step = max(1, ''' + str(self.total_frames) + ''' // 60)  # 60 keyframes for smooth color changes
+    # Generate enhanced color keyframes with musical responsiveness
+    frame_step = max(1, ''' + str(self.total_frames) + ''' // 80)  # More keyframes for smoother color changes
     
     for i in range(0, ''' + str(self.total_frames) + ''', frame_step):
         frame = min(i, ''' + str(self.total_frames) + ''' - 1)
         progress = frame / ''' + str(self.total_frames) + '''
         
-        # Get audio values for this frame
+        # Get enhanced audio values for this frame
         kick_val = kick_data[min(frame, len(kick_data) - 1)] if kick_data else 0.0
         bass_val = bass_data[min(frame, len(bass_data) - 1)] if bass_data else 0.0
+        snare_val = snare_data[min(frame, len(snare_data) - 1)] if snare_data else 0.0
+        hihat_val = hihat_data[min(frame, len(hihat_data) - 1)] if hihat_data else 0.0
         vocal_val = vocal_data[min(frame, len(vocal_data) - 1)] if vocal_data else 0.0
+        air_val = air_data[min(frame, len(air_data) - 1)] if air_data else 0.0
         spectral_val = spectral_data[min(frame, len(spectral_data) - 1)] if spectral_data else 0.0
+        beat_val = beat_data[min(frame, len(beat_data) - 1)] if beat_data else 0.0
         
-        # Calculate dynamic color based on audio and time
-        # Time-based color cycling
-        time_color_index = int((progress * len(color_palette)) % len(color_palette))
-        next_color_index = (time_color_index + 1) % len(color_palette)
-        time_blend = (progress * len(color_palette)) % 1.0
+        # Calculate enhanced dynamic color based on audio and time
+        # Time-based color cycling with musical responsiveness
+        time_color_index = int((progress * len(primary_palette) * color_transition_speed) % len(primary_palette))
+        next_color_index = (time_color_index + 1) % len(primary_palette)
+        time_blend = (progress * len(primary_palette) * color_transition_speed) % 1.0
         
-        # Audio-reactive color shifts
-        audio_intensity = (kick_val + bass_val + vocal_val) / 3.0
-        spectral_shift = spectral_val * 0.5
+        # Enhanced audio-reactive color calculation
+        audio_intensity = (kick_val + bass_val + snare_val + hihat_val + vocal_val + air_val) / 6.0
+        spectral_shift = spectral_val * 0.6
+        beat_influence = beat_val * 0.4
         
-        # Blend colors based on time and audio
-        base_color = color_palette[time_color_index]
-        next_color = color_palette[next_color_index]
+        # Frequency-specific color mixing
+        freq_r = (kick_val * frequency_colors['kick'][0] + 
+                 bass_val * frequency_colors['bass'][0] + 
+                 snare_val * frequency_colors['snare'][0] + 
+                 hihat_val * frequency_colors['hihat'][0] + 
+                 vocal_val * frequency_colors['vocal'][0] + 
+                 air_val * frequency_colors['air'][0]) / 6.0
         
-        # Smooth color interpolation
+        freq_g = (kick_val * frequency_colors['kick'][1] + 
+                 bass_val * frequency_colors['bass'][1] + 
+                 snare_val * frequency_colors['snare'][1] + 
+                 hihat_val * frequency_colors['hihat'][1] + 
+                 vocal_val * frequency_colors['vocal'][1] + 
+                 air_val * frequency_colors['air'][1]) / 6.0
+        
+        freq_b = (kick_val * frequency_colors['kick'][2] + 
+                 bass_val * frequency_colors['bass'][2] + 
+                 snare_val * frequency_colors['snare'][2] + 
+                 hihat_val * frequency_colors['hihat'][2] + 
+                 vocal_val * frequency_colors['vocal'][2] + 
+                 air_val * frequency_colors['air'][2]) / 6.0
+        
+        # Blend colors based on time and audio with enhanced mixing
+        base_color = primary_palette[time_color_index]
+        next_color = primary_palette[next_color_index]
+        
+        # Smooth color interpolation with musical responsiveness
         r = base_color[0] + (next_color[0] - base_color[0]) * time_blend
         g = base_color[1] + (next_color[1] - base_color[1]) * time_blend
         b = base_color[2] + (next_color[2] - base_color[2]) * time_blend
         
-        # Apply audio-reactive color shifts
-        r += (kick_val * 0.3) + (spectral_shift * 0.2)
-        g += (vocal_val * 0.3) + (spectral_shift * 0.1)
-        b += (bass_val * 0.3) + (spectral_shift * 0.3)
+        # Apply enhanced audio-reactive color shifts
+        r += (kick_val * 0.4) + (spectral_shift * 0.3) + (beat_influence * 0.2) + (freq_r * frequency_color_mixing)
+        g += (vocal_val * 0.4) + (spectral_shift * 0.2) + (beat_influence * 0.1) + (freq_g * frequency_color_mixing)
+        b += (bass_val * 0.4) + (spectral_shift * 0.4) + (beat_influence * 0.3) + (freq_b * frequency_color_mixing)
         
-        # Clamp color values
+        # Apply musical responsiveness factor
+        r *= musical_responsiveness
+        g *= musical_responsiveness
+        b *= musical_responsiveness
+        
+        # Clamp color values with enhanced bounds
         r = max(0.0, min(1.0, r))
         g = max(0.0, min(1.0, g))
         b = max(0.0, min(1.0, b))
@@ -612,13 +763,27 @@ if audio_features and len(audio_features) > 0:
         base_color_g.keyframe_points.insert(frame, g)
         base_color_b.keyframe_points.insert(frame, b)
         
-        # Insert emission color keyframes if available
+        # Insert enhanced emission color keyframes if available
         if emission_available:
-            # Emission colors are brighter versions of base colors
-            emission_r_val = min(1.0, r * 1.5)
-            emission_g_val = min(1.0, g * 1.5)
-            emission_b_val = min(1.0, b * 1.5)
-            emission_strength_val = 0.5 + (audio_intensity * color_intensity_boost)
+            # Enhanced emission colors with frequency-specific brightness
+            kick_brightness = kick_val * 2.0
+            bass_brightness = bass_val * 1.8
+            snare_brightness = snare_val * 1.6
+            hihat_brightness = hihat_val * 1.4
+            vocal_brightness = vocal_val * 1.5
+            air_brightness = air_val * 1.2
+            
+            # Calculate frequency-weighted emission brightness
+            emission_brightness = (kick_brightness + bass_brightness + snare_brightness + 
+                                 hihat_brightness + vocal_brightness + air_brightness) / 6.0
+            
+            # Enhanced emission colors with musical responsiveness
+            emission_r_val = min(1.0, r * (1.5 + emission_brightness * 0.5))
+            emission_g_val = min(1.0, g * (1.5 + emission_brightness * 0.5))
+            emission_b_val = min(1.0, b * (1.5 + emission_brightness * 0.5))
+            
+            # Dynamic emission strength based on audio intensity
+            emission_strength_val = 0.3 + (audio_intensity * color_intensity_boost) + (beat_val * 0.3)
             
             emission_r.keyframe_points.insert(frame, emission_r_val)
             emission_g.keyframe_points.insert(frame, emission_g_val)
