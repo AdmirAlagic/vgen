@@ -37,12 +37,14 @@ class MutatingCubeAnimator:
         self.duration = audio_features['duration']
         self.quality_level = quality_level
         
-        # Quality configuration
+        # OPTIMIZED Quality configuration for better performance
         self.quality_configs = {
-            'ultra': {'subdivision': 3, 'samples': 512, 'keyframe_density': 120},
-            'high': {'subdivision': 2, 'samples': 256, 'keyframe_density': 80},
-            'medium': {'subdivision': 1, 'samples': 128, 'keyframe_density': 60},
-            'low': {'subdivision': 0, 'samples': 64, 'keyframe_density': 40}
+            'ultra_fast': {'subdivision': 1, 'samples': 32, 'keyframe_density': 30, 'max_bounces': 4},
+            'fast': {'subdivision': 1, 'samples': 64, 'keyframe_density': 40, 'max_bounces': 5},
+            'ultra': {'subdivision': 3, 'samples': 256, 'keyframe_density': 80, 'max_bounces': 8},  # Reduced from 512
+            'high': {'subdivision': 2, 'samples': 128, 'keyframe_density': 60, 'max_bounces': 6},  # Reduced from 256
+            'medium': {'subdivision': 1, 'samples': 64, 'keyframe_density': 40, 'max_bounces': 4},  # Reduced from 128
+            'low': {'subdivision': 0, 'samples': 32, 'keyframe_density': 20, 'max_bounces': 3}     # Reduced from 64
         }
         
         self.config = self.quality_configs[quality_level]
@@ -1025,8 +1027,9 @@ shape_key.keyframe_insert(data_path="value")''')
         return '\n'.join(animation_code)
     
     def _generate_optimized_render_settings(self, render_settings: Dict = None) -> str:
-        """Generate optimized render settings for high-quality output."""
+        """Generate optimized render settings for efficient output."""
         if not render_settings:
+            # OPTIMIZED: More efficient default settings
             render_settings = {
                 'resolution_x': 1920,
                 'resolution_y': 1080,
@@ -1034,8 +1037,11 @@ shape_key.keyframe_insert(data_path="value")''')
                 'device': 'GPU',
                 'samples': self.config['samples'],
                 'use_denoising': True,
-                'max_bounces': 8,
-                'use_adaptive_sampling': True
+                'max_bounces': self.config.get('max_bounces', 6),  # Use config value
+                'use_adaptive_sampling': True,
+                'adaptive_threshold': 0.1,  # Faster convergence
+                'use_denoising': True,
+                'denoiser': 'OPTIX' if self.config['samples'] > 64 else 'OPENIMAGEDENOISE'  # Better denoiser for higher samples
             }
         
         settings_code = []
@@ -1043,12 +1049,12 @@ shape_key.keyframe_insert(data_path="value")''')
         settings_code.append(f'render.resolution_y = {render_settings.get("resolution_y", 1080)}')
         settings_code.append(f'render.engine = "{render_settings.get("engine", "CYCLES")}"')
         
-        # Configure video output format
+        # Configure video output format with correct enum values
         settings_code.append('render.image_settings.file_format = "FFMPEG"')
         settings_code.append('render.ffmpeg.format = "MPEG4"')
         settings_code.append('render.ffmpeg.codec = "H264"')
-        settings_code.append('render.ffmpeg.constant_rate_factor = "HIGH"')
-        settings_code.append('render.ffmpeg.ffmpeg_preset = "GOOD"')
+        settings_code.append('render.ffmpeg.constant_rate_factor = "MEDIUM"')  # Use correct enum
+        settings_code.append('render.ffmpeg.ffmpeg_preset = "GOOD"')  # BEST, GOOD, REALTIME
         settings_code.append('render.ffmpeg.audio_codec = "AAC"')
         settings_code.append('render.ffmpeg.audio_bitrate = 128')
         settings_code.append('render.ffmpeg.audio_channels = "STEREO"')
@@ -1059,8 +1065,17 @@ shape_key.keyframe_insert(data_path="value")''')
             settings_code.append(f'cycles.samples = {render_settings.get("samples", self.config["samples"])}')
             settings_code.append(f'cycles.use_denoising = {render_settings.get("use_denoising", True)}')
             settings_code.append(f'cycles.device = "{render_settings.get("device", "GPU")}"')
-            settings_code.append(f'cycles.max_bounces = {render_settings.get("max_bounces", 8)}')
+            settings_code.append(f'cycles.max_bounces = {render_settings.get("max_bounces", self.config.get("max_bounces", 6))}')
             settings_code.append(f'cycles.use_adaptive_sampling = {render_settings.get("use_adaptive_sampling", True)}')
+            settings_code.append(f'cycles.adaptive_threshold = {render_settings.get("adaptive_threshold", 0.1)}')
+            
+            # OPTIMIZED: Set denoiser based on sample count
+            denoiser = render_settings.get('denoiser', 'OPENIMAGEDENOISE')
+            settings_code.append(f'cycles.denoiser = "{denoiser}"')
+            
+            # OPTIMIZED: Additional performance settings
+            settings_code.append('cycles.use_light_tree = True')  # Faster light sampling
+            settings_code.append('cycles.use_auto_tile = True')   # Automatic tiling for memory efficiency
             
             # Enable GPU features if available
             settings_code.append('''

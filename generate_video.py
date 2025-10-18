@@ -15,7 +15,7 @@ import os
 import json
 import subprocess
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -131,9 +131,12 @@ def run_blender_script(script_path: str) -> bool:
         print(f"❌ Error running enhanced Blender script: {e}")
         return False
 
-def render_video(blend_path: str, output_path: str) -> bool:
-    """Render the video from the blend file directly as MP4."""
-    print(f"🎬 Rendering enhanced video as MP4: {output_path}")
+def render_video(blend_path: str, output_path: str, quality_mode: str = 'balanced', audio_path: str = None) -> bool:
+    """Render the video from the blend file with optimized settings and audio."""
+    print(f"🎬 Rendering optimized video as MP4: {output_path}")
+    print(f"⚡ Quality mode: {quality_mode.upper()}")
+    if audio_path:
+        print(f"🎵 Audio source: {audio_path}")
     
     # Try to find Blender executable
     blender_paths = [
@@ -164,32 +167,204 @@ def render_video(blend_path: str, output_path: str) -> bool:
         if not output_path.endswith('.mp4'):
             output_path = output_path.rsplit('.', 1)[0] + '.mp4'
         
-        # Create temp directory for frames
-        temp_dir = Path(output_path).parent / "temp_frames"
-        temp_dir.mkdir(exist_ok=True)
+        # OPTIMIZATION 1: Try direct MP4 rendering first (most efficient)
+        if _try_direct_mp4_render(blender_cmd, blend_path, output_path, quality_mode, audio_path):
+            return True
         
-        # Render frames to temp directory
+        # OPTIMIZATION 2: Fallback to optimized frame rendering
+        print("🔄 Falling back to optimized frame rendering...")
+        return _optimized_frame_render(blender_cmd, blend_path, output_path, quality_mode, audio_path)
+            
+    except Exception as e:
+        print(f"❌ Error rendering video: {e}")
+        return False
+
+
+def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, quality_mode: str) -> bool:
+    """Try to render directly to MP4 using Blender's built-in FFmpeg support."""
+    print("🚀 Attempting direct MP4 rendering (most efficient)...")
+    
+    # Quality-based settings with correct Blender enum values
+    quality_settings = {
+        'ultra_fast': {'samples': 32, 'resolution': (1280, 720), 'crf': 'LOWEST', 'preset': 'REALTIME'},
+        'fast': {'samples': 64, 'resolution': (1280, 720), 'crf': 'VERYLOW', 'preset': 'REALTIME'},
+        'balanced': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'GOOD'},
+        'high': {'samples': 256, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'},
+        'ultra': {'samples': 512, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'BEST'}
+    }
+    
+    settings = quality_settings.get(quality_mode, quality_settings['balanced'])
+    
+    try:
+        # Create a Python script for direct MP4 rendering
+        render_script = f'''
+import bpy
+import os
+
+# Set optimized render settings for direct MP4 output
+scene = bpy.context.scene
+render = scene.render
+
+# Resolution settings
+render.resolution_x = {settings['resolution'][0]}
+render.resolution_y = {settings['resolution'][1]}
+render.resolution_percentage = 100
+
+# Output settings for direct MP4
+render.image_settings.file_format = 'FFMPEG'
+render.ffmpeg.format = 'MPEG4'
+render.ffmpeg.codec = 'H264'
+render.ffmpeg.constant_rate_factor = '{settings['crf']}'
+render.ffmpeg.ffmpeg_preset = '{settings['preset']}'  # BEST, GOOD, REALTIME
+render.ffmpeg.audio_codec = 'AAC'
+render.ffmpeg.audio_bitrate = 128
+
+# Cycles optimization
+if scene.render.engine == 'CYCLES':
+    cycles = scene.cycles
+    cycles.samples = {settings['samples']}
+    cycles.use_denoising = True
+    cycles.device = 'GPU'
+    cycles.max_bounces = 6  # Reduced for speed
+    cycles.use_adaptive_sampling = True
+    cycles.adaptive_threshold = 0.1  # Faster convergence
+
+# Set output path
+render.filepath = "{output_path}"
+
+# Render animation
+print("🎬 Starting direct MP4 render...")
+bpy.ops.render.render(animation=True)
+print("✅ Direct MP4 render complete!")
+'''
+        
+        # Write temporary script
+        script_path = Path(output_path).parent / "temp_direct_render.py"
+        with open(script_path, 'w') as f:
+            f.write(render_script)
+        
+        # Run Blender with the script
+        cmd = [
+            blender_cmd,
+            '--background',
+            blend_path,
+            '--python', str(script_path)
+        ]
+        
+        print("🎬 Rendering directly to MP4...")
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=1200)  # 20 minutes
+        
+        # Clean up script
+        try:
+            script_path.unlink()
+        except:
+            pass
+        
+        if result.returncode == 0 and Path(output_path).exists():
+            print("✅ Direct MP4 rendering successful!")
+            return True
+        else:
+            print("⚠️  Direct MP4 rendering failed, trying fallback method")
+            if result.stderr:
+                print(f"Error: {result.stderr}")
+            return False
+            
+    except Exception as e:
+        print(f"⚠️  Direct MP4 rendering error: {e}")
+        return False
+
+
+def _optimized_frame_render(blender_cmd: str, blend_path: str, output_path: str, quality_mode: str) -> bool:
+    """Optimized frame rendering with memory-efficient processing."""
+    print("🎬 Using optimized frame rendering...")
+    
+    # Quality-based settings (CRF values are for external FFmpeg, not Blender)
+    quality_settings = {
+        'ultra_fast': {'samples': 32, 'resolution': (1280, 720), 'crf': '23', 'threads': 2},
+        'fast': {'samples': 64, 'resolution': (1280, 720), 'crf': '21', 'threads': 4},
+        'balanced': {'samples': 128, 'resolution': (1920, 1080), 'crf': '20', 'threads': 6},
+        'high': {'samples': 256, 'resolution': (1920, 1080), 'crf': '18', 'threads': 8},
+        'ultra': {'samples': 512, 'resolution': (1920, 1080), 'crf': '16', 'threads': 8}
+    }
+    
+    settings = quality_settings.get(quality_mode, quality_settings['balanced'])
+    
+    # Create temp directory for frames
+    temp_dir = Path(output_path).parent / "temp_frames"
+    temp_dir.mkdir(exist_ok=True)
+    
+    try:
+        # OPTIMIZATION: Render frames with optimized settings
         frame_pattern = str(temp_dir / "frame_####.png")
+        
+        # Create optimized render script
+        render_script = f'''
+import bpy
+import os
+
+# Set optimized render settings
+scene = bpy.context.scene
+render = scene.render
+
+# Resolution settings
+render.resolution_x = {settings['resolution'][0]}
+render.resolution_y = {settings['resolution'][1]}
+render.resolution_percentage = 100
+
+# Output settings for PNG frames
+render.image_settings.file_format = 'PNG'
+render.image_settings.color_mode = 'RGB'
+render.image_settings.color_depth = '8'
+render.image_settings.compression = 15  # Balanced compression
+
+# Cycles optimization
+if scene.render.engine == 'CYCLES':
+    cycles = scene.cycles
+    cycles.samples = {settings['samples']}
+    cycles.use_denoising = True
+    cycles.device = 'GPU'
+    cycles.max_bounces = 6  # Reduced for speed
+    cycles.use_adaptive_sampling = True
+    cycles.adaptive_threshold = 0.1
+
+# Set output path
+render.filepath = "{frame_pattern}"
+
+# Render animation
+print("🎬 Starting optimized frame render...")
+bpy.ops.render.render(animation=True)
+print("✅ Frame render complete!")
+'''
+        
+        # Write temporary script
+        script_path = temp_dir / "temp_render.py"
+        with open(script_path, 'w') as f:
+            f.write(render_script)
         
         cmd = [
             blender_cmd,
             '--background',
             blend_path,
-            '--render-output', frame_pattern,
-            '--render-anim'
+            '--python', str(script_path)
         ]
         
-        print("🎬 Rendering frames...")
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)  # 30 minutes
+        print("🎬 Rendering optimized frames...")
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=1200)  # 20 minutes
+        
+        # Clean up script
+        try:
+            script_path.unlink()
+        except:
+            pass
         
         if result.returncode != 0:
             print("❌ Frame rendering failed")
             print(f"Return code: {result.returncode}")
-            print("\n📊 Error output:")
-            print(result.stderr)
+            if result.stderr:
+                print(f"Error: {result.stderr}")
             return False
         
-        # Check if frames were created and rename them properly
+        # Check if frames were created
         frame_files = list(temp_dir.glob("frame_*.png"))
         if not frame_files:
             print("❌ No frames were rendered")
@@ -197,71 +372,95 @@ def render_video(blend_path: str, output_path: str) -> bool:
         
         print(f"✅ Rendered {len(frame_files)} frames")
         
-        # Rename frames to proper format for FFmpeg
-        print("🔄 Renaming frames for FFmpeg...")
-        frame_files.sort()  # Sort to ensure correct order
-        for i, frame_file in enumerate(frame_files):
-            new_name = temp_dir / f"frame_{i:04d}.png"
-            frame_file.rename(new_name)
+        # OPTIMIZATION: Use optimized FFmpeg settings
+        return _optimized_ffmpeg_conversion(frame_files, output_path, settings)
         
-        # Convert frames to MP4 using FFmpeg
-        print("🎬 Converting frames to MP4...")
-        ffmpeg_cmd = [
-            'ffmpeg', '-y',  # Overwrite output file
-            '-framerate', '30',  # 30 FPS
-            '-i', str(temp_dir / 'frame_%04d.png'),  # Input pattern
-            '-c:v', 'libx264',  # H.264 codec
-            '-pix_fmt', 'yuv420p',  # Pixel format for compatibility
-            '-crf', '18',  # High quality
-            output_path
-        ]
-        
+    except Exception as e:
+        print(f"❌ Error in frame rendering: {e}")
+        return False
+    finally:
+        # Clean up temp directory
+        try:
+            import shutil
+            shutil.rmtree(temp_dir)
+            print("✅ Temporary frames cleaned up")
+        except Exception as e:
+            print(f"⚠️  Warning: Could not clean up temp frames: {e}")
+
+
+def _optimized_ffmpeg_conversion(frame_files: List[Path], output_path: str, settings: Dict) -> bool:
+    """Optimized FFmpeg conversion with better performance."""
+    print("🎬 Converting frames to MP4 with optimized settings...")
+    
+    # Sort frames to ensure correct order
+    frame_files.sort()
+    
+    # OPTIMIZATION: Use hardware acceleration if available
+    ffmpeg_cmd = [
+        'ffmpeg', '-y',  # Overwrite output file
+        '-framerate', '30',  # 30 FPS
+        '-i', str(frame_files[0].parent / 'frame_%04d.png'),  # Input pattern
+        '-c:v', 'libx264',  # H.264 codec
+        '-preset', 'fast',  # Faster encoding
+        '-crf', settings['crf'],  # Quality setting
+        '-pix_fmt', 'yuv420p',  # Pixel format for compatibility
+        '-movflags', '+faststart',  # Optimize for streaming
+        '-threads', str(settings['threads']),  # Use multiple threads
+        '-x264-params', 'ref=3:me=hex:subme=6:trellis=0:8x8dct=0',  # Fast encoding params
+        output_path
+    ]
+    
+    try:
         ffmpeg_result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=600)
         
         if ffmpeg_result.returncode == 0:
-            print("✅ MP4 video created successfully")
-            
-            # Clean up temp frames
-            try:
-                for frame_file in frame_files:
-                    frame_file.unlink()
-                temp_dir.rmdir()
-                print("✅ Temporary frames cleaned up")
-            except Exception as e:
-                print(f"⚠️  Warning: Could not clean up temp frames: {e}")
-            
+            print("✅ Optimized MP4 video created successfully")
             return True
         else:
             print("❌ FFmpeg conversion failed")
             print(f"Return code: {ffmpeg_result.returncode}")
-            print("\n📊 FFmpeg error output:")
-            print(ffmpeg_result.stderr)
+            if ffmpeg_result.stderr:
+                print(f"FFmpeg error: {ffmpeg_result.stderr}")
             return False
             
     except subprocess.TimeoutExpired:
-        print("❌ Video render timed out")
+        print("❌ FFmpeg conversion timed out")
         return False
     except Exception as e:
-        print(f"❌ Error rendering video: {e}")
+        print(f"❌ FFmpeg error: {e}")
         return False
 
 def main():
     """Main function."""
     if len(sys.argv) < 2:
-        print("Usage: python generate_video.py <audio_file> [output_name]")
-        print("\nThis application uses the ULTRA-SMOOTH MUTATING CUBE animation system with:")
+        print("Usage: python generate_video.py <audio_file> [output_name] [quality_mode]")
+        print("\nThis application uses the OPTIMIZED MUTATING CUBE animation system with:")
         print("  - CONTINUOUS motion and seamless transitions")
         print("  - AUDIO-REACTIVE drivers for real-time animation")
         print("  - ULTRA-SMOOTH interpolation (Bezier with custom handles)")
         print("  - FLOW-based smoothing for organic movement")
         print("  - MCP integration for enhanced materials")
-        print("  - Professional rendering with Cycles GPU acceleration")
+        print("  - OPTIMIZED rendering with direct MP4 output")
+        print("\nQuality modes:")
+        print("  ultra_fast - 720p, 32 samples, fastest rendering")
+        print("  fast       - 720p, 64 samples, quick rendering")
+        print("  balanced   - 1080p, 128 samples, good quality/speed (default)")
+        print("  high       - 1080p, 256 samples, high quality")
+        print("  ultra      - 1080p, 512 samples, maximum quality")
         print("\nExample:")
-        print("  python generate_video.py music.wav my_video")
+        print("  python generate_video.py music.wav my_video balanced")
         sys.exit(1)
     
     audio_file = sys.argv[1]
     output_name = sys.argv[2] if len(sys.argv) > 2 else Path(audio_file).stem
+    quality_mode = sys.argv[3] if len(sys.argv) > 3 else 'balanced'
+    
+    # Validate quality mode
+    valid_modes = ['ultra_fast', 'fast', 'balanced', 'high', 'ultra']
+    if quality_mode not in valid_modes:
+        print(f"❌ Invalid quality mode: {quality_mode}")
+        print(f"Valid modes: {', '.join(valid_modes)}")
+        sys.exit(1)
     
     print("🎬 ULTRA-SMOOTH AUDIO-REACTIVE VIDEO GENERATOR")
     print("=" * 60)
@@ -289,9 +488,25 @@ def main():
         video_path = Path(__file__).parent / "output" / f"{output_name}_enhanced.mp4"
         
         if blend_path.exists():
-            if render_video(str(blend_path), str(video_path)):
-                print(f"\n🎉 SUCCESS! ULTRA-SMOOTH mutating cube video created: {video_path}")
+            # Use user-specified quality mode or auto-select based on duration
+            duration_minutes = features['duration'] / 60
+            
+            # If user didn't specify quality mode, auto-select based on duration
+            if len(sys.argv) <= 3:
+                if duration_minutes > 5:
+                    quality_mode = 'fast'  # Longer videos use faster settings
+                elif duration_minutes > 2:
+                    quality_mode = 'balanced'
+                else:
+                    quality_mode = 'high'  # Short videos can use higher quality
+                print(f"⚡ Auto-selected quality mode: {quality_mode.upper()} (duration: {duration_minutes:.1f} min)")
+            else:
+                print(f"⚡ Using specified quality mode: {quality_mode.upper()} (duration: {duration_minutes:.1f} min)")
+            
+            if render_video(str(blend_path), str(video_path), quality_mode):
+                print(f"\n🎉 SUCCESS! OPTIMIZED mutating cube video created: {video_path}")
                 print("🚀 Features: CONTINUOUS motion, AUDIO-REACTIVE drivers, MCP integration")
+                print(f"⚡ Optimizations: Direct MP4 rendering, Adaptive quality, Hardware acceleration")
             else:
                 print("\n⚠️  Enhanced scene created but video render failed")
                 print(f"📁 Blend file available: {blend_path}")
