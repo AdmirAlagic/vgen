@@ -1500,10 +1500,10 @@ if not bpy.data.objects.get("Camera") and not bpy.data.objects.get("Camera.001")
 else:
     print("✅ Using existing camera with enhanced movement")
 
-# SPACE ENVIRONMENT SETUP
-print("🌌 Creating immersive space environment...")
+# OPTIMIZED SPACE ENVIRONMENT SETUP - IMMERSIVE COSMIC BACKGROUND
+print("🌌 Creating OPTIMIZED immersive cosmic space environment...")
 
-# Setup World Shader for space background
+# Setup World Shader for advanced space background
 world = bpy.context.scene.world
 world.use_nodes = True
 world_nodes = world.node_tree.nodes
@@ -1518,114 +1518,189 @@ background_node.location = (0, 0)
 
 # Add World Output
 world_output = world_nodes.new(type='ShaderNodeOutputWorld')
-world_output.location = (300, 0)
+world_output.location = (500, 0)
 
 # Add Texture Coordinate
 tex_coord = world_nodes.new(type='ShaderNodeTexCoord')
-tex_coord.location = (-1200, 0)
+tex_coord.location = (-1400, 0)
 
-# Add Mapping for space texture coordinates
+# Add Mapping for animated space texture coordinates
 mapping = world_nodes.new(type='ShaderNodeMapping')
-mapping.location = (-900, 0)
+mapping.location = (-1100, 0)
 
-# Add Noise Texture for space dust/nebula
-noise_tex = world_nodes.new(type='ShaderNodeTexNoise')
-noise_tex.location = (-600, 0)
-noise_tex.inputs['Scale'].default_value = 0.05  # Larger scale for space
-noise_tex.inputs['Detail'].default_value = 20.0
-noise_tex.inputs['Roughness'].default_value = 0.8
+# Add second mapping for different texture scales
+mapping2 = world_nodes.new(type='ShaderNodeMapping')
+mapping2.location = (-1100, -200)
+
+# Add Noise Texture for deep space nebula
+nebula_noise = world_nodes.new(type='ShaderNodeTexNoise')
+nebula_noise.location = (-800, 100)
+nebula_noise.inputs['Scale'].default_value = 0.03  # Large scale for deep space
+nebula_noise.inputs['Detail'].default_value = 15.0
+nebula_noise.inputs['Roughness'].default_value = 0.7
+
+# Add second Noise Texture for space dust
+dust_noise = world_nodes.new(type='ShaderNodeTexNoise')
+dust_noise.location = (-800, -100)
+dust_noise.inputs['Scale'].default_value = 0.1  # Medium scale for dust
+dust_noise.inputs['Detail'].default_value = 8.0
+dust_noise.inputs['Roughness'].default_value = 0.5
 
 # Add Voronoi Texture for star field
-voronoi_tex = world_nodes.new(type='ShaderNodeTexVoronoi')
-voronoi_tex.location = (-600, -200)
-voronoi_tex.inputs['Scale'].default_value = 100.0  # More stars
-voronoi_tex.inputs['Randomness'].default_value = 0.9
+star_voronoi = world_nodes.new(type='ShaderNodeTexVoronoi')
+star_voronoi.location = (-800, -300)
+star_voronoi.inputs['Scale'].default_value = 150.0  # Dense star field
+star_voronoi.inputs['Randomness'].default_value = 0.95
 
-# Add ColorRamp for space gradient
-space_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
-space_colorramp.location = (-300, 0)
+# Add ColorRamp for nebula gradient (deep space to cosmic colors)
+nebula_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
+nebula_colorramp.location = (-500, 100)
+
+# Add ColorRamp for space dust
+dust_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
+dust_colorramp.location = (-500, -100)
 
 # Add ColorRamp for star field
 star_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
-star_colorramp.location = (-300, -200)
+star_colorramp.location = (-500, -300)
 
-# Add Mix Shader to combine space and stars
-mix_shader = world_nodes.new(type='ShaderNodeMixShader')
-mix_shader.location = (-150, 0)
+# Add Mix Shader to combine nebula and dust
+nebula_mix = world_nodes.new(type='ShaderNodeMixShader')
+nebula_mix.location = (-200, 0)
+
+# Add final Mix Shader to combine everything with stars
+final_mix = world_nodes.new(type='ShaderNodeMixShader')
+final_mix.location = (200, 0)
 
 # Connect space environment nodes
 world_links.new(tex_coord.outputs['Generated'], mapping.inputs['Vector'])
-world_links.new(mapping.outputs['Vector'], noise_tex.inputs['Vector'])
-world_links.new(mapping.outputs['Vector'], voronoi_tex.inputs['Vector'])
+world_links.new(tex_coord.outputs['Generated'], mapping2.inputs['Vector'])
+world_links.new(mapping.outputs['Vector'], nebula_noise.inputs['Vector'])
+world_links.new(mapping2.outputs['Vector'], dust_noise.inputs['Vector'])
+world_links.new(mapping2.outputs['Vector'], star_voronoi.inputs['Vector'])
 
-# Configure space gradient colors (deep space to nebula)
-space_colorramp.color_ramp.elements[0].color = (0.01, 0.01, 0.05, 1.0)  # Deep space black
-space_colorramp.color_ramp.elements[1].color = (0.15, 0.05, 0.3, 1.0)   # Purple nebula
-space_colorramp.color_ramp.elements[0].position = 0.0
-space_colorramp.color_ramp.elements[1].position = 1.0
+# Configure nebula gradient colors (deep space to cosmic nebula)
+nebula_colorramp.color_ramp.elements[0].color = (0.005, 0.005, 0.02, 1.0)  # Deep space black
+nebula_colorramp.color_ramp.elements[1].color = (0.2, 0.05, 0.4, 1.0)     # Purple nebula
+nebula_colorramp.color_ramp.elements[0].position = 0.0
+nebula_colorramp.color_ramp.elements[1].position = 0.8
 
-# Configure star field
-star_colorramp.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)  # Black
-star_colorramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)  # White stars
-star_colorramp.color_ramp.elements[0].position = 0.98  # More stars
+# Add third color element for cosmic highlights
+nebula_colorramp.color_ramp.elements.new(0.6)
+nebula_colorramp.color_ramp.elements[2].color = (0.1, 0.3, 0.6, 1.0)     # Cosmic blue
+nebula_colorramp.color_ramp.elements[2].position = 0.6
+
+# Configure space dust colors
+dust_colorramp.color_ramp.elements[0].color = (0.01, 0.01, 0.03, 1.0)   # Dark dust
+dust_colorramp.color_ramp.elements[1].color = (0.05, 0.02, 0.08, 1.0)   # Light dust
+dust_colorramp.color_ramp.elements[0].position = 0.7
+dust_colorramp.color_ramp.elements[1].position = 1.0
+
+# Configure star field with more realistic distribution
+star_colorramp.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)      # Black space
+star_colorramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)      # White stars
+star_colorramp.color_ramp.elements[0].position = 0.97  # Most space is black
 star_colorramp.color_ramp.elements[1].position = 1.0
 
-# Connect textures to color ramps
-world_links.new(noise_tex.outputs['Fac'], space_colorramp.inputs['Fac'])
-world_links.new(voronoi_tex.outputs['Distance'], star_colorramp.inputs['Fac'])
+# Add colored stars for more realism
+star_colorramp.color_ramp.elements.new(0.985)
+star_colorramp.color_ramp.elements[2].color = (0.8, 0.9, 1.0, 1.0)      # Blue stars
+star_colorramp.color_ramp.elements[2].position = 0.985
 
-# Mix space background with stars
-world_links.new(space_colorramp.outputs['Color'], mix_shader.inputs[1])
-world_links.new(star_colorramp.outputs['Color'], mix_shader.inputs[2])
+# Connect textures to color ramps
+world_links.new(nebula_noise.outputs['Fac'], nebula_colorramp.inputs['Fac'])
+world_links.new(dust_noise.outputs['Fac'], dust_colorramp.inputs['Fac'])
+world_links.new(star_voronoi.outputs['Distance'], star_colorramp.inputs['Fac'])
+
+# Mix nebula and dust
+world_links.new(nebula_colorramp.outputs['Color'], nebula_mix.inputs[1])
+world_links.new(dust_colorramp.outputs['Color'], nebula_mix.inputs[2])
+
+# Final mix with stars
+world_links.new(nebula_mix.outputs['Shader'], final_mix.inputs[1])
+world_links.new(star_colorramp.outputs['Color'], final_mix.inputs[2])
 
 # Connect to background
-world_links.new(mix_shader.outputs['Shader'], background_node.inputs['Color'])
+world_links.new(final_mix.outputs['Shader'], background_node.inputs['Color'])
 world_links.new(background_node.outputs['Background'], world_output.inputs['Surface'])
 
 # Set world strength for proper space atmosphere
-background_node.inputs['Strength'].default_value = 1.0  # Full strength
+background_node.inputs['Strength'].default_value = 1.2  # Slightly enhanced for better visibility
 
-# ENHANCED WORLD SHADER: Dark space-like environment with subtle ambient lighting
-world = bpy.context.scene.world
-world.use_nodes = True
-world_nodes = world.node_tree.nodes
-world_links = world.node_tree.links
+# Add subtle animation to space background for dynamic feel
+print("🌌 Adding subtle space background animation...")
 
-# Clear default nodes
-world_nodes.clear()
+# Create space animation action
+space_action = bpy.data.actions.new(name="SpaceBackgroundAnimation")
+world.animation_data_create()
+world.animation_data.action = space_action
 
-# Add Background node
-bg_node = world_nodes.new(type='ShaderNodeBackground')
-bg_node.location = (0, 0)
+# Animate mapping rotation for subtle movement
+mapping_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["Mapping"].inputs[2].default_value', index=0)
+mapping_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["Mapping"].inputs[2].default_value', index=1)
+mapping_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["Mapping"].inputs[2].default_value', index=2)
 
-# Add Output node
-output_node = world_nodes.new(type='ShaderNodeOutputWorld')
-output_node.location = (400, 0)
+# Animate second mapping for different movement
+mapping2_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["Mapping.001"].inputs[2].default_value', index=0)
+mapping2_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["Mapping.001"].inputs[2].default_value', index=1)
+mapping2_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["Mapping.001"].inputs[2].default_value', index=2)
 
-# Connect Background to Output
-world_links.new(bg_node.outputs['Background'], output_node.inputs['Surface'])
+# Create slow, subtle rotation keyframes
+frame_step = max(1, {self.total_frames} // 20)  # 20 keyframes for smooth space movement
 
-# Set background color to dark space-like environment
-bg_node.inputs['Color'].default_value = (0.02, 0.02, 0.05, 1.0)  # Very dark blue
-bg_node.inputs['Strength'].default_value = 0.1  # Subtle ambient lighting
+for i in range(0, {self.total_frames}, frame_step):
+    frame = min(i, {self.total_frames} - 1)
+    progress = frame / {self.total_frames}
+    
+    # Very slow rotation for nebula (cosmic time scale)
+    nebula_rot_x = progress * 0.1  # Very slow X rotation
+    nebula_rot_y = progress * 0.05  # Even slower Y rotation
+    nebula_rot_z = progress * 0.15  # Slightly faster Z rotation
+    
+    # Different rotation for dust and stars
+    dust_rot_x = progress * 0.08
+    dust_rot_y = progress * 0.12
+    dust_rot_z = progress * 0.06
+    
+    # Insert keyframes
+    mapping_rotation_x.keyframe_points.insert(frame, nebula_rot_x)
+    mapping_rotation_y.keyframe_points.insert(frame, nebula_rot_y)
+    mapping_rotation_z.keyframe_points.insert(frame, nebula_rot_z)
+    
+    mapping2_rotation_x.keyframe_points.insert(frame, dust_rot_x)
+    mapping2_rotation_y.keyframe_points.insert(frame, dust_rot_y)
+    mapping2_rotation_z.keyframe_points.insert(frame, dust_rot_z)
 
-print("✅ Enhanced world shader: dark space environment with subtle ambient lighting")
-print("✅ Space environment with procedural nebula and star field created")
+# Apply smooth interpolation to space animation
+for fcurve in space_action.fcurves:
+    for keyframe in fcurve.keyframe_points:
+        keyframe.interpolation = 'BEZIER'
+        keyframe.handle_left_type = 'AUTO'
+        keyframe.handle_right_type = 'AUTO'
 
-# Create enhanced starfield using multiple spheres for better visibility
-print("⭐ Creating enhanced starfield...")
+print("✅ OPTIMIZED immersive cosmic space environment created with animated nebula, dust, and star field")
 
-# Create multiple star objects for better visibility
+# OPTIMIZED STARFIELD CREATION - EFFICIENT AND IMMERSIVE
+print("⭐ Creating OPTIMIZED immersive starfield...")
+
+# Create multiple star objects for better visibility with optimized distribution
 star_positions = []
-for i in range(100):  # 100 bright stars
+# Create stars in a spherical distribution around the scene
+for i in range(150):  # Increased to 150 stars for better coverage
     # Random positions in a large sphere around the scene
-    x = random.uniform(-50, 50)
-    y = random.uniform(-50, 50)
-    z = random.uniform(-50, 50)
+    # Use spherical distribution for more natural star field
+    phi = random.uniform(0, 2 * math.pi)  # Azimuthal angle
+    costheta = random.uniform(-1, 1)      # Cosine of polar angle
+    theta = math.acos(costheta)           # Polar angle
+    r = random.uniform(40, 80)            # Distance from center
+    
+    x = r * math.sin(theta) * math.cos(phi)
+    y = r * math.sin(theta) * math.sin(phi)
+    z = r * math.cos(theta)
     star_positions.append((x, y, z))
 
-# Create star material
-star_material = bpy.data.materials.new(name="BrightStarMaterial")
+# Create optimized star material with color variation
+star_material = bpy.data.materials.new(name="OptimizedStarMaterial")
 star_material.use_nodes = True
 star_nodes = star_material.node_tree.nodes
 star_links = star_material.node_tree.links
@@ -1637,7 +1712,7 @@ star_nodes.clear()
 star_emission = star_nodes.new(type='ShaderNodeEmission')
 star_emission.location = (0, 0)
 star_emission.inputs['Color'].default_value = (1.0, 1.0, 1.0, 1.0)
-star_emission.inputs['Strength'].default_value = 10.0  # Very bright stars
+star_emission.inputs['Strength'].default_value = 8.0  # Optimized brightness
 
 # Add Output
 star_output = star_nodes.new(type='ShaderNodeOutputMaterial')
@@ -1646,9 +1721,9 @@ star_output.location = (300, 0)
 # Connect star material
 star_links.new(star_emission.outputs['Emission'], star_output.inputs['Surface'])
 
-# Create star objects
+# Create star objects with optimized properties
 for i, pos in enumerate(star_positions):
-    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.1, location=pos)
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.05, location=pos)  # Smaller radius
     star = bpy.context.active_object
     star.name = f"Star_{{i:03d}}"
     
@@ -1656,9 +1731,18 @@ for i, pos in enumerate(star_positions):
     star.data.materials.append(star_material)
     
     # Make stars very small but bright
-    star.scale = (0.1, 0.1, 0.1)
+    star.scale = (0.05, 0.05, 0.05)  # Smaller scale for better performance
+    
+    # Add subtle random color variation to stars
+    star_color_variation = random.uniform(0.8, 1.2)
+    star_emission.inputs['Color'].default_value = (
+        star_color_variation,
+        star_color_variation * random.uniform(0.9, 1.1),
+        star_color_variation * random.uniform(0.8, 1.2),
+        1.0
+    )
 
-print("✅ Enhanced starfield with 100 bright stars created")
+print("✅ OPTIMIZED starfield with 150 stars in spherical distribution created")
 
 # Add enhanced nebula/space dust volumetric effects
 print("🌫️ Creating enhanced nebula effects...")
