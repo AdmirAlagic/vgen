@@ -239,6 +239,40 @@ import os
 
 {audio_script_section}
 
+# Validate and fix shader node trees before rendering
+print("🔧 Validating shader node trees...")
+try:
+    for material in bpy.data.materials:
+        if material.use_nodes and material.node_tree:
+            # Check for invalid socket connections
+            for link in material.node_tree.links:
+                try:
+                    # Test if the connection is valid by checking socket compatibility
+                    if hasattr(link.from_socket, 'type') and hasattr(link.to_socket, 'type'):
+                        # Basic type compatibility check
+                        from_type = link.from_socket.type
+                        to_type = link.to_socket.type
+                        
+                        # Remove incompatible connections
+                        if from_type == 'RGBA' and to_type == 'VECTOR':
+                            print(f"⚠️  Removing invalid connection: {{link.from_socket.name}} -> {{link.to_socket.name}}")
+                            material.node_tree.links.remove(link)
+                        elif from_type == 'RGBA' and to_type == 'NORMAL':
+                            print(f"⚠️  Removing invalid connection: {{link.from_socket.name}} -> {{link.to_socket.name}}")
+                            material.node_tree.links.remove(link)
+                        elif from_type == 'RGBA' and to_type == 'FLOAT':
+                            print(f"⚠️  Removing invalid connection: {{link.from_socket.name}} -> {{link.to_socket.name}}")
+                            material.node_tree.links.remove(link)
+                except Exception as e:
+                    print(f"⚠️  Error checking link: {{e}}")
+                    try:
+                        material.node_tree.links.remove(link)
+                    except:
+                        pass
+    print("✅ Shader validation complete")
+except Exception as e:
+    print(f"⚠️  Shader validation error: {{e}}")
+
 # Set optimized render settings for direct MP4 output
 scene = bpy.context.scene
 render = scene.render
@@ -382,6 +416,40 @@ import bpy
 import os
 
 {audio_script_section}
+
+# Validate and fix shader node trees before rendering
+print("🔧 Validating shader node trees...")
+try:
+    for material in bpy.data.materials:
+        if material.use_nodes and material.node_tree:
+            # Check for invalid socket connections
+            for link in material.node_tree.links:
+                try:
+                    # Test if the connection is valid by checking socket compatibility
+                    if hasattr(link.from_socket, 'type') and hasattr(link.to_socket, 'type'):
+                        # Basic type compatibility check
+                        from_type = link.from_socket.type
+                        to_type = link.to_socket.type
+                        
+                        # Remove incompatible connections
+                        if from_type == 'RGBA' and to_type == 'VECTOR':
+                            print(f"⚠️  Removing invalid connection: {{link.from_socket.name}} -> {{link.to_socket.name}}")
+                            material.node_tree.links.remove(link)
+                        elif from_type == 'RGBA' and to_type == 'NORMAL':
+                            print(f"⚠️  Removing invalid connection: {{link.from_socket.name}} -> {{link.to_socket.name}}")
+                            material.node_tree.links.remove(link)
+                        elif from_type == 'RGBA' and to_type == 'FLOAT':
+                            print(f"⚠️  Removing invalid connection: {{link.from_socket.name}} -> {{link.to_socket.name}}")
+                            material.node_tree.links.remove(link)
+                except Exception as e:
+                    print(f"⚠️  Error checking link: {{e}}")
+                    try:
+                        material.node_tree.links.remove(link)
+                    except:
+                        pass
+    print("✅ Shader validation complete")
+except Exception as e:
+    print(f"⚠️  Shader validation error: {{e}}")
 
 # Set optimized render settings
 scene = bpy.context.scene
