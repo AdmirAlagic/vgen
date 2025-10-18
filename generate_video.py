@@ -14,6 +14,7 @@ import sys
 import os
 import json
 import subprocess
+import time
 from pathlib import Path
 from typing import Dict, Optional, List
 
@@ -305,9 +306,19 @@ if scene.render.engine == 'CYCLES':
     cycles.samples = {settings['samples']}
     cycles.use_denoising = True
     cycles.device = 'GPU'
-    cycles.max_bounces = 6  # Reduced for speed
-    cycles.use_adaptive_sampling = True
-    cycles.adaptive_threshold = 0.1  # Faster convergence
+    
+    # Ultra-fast optimizations
+    if '{quality_mode}' == 'ultra_fast':
+        cycles.max_bounces = 3  # Very low for speed
+        cycles.use_adaptive_sampling = True
+        cycles.adaptive_threshold = 0.2  # Higher threshold for faster convergence
+        cycles.use_fast_gi = True  # Enable fast global illumination
+        cycles.caustics_reflective = False  # Disable caustics for speed
+        cycles.caustics_refractive = False
+    else:
+        cycles.max_bounces = 6  # Reduced for speed
+        cycles.use_adaptive_sampling = True
+        cycles.adaptive_threshold = 0.1  # Faster convergence
 
 # Set output path
 render.filepath = "{output_path}"
@@ -332,7 +343,86 @@ print("✅ Direct MP4 render complete!")
         ]
         
         print("🎬 Rendering directly to MP4...")
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=1200)  # 20 minutes
+        print(f"📊 Render settings: {settings['resolution'][0]}x{settings['resolution'][1]}, {settings['samples']} samples")
+        print(f"⏱️  Expected duration: ~{total_frames/30:.1f} seconds")
+        print(f"🎯 Quality: {quality_mode.upper()}")
+        print(f"📈 Total frames to render: {total_frames}")
+        
+        # Estimate render time based on quality
+        estimated_time_per_frame = {
+            'ultra_fast': 0.5,  # seconds per frame
+            'fast': 1.0,
+            'balanced': 2.0,
+            'high': 4.0,
+            'ultra': 8.0
+        }
+        estimated_total_time = estimated_time_per_frame.get(quality_mode, 2.0) * total_frames
+        print(f"⏰ Estimated render time: ~{estimated_total_time/60:.1f} minutes")
+        print("🚀 Starting Blender render process...")
+        
+        # Start the process with real-time output
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, universal_newlines=True)
+        
+        # Track progress
+        start_time = time.time()
+        last_progress_time = start_time
+        frame_count = 0
+        
+        print("📈 Render progress:")
+        while True:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            
+            if output:
+                # Print Blender output in real-time
+                print(f"🔧 Blender: {output.strip()}")
+                
+                # Try to extract frame progress from Blender output
+                if "Fra:" in output or "Frame" in output:
+                    try:
+                        # Extract frame number from Blender output
+                        if "Fra:" in output:
+                            frame_part = output.split("Fra:")[1].split()[0]
+                            frame_count = int(frame_part)
+                        elif "Frame" in output:
+                            frame_part = output.split("Frame")[1].split()[0]
+                            frame_count = int(frame_part)
+                        
+                        # Calculate progress
+                        progress = (frame_count / total_frames) * 100
+                        elapsed = time.time() - start_time
+                        
+                        # Print progress every 5% or every 30 seconds
+                        if progress % 5 < 1 or (time.time() - last_progress_time) > 30:
+                            print(f"📊 Progress: {progress:.1f}% ({frame_count}/{total_frames} frames) - {elapsed:.1f}s elapsed")
+                            last_progress_time = time.time()
+                            
+                            # Check if we're taking too long
+                            if elapsed > estimated_total_time * 2:
+                                print(f"⚠️  WARNING: Render is taking longer than expected ({elapsed:.1f}s vs {estimated_total_time:.1f}s)")
+                                print("💡 Consider using a faster quality mode or checking system resources")
+                            
+                    except (ValueError, IndexError):
+                        pass  # Ignore parsing errors
+        
+        # Wait for process to complete
+        return_code = process.wait()
+        total_time = time.time() - start_time
+        
+        print(f"⏱️  Total render time: {total_time:.1f} seconds")
+        
+        if return_code == 0:
+            print("✅ Blender render process completed successfully!")
+        else:
+            print(f"❌ Blender render process failed with code: {return_code}")
+        
+        # Get any remaining output
+        remaining_output = process.stdout.read()
+        if remaining_output:
+            print(f"🔧 Final Blender output: {remaining_output}")
+        
+        result = subprocess.CompletedProcess(cmd, return_code, "", "")
         
         # Clean up script
         try:
@@ -480,9 +570,19 @@ if scene.render.engine == 'CYCLES':
     cycles.samples = {settings['samples']}
     cycles.use_denoising = True
     cycles.device = 'GPU'
-    cycles.max_bounces = 6  # Reduced for speed
-    cycles.use_adaptive_sampling = True
-    cycles.adaptive_threshold = 0.1
+    
+    # Ultra-fast optimizations
+    if '{quality_mode}' == 'ultra_fast':
+        cycles.max_bounces = 3  # Very low for speed
+        cycles.use_adaptive_sampling = True
+        cycles.adaptive_threshold = 0.2  # Higher threshold for faster convergence
+        cycles.use_fast_gi = True  # Enable fast global illumination
+        cycles.caustics_reflective = False  # Disable caustics for speed
+        cycles.caustics_refractive = False
+    else:
+        cycles.max_bounces = 6  # Reduced for speed
+        cycles.use_adaptive_sampling = True
+        cycles.adaptive_threshold = 0.1
 
 # Set output path
 render.filepath = "{frame_pattern}"
@@ -506,7 +606,69 @@ print("✅ Frame render complete!")
         ]
         
         print("🎬 Rendering optimized frames...")
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=1200)  # 20 minutes
+        print(f"📊 Render settings: {settings['resolution'][0]}x{settings['resolution'][1]}, {settings['samples']} samples")
+        print(f"⏱️  Expected duration: ~{total_frames/30:.1f} seconds")
+        print(f"🎯 Quality: {quality_mode.upper()}")
+        print("🚀 Starting Blender frame render process...")
+        
+        # Start the process with real-time output
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, universal_newlines=True)
+        
+        # Track progress
+        start_time = time.time()
+        last_progress_time = start_time
+        frame_count = 0
+        
+        print("📈 Frame render progress:")
+        while True:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            
+            if output:
+                # Print Blender output in real-time
+                print(f"🔧 Blender: {output.strip()}")
+                
+                # Try to extract frame progress from Blender output
+                if "Fra:" in output or "Frame" in output:
+                    try:
+                        # Extract frame number from Blender output
+                        if "Fra:" in output:
+                            frame_part = output.split("Fra:")[1].split()[0]
+                            frame_count = int(frame_part)
+                        elif "Frame" in output:
+                            frame_part = output.split("Frame")[1].split()[0]
+                            frame_count = int(frame_part)
+                        
+                        # Calculate progress
+                        progress = (frame_count / total_frames) * 100
+                        elapsed = time.time() - start_time
+                        
+                        # Print progress every 5% or every 30 seconds
+                        if progress % 5 < 1 or (time.time() - last_progress_time) > 30:
+                            print(f"📊 Progress: {progress:.1f}% ({frame_count}/{total_frames} frames) - {elapsed:.1f}s elapsed")
+                            last_progress_time = time.time()
+                            
+                    except (ValueError, IndexError):
+                        pass  # Ignore parsing errors
+        
+        # Wait for process to complete
+        return_code = process.wait()
+        total_time = time.time() - start_time
+        
+        print(f"⏱️  Total frame render time: {total_time:.1f} seconds")
+        
+        if return_code == 0:
+            print("✅ Blender frame render process completed successfully!")
+        else:
+            print(f"❌ Blender frame render process failed with code: {return_code}")
+        
+        # Get any remaining output
+        remaining_output = process.stdout.read()
+        if remaining_output:
+            print(f"🔧 Final Blender output: {remaining_output}")
+        
+        result = subprocess.CompletedProcess(cmd, return_code, "", "")
         
         # Clean up script
         try:
@@ -581,18 +743,54 @@ def _optimized_ffmpeg_conversion(frame_files: List[Path], output_path: str, sett
     ffmpeg_cmd.append(output_path)  # Output file
     
     try:
-        ffmpeg_result = subprocess.run(ffmpeg_cmd, capture_output=True, text=True, timeout=600)
+        print(f"🎬 FFmpeg command: {' '.join(ffmpeg_cmd)}")
+        print("🚀 Starting FFmpeg conversion...")
         
-        if ffmpeg_result.returncode == 0:
+        # Start FFmpeg with real-time output
+        process = subprocess.Popen(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, universal_newlines=True)
+        
+        start_time = time.time()
+        print("📈 FFmpeg conversion progress:")
+        
+        while True:
+            output = process.stdout.readline()
+            if output == '' and process.poll() is not None:
+                break
+            
+            if output:
+                # Print FFmpeg output in real-time
+                print(f"🔧 FFmpeg: {output.strip()}")
+                
+                # Try to extract progress from FFmpeg output
+                if "frame=" in output and "fps=" in output:
+                    try:
+                        # Extract frame and fps info
+                        frame_part = output.split("frame=")[1].split()[0]
+                        fps_part = output.split("fps=")[1].split()[0]
+                        elapsed = time.time() - start_time
+                        print(f"📊 FFmpeg: {frame_part} frames, {fps_part} fps, {elapsed:.1f}s elapsed")
+                    except (ValueError, IndexError):
+                        pass  # Ignore parsing errors
+        
+        # Wait for process to complete
+        return_code = process.wait()
+        total_time = time.time() - start_time
+        
+        print(f"⏱️  Total FFmpeg conversion time: {total_time:.1f} seconds")
+        
+        if return_code == 0:
             print("✅ Optimized MP4 video created successfully")
             if audio_path:
                 print("🎵 Audio successfully added to video")
             return True
         else:
             print("❌ FFmpeg conversion failed")
-            print(f"Return code: {ffmpeg_result.returncode}")
-            if ffmpeg_result.stderr:
-                print(f"FFmpeg error: {ffmpeg_result.stderr}")
+            print(f"Return code: {return_code}")
+            
+            # Get any remaining output
+            remaining_output = process.stdout.read()
+            if remaining_output:
+                print(f"🔧 Final FFmpeg output: {remaining_output}")
             return False
             
     except subprocess.TimeoutExpired:

@@ -1030,12 +1030,25 @@ cube.name = "OptimizedMutatingCube"
 bpy.ops.object.mode_set(mode='EDIT')
 bpy.ops.mesh.select_all(action='SELECT')
 bpy.ops.mesh.subdivide(number_cuts={self.config['subdivision']})
+
+# COMMERCIAL-GRADE GEOMETRY OPTIMIZATION: Add beveling for softer corners
+bpy.ops.mesh.bevel(offset=0.15, segments=3, affect='EDGES')
+
+# Apply smooth shading for professional appearance
+bpy.ops.mesh.faces_shade_smooth()
+
 bpy.ops.object.mode_set(mode='OBJECT')
 
-print("✅ Cube created with OPTIMAL subdivision")
+# Add Subdivision Surface modifier for ultra-smooth results
+if "SubdivisionSurface" not in cube.modifiers:
+    subdiv_mod = cube.modifiers.new(name="SubdivisionSurface", type='SUBSURF')
+    subdiv_mod.levels = 2
+    subdiv_mod.render_levels = 3
 
-# Create cosmic/space-themed material with advanced shader nodes
-material = bpy.data.materials.new(name="CosmicMutatingMaterial")
+print("✅ Cube created with COMMERCIAL-GRADE geometry: beveled edges, smooth shading, subdivision surface")
+
+# PREMIUM MATERIAL SYSTEM: Create high-quality futuristic material
+material = bpy.data.materials.new(name="PremiumFuturisticMaterial")
 material.use_nodes = True
 nodes = material.node_tree.nodes
 links = material.node_tree.links
@@ -1049,138 +1062,58 @@ bsdf.location = (0, 0)
 
 # Add Output
 output = nodes.new(type='ShaderNodeOutputMaterial')
-output.location = (600, 0)
+output.location = (400, 0)
 
-# Add Volume Principled for cosmic volumetric effects
-volume_principled = nodes.new(type='ShaderNodeVolumePrincipled')
-volume_principled.location = (0, -400)
-
-# Add Glass BSDF for cosmic transparency
-glass = nodes.new(type='ShaderNodeBsdfGlass')
-glass.location = (0, -200)
-
-# Add Mix Shader to blend Principled and Glass
-mix_shader = nodes.new(type='ShaderNodeMixShader')
-mix_shader.location = (300, 0)
-
-# Add Fresnel node for cosmic edges (not used in current setup)
-# fresnel = nodes.new(type='ShaderNodeFresnel')
-# fresnel.location = (-300, 0)
-# fresnel.inputs['IOR'].default_value = 1.5  # Cosmic material IOR
-
-# Add ColorRamp for cosmic energy effect
-colorramp = nodes.new(type='ShaderNodeValToRGB')
-colorramp.location = (-600, 0)
-
-# Add Wave Texture for cosmic energy distortion
-wave_tex = nodes.new(type='ShaderNodeTexWave')
-wave_tex.location = (-900, 0)
-wave_tex.wave_type = 'BANDS'
-wave_tex.wave_profile = 'SAW'
-wave_tex.inputs['Scale'].default_value = 8.0
-wave_tex.inputs['Distortion'].default_value = 3.0
-wave_tex.inputs['Detail'].default_value = 20.0
-wave_tex.inputs['Detail Scale'].default_value = 3.0
-wave_tex.inputs['Detail Roughness'].default_value = 0.6
-
-# Add Noise Texture for cosmic surface detail
+# PREMIUM MATERIAL FEATURES: Add sophisticated node setup
+# Add Noise Texture for surface variation
 noise_tex = nodes.new(type='ShaderNodeTexNoise')
-noise_tex.location = (-900, -200)
-noise_tex.inputs['Scale'].default_value = 15.0
-noise_tex.inputs['Detail'].default_value = 20.0
-noise_tex.inputs['Roughness'].default_value = 0.8
+noise_tex.location = (-400, 200)
+noise_tex.inputs['Scale'].default_value = 8.0
+noise_tex.inputs['Detail'].default_value = 12.0
 
-# Add Voronoi Texture for cosmic energy patterns
-voronoi_tex = nodes.new(type='ShaderNodeTexVoronoi')
-voronoi_tex.location = (-900, -400)
-voronoi_tex.inputs['Scale'].default_value = 12.0
-voronoi_tex.inputs['Randomness'].default_value = 0.7
+# Add ColorRamp for noise control
+color_ramp = nodes.new(type='ShaderNodeValToRGB')
+color_ramp.location = (-200, 200)
+color_ramp.color_ramp.elements[0].color = (0.1, 0.2, 0.4, 1.0)  # Dark blue
+color_ramp.color_ramp.elements[1].color = (0.4, 0.6, 0.9, 1.0)  # Light blue
 
-# Add Mapping node for texture animation
-mapping = nodes.new(type='ShaderNodeMapping')
-mapping.location = (-1200, 0)
+# Add Fresnel node for edge lighting
+fresnel = nodes.new(type='ShaderNodeFresnel')
+fresnel.location = (-200, -200)
+fresnel.inputs['IOR'].default_value = 1.5
 
-# Add Texture Coordinate
-tex_coord = nodes.new(type='ShaderNodeTexCoord')
-tex_coord.location = (-1500, 0)
+# Add Emission node for glow effect
+emission = nodes.new(type='ShaderNodeEmission')
+emission.location = (-200, -400)
 
-# Add Time node for animation
-time_node = nodes.new(type='ShaderNodeValue')
-time_node.location = (-1500, -200)
+# Add Add Shader to combine emission with principled
+add_shader = nodes.new(type='ShaderNodeAddShader')
+add_shader.location = (200, -200)
 
-# Connect nodes for cosmic energy effect
-links.new(tex_coord.outputs['Generated'], mapping.inputs['Vector'])
-links.new(time_node.outputs['Value'], mapping.inputs['Location'])
-links.new(mapping.outputs['Vector'], wave_tex.inputs['Vector'])
-links.new(mapping.outputs['Vector'], noise_tex.inputs['Vector'])
-links.new(mapping.outputs['Vector'], voronoi_tex.inputs['Vector'])
+# Connect premium material nodes
+links.new(noise_tex.outputs['Fac'], color_ramp.inputs['Fac'])
+links.new(color_ramp.outputs['Color'], bsdf.inputs['Base Color'])
+links.new(fresnel.outputs['Fac'], emission.inputs['Strength'])
+links.new(bsdf.outputs['BSDF'], add_shader.inputs[0])
+links.new(emission.outputs['Emission'], add_shader.inputs[1])
+links.new(add_shader.outputs['Shader'], output.inputs['Surface'])
 
-# Connect wave texture to colorramp for cosmic energy
-links.new(wave_tex.outputs['Fac'], colorramp.inputs['Fac'])
+# Set premium material properties
+bsdf.inputs['Metallic'].default_value = 0.9
+bsdf.inputs['Roughness'].default_value = 0.15
+bsdf.inputs['IOR'].default_value = 1.8
 
-# Set up ColorRamp for cosmic energy (purple to cyan)
-colorramp.color_ramp.elements[0].color = (0.3, 0.0, 0.5, 1.0)  # Deep purple
-colorramp.color_ramp.elements[1].color = (0.0, 0.8, 1.0, 1.0)  # Bright cyan
-colorramp.color_ramp.elements[0].position = 0.2
-colorramp.color_ramp.elements[1].position = 0.8
-
-# Fix: Connect colorramp output to mix shader factor, not fresnel normal
-links.new(colorramp.outputs['Color'], mix_shader.inputs['Fac'])
-
-# Configure Principled BSDF for cosmic properties
-bsdf.inputs['Base Color'].default_value = (0.1, 0.05, 0.3, 1.0)  # Darker cosmic purple base
-bsdf.inputs['Metallic'].default_value = 0.8  # High metallic for cosmic reflection
-bsdf.inputs['Roughness'].default_value = 0.05  # Very smooth cosmic surface
-bsdf.inputs['IOR'].default_value = 1.8  # Higher IOR for cosmic material
+# Handle emission for Blender 4.5 compatibility
 try:
-    bsdf.inputs['Transmission Weight'].default_value = 0.9  # Very high transmission for cosmic effect
-    bsdf.inputs['Transmission Roughness'].default_value = 0.05  # Very smooth transmission
+    bsdf.inputs['Emission Color'].default_value = (0.5, 0.2, 1.0, 1.0)
+    bsdf.inputs['Emission Strength'].default_value = 1.5
 except KeyError:
-    # Use alternative input names for different Blender versions
-    try:
-        bsdf.inputs['Transmission'].default_value = 0.9  # Very high transmission
-    except KeyError:
-        print("⚠️  Transmission inputs not available in this Blender version")
+    pass
 
-# Add subsurface scattering for cosmic depth
-try:
-    bsdf.inputs['Subsurface Weight'].default_value = 0.8  # Strong subsurface scattering
-    bsdf.inputs['Subsurface Color'].default_value = (0.4, 0.1, 0.8, 1.0)  # Bright purple subsurface
-    bsdf.inputs['Subsurface Radius'].default_value = (1.2, 0.4, 0.3)  # Larger cosmic scattering
-except KeyError:
-    print("⚠️  Subsurface inputs not available, using standard transmission")
-
-# Configure Glass BSDF for cosmic transparency
-glass.inputs['Color'].default_value = (0.8, 0.4, 1.0, 1.0)  # Bright purple cosmic tint
-glass.inputs['Roughness'].default_value = 0.02
-glass.inputs['IOR'].default_value = 1.8
-
-# Configure Volume Principled for cosmic volume
-volume_principled.inputs['Color'].default_value = (0.3, 0.1, 0.8, 1.0)  # Bright cosmic color
-volume_principled.inputs['Density'].default_value = 0.5  # Higher density for visible cosmic effect
-volume_principled.inputs['Anisotropy'].default_value = 0.3  # More anisotropy for cosmic scattering
-
-# Connect shaders
-links.new(bsdf.outputs['BSDF'], mix_shader.inputs[1])
-links.new(glass.outputs['BSDF'], mix_shader.inputs[2])
-links.new(mix_shader.outputs['Shader'], output.inputs['Surface'])
-
-# Connect volume shader
-links.new(volume_principled.outputs['Volume'], output.inputs['Volume'])
-
-# Handle emission for cosmic glow (Blender 4.5 compatibility)
-try:
-    bsdf.inputs['Emission Color'].default_value = (0.5, 0.2, 1.0, 1.0)  # Bright cosmic purple glow
-    bsdf.inputs['Emission Strength'].default_value = 1.5  # Very strong cosmic emission
-    print("✅ Bright cosmic emission set using Blender 4.5 style")
-except KeyError:
-    print("⚠️  Emission input not found, using enhanced base color")
-    bsdf.inputs['Base Color'].default_value = (0.4, 0.2, 0.9, 1.0)
-
-# Assign material
+# Assign premium material to cube
 cube.data.materials.append(material)
 
-print("✅ Cosmic/space-themed material created with energy effects, cosmic transparency, and volumetric effects")
+print("✅ PREMIUM futuristic material created with sophisticated node setup and commercial-grade quality")
 
 # Create shape keys for deformation
 shape_keys = cube.shape_key_add(name="Basis")
@@ -1250,42 +1183,27 @@ print("✅ OPTIMIZED shape key animations generated")
 # MCP INTEGRATION: Enhanced materials and assets
 {self.generate_mcp_enhancements()}
 
-# Set ULTRA-SMOOTH keyframe interpolation optimized for continuous abstract shape changing
-for fcurve in action.fcurves:
-    for i, keyframe in enumerate(fcurve.keyframe_points):
-        keyframe.interpolation = 'BEZIER'
-        
-        # CRITICAL: Replace AUTO_CLAMPED with FREE handles for ultra-smooth continuous motion
-        keyframe.handle_left_type = 'FREE'
-        keyframe.handle_right_type = 'FREE'
-        
-        # Calculate ultra-smooth handles for continuous abstract shape changing
-        if len(fcurve.keyframe_points) > 1:
-            # Custom handle calculation for ultra-smooth interpolation
-            keyframe.handle_left[0] = -0.33  # Smooth left handle
-            keyframe.handle_right[0] = 0.33  # Smooth right handle
-            
-            # Ensure handles create continuous flow
-            keyframe.handle_left[1] = keyframe.co[1] * 0.1  # Subtle vertical variation
-            keyframe.handle_right[1] = keyframe.co[1] * 0.1
-            
-            # Create continuous flow effect for seamless transitions
-            if i > 0 and i < len(fcurve.keyframe_points) - 1:
-                # Flow-based handle adjustment for seamless transitions
-                flow_offset = 0.2 * 0.2
-                keyframe.handle_left[1] += flow_offset
-                keyframe.handle_right[1] -= flow_offset
-                
-                # Ensure continuous derivative (smooth velocity)
-                prev_keyframe = fcurve.keyframe_points[i-1]
-                next_keyframe = fcurve.keyframe_points[i+1]
-                
-                # Calculate smooth velocity for continuous motion
-                velocity = (next_keyframe.co[1] - prev_keyframe.co[1]) * 0.1
-                keyframe.handle_left[1] += velocity
-                keyframe.handle_right[1] += velocity
+# ANTI-FLICKER SYSTEM: Prevent animation flicker at start
+print("🔧 Applying anti-flicker system...")
 
-print("✅ ADVANCED smooth interpolation applied")
+# Apply smooth interpolation to all keyframes
+for fcurve in action.fcurves:
+    for keyframe in fcurve.keyframe_points:
+        keyframe.interpolation = 'BEZIER'
+        keyframe.handle_left_type = 'AUTO'
+        keyframe.handle_right_type = 'AUTO'
+        
+        # Add pre-keyframe at frame -1 to prevent sudden changes
+        if keyframe.co[0] == 0.0:
+            fcurve.keyframe_points.insert(frame=-1.0, value=keyframe.co[1])
+            # Set gentle curve for first keyframe
+            keyframe.handle_right_type = 'VECTOR'
+
+# Ensure scene starts at frame 0 with proper settings
+scene.frame_start = 0
+scene.frame_current = 0
+
+print("✅ Anti-flicker system applied: smooth interpolation, pre-keyframes, gentle curves")
 
 # AUDIO-REACTIVE DRIVERS: Real-time continuous motion system
 {self.create_audio_reactive_drivers()}
@@ -1405,6 +1323,31 @@ world_links.new(background_node.outputs['Background'], world_output.inputs['Surf
 # Set world strength for proper space atmosphere
 background_node.inputs['Strength'].default_value = 1.0  # Full strength
 
+# ENHANCED WORLD SHADER: Dark space-like environment with subtle ambient lighting
+world = bpy.context.scene.world
+world.use_nodes = True
+world_nodes = world.node_tree.nodes
+world_links = world.node_tree.links
+
+# Clear default nodes
+world_nodes.clear()
+
+# Add Background node
+bg_node = world_nodes.new(type='ShaderNodeBackground')
+bg_node.location = (0, 0)
+
+# Add Output node
+output_node = world_nodes.new(type='ShaderNodeOutputWorld')
+output_node.location = (400, 0)
+
+# Connect Background to Output
+world_links.new(bg_node.outputs['Background'], output_node.inputs['Surface'])
+
+# Set background color to dark space-like environment
+bg_node.inputs['Color'].default_value = (0.02, 0.02, 0.05, 1.0)  # Very dark blue
+bg_node.inputs['Strength'].default_value = 0.1  # Subtle ambient lighting
+
+print("✅ Enhanced world shader: dark space environment with subtle ambient lighting")
 print("✅ Space environment with procedural nebula and star field created")
 
 # Create enhanced starfield using multiple spheres for better visibility
@@ -1506,40 +1449,33 @@ for i, pos in enumerate(nebula_positions):
 
 print("✅ Enhanced nebula volumetric effects created")
 
-# Setup enhanced space lighting
-# Main key light (sun/star)
-bpy.ops.object.light_add(type='SUN', location=(4, 4, 6))
-sun = bpy.context.active_object
-sun.name = "SpaceKeyLight"
-sun.data.energy = 4.0  # Increased for space atmosphere
-sun.data.color = (1.0, 0.9, 0.8)  # Warm star light
-sun.data.angle = math.radians(25)
+# PROFESSIONAL LIGHTING SETUP: Three-point lighting with area lights
+# Main key light (warm white)
+bpy.ops.object.light_add(type='AREA', location=(3, 3, 5))
+main_light = bpy.context.active_object
+main_light.name = "MainKeyLight"
+main_light.data.energy = 50
+main_light.data.size = 2.0
+main_light.data.color = (1.0, 0.95, 0.8)  # Warm white
+main_light.rotation_euler = (0.5, 0.2, 0.3)
 
-# Fill light (distant star)
+# Rim light for edge definition (cool blue)
 bpy.ops.object.light_add(type='AREA', location=(-3, -3, 3))
-fill_light = bpy.context.active_object
-fill_light.name = "SpaceFillLight"
-fill_light.data.energy = 2.0
-fill_light.data.color = (0.7, 0.8, 1.0)  # Cool blue star light
-fill_light.data.size = 3.0
-
-# Rim light for dramatic space effect
-bpy.ops.object.light_add(type='AREA', location=(0, -8, 2))
 rim_light = bpy.context.active_object
-rim_light.name = "SpaceRimLight"
-rim_light.data.energy = 3.0
-rim_light.data.color = (1.0, 0.7, 0.5)  # Warm rim light
+rim_light.name = "RimLight"
+rim_light.data.energy = 30
 rim_light.data.size = 1.5
+rim_light.data.color = (0.8, 0.9, 1.0)  # Cool blue
 
-# Add ambient space light
-bpy.ops.object.light_add(type='AREA', location=(0, 0, 10))
-ambient_light = bpy.context.active_object
-ambient_light.name = "SpaceAmbientLight"
-ambient_light.data.energy = 0.5
-ambient_light.data.color = (0.5, 0.6, 0.8)  # Cool ambient
-ambient_light.data.size = 10.0
+# Fill light for overall illumination (neutral white)
+bpy.ops.object.light_add(type='AREA', location=(0, -4, 2))
+fill_light = bpy.context.active_object
+fill_light.name = "FillLight"
+fill_light.data.energy = 20
+fill_light.data.size = 3.0
+fill_light.data.color = (1.0, 1.0, 0.9)  # Neutral white
 
-print("✅ Enhanced space lighting setup")
+print("✅ PROFESSIONAL three-point lighting setup with area lights")
 
 # MCP INTEGRATION: Enhance materials with PolyHaven assets
 print("🎨 Checking MCP integrations for enhanced materials...")
@@ -1599,17 +1535,18 @@ cube.data.materials.append(material)
 
 print("✅ ULTRA-SMOOTH enhanced material created with MCP integration support")
 
-print("🌌 COSMIC MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
+print("🌌 COMMERCIAL-GRADE MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
 print(f"📊 Total frames: {self.total_frames}")
 print(f"🎬 FPS: {self.fps}")
 print(f"⏱️ Duration: {self.duration:.2f}s")
 print(f"🔑 Shape keys: {{len(shape_key_names)}}")
 print(f"🎯 Quality: {self.quality_level.upper()}")
 print(f"🔧 Subdivision: {self.config['subdivision']}")
-print("🌌 Space Environment: HDRI background, Starfield particles, Nebula volumes")
-print("🎨 Cosmic Material: Purple-cyan energy, Volumetric effects, Audio-reactive glow")
-print("🚀 Features: ULTRA-SMOOTH interpolation, CONTINUOUS motion, AUDIO-REACTIVE drivers, MCP integration")
-print("✨ Optimizations: Space atmosphere, Cosmic lighting, Continuous flow smoothing, Organic variation")
+print("🌌 Environment: Dark space background with subtle ambient lighting")
+print("🎨 Premium Material: Sophisticated node setup with noise textures, fresnel effects, and emission")
+print("💡 Professional Lighting: Three-point area lighting system")
+print("🚀 Features: COMMERCIAL-GRADE geometry, PREMIUM materials, ANTI-FLICKER system, smooth interpolation")
+print("✨ Optimizations: Beveled edges, subdivision surface, smooth shading, professional lighting, flicker prevention")
 
 {f"# Save blend file\nbpy.ops.wm.save_as_mainfile(filepath=\"{blend_path}\")\nprint(f\"💾 Blend file saved: {blend_path}\")" if blend_path else "# No blend file path provided"}
 '''
