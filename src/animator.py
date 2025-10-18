@@ -671,6 +671,29 @@ print("✅ Audio-reactive drivers setup complete")
         
         return organic_factor
     
+    def _calculate_harmonic_progression(self, kick_val: float, bass_val: float, snare_val: float, vocal_val: float, spectral_val: float) -> float:
+        """Calculate harmonic progression based on audio features using musical theory."""
+        # Analyze harmonic content based on frequency distribution
+        # Low frequencies (kick, bass) represent root notes and stability
+        # Mid frequencies (snare, vocal) represent harmonic movement
+        # High frequencies (spectral) represent tension and resolution
+        
+        # Calculate harmonic tension (0.0 = stable, 1.0 = high tension)
+        harmonic_tension = (snare_val * 0.4 + vocal_val * 0.3 + spectral_val * 0.3)
+        
+        # Calculate harmonic stability (0.0 = unstable, 1.0 = stable)
+        harmonic_stability = (kick_val * 0.5 + bass_val * 0.5)
+        
+        # Calculate harmonic progression direction
+        # Positive values indicate progression toward resolution
+        # Negative values indicate movement away from resolution
+        progression_factor = harmonic_stability - harmonic_tension
+        
+        # Normalize to -1.0 to 1.0 range
+        progression_factor = max(-1.0, min(1.0, progression_factor))
+        
+        return progression_factor
+    
     def _generate_optimized_fallback_keyframes(self, shape_key_name: str) -> List[Tuple[float, float]]:
         """Generate optimized fallback keyframes with advanced patterns."""
         keyframes = []
@@ -827,35 +850,39 @@ print("✅ Audio-reactive drivers setup complete")
         return min_val + (max_val - min_val) * (0.5 + 0.5 * pattern)
     
     def generate_advanced_color_animations(self) -> str:
-        """Generate ENHANCED musical-responsive color animations with sophisticated frequency mapping and harmonic relationships."""
+        """Generate ADVANCED musical-responsive color animations with sophisticated harmonic relationships and dynamic material properties."""
         color_animation_code = []
         
         # Get audio features for color reactivity
         audio_features = self.features.get('audio_features', {})
         
         color_animation_code.append('''
-# ENHANCED FREQUENCY-RESPONSIVE COLOR ANIMATION SYSTEM WITH HARMONIC RELATIONSHIPS
-print("🎨 Creating ENHANCED harmonic frequency-responsive color animations...")
+# ADVANCED HARMONIC COLOR ANIMATION SYSTEM WITH DYNAMIC MATERIAL PROPERTIES
+print("🎨 Creating ADVANCED harmonic color system with sophisticated material property animations...")
 
 # Create enhanced material action for dynamic color changes
-material_action = bpy.data.actions.new(name="EnhancedHarmonicColorAnimation")
+material_action = bpy.data.actions.new(name="AdvancedHarmonicColorAnimation")
 material.animation_data_create()
 material.animation_data.action = material_action
 
 # Get audio feature data for color reactivity
 audio_features = ''' + json.dumps(audio_features, indent=2) + '''
 
-# ENHANCED color animation parameters with harmonic relationships
-color_transition_speed = 1.5  # Enhanced speed for more dynamic changes
-color_intensity_boost = 2.5  # Increased intensity multiplier
-color_smoothness = 0.95      # Higher smoothness for seamless transitions
-frequency_color_mixing = 0.9  # Enhanced frequency-based color mixing
-musical_responsiveness = 1.2  # Increased musical responsiveness
-frequency_dominance = 0.8    # Higher frequency color dominance
-beat_response_intensity = 2.0 # Enhanced beat-responsive changes
-harmonic_color_blending = 0.7  # New: Harmonic color relationship blending
-spectral_harmony_factor = 0.6  # New: Spectral harmony influence
-tempo_based_color_rhythm = 1.0  # New: Tempo-based color rhythm
+# ADVANCED color animation parameters with sophisticated harmonic relationships
+color_transition_speed = 2.0  # Enhanced speed for more dynamic changes
+color_intensity_boost = 3.0  # Increased intensity multiplier
+color_smoothness = 0.98      # Higher smoothness for seamless transitions
+frequency_color_mixing = 0.95  # Enhanced frequency-based color mixing
+musical_responsiveness = 1.5  # Increased musical responsiveness
+frequency_dominance = 0.9    # Higher frequency color dominance
+beat_response_intensity = 2.5 # Enhanced beat-responsive changes
+harmonic_color_blending = 0.8  # Enhanced: Harmonic color relationship blending
+spectral_harmony_factor = 0.7  # Enhanced: Spectral harmony influence
+tempo_based_color_rhythm = 1.2  # Enhanced: Tempo-based color rhythm
+material_property_responsiveness = 1.8  # New: Material property animation intensity
+harmonic_resolution_factor = 0.6  # New: Harmonic resolution influence
+dissonance_detection = 0.4  # New: Dissonance detection for color shifts
+chord_progression_sensitivity = 0.8  # New: Chord progression sensitivity
 
 # ENHANCED: Generate sophisticated color keyframes with harmonic relationships
 if audio_features and len(audio_features) > 0:
@@ -878,27 +905,39 @@ if audio_features and len(audio_features) > 0:
     beat_data = audio_features.get('beat_strength', [0.0] * ''' + str(self.total_frames) + ''')
     onset_data = audio_features.get('onset_strength', [0.0] * ''' + str(self.total_frames) + ''')
     
-    # ENHANCED: Sophisticated color palette with harmonic relationships
+    # ADVANCED: Sophisticated harmonic color palette with musical theory relationships
     harmonic_palette = [
-        # Primary harmonic colors (major chord: C-E-G)
-        (0.8, 0.2, 0.2, 1.0),  # C - Deep red
-        (0.2, 0.8, 0.2, 1.0),  # E - Deep green  
-        (0.2, 0.2, 0.8, 1.0),  # G - Deep blue
+        # Major chord progression colors (I-IV-V-I)
+        (0.9, 0.2, 0.1, 1.0),  # I - Root (Deep red) - Stability
+        (0.1, 0.8, 0.2, 1.0),  # IV - Subdominant (Deep green) - Movement
+        (0.1, 0.2, 0.9, 1.0),  # V - Dominant (Deep blue) - Tension
+        (0.8, 0.6, 0.1, 1.0),  # I - Resolution (Golden) - Return
         
-        # Secondary harmonic colors (minor chord: A-C-E)
-        (0.6, 0.4, 0.2, 1.0),  # A - Orange
-        (0.4, 0.6, 0.2, 1.0),  # C - Yellow-green
-        (0.2, 0.6, 0.4, 1.0),  # E - Teal
+        # Minor chord progression colors (i-iv-v-i)
+        (0.6, 0.1, 0.3, 1.0),  # i - Root minor (Dark crimson) - Melancholy
+        (0.2, 0.6, 0.1, 1.0),  # iv - Subdominant minor (Dark olive) - Contemplation
+        (0.3, 0.1, 0.7, 1.0),  # v - Dominant minor (Dark purple) - Suspense
+        (0.7, 0.4, 0.1, 1.0),  # i - Resolution minor (Bronze) - Acceptance
         
-        # Tertiary harmonic colors (diminished chord: B-D-F)
-        (0.8, 0.4, 0.6, 1.0),  # B - Pink
-        (0.6, 0.2, 0.8, 1.0),  # D - Purple
-        (0.4, 0.8, 0.6, 1.0),  # F - Cyan
+        # Diminished chord colors (vii°)
+        (0.8, 0.3, 0.5, 1.0),  # vii° - Diminished (Magenta) - Dissonance
+        (0.5, 0.8, 0.3, 1.0),  # vii° - Diminished (Lime) - Instability
+        (0.3, 0.5, 0.8, 1.0),  # vii° - Diminished (Cyan) - Ambiguity
         
-        # Extended harmonic colors (augmented chord: C-E-G#)
-        (0.9, 0.1, 0.3, 1.0),  # C - Crimson
-        (0.1, 0.9, 0.3, 1.0),  # E - Lime
-        (0.3, 0.1, 0.9, 1.0),  # G# - Indigo
+        # Augmented chord colors (#5)
+        (0.9, 0.1, 0.4, 1.0),  # Augmented (Crimson) - Tension
+        (0.1, 0.9, 0.4, 1.0),  # Augmented (Emerald) - Brightness
+        (0.4, 0.1, 0.9, 1.0),  # Augmented (Indigo) - Mystery
+        
+        # Extended harmony colors (9th, 11th, 13th)
+        (0.8, 0.5, 0.2, 1.0),  # 9th (Amber) - Richness
+        (0.2, 0.8, 0.5, 1.0),  # 11th (Mint) - Freshness
+        (0.5, 0.2, 0.8, 1.0),  # 13th (Violet) - Sophistication
+        
+        # Chromatic colors for modulation
+        (0.7, 0.3, 0.1, 1.0),  # Chromatic (Rust) - Transition
+        (0.1, 0.7, 0.3, 1.0),  # Chromatic (Forest) - Growth
+        (0.3, 0.1, 0.7, 1.0),  # Chromatic (Royal) - Depth
     ]
     
     # ENHANCED: Sophisticated frequency-specific color mapping with harmonic relationships
@@ -937,6 +976,11 @@ if audio_features and len(audio_features) > 0:
     base_color_g = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=1)
     base_color_b = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=2)
     
+    # ADVANCED: Create dynamic material property animation curves
+    metallic_curve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[6].default_value')
+    roughness_curve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[9].default_value')
+    ior_curve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[14].default_value')
+    
     # Create emission color animation curves
     try:
         emission_r = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[19].default_value', index=0)
@@ -974,11 +1018,18 @@ if audio_features and len(audio_features) > 0:
         beat_val = beat_data[min(frame, len(beat_data) - 1)] if beat_data else 0.0
         onset_val = onset_data[min(frame, len(onset_data) - 1)] if onset_data else 0.0
         
-        # ENHANCED: Calculate harmonic color relationships
+        # ADVANCED: Calculate sophisticated harmonic color relationships with musical theory
+        # Detect harmonic progression based on audio features
+        harmonic_progression = self._calculate_harmonic_progression(kick_val, bass_val, snare_val, vocal_val, spectral_val)
+        
         # Time-based harmonic color cycling with musical responsiveness
         harmonic_color_index = int((progress * len(harmonic_palette) * color_transition_speed) % len(harmonic_palette))
         next_harmonic_index = (harmonic_color_index + 1) % len(harmonic_palette)
         harmonic_blend = (progress * len(harmonic_palette) * color_transition_speed) % 1.0
+        
+        # ADVANCED: Apply harmonic progression influence
+        harmonic_progression_influence = harmonic_progression * chord_progression_sensitivity
+        harmonic_color_index = int((harmonic_color_index + harmonic_progression_influence) % len(harmonic_palette))
         
         # ENHANCED: Sophisticated audio-reactive color calculation with harmonic weighting
         # Low frequency harmonic dominance (root and fifth)
@@ -1077,6 +1128,25 @@ if audio_features and len(audio_features) > 0:
         base_color_g.keyframe_points.insert(frame, g)
         base_color_b.keyframe_points.insert(frame, b)
         
+        # ADVANCED: Calculate and insert dynamic material property keyframes
+        # Metallic property responds to bass and kick energy
+        metallic_base = 0.8
+        metallic_variation = (kick_val * 0.3 + bass_val * 0.2 + beat_val * 0.1) * material_property_responsiveness
+        metallic_value = max(0.0, min(1.0, metallic_base + metallic_variation))
+        metallic_curve.keyframe_points.insert(frame, metallic_value)
+        
+        # Roughness property responds to high frequencies and spectral content
+        roughness_base = 0.15
+        roughness_variation = (hihat_val * 0.2 + air_val * 0.15 + spectral_val * 0.1) * material_property_responsiveness
+        roughness_value = max(0.0, min(1.0, roughness_base + roughness_variation))
+        roughness_curve.keyframe_points.insert(frame, roughness_value)
+        
+        # IOR (Index of Refraction) responds to overall energy and harmonic content
+        ior_base = 1.8
+        ior_variation = (harmonic_audio_intensity * 0.3 + beat_val * 0.2) * material_property_responsiveness * 0.5
+        ior_value = max(1.0, min(2.5, ior_base + ior_variation))
+        ior_curve.keyframe_points.insert(frame, ior_value)
+        
         # ENHANCED: Insert sophisticated emission color keyframes if available
         if emission_available:
             # Enhanced emission colors with harmonic brightness
@@ -1116,9 +1186,9 @@ if audio_features and len(audio_features) > 0:
             keyframe.handle_left[1] = keyframe.co[1] * 0.1
             keyframe.handle_right[1] = keyframe.co[1] * 0.1
     
-    print("✅ ENHANCED harmonic color animations created with sophisticated audio reactivity and musical relationships")
+    print("✅ ADVANCED harmonic color animations created with sophisticated audio reactivity, musical theory relationships, and dynamic material properties")
 else:
-    print("⚠️  No audio data available for harmonic color animation, using time-based harmonic colors only")
+    print("⚠️  No audio data available for advanced harmonic color animation, using time-based harmonic colors only")
     
     # ENHANCED: Fallback harmonic color cycling
     harmonic_color_palette = [
@@ -1150,7 +1220,7 @@ else:
     
     print("✅ ENHANCED harmonic color cycling created")
 
-print("🎨 ENHANCED harmonic color animation system complete")
+print("🎨 ADVANCED harmonic color animation system complete with musical theory integration and dynamic material properties")
 ''')
         
         return '\n'.join(color_animation_code)
