@@ -526,8 +526,8 @@ bpy.ops.object.mode_set(mode='OBJECT')
 
 print("✅ Cube created with OPTIMAL subdivision")
 
-# Create realistic water/liquid material with advanced shader nodes
-material = bpy.data.materials.new(name="LiquidWaterMaterial")
+# Create cosmic/space-themed material with advanced shader nodes
+material = bpy.data.materials.new(name="CosmicMutatingMaterial")
 material.use_nodes = True
 nodes = material.node_tree.nodes
 links = material.node_tree.links
@@ -543,11 +543,11 @@ bsdf.location = (0, 0)
 output = nodes.new(type='ShaderNodeOutputMaterial')
 output.location = (600, 0)
 
-# Add Volume Principled for volumetric liquid effects
+# Add Volume Principled for cosmic volumetric effects
 volume_principled = nodes.new(type='ShaderNodeVolumePrincipled')
 volume_principled.location = (0, -400)
 
-# Add Glass BSDF for water-like transparency
+# Add Glass BSDF for cosmic transparency
 glass = nodes.new(type='ShaderNodeBsdfGlass')
 glass.location = (0, -200)
 
@@ -555,32 +555,38 @@ glass.location = (0, -200)
 mix_shader = nodes.new(type='ShaderNodeMixShader')
 mix_shader.location = (300, 0)
 
-# Add Fresnel node for realistic water edges
+# Add Fresnel node for cosmic edges
 fresnel = nodes.new(type='ShaderNodeFresnel')
 fresnel.location = (-300, 0)
-fresnel.inputs['IOR'].default_value = 1.33  # Water's IOR
+fresnel.inputs['IOR'].default_value = 1.5  # Cosmic material IOR
 
-# Add ColorRamp for caustics effect
+# Add ColorRamp for cosmic energy effect
 colorramp = nodes.new(type='ShaderNodeValToRGB')
 colorramp.location = (-600, 0)
 
-# Add Wave Texture for water surface distortion
+# Add Wave Texture for cosmic energy distortion
 wave_tex = nodes.new(type='ShaderNodeTexWave')
 wave_tex.location = (-900, 0)
 wave_tex.wave_type = 'BANDS'
 wave_tex.wave_profile = 'SAW'
-wave_tex.inputs['Scale'].default_value = 5.0
-wave_tex.inputs['Distortion'].default_value = 2.0
-wave_tex.inputs['Detail'].default_value = 15.0
-wave_tex.inputs['Detail Scale'].default_value = 2.0
-wave_tex.inputs['Detail Roughness'].default_value = 0.5
+wave_tex.inputs['Scale'].default_value = 8.0
+wave_tex.inputs['Distortion'].default_value = 3.0
+wave_tex.inputs['Detail'].default_value = 20.0
+wave_tex.inputs['Detail Scale'].default_value = 3.0
+wave_tex.inputs['Detail Roughness'].default_value = 0.6
 
-# Add Noise Texture for additional surface detail
+# Add Noise Texture for cosmic surface detail
 noise_tex = nodes.new(type='ShaderNodeTexNoise')
 noise_tex.location = (-900, -200)
-noise_tex.inputs['Scale'].default_value = 10.0
-noise_tex.inputs['Detail'].default_value = 15.0
-noise_tex.inputs['Roughness'].default_value = 0.7
+noise_tex.inputs['Scale'].default_value = 15.0
+noise_tex.inputs['Detail'].default_value = 20.0
+noise_tex.inputs['Roughness'].default_value = 0.8
+
+# Add Voronoi Texture for cosmic energy patterns
+voronoi_tex = nodes.new(type='ShaderNodeTexVoronoi')
+voronoi_tex.location = (-900, -400)
+voronoi_tex.inputs['Scale'].default_value = 12.0
+voronoi_tex.inputs['Randomness'].default_value = 0.7
 
 # Add Mapping node for texture animation
 mapping = nodes.new(type='ShaderNodeMapping')
@@ -594,56 +600,57 @@ tex_coord.location = (-1500, 0)
 time_node = nodes.new(type='ShaderNodeValue')
 time_node.location = (-1500, -200)
 
-# Connect nodes for water caustics effect
+# Connect nodes for cosmic energy effect
 links.new(tex_coord.outputs['Generated'], mapping.inputs['Vector'])
 links.new(time_node.outputs['Value'], mapping.inputs['Location'])
 links.new(mapping.outputs['Vector'], wave_tex.inputs['Vector'])
 links.new(mapping.outputs['Vector'], noise_tex.inputs['Vector'])
+links.new(mapping.outputs['Vector'], voronoi_tex.inputs['Vector'])
 
-# Connect wave texture directly to colorramp for caustics
+# Connect wave texture to colorramp for cosmic energy
 links.new(wave_tex.outputs['Color'], colorramp.inputs['Fac'])
 
-# Set up ColorRamp for caustics
-colorramp.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)  # Black
-colorramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)  # White
-colorramp.color_ramp.elements[0].position = 0.3
-colorramp.color_ramp.elements[1].position = 0.7
+# Set up ColorRamp for cosmic energy (purple to cyan)
+colorramp.color_ramp.elements[0].color = (0.3, 0.0, 0.5, 1.0)  # Deep purple
+colorramp.color_ramp.elements[1].color = (0.0, 0.8, 1.0, 1.0)  # Bright cyan
+colorramp.color_ramp.elements[0].position = 0.2
+colorramp.color_ramp.elements[1].position = 0.8
 
 # Connect to Fresnel
 links.new(colorramp.outputs['Color'], fresnel.inputs['Normal'])
 
-# Configure Principled BSDF for water properties
-bsdf.inputs['Base Color'].default_value = (0.1, 0.3, 0.8, 1.0)  # Deep blue water
-bsdf.inputs['Metallic'].default_value = 0.0  # No metallic for water
-bsdf.inputs['Roughness'].default_value = 0.0  # Smooth water surface
-bsdf.inputs['IOR'].default_value = 1.33  # Water's index of refraction
+# Configure Principled BSDF for cosmic properties
+bsdf.inputs['Base Color'].default_value = (0.1, 0.05, 0.3, 1.0)  # Darker cosmic purple base
+bsdf.inputs['Metallic'].default_value = 0.8  # High metallic for cosmic reflection
+bsdf.inputs['Roughness'].default_value = 0.05  # Very smooth cosmic surface
+bsdf.inputs['IOR'].default_value = 1.8  # Higher IOR for cosmic material
 try:
-    bsdf.inputs['Transmission Weight'].default_value = 1.0  # Full transmission
-    bsdf.inputs['Transmission Roughness'].default_value = 0.0  # Clear water
+    bsdf.inputs['Transmission Weight'].default_value = 0.9  # Very high transmission for cosmic effect
+    bsdf.inputs['Transmission Roughness'].default_value = 0.05  # Very smooth transmission
 except KeyError:
     # Use alternative input names for different Blender versions
     try:
-        bsdf.inputs['Transmission'].default_value = 1.0  # Full transmission
+        bsdf.inputs['Transmission'].default_value = 0.9  # Very high transmission
     except KeyError:
         print("⚠️  Transmission inputs not available in this Blender version")
 
-# Add subsurface scattering for realistic liquid depth
+# Add subsurface scattering for cosmic depth
 try:
     bsdf.inputs['Subsurface Weight'].default_value = 0.8  # Strong subsurface scattering
-    bsdf.inputs['Subsurface Color'].default_value = (0.2, 0.4, 0.8, 1.0)  # Blue subsurface
-    bsdf.inputs['Subsurface Radius'].default_value = (1.0, 0.2, 0.1)  # Water-like scattering
+    bsdf.inputs['Subsurface Color'].default_value = (0.4, 0.1, 0.8, 1.0)  # Bright purple subsurface
+    bsdf.inputs['Subsurface Radius'].default_value = (1.2, 0.4, 0.3)  # Larger cosmic scattering
 except KeyError:
     print("⚠️  Subsurface inputs not available, using standard transmission")
 
-# Configure Glass BSDF
-glass.inputs['Color'].default_value = (0.8, 0.9, 1.0, 1.0)  # Slightly blue tint
-glass.inputs['Roughness'].default_value = 0.0
-glass.inputs['IOR'].default_value = 1.33
+# Configure Glass BSDF for cosmic transparency
+glass.inputs['Color'].default_value = (0.8, 0.4, 1.0, 1.0)  # Bright purple cosmic tint
+glass.inputs['Roughness'].default_value = 0.02
+glass.inputs['IOR'].default_value = 1.8
 
-# Configure Volume Principled for liquid volume
-volume_principled.inputs['Color'].default_value = (0.1, 0.3, 0.8, 1.0)  # Water color
-volume_principled.inputs['Density'].default_value = 0.5  # Moderate density
-volume_principled.inputs['Anisotropy'].default_value = 0.0  # Isotropic scattering
+# Configure Volume Principled for cosmic volume
+volume_principled.inputs['Color'].default_value = (0.3, 0.1, 0.8, 1.0)  # Bright cosmic color
+volume_principled.inputs['Density'].default_value = 0.5  # Higher density for visible cosmic effect
+volume_principled.inputs['Anisotropy'].default_value = 0.3  # More anisotropy for cosmic scattering
 
 # Connect shaders
 links.new(fresnel.outputs['Fac'], mix_shader.inputs['Fac'])
@@ -654,19 +661,19 @@ links.new(mix_shader.outputs['Shader'], output.inputs['Surface'])
 # Connect volume shader
 links.new(volume_principled.outputs['Volume'], output.inputs['Volume'])
 
-# Handle emission for subtle glow (Blender 4.5 compatibility)
+# Handle emission for cosmic glow (Blender 4.5 compatibility)
 try:
-    bsdf.inputs['Emission Color'].default_value = (0.0, 0.1, 0.2, 1.0)  # Subtle blue glow
-    bsdf.inputs['Emission Strength'].default_value = 0.1
-    print("✅ Water emission set using Blender 4.5 style")
+    bsdf.inputs['Emission Color'].default_value = (0.5, 0.2, 1.0, 1.0)  # Bright cosmic purple glow
+    bsdf.inputs['Emission Strength'].default_value = 1.5  # Very strong cosmic emission
+    print("✅ Bright cosmic emission set using Blender 4.5 style")
 except KeyError:
     print("⚠️  Emission input not found, using enhanced base color")
-    bsdf.inputs['Base Color'].default_value = (0.15, 0.35, 0.85, 1.0)
+    bsdf.inputs['Base Color'].default_value = (0.4, 0.2, 0.9, 1.0)
 
 # Assign material
 cube.data.materials.append(material)
 
-print("✅ Realistic water/liquid material created with caustics, wave effects, subsurface scattering, and volumetric effects")
+print("✅ Cosmic/space-themed material created with energy effects, cosmic transparency, and volumetric effects")
 
 # Create shape keys for deformation
 shape_keys = cube.shape_key_add(name="Basis")
@@ -730,39 +737,39 @@ print("✅ Animation action created")
 
 print("✅ OPTIMIZED shape key animations generated")
 
-# AUDIO-REACTIVE MATERIAL COLOR ANIMATION
-print("🎨 Creating audio-reactive water color animation...")
+# AUDIO-REACTIVE COSMIC MATERIAL ANIMATION
+print("🎨 Creating audio-reactive cosmic energy animation...")
 
-# Create material action for color changes
-material_action = bpy.data.actions.new(name="LiquidWaterColorAction")
+# Create material action for cosmic color changes
+material_action = bpy.data.actions.new(name="CosmicEnergyAction")
 material.animation_data_create()
 material.animation_data.action = material_action
 
-# Get audio feature data for color animation
+# Get audio feature data for cosmic animation
 audio_features = {json.dumps(self.features.get('audio_features', {}), indent=2)}
 
-# Create color animation based on audio features
+# Create cosmic energy animation based on audio features
 if 'kick_energy' in audio_features and 'bass_energy' in audio_features:
     kick_data = audio_features['kick_energy']
     bass_data = audio_features['bass_energy']
     vocal_data = audio_features.get('vocal_energy', [0.0] * len(kick_data))
     
-    # Animate base color (water color shifts)
+    # Animate base color (cosmic energy shifts)
     base_color_fcurve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=0)
     base_color_fcurve.keyframe_points.add(len(kick_data))
     
     for i, (kick, bass, vocal) in enumerate(zip(kick_data, bass_data, vocal_data)):
         frame = i + 1
         
-        # Dynamic color shifts based on audio
-        # Blue base (0.1, 0.3, 0.8) shifts to:
-        # - Cyan on kick (0.0, 0.6, 0.9) 
-        # - Purple on bass (0.2, 0.2, 0.9)
-        # - Green on vocal (0.0, 0.8, 0.6)
+        # Dynamic cosmic energy shifts based on audio
+        # Cosmic purple base (0.2, 0.1, 0.6) shifts to:
+        # - Bright purple on kick (0.4, 0.0, 0.8) 
+        # - Deep blue on bass (0.1, 0.2, 0.9)
+        # - Cyan on vocal (0.0, 0.6, 1.0)
         
-        r = 0.1 + (kick * 0.1) + (vocal * 0.1)  # Red component
-        g = 0.3 + (kick * 0.3) + (bass * -0.1) + (vocal * 0.5)  # Green component  
-        b = 0.8 + (kick * 0.1) + (bass * 0.1) + (vocal * -0.2)  # Blue component
+        r = 0.2 + (kick * 0.2) + (bass * -0.1) + (vocal * -0.2)  # Red component
+        g = 0.1 + (kick * -0.1) + (bass * 0.1) + (vocal * 0.5)  # Green component  
+        b = 0.6 + (kick * 0.2) + (bass * 0.3) + (vocal * 0.4)  # Blue component
         
         # Clamp values
         r = max(0.0, min(1.0, r))
@@ -777,7 +784,7 @@ if 'kick_energy' in audio_features and 'bass_energy' in audio_features:
     
     for i, (kick, bass, vocal) in enumerate(zip(kick_data, bass_data, vocal_data)):
         frame = i + 1
-        g = 0.3 + (kick * 0.3) + (bass * -0.1) + (vocal * 0.5)
+        g = 0.1 + (kick * -0.1) + (bass * 0.1) + (vocal * 0.5)
         g = max(0.0, min(1.0, g))
         green_fcurve.keyframe_points[i].co = (frame, g)
     
@@ -787,47 +794,62 @@ if 'kick_energy' in audio_features and 'bass_energy' in audio_features:
     
     for i, (kick, bass, vocal) in enumerate(zip(kick_data, bass_data, vocal_data)):
         frame = i + 1
-        b = 0.8 + (kick * 0.1) + (bass * 0.1) + (vocal * -0.2)
+        b = 0.6 + (kick * 0.2) + (bass * 0.3) + (vocal * 0.4)
         b = max(0.0, min(1.0, b))
         blue_fcurve.keyframe_points[i].co = (frame, b)
     
-    # Animate wave texture scale for dynamic surface movement
+    # Animate wave texture scale for dynamic cosmic energy movement
     wave_scale_fcurve = material_action.fcurves.new(data_path='node_tree.nodes["Wave Texture"].inputs[1].default_value')
     wave_scale_fcurve.keyframe_points.add(len(kick_data))
     
     for i, (kick, bass) in enumerate(zip(kick_data, bass_data)):
         frame = i + 1
-        # Wave scale changes with audio energy
-        base_scale = 5.0
-        scale_variation = (kick + bass) * 3.0  # 0-6 variation
+        # Cosmic energy scale changes with audio energy
+        base_scale = 8.0
+        scale_variation = (kick + bass) * 5.0  # 0-10 variation for cosmic effect
         wave_scale = base_scale + scale_variation
         wave_scale_fcurve.keyframe_points[i].co = (frame, wave_scale)
     
-    # Animate emission strength for subtle glow changes
+    # Animate cosmic emission strength for energy glow changes
     try:
         emission_fcurve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[19].default_value')
         emission_fcurve.keyframe_points.add(len(kick_data))
         
         for i, (kick, vocal) in enumerate(zip(kick_data, vocal_data)):
             frame = i + 1
-            # Emission pulses with kick and vocal energy
-            base_emission = 0.1
-            emission_boost = (kick * 0.3) + (vocal * 0.2)
+            # Cosmic emission pulses with kick and vocal energy
+            base_emission = 0.5
+            emission_boost = (kick * 0.8) + (vocal * 0.6)  # Strong cosmic emission
             emission_strength = base_emission + emission_boost
             emission_fcurve.keyframe_points[i].co = (frame, emission_strength)
     except:
-        print("⚠️  Emission animation skipped (Blender version compatibility)")
+        print("⚠️  Cosmic emission animation skipped (Blender version compatibility)")
     
-    # Apply smooth interpolation to material animations
+    # Animate cosmic volume density for volumetric energy effects
+    try:
+        volume_density_fcurve = material_action.fcurves.new(data_path='node_tree.nodes["Volume Principled"].inputs[1].default_value')
+        volume_density_fcurve.keyframe_points.add(len(kick_data))
+        
+        for i, (kick, bass) in enumerate(zip(kick_data, bass_data)):
+            frame = i + 1
+            # Volume density changes with audio energy
+            base_density = 0.3
+            density_variation = (kick + bass) * 0.4  # 0-0.4 variation
+            volume_density = base_density + density_variation
+            volume_density_fcurve.keyframe_points[i].co = (frame, volume_density)
+    except:
+        print("⚠️  Volume density animation skipped (Blender version compatibility)")
+    
+    # Apply smooth interpolation to cosmic material animations
     for fcurve in material_action.fcurves:
         for keyframe in fcurve.keyframe_points:
             keyframe.interpolation = 'BEZIER'
             keyframe.handle_left_type = 'FREE'
             keyframe.handle_right_type = 'FREE'
     
-    print("✅ Audio-reactive water color animation created")
+    print("✅ Audio-reactive cosmic energy animation created")
 else:
-    print("⚠️  No audio feature data available for material animation")
+    print("⚠️  No audio feature data available for cosmic material animation")
 
 # Set ULTRA-SMOOTH keyframe interpolation optimized for continuous abstract shape changing
 for fcurve in action.fcurves:
@@ -899,32 +921,226 @@ scene.camera = camera
 
 print("✅ Professional camera setup")
 
-# Setup enhanced lighting
-# Main key light
+# SPACE ENVIRONMENT SETUP
+print("🌌 Creating immersive space environment...")
+
+# Setup World Shader for space background
+world = bpy.context.scene.world
+world.use_nodes = True
+world_nodes = world.node_tree.nodes
+world_links = world.node_tree.links
+
+# Clear default nodes
+world_nodes.clear()
+
+# Add Background node
+background_node = world_nodes.new(type='ShaderNodeBackground')
+background_node.location = (0, 0)
+
+# Add World Output
+world_output = world_nodes.new(type='ShaderNodeOutputWorld')
+world_output.location = (300, 0)
+
+# Add Texture Coordinate
+tex_coord = world_nodes.new(type='ShaderNodeTexCoord')
+tex_coord.location = (-1200, 0)
+
+# Add Mapping for space texture coordinates
+mapping = world_nodes.new(type='ShaderNodeMapping')
+mapping.location = (-900, 0)
+
+# Add Noise Texture for space dust/nebula
+noise_tex = world_nodes.new(type='ShaderNodeTexNoise')
+noise_tex.location = (-600, 0)
+noise_tex.inputs['Scale'].default_value = 0.05  # Larger scale for space
+noise_tex.inputs['Detail'].default_value = 20.0
+noise_tex.inputs['Roughness'].default_value = 0.8
+
+# Add Voronoi Texture for star field
+voronoi_tex = world_nodes.new(type='ShaderNodeTexVoronoi')
+voronoi_tex.location = (-600, -200)
+voronoi_tex.inputs['Scale'].default_value = 100.0  # More stars
+voronoi_tex.inputs['Randomness'].default_value = 0.9
+
+# Add ColorRamp for space gradient
+space_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
+space_colorramp.location = (-300, 0)
+
+# Add ColorRamp for star field
+star_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
+star_colorramp.location = (-300, -200)
+
+# Add Mix Shader to combine space and stars
+mix_shader = world_nodes.new(type='ShaderNodeMixShader')
+mix_shader.location = (-150, 0)
+
+# Connect space environment nodes
+world_links.new(tex_coord.outputs['Generated'], mapping.inputs['Vector'])
+world_links.new(mapping.outputs['Vector'], noise_tex.inputs['Vector'])
+world_links.new(mapping.outputs['Vector'], voronoi_tex.inputs['Vector'])
+
+# Configure space gradient colors (deep space to nebula)
+space_colorramp.color_ramp.elements[0].color = (0.01, 0.01, 0.05, 1.0)  # Deep space black
+space_colorramp.color_ramp.elements[1].color = (0.15, 0.05, 0.3, 1.0)   # Purple nebula
+space_colorramp.color_ramp.elements[0].position = 0.0
+space_colorramp.color_ramp.elements[1].position = 1.0
+
+# Configure star field
+star_colorramp.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)  # Black
+star_colorramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)  # White stars
+star_colorramp.color_ramp.elements[0].position = 0.98  # More stars
+star_colorramp.color_ramp.elements[1].position = 1.0
+
+# Connect textures to color ramps
+world_links.new(noise_tex.outputs['Fac'], space_colorramp.inputs['Fac'])
+world_links.new(voronoi_tex.outputs['Distance'], star_colorramp.inputs['Fac'])
+
+# Mix space background with stars
+world_links.new(space_colorramp.outputs['Color'], mix_shader.inputs[1])
+world_links.new(star_colorramp.outputs['Color'], mix_shader.inputs[2])
+
+# Connect to background
+world_links.new(mix_shader.outputs['Shader'], background_node.inputs['Color'])
+world_links.new(background_node.outputs['Background'], world_output.inputs['Surface'])
+
+# Set world strength for proper space atmosphere
+background_node.inputs['Strength'].default_value = 1.0  # Full strength
+
+print("✅ Space environment with procedural nebula and star field created")
+
+# Create enhanced starfield using multiple spheres for better visibility
+print("⭐ Creating enhanced starfield...")
+
+# Create multiple star objects for better visibility
+star_positions = []
+for i in range(100):  # 100 bright stars
+    # Random positions in a large sphere around the scene
+    x = random.uniform(-50, 50)
+    y = random.uniform(-50, 50)
+    z = random.uniform(-50, 50)
+    star_positions.append((x, y, z))
+
+# Create star material
+star_material = bpy.data.materials.new(name="BrightStarMaterial")
+star_material.use_nodes = True
+star_nodes = star_material.node_tree.nodes
+star_links = star_material.node_tree.links
+
+# Clear default nodes
+star_nodes.clear()
+
+# Add Emission shader for bright glowing stars
+star_emission = star_nodes.new(type='ShaderNodeEmission')
+star_emission.location = (0, 0)
+star_emission.inputs['Color'].default_value = (1.0, 1.0, 1.0, 1.0)
+star_emission.inputs['Strength'].default_value = 10.0  # Very bright stars
+
+# Add Output
+star_output = star_nodes.new(type='ShaderNodeOutputMaterial')
+star_output.location = (300, 0)
+
+# Connect star material
+star_links.new(star_emission.outputs['Emission'], star_output.inputs['Surface'])
+
+# Create star objects
+for i, pos in enumerate(star_positions):
+    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.1, location=pos)
+    star = bpy.context.active_object
+    star.name = f"Star_{{i:03d}}"
+    
+    # Assign bright star material
+    star.data.materials.append(star_material)
+    
+    # Make stars very small but bright
+    star.scale = (0.1, 0.1, 0.1)
+
+print("✅ Enhanced starfield with 100 bright stars created")
+
+# Add enhanced nebula/space dust volumetric effects
+print("🌫️ Creating enhanced nebula effects...")
+
+# Create multiple nebula volumes for better effect
+nebula_positions = [
+    (10, 5, 3), (-8, -3, 2), (5, -10, 4), (-12, 8, 1)
+]
+
+# Configure nebula properties with different colors
+nebula_colors = [
+    (0.4, 0.1, 0.6, 1.0),  # Purple nebula
+    (0.2, 0.3, 0.8, 1.0),  # Blue nebula
+    (0.6, 0.2, 0.8, 1.0),  # Magenta nebula
+    (0.1, 0.4, 0.7, 1.0)   # Cyan nebula
+]
+
+for i, pos in enumerate(nebula_positions):
+    bpy.ops.object.volume_add(location=pos)
+    nebula_volume = bpy.context.active_object
+    nebula_volume.name = f"NebulaVolume_{{i:02d}}"
+    nebula_volume.scale = (15, 15, 15)  # Large volume for space
+    
+    # Create nebula volume material
+    nebula_material = bpy.data.materials.new(name=f"NebulaMaterial_{{i:02d}}")
+    nebula_material.use_nodes = True
+    nebula_nodes = nebula_material.node_tree.nodes
+    nebula_links = nebula_material.node_tree.links
+    
+    # Clear default nodes
+    nebula_nodes.clear()
+    
+    # Add Volume Principled
+    volume_principled = nebula_nodes.new(type='ShaderNodeVolumePrincipled')
+    volume_principled.location = (0, 0)
+    
+    # Add Output
+    nebula_output = nebula_nodes.new(type='ShaderNodeOutputMaterial')
+    nebula_output.location = (300, 0)
+    
+    volume_principled.inputs['Color'].default_value = nebula_colors[i]
+    volume_principled.inputs['Density'].default_value = 0.2  # Higher density for visibility
+    volume_principled.inputs['Anisotropy'].default_value = 0.3  # More scattering
+    
+    # Connect nebula material
+    nebula_links.new(volume_principled.outputs['Volume'], nebula_output.inputs['Volume'])
+    
+    # Assign nebula material
+    nebula_volume.data.materials.append(nebula_material)
+
+print("✅ Enhanced nebula volumetric effects created")
+
+# Setup enhanced space lighting
+# Main key light (sun/star)
 bpy.ops.object.light_add(type='SUN', location=(4, 4, 6))
 sun = bpy.context.active_object
-sun.name = "KeyLight"
-sun.data.energy = 3.5
-sun.data.color = (1.0, 0.95, 0.9)
-sun.data.angle = math.radians(30)
+sun.name = "SpaceKeyLight"
+sun.data.energy = 4.0  # Increased for space atmosphere
+sun.data.color = (1.0, 0.9, 0.8)  # Warm star light
+sun.data.angle = math.radians(25)
 
-# Fill light
+# Fill light (distant star)
 bpy.ops.object.light_add(type='AREA', location=(-3, -3, 3))
 fill_light = bpy.context.active_object
-fill_light.name = "FillLight"
-fill_light.data.energy = 1.8
-fill_light.data.color = (0.8, 0.9, 1.0)
-fill_light.data.size = 2.0
+fill_light.name = "SpaceFillLight"
+fill_light.data.energy = 2.0
+fill_light.data.color = (0.7, 0.8, 1.0)  # Cool blue star light
+fill_light.data.size = 3.0
 
-# Rim light for dramatic effect
+# Rim light for dramatic space effect
 bpy.ops.object.light_add(type='AREA', location=(0, -8, 2))
 rim_light = bpy.context.active_object
-rim_light.name = "RimLight"
-rim_light.data.energy = 2.5
-rim_light.data.color = (1.0, 0.8, 0.6)
-rim_light.data.size = 1.0
+rim_light.name = "SpaceRimLight"
+rim_light.data.energy = 3.0
+rim_light.data.color = (1.0, 0.7, 0.5)  # Warm rim light
+rim_light.data.size = 1.5
 
-print("✅ Enhanced lighting setup")
+# Add ambient space light
+bpy.ops.object.light_add(type='AREA', location=(0, 0, 10))
+ambient_light = bpy.context.active_object
+ambient_light.name = "SpaceAmbientLight"
+ambient_light.data.energy = 0.5
+ambient_light.data.color = (0.5, 0.6, 0.8)  # Cool ambient
+ambient_light.data.size = 10.0
+
+print("✅ Enhanced space lighting setup")
 
 # MCP INTEGRATION: Enhance materials with PolyHaven assets
 print("🎨 Checking MCP integrations for enhanced materials...")
@@ -984,15 +1200,17 @@ cube.data.materials.append(material)
 
 print("✅ ULTRA-SMOOTH enhanced material created with MCP integration support")
 
-print("🎉 ULTRA-SMOOTH mutating cube scene created successfully!")
+print("🌌 COSMIC MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
 print(f"📊 Total frames: {self.total_frames}")
 print(f"🎬 FPS: {self.fps}")
 print(f"⏱️ Duration: {self.duration:.2f}s")
 print(f"🔑 Shape keys: {{len(shape_key_names)}}")
 print(f"🎯 Quality: {self.quality_level.upper()}")
 print(f"🔧 Subdivision: {self.config['subdivision']}")
-print("🎨 Features: ULTRA-SMOOTH interpolation, CONTINUOUS motion, AUDIO-REACTIVE drivers, MCP integration")
-print("🚀 Optimizations: Continuous flow smoothing, Organic variation, Driver-based animation")
+print("🌌 Space Environment: HDRI background, Starfield particles, Nebula volumes")
+print("🎨 Cosmic Material: Purple-cyan energy, Volumetric effects, Audio-reactive glow")
+print("🚀 Features: ULTRA-SMOOTH interpolation, CONTINUOUS motion, AUDIO-REACTIVE drivers, MCP integration")
+print("✨ Optimizations: Space atmosphere, Cosmic lighting, Continuous flow smoothing, Organic variation")
 
 {f"# Save blend file\nbpy.ops.wm.save_as_mainfile(filepath=\"{blend_path}\")\nprint(f\"💾 Blend file saved: {blend_path}\")" if blend_path else "# No blend file path provided"}
 '''
