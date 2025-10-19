@@ -2276,7 +2276,14 @@ if audio_features and len(audio_features) > 0 and cube and cube.data.materials:
         
         # ADVANCED: Calculate sophisticated harmonic color relationships with musical theory
         # Detect harmonic progression based on audio features
-        harmonic_progression = self._calculate_harmonic_progression(kick_val, bass_val, snare_val, vocal_val, spectral_val)
+        # Calculate harmonic tension (0.0 = stable, 1.0 = high tension)
+        harmonic_tension = (snare_val * 0.4 + vocal_val * 0.3 + spectral_val * 0.3)
+        
+        # Calculate harmonic stability (0.0 = unstable, 1.0 = stable)
+        harmonic_stability = (kick_val * 0.6 + bass_val * 0.4)
+        
+        # Calculate harmonic progression (0.0 = root, 1.0 = dominant)
+        harmonic_progression = harmonic_tension * (1.0 - harmonic_stability)
         
         # Time-based harmonic color cycling with musical responsiveness
         harmonic_color_index = int((progress * len(harmonic_palette) * color_transition_speed) % len(harmonic_palette))
@@ -2694,7 +2701,7 @@ if main_camera:
     main_camera.animation_data_create()
     main_camera.animation_data.action = camera_action
     
-gi    # Camera movement parameters - SLIGHTLY ZOOMED IN for better focus
+    # Camera movement parameters - SLIGHTLY ZOOMED IN for better focus
     orbit_radius = 12.0  # Slightly closer distance from center (reduced from 15.0)
     orbit_height = 6.0   # Slightly lower position for better focus (reduced from 8.0)
     orbit_speed = 0.15  # Much slower rotation speed (degrees per frame) - reduced from 0.5
@@ -3666,10 +3673,10 @@ volumetric_positions = [
 ]
 
 volumetric_colors = [
-    (0.8, 0.4, 1.0, 1.0),  # Purple volumetric light
-    (0.4, 0.8, 1.0, 1.0),  # Blue volumetric light
-    (1.0, 0.6, 0.4, 1.0),  # Orange volumetric light
-    (0.6, 1.0, 0.4, 1.0)   # Green volumetric light
+    (0.8, 0.4, 1.0),  # Purple volumetric light
+    (0.4, 0.8, 1.0),  # Blue volumetric light
+    (1.0, 0.6, 0.4),  # Orange volumetric light
+    (0.6, 1.0, 0.4)   # Green volumetric light
 ]
 
 for i, pos in enumerate(volumetric_positions):
@@ -3680,9 +3687,7 @@ for i, pos in enumerate(volumetric_positions):
     vol_light.data.size = 3.0  # Larger size for soft volumetric lighting
     vol_light.data.color = volumetric_colors[i]
     
-    # Enable volumetric lighting
-    vol_light.data.use_contact_shadow = True
-    vol_light.data.contact_shadow_distance = 5.0
+    # Enable volumetric lighting (contact shadow not available for area lights)
     
     volumetric_lights.append(vol_light)
 
@@ -3930,5 +3935,5 @@ except Exception as e:
 
 
 # Save blend file
-bpy.ops.wm.save_as_mainfile(filepath="test_output.blend")
-print("💾 Blend file saved: test_output.blend")
+bpy.ops.wm.save_as_mainfile(filepath="test_working_final.blend")
+print("💾 Blend file saved: test_working_final.blend")

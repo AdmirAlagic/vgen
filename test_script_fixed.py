@@ -2694,7 +2694,7 @@ if main_camera:
     main_camera.animation_data_create()
     main_camera.animation_data.action = camera_action
     
-gi    # Camera movement parameters - SLIGHTLY ZOOMED IN for better focus
+    # Camera movement parameters - SLIGHTLY ZOOMED IN for better focus
     orbit_radius = 12.0  # Slightly closer distance from center (reduced from 15.0)
     orbit_height = 6.0   # Slightly lower position for better focus (reduced from 8.0)
     orbit_speed = 0.15  # Much slower rotation speed (degrees per frame) - reduced from 0.5
@@ -3930,5 +3930,5 @@ except Exception as e:
 
 
 # Save blend file
-bpy.ops.wm.save_as_mainfile(filepath="test_output.blend")
-print("💾 Blend file saved: test_output.blend")
+bpy.ops.wm.save_as_mainfile(filepath="test_output_fixed.blend")
+print("💾 Blend file saved: test_output_fixed.blend")

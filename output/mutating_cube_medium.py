@@ -29,14 +29,14 @@ for action in bpy.data.actions:
 # Set scene properties
 scene = bpy.context.scene
 scene.frame_start = 0
-scene.frame_end = 120
+scene.frame_end = 240
 scene.frame_current = 0
 scene.render.fps = 24
 
 print("🎬 Creating ULTRA-SMOOTH mutating cube scene...")
-print(f"📊 Frames: 120, FPS: 24, Duration: 5.00s")
-print(f"🎯 Quality Level: PREVIEW")
-print(f"🔧 Subdivision Level: 1")
+print(f"📊 Frames: 240, FPS: 24, Duration: 10.00s")
+print(f"🎯 Quality Level: MEDIUM")
+print(f"🔧 Subdivision Level: 2")
 print("🚀 Features: CONTINUOUS motion, AUDIO-REACTIVE drivers, MCP integration")
 
 # Create optimized mutating cube with optimal subdivision
@@ -44,10 +44,10 @@ bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 0))
 cube = bpy.context.active_object
 cube.name = "OptimizedMutatingCube"
 
-# OPTIMAL subdivision for smooth deformation (level 1)
+# OPTIMAL subdivision for smooth deformation (level 2)
 bpy.ops.object.mode_set(mode='EDIT')
 bpy.ops.mesh.select_all(action='SELECT')
-bpy.ops.mesh.subdivide(number_cuts=1)
+bpy.ops.mesh.subdivide(number_cuts=2)
 
 # COMMERCIAL-GRADE GEOMETRY OPTIMIZATION: Add beveling for softer corners
 bpy.ops.mesh.bevel(offset=0.15, segments=3, affect='EDGES')
@@ -197,102 +197,202 @@ shape_key = cube.data.shape_keys.key_blocks["SimpleDeform"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.135
+shape_key.value = -0.1955765599484851
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.7401101148745346
+shape_key.value = -1.026253964565111
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.7807358906522177
+shape_key.value = -1.040576818892155
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.6952865123634253
+shape_key.value = -0.5291238778312448
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.6330524123231152
+shape_key.value = -0.19157277271659146
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.3201040054813593
+shape_key.value = -0.6872376109041262
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.1957204101783864
+shape_key.value = -1.1914465255336504
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.4984922353325009
+shape_key.value = -0.979491101870819
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.5261271611616488
+shape_key.value = -0.2460384987490597
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.14807208744894726
+shape_key.value = 0.7485443147614121
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.06480909114098983
+shape_key.value = 1.2
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.20513806000970314
+shape_key.value = 0.23038254957523852
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.3829542872058929
+shape_key.value = -0.7771635850080791
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.07576183067875077
+shape_key.value = -0.8556874122734293
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.51737241420891
+shape_key.value = -0.511623005354381
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.6208501383325123
+shape_key.value = -0.16712420750475943
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.41169671300080446
+shape_key.value = -0.17679443886789903
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.29344447797449774
+shape_key.value = -0.7633110116738597
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.009247081065860044
+shape_key.value = -1.2
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.3131022853199637
+shape_key.value = -1.1017810217069872
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.62548408191825
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.19323127988920863
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.04525468692561252
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.41927221016636274
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.9850192941619045
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -1.1232202751222433
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.7765148263784799
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = -0.1278209261675467
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = 0.31620842777399605
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = -0.05674314179442108
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.8486207427818189
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -1.059104885233326
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.6754870830313489
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = 0.055830856931794015
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.8696146943494354
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = 0.9756540281482844
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.010523154529371137
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = -0.5036436465666724
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.38998194300760003
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = -0.09165142100247037
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -301,102 +401,202 @@ shape_key = cube.data.shape_keys.key_blocks["SimpleDeform.001"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.08
+shape_key.value = 1.0
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.4161722860414081
+shape_key.value = -0.0736495695488315
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.4387421614734543
+shape_key.value = -0.3909439436463713
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.3912702846463474
+shape_key.value = -0.34666287200514045
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.35669578462395285
+shape_key.value = -0.39241190525263137
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.18283555860075518
+shape_key.value = -0.6365465092633865
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.11373356121021469
+shape_key.value = -0.7854984080072163
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.2819401307402783
+shape_key.value = -0.697749987432704
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.29729286731202714
+shape_key.value = -0.5654523850615993
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.08726227080497075
+shape_key.value = -0.5162406791150531
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.031005050633883258
+shape_key.value = -0.6378199760068013
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.10896558889427953
+shape_key.value = -0.853815622579112
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.20775238178105165
+shape_key.value = -0.9720043325965825
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.03708990593263929
+shape_key.value = -0.9783807902764908
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.29242911900495
+shape_key.value = -0.9392881601231322
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.34991674351806246
+shape_key.value = -0.9110869967027686
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.2337203961115581
+shape_key.value = -0.9485476186035848
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.16802470998583208
+shape_key.value = -0.9959257223298493
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.0001372672588111773
+shape_key.value = -0.9885161671143815
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.1689457140666465
+shape_key.value = -0.874046313615084
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.7094184060498958
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.6146573463623679
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.6517201858703066
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.7747078030077792
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.8859636019585886
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -0.8819425064334182
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.8209883515823808
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = -0.7288250152813969
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.4689595890497936
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = -0.1285615959055616
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.03589220051859676
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -0.16554269461565851
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.1819360872852881
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = -0.09356520461688256
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.12461840948107006
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = 0.3874989375144875
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.39155693808727166
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = 0.16285193341772408
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = 0.033844530180136
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = -0.08171284154869962
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -405,102 +605,202 @@ shape_key = cube.data.shape_keys.key_blocks["Shrinkwrap"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.048
+shape_key.value = 0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.2900440459498138
+shape_key.value = -0.3067731529377924
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.30629435626088714
+shape_key.value = -0.8697743982928423
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.2721146049453701
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.24722096492924603
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.12204160219254373
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.07228816407135459
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.19339689413300035
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.20445086446465963
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.05322883497957897
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.031923636456395954
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.08805522400388129
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.15918171488235722
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.03630473227150029
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.20094896568356405
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.24234005533300496
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.15867868520032188
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.11137779118979914
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.009698832426344074
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.13124091412798553
+shape_key.value = -0.8863429359394185
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.814213097790336
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.7901352060407315
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.7945706403239429
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.7987511544535739
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.785619350556397
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -0.774479471732004
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.8104485301828606
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = -0.829127917998638
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.706109721898992
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = -0.4611520275064976
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.2571158266486301
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -0.31251509113000986
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.5206108468102194
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = -0.5307915683975019
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = -0.3712506036030341
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = -0.12506021964356584
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.035206573035494126
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = -0.0643137202291626
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.27980616296266014
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = -0.40226828690931016
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -509,102 +809,202 @@ shape_key = cube.data.shape_keys.key_blocks["Shrinkwrap.001"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.054000000000000006
+shape_key.value = -0.18459110173586046
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.33638472027478267
+shape_key.value = -0.6263162030441654
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.35534341563770155
+shape_key.value = -0.6211188733096055
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.31546703910293167
+shape_key.value = -0.2655995555411634
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.28642445908412034
+shape_key.value = 0.02936796403364539
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.14038186922463436
+shape_key.value = -0.19630416570035714
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.08233619141658031
+shape_key.value = -0.5651754605769329
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.22362970982183375
+shape_key.value = -0.47136084057115113
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.2365260085421028
+shape_key.value = -0.04220501737651228
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.06010030747617545
+shape_key.value = 0.47238135107979695
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.039244242532461886
+shape_key.value = 0.7
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.10473109467119475
+shape_key.value = 0.30314603272036367
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.18771200069608338
+shape_key.value = -0.3188627111881565
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.044355520983417045
+shape_key.value = -0.4704150940407125
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.23244045996415796
+shape_key.value = -0.3096561242489383
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.2807300645551724
+shape_key.value = -0.07923755088849538
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.18312513273370876
+shape_key.value = -0.010437730604068274
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.127940756388099
+shape_key.value = -0.34889810774320823
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.0133153044974014
+shape_key.value = -0.7
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.15511439981598305
+shape_key.value = -0.6947847341213453
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.45083814416025825
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.16763506449780907
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.027284030188019837
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.20820486630613677
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.5334144961027022
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -0.5951563607406698
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.3609461147889252
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = 0.07430556168240265
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = 0.41495910493234245
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = 0.25961998546689213
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.30370473460121694
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -0.5265275991285889
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.32829977013035216
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = 0.10236523493456617
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.5111850144282908
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = 0.6010209983434147
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.13605476425131546
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = -0.2564150866134556
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.25429829546149313
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = -0.0967580449434482
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -613,102 +1013,202 @@ shape_key = cube.data.shape_keys.key_blocks["Shrinkwrap.002"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.009
+shape_key.value = 0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.10985168581242241
+shape_key.value = -0.16139234205525937
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.11662264844203629
+shape_key.value = -0.495130591405907
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.1023810853939042
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.09200873538718586
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.03985066758022655
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.019120068363064405
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.06958203922208349
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.07418786019360814
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.011178681241491224
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.024301515190164977
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.04768967666828386
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.07732571453431548
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.02612697177979179
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.072728735701485
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.08997502305541873
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.05511611883346742
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.035407412995749614
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.015041180177643353
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.06568371421999394
+shape_key.value = -0.499848506692501
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.4604066258720146
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.44548978808948436
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.4328765982553323
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.42205899069897823
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.42373238090485443
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -0.4376754860982061
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.45868499895460274
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = -0.47791492608608005
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.47221375251259184
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = -0.43100298799250236
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.38319691627264735
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -0.3452927094798638
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.32538851928903134
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = -0.3001228613155166
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = -0.24785218137495985
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = -0.1839559091297458
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = -0.14696626320553174
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = -0.15430022899646723
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.2016133491479441
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = -0.24922327213287304
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -717,102 +1217,202 @@ shape_key = cube.data.shape_keys.key_blocks["Wave"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.037125000000000005
+shape_key.value = 0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.2791690459498139
+shape_key.value = -0.19040679152006734
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.29541935626088717
+shape_key.value = -0.7106909964970229
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.26123960494537013
+shape_key.value = -0.7764151900091572
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.236345964929246
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.11116660219254369
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.0614131640713546
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.18252189413300043
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.19357586446465952
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.042353834979578925
+shape_key.value = -0.7784821366195818
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.04279863645639597
+shape_key.value = -0.7982082421473307
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.09893022400388128
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.1700567148823572
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.04717973227150027
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.19007396568356394
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.23146505533300493
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.14780368520032183
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.10050279118979906
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.020573832426344037
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.1421159141279855
+shape_key.value = -0.7740438947354991
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.6990567848723649
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.659563084089173
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.6617913837188333
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.6895733759776328
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.7091539325927733
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -0.7106605015411649
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.7211499931739868
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = -0.7111105901175166
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.5658552690714538
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = -0.320178826920618
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.15333562987959237
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -0.21181957009138053
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.36563574478191585
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = -0.3708461834677991
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = -0.23038541376732047
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = -0.013451479069313876
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.1182632478890625
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = 0.0321710699450779
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.15471315156924326
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = -0.27045755063463495
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -821,102 +1421,202 @@ shape_key = cube.data.shape_keys.key_blocks["Displace"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.1365
+shape_key.value = -0.3533119394417795
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.5735239718538305
+shape_key.value = -0.9289259737557624
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.6028648099154905
+shape_key.value = -0.8868795351615724
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.5411513700402516
+shape_key.value = -0.3580966718491023
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.4962045200111387
+shape_key.value = 0.07318768755802751
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.2701862261809817
+shape_key.value = -0.2510967889328304
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.1803536295732791
+shape_key.value = -0.7858191742926712
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.39902216996236184
+shape_key.value = -0.6525405766917844
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.41898072750563525
+shape_key.value = -0.03976438888076583
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.14594095204646196
+shape_key.value = 0.6872997450550069
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.0078065658240482425
+shape_key.value = 1.0
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.1091552655625634
+shape_key.value = 0.44601894329864566
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.2375780963153672
+shape_key.value = -0.43799291787217953
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.015716877712431087
+shape_key.value = -0.6512260189225634
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.41265785470643496
+shape_key.value = -0.4244965137715586
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.48739176657348116
+shape_key.value = -0.0846493009307
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.3363365149450255
+shape_key.value = 0.013014304531342225
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.2509321229815817
+shape_key.value = -0.47752130775106005
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = 0.032321552563545464
+shape_key.value = -0.9998755781797263
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.18712942828664042
+shape_key.value = -0.9874198073537618
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.6358475979303367
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.22943097106563348
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.03030677217861666
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.29197647086318135
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.7616848831687641
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -0.8498083932115695
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.5059209053326595
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = 0.11036287653947396
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = 0.59298378755873
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = 0.3744090894824015
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.428374081027883
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -0.750191821533098
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.4685264687005186
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = 0.14163331788562572
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.7154871094187745
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = 0.8413532009299953
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.18496048930141118
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = -0.3727468870939702
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.36649328642328627
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = -0.13773304827917687
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -925,102 +1625,202 @@ shape_key = cube.data.shape_keys.key_blocks["Displace.001"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.0495
+shape_key.value = 0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.27137370878732936
+shape_key.value = -0.0769973076388012
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.28626982657247985
+shape_key.value = -0.5204597960145247
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.2549383878665893
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.23211921785180892
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.11737146867649842
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.07176415039874169
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.18278048628858368
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.1929132924259379
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.054293098731280666
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.02376333341836294
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.07521728867022448
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.1404165719754941
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.02777933791554195
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.18970321854326705
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.2276450507219212
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.1509554614336283
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.10759630859064918
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.0033905963908153498
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.1148041712839867
+shape_key.value = -0.5955214447272157
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.5412511571475914
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.5152714914311957
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.516339374385035
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.5251238955846395
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.5305902263544615
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -0.5361474832781628
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.5372581149926404
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = -0.5197064787308292
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.44090767828944555
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = -0.3078876529449013
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.20147508928671537
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -0.16388319112433525
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.2057452342572082
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = -0.21991543184956058
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = -0.14987953404799959
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = -0.03577817304222364
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.04069459789297558
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = 0.02099338794974448
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.073902753565522
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = -0.16023930437547024
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -1029,102 +1829,202 @@ shape_key = cube.data.shape_keys.key_blocks["Displace.002"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.03
+shape_key.value = 0.4
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.16446891441656328
+shape_key.value = 0.009272585217273643
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.17349686458938174
+shape_key.value = -0.14072594302242042
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.15450811385853896
+shape_key.value = -0.08748992098338404
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.1406783138495811
+shape_key.value = -0.04480706396849382
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.07113422344030204
+shape_key.value = -0.1674498478976334
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.04349342448408589
+shape_key.value = -0.3050571361776658
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.11077605229611134
+shape_key.value = -0.27072614306496057
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.11691714692481084
+shape_key.value = -0.15770207389698918
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.032904908321988294
+shape_key.value = -0.0570544664228152
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.014402020253553319
+shape_key.value = -0.08602862703931613
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.045586235557711824
+shape_key.value = -0.2844973813517755
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.08510095271242067
+shape_key.value = -0.4
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.016835962373055707
+shape_key.value = -0.4
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.11497164760197996
+shape_key.value = -0.4
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.13796669740722495
+shape_key.value = -0.32483807569258877
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.09148815844462323
+shape_key.value = -0.2770726101485738
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.0652098839943328
+shape_key.value = -0.32517228952173455
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.0020549069035244658
+shape_key.value = -0.4
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.0695782856266586
+shape_key.value = -0.39093697528002763
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.3053105175676196
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.21238537199715157
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.16214098355498302
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.21541158657076095
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.3275850576757568
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -0.35683720936998986
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.308776292998913
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = -0.21346240108096703
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.09558551879488092
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = -0.014602657091890514
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.061773009787232214
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -0.12273488797406507
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.0756532675319721
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = 0.02468443188602326
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.1348038917968719
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = 0.18664847160124087
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.0884244192756764
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = -0.024044374935677515
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.04159464604804358
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = -0.02860258436804486
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -1133,102 +2033,202 @@ shape_key = cube.data.shape_keys.key_blocks["Displace.003"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.036
+shape_key.value = 0.22862440263248107
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 6
 scene.frame_set(6)
-shape_key.value = 0.23770337162484484
+shape_key.value = -0.01899272507210137
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.25124529688407254
+shape_key.value = -0.0350840626270571
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 18
 scene.frame_set(18)
-shape_key.value = 0.2227621707878084
+shape_key.value = 0.11768271035178379
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.20201747077437168
+shape_key.value = 0.08043636387137154
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 30
 scene.frame_set(30)
-shape_key.value = 0.0977013351604531
+shape_key.value = -0.3011405449270189
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.05624013672612881
+shape_key.value = -0.4371440328219007
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 42
 scene.frame_set(42)
-shape_key.value = 0.157164078444167
+shape_key.value = -0.2011660901928231
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.16637572038721626
+shape_key.value = 0.18610419745502682
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 54
 scene.frame_set(54)
-shape_key.value = 0.040357362482982446
+shape_key.value = 0.4440310200355867
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.030603030380329955
+shape_key.value = 0.3836478390248149
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 66
 scene.frame_set(66)
-shape_key.value = -0.07737935333656772
+shape_key.value = -0.0905871042502086
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.136651429068631
+shape_key.value = -0.390793260782787
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 78
 scene.frame_set(78)
-shape_key.value = -0.034253943559583576
+shape_key.value = -0.30395532938849973
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.16345747140296998
+shape_key.value = -0.1467727687500769
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 90
 scene.frame_set(90)
-shape_key.value = 0.19795004611083747
+shape_key.value = -0.09014429857481171
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.12823223766693484
+shape_key.value = -0.20243152932037084
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 102
 scene.frame_set(102)
-shape_key.value = 0.08881482599149923
+shape_key.value = -0.4550258338393788
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.012082360355286708
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 114
 scene.frame_set(114)
-shape_key.value = -0.11336742843998789
+shape_key.value = -0.3815083623251815
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.15232569129532686
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 126
+scene.frame_set(126)
+shape_key.value = -0.04749009562750106
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.08613587779185417
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 138
+scene.frame_set(138)
+shape_key.value = -0.2869084333005798
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.4483708518001785
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 150
+scene.frame_set(150)
+shape_key.value = -0.3470930843873966
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.045363318470550196
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 162
+scene.frame_set(162)
+shape_key.value = 0.2177843879171144
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = 0.2555919137550754
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 174
+scene.frame_set(174)
+shape_key.value = 0.007547499533483659
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.2057259799478064
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 186
+scene.frame_set(186)
+shape_key.value = -0.13767243477467211
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = 0.1055592082982354
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 198
+scene.frame_set(198)
+shape_key.value = 0.36994867420661537
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.496876743141895
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 210
+scene.frame_set(210)
+shape_key.value = 0.3472469163177375
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.028039464449407414
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 222
+scene.frame_set(222)
+shape_key.value = -0.05079714939107388
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = 0.02757704723560961
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 234
+scene.frame_set(234)
+shape_key.value = 0.08719476866155684
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -1253,862 +2253,1707 @@ else:
 
 # Get audio feature data for color reactivity
 audio_features = {
-  "duration": 5.0,
-  "total_frames": 120,
+  "duration": 10.0,
   "fps": 24,
+  "total_frames": 240,
   "kick_energy": [
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1
+    0.06489493740101655,
+    0.06984761138648415,
+    0.07717069717404743,
+    0.08604839867290488,
+    0.09562390409783503,
+    0.10573673752233968,
+    0.11612119730416781,
+    0.12695960170613219,
+    0.13880514746978767,
+    0.15255127091711787,
+    0.16901876213178715,
+    0.18831943065778237,
+    0.21048029807550095,
+    0.23497434440979237,
+    0.2610429547476555,
+    0.28724818736492513,
+    0.312094070431648,
+    0.3345962484893686,
+    0.35419918029247854,
+    0.37053584510098586,
+    0.3828196605301787,
+    0.39037925859398015,
+    0.39275618473289164,
+    0.3851113458772076,
+    0.3664831486114378,
+    0.3420119760479289,
+    0.31505016935902697,
+    0.28667525111448144,
+    0.2569494992697571,
+    0.2263299525158329,
+    0.19606753983665576,
+    0.16841240648890624,
+    0.14566254129543313,
+    0.13104674232625704,
+    0.12634041364447562,
+    0.1283424474912206,
+    0.13394105766336348,
+    0.1433631287419229,
+    0.15688739235932575,
+    0.17465260819439948,
+    0.1968070859889504,
+    0.2229408711012593,
+    0.2524726282440749,
+    0.2841606755596579,
+    0.31704280895832,
+    0.3502451960820907,
+    0.3835007091114554,
+    0.4167149809383221,
+    0.4495766877674193,
+    0.4817460455662772,
+    0.512434215287819,
+    0.5410967325718424,
+    0.5668443740577312,
+    0.5890485574981933,
+    0.6071491925869315,
+    0.6211160440433467,
+    0.6309850263230101,
+    0.6365642914226987,
+    0.6374649662051528,
+    0.6246515314675235,
+    0.5986872824081649,
+    0.5624885433537004,
+    0.5197866941918154,
+    0.4736218934591811,
+    0.4263739401589895,
+    0.37876893037218834,
+    0.3313441415254403,
+    0.28496985764341387,
+    0.2418229427385144,
+    0.20499215536892873,
+    0.1785868568684149,
+    0.1656463165252754,
+    0.1662481803542822,
+    0.17126566119429423,
+    0.18038359199209736,
+    0.19251013618343973,
+    0.20654186488008716,
+    0.22161813382944254,
+    0.23730476126114655,
+    0.25311304321539685,
+    0.26815411074761153,
+    0.2815708666696921,
+    0.29274780260958594,
+    0.30169291448858715,
+    0.3087757950468728,
+    0.3147223676162574,
+    0.32035021506057093,
+    0.3261302344419316,
+    0.3320558885395257,
+    0.33760328755606994,
+    0.3422285534822999,
+    0.34530636095020406,
+    0.3463486614247644,
+    0.34250551099687426,
+    0.3323494491995733,
+    0.31786193655923134,
+    0.3002849365827273,
+    0.2808186767409275,
+    0.2599894476246654,
+    0.23873574049773438,
+    0.21744613132574742,
+    0.19668448194522783,
+    0.17664645065323034,
+    0.1576223447316913,
+    0.13983757746643524,
+    0.12399657178076835,
+    0.11130898123117682,
+    0.10450701727528997,
+    0.10508653035734229,
+    0.10935476281396841,
+    0.11779815691085135,
+    0.13020102816308174,
+    0.14550228898782352,
+    0.16266958817586782,
+    0.1808815512191577,
+    0.19981309114930296,
+    0.2190884111845221,
+    0.2378710824543216,
+    0.25523696994204315,
+    0.2703284310652501,
+    0.2829090079326655,
+    0.29309066188144933,
+    0.3015812275430146,
+    0.30922720837746986,
+    0.3167033526423301,
+    0.324108014556826,
+    0.331126427944179,
+    0.33726201157006575,
+    0.3419333848380972,
+    0.34470147633869,
+    0.3455245344406052,
+    0.3425418428568342,
+    0.33543345628821875,
+    0.3245748629116224,
+    0.31037086686673326,
+    0.29314353789841013,
+    0.2741004880289492,
+    0.25431971195074266,
+    0.23463597638588263,
+    0.21518927888727937,
+    0.19572661455802937,
+    0.17636639501984752,
+    0.15804068309876124,
+    0.14296358917691313,
+    0.13435923357142948,
+    0.13428974638572508,
+    0.13730846830002202,
+    0.14349803146618167,
+    0.15290130491237625,
+    0.16572437692229347,
+    0.18225197592959522,
+    0.20292218388726105,
+    0.2277234478395576,
+    0.2564139163116445,
+    0.2878123111626839,
+    0.3208194778056737,
+    0.3542064964582692,
+    0.38752323211743395,
+    0.42043347625543037,
+    0.4524190800556666,
+    0.4823877364035528,
+    0.5087026410112633,
+    0.5302003755116743,
+    0.5463341359306546,
+    0.5575651405162527,
+    0.5643713222123837,
+    0.5672257066953108,
+    0.563490098795297,
+    0.5471637955119069,
+    0.519957844392807,
+    0.4850442831709827,
+    0.44681407051242567,
+    0.40856554963195446,
+    0.3713126119434364,
+    0.33397936558627095,
+    0.2959936243791725,
+    0.2577326830842975,
+    0.22104885322649975,
+    0.1878650336754422,
+    0.16033814456488493,
+    0.1402652253095143,
+    0.12990715969414726,
+    0.13001628716120917,
+    0.13366599189309686,
+    0.14090966309385142,
+    0.1515595762236313,
+    0.16557634934729054,
+    0.18304573251186798,
+    0.2043110027056474,
+    0.22933455454041146,
+    0.2579772298577802,
+    0.2892104910975028,
+    0.32204722816913256,
+    0.3552577817960162,
+    0.38836962787025897,
+    0.42114567043668516,
+    0.45346782241464595,
+    0.4851066720319246,
+    0.5154312036168553,
+    0.5438541363729618,
+    0.5692819368387758,
+    0.590959555055008,
+    0.6082384249868528,
+    0.6213682624021932,
+    0.6306095771410953,
+    0.6360763479764666,
+    0.637380382345834,
+    0.62701420499482,
+    0.6032228666773718,
+    0.568201772077278,
+    0.5254021565891712,
+    0.47819145081752473,
+    0.42962704188978373,
+    0.3809005301785176,
+    0.33278355670803506,
+    0.28608928764844527,
+    0.2429897256950515,
+    0.20671926273545993,
+    0.18174819211111887,
+    0.1713526641138403,
+    0.17310460124212387,
+    0.17960536681665004,
+    0.19032791023215664,
+    0.2040440860506723,
+    0.21958268928039737,
+    0.23598033592387857,
+    0.2527357885793967,
+    0.26931241854311266,
+    0.2848090341165368,
+    0.2983610007752647,
+    0.3092617192999085,
+    0.31757608272003957,
+    0.32362330564089226,
+    0.3283788049371683,
+    0.33258966607552365,
+    0.3366426862121978,
+    0.3397397439302426,
+    0.3407556135719034,
+    0.33290458760845887,
+    0.3109601848997842,
+    0.15247569888830187
   ],
   "bass_energy": [
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2
+    0.0675243350683013,
+    0.0725422156603534,
+    0.08272537062224022,
+    0.09541016426133228,
+    0.10970429414643137,
+    0.12493332071093981,
+    0.1406837680713287,
+    0.1569122225295114,
+    0.1739902885046346,
+    0.1925319962680712,
+    0.21348937231722265,
+    0.2373149715769978,
+    0.26419079779270643,
+    0.29381785350426887,
+    0.3254790620889755,
+    0.3579194435179567,
+    0.38938359237353337,
+    0.418214119172139,
+    0.44307894150148275,
+    0.463261287203425,
+    0.478332832649889,
+    0.4879215644545168,
+    0.4916382429269789,
+    0.4847910195866114,
+    0.46252971803674686,
+    0.43042518406605995,
+    0.3935890453903382,
+    0.3556984947553677,
+    0.31880820563828777,
+    0.28357472310523385,
+    0.2501209507386681,
+    0.21923736497256707,
+    0.19277147811800682,
+    0.17386064850583383,
+    0.16524124812583896,
+    0.16631430037431727,
+    0.1716215095066353,
+    0.18148934603676858,
+    0.19620242237358332,
+    0.21589640813439384,
+    0.24064915566316955,
+    0.27024222227115896,
+    0.3040046668502428,
+    0.3407576595693971,
+    0.3791019750476435,
+    0.4177523977597606,
+    0.4556654381878074,
+    0.4923653028300458,
+    0.5274103157220287,
+    0.5605125196649644,
+    0.5913043556566174,
+    0.6193702488594992,
+    0.6442723785867345,
+    0.6654026808715285,
+    0.6822112599959548,
+    0.6942776019747221,
+    0.701474938092804,
+    0.703757174202403,
+    0.6958393534011814,
+    0.6744152923026727,
+    0.6418595406170192,
+    0.6004305706886685,
+    0.5526350630403083,
+    0.5012812726755977,
+    0.44897832976761176,
+    0.39776658282168864,
+    0.3487622352874778,
+    0.30263859272928584,
+    0.2604355947763686,
+    0.22424445927563771,
+    0.19746703096861012,
+    0.1827172725977692,
+    0.1803356760736416,
+    0.18319267733570016,
+    0.1893593760693502,
+    0.19886305194329898,
+    0.21185406204444224,
+    0.22833133588722707,
+    0.24790618120929078,
+    0.26960739666698663,
+    0.29221207654658427,
+    0.31459172661319734,
+    0.33614793915376606,
+    0.3566011400804058,
+    0.37611210515528154,
+    0.3945877658467488,
+    0.41162480937483276,
+    0.4268816342788927,
+    0.44004924025153974,
+    0.4512549878093042,
+    0.46047316539506367,
+    0.46741641597727374,
+    0.47174708446706914,
+    0.4730817827379252,
+    0.4673193191241022,
+    0.4526557063282314,
+    0.43106479874833964,
+    0.404304712247471,
+    0.37418795132730853,
+    0.34191241205852324,
+    0.3082320571198617,
+    0.274519238374299,
+    0.24200285356812878,
+    0.21216750960958639,
+    0.18575409228682446,
+    0.16322379578039437,
+    0.14577855537729734,
+    0.13584334714078652,
+    0.13538525808590351,
+    0.138389894909093,
+    0.14469184849129663,
+    0.15391437308022846,
+    0.16594272548126504,
+    0.18085754406492344,
+    0.19875413499919756,
+    0.21941227513274036,
+    0.242086288782046,
+    0.2656829295636194,
+    0.2891082358058697,
+    0.31171102502229164,
+    0.33315752082199074,
+    0.3536447270976109,
+    0.37315501971118836,
+    0.3913894220234345,
+    0.40806076992186724,
+    0.4228203241454969,
+    0.43562090516352653,
+    0.44606553451534814,
+    0.4538065179138559,
+    0.45861082877980597,
+    0.46065869796256403,
+    0.4593361224132056,
+    0.45131119489852833,
+    0.43808189826733906,
+    0.41991265658164456,
+    0.39815949869799505,
+    0.3737938172500233,
+    0.34851153354634057,
+    0.32347672428570495,
+    0.2993753246519445,
+    0.27607153313694727,
+    0.2530731529705811,
+    0.23076507303907445,
+    0.21088119080537723,
+    0.1970927301096186,
+    0.19213219951208887,
+    0.19395505289289725,
+    0.19965896148375573,
+    0.20956351766104722,
+    0.22394971375444792,
+    0.2429361948082529,
+    0.26661318274288603,
+    0.2947435685093029,
+    0.32676764117119994,
+    0.3616319198686028,
+    0.3981000459579462,
+    0.43498981632217154,
+    0.471275153909445,
+    0.5064369716952193,
+    0.5398334158248486,
+    0.570890280426039,
+    0.5989271465355682,
+    0.6235041730035599,
+    0.644206768968543,
+    0.6606865743266008,
+    0.6726948940668634,
+    0.6798430024646658,
+    0.6819890549333726,
+    0.6728632220716579,
+    0.6500689927679382,
+    0.6166838441927887,
+    0.5756232114359735,
+    0.529154086785077,
+    0.4794956150213918,
+    0.4285774330482846,
+    0.37806128556775487,
+    0.3299913639471732,
+    0.2855705729541415,
+    0.24578902199482924,
+    0.2116644506724877,
+    0.1846169024731954,
+    0.16704270049521583,
+    0.1608230114318423,
+    0.16286384802866105,
+    0.16936804989799548,
+    0.18058584299848665,
+    0.1966684233479499,
+    0.2176211592133282,
+    0.24340315512292685,
+    0.27372853041067535,
+    0.30800893865131124,
+    0.34512088167464816,
+    0.38375793599069863,
+    0.4226462690195377,
+    0.4606888482368017,
+    0.4973571493359379,
+    0.5321844469134264,
+    0.5649455031836988,
+    0.5954174769024997,
+    0.6233968541397038,
+    0.6484565672286003,
+    0.6699560640108712,
+    0.6872141726021015,
+    0.6996701778751183,
+    0.7071949398940386,
+    0.7097504037058205,
+    0.7026306589528433,
+    0.6817511478246423,
+    0.6493291058187086,
+    0.6072763987893618,
+    0.558081454818669,
+    0.5047576031209882,
+    0.45033492271336406,
+    0.397333458101493,
+    0.34700918152831156,
+    0.30002530726025706,
+    0.25742539355056276,
+    0.22143208622152846,
+    0.19572359119258265,
+    0.1829992172203954,
+    0.18323905515413483,
+    0.18751180895693986,
+    0.19562052534893298,
+    0.20745972102070434,
+    0.22293977046058017,
+    0.24192957146689198,
+    0.2638862112063176,
+    0.2878348105202017,
+    0.31232898650740054,
+    0.3359296061130945,
+    0.3577312785684976,
+    0.3772436216861051,
+    0.394729496456626,
+    0.41035584897384714,
+    0.42396805229608664,
+    0.4350592110721111,
+    0.4427181279726312,
+    0.44607115113839724,
+    0.43981744535348827,
+    0.4147634573001251,
+    0.24072701100468274
   ],
   "snare_energy": [
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1
+    0.038326463734963914,
+    0.04019256339982106,
+    0.04392586461708077,
+    0.04857915035594285,
+    0.05371935689045982,
+    0.0588391164518727,
+    0.06363028157223877,
+    0.06786498263009783,
+    0.07144927643703392,
+    0.07435864869285294,
+    0.0766974052931117,
+    0.07860420761627313,
+    0.08022224906282674,
+    0.08174105371479398,
+    0.08323782280739475,
+    0.08479170527449892,
+    0.0864059949106539,
+    0.08803898384147445,
+    0.08952965236693802,
+    0.09077403978978286,
+    0.09170924840028992,
+    0.09227692326959382,
+    0.09239315724730403,
+    0.09089340557192298,
+    0.08772757997384416,
+    0.08316115914944451,
+    0.07762652444261413,
+    0.07152564200947542,
+    0.06545631188869275,
+    0.05966010434194802,
+    0.05434785206410412,
+    0.04966357416960021,
+    0.04592798284775932,
+    0.043318099421602904,
+    0.04188478523623694,
+    0.04151970466582984,
+    0.041699260082282336,
+    0.0421467224493011,
+    0.0428659912907316,
+    0.04388537858392796,
+    0.0452111134128035,
+    0.046833039127003546,
+    0.04860519593934464,
+    0.05040074933298355,
+    0.052108864428278376,
+    0.053690949014583565,
+    0.05514157787955641,
+    0.05649936310376113,
+    0.05777814715290837,
+    0.0589481585530363,
+    0.059937701805930825,
+    0.0606030788110562,
+    0.06088894559047248,
+    0.060569702318102554,
+    0.05924595745153182,
+    0.05716906502980757,
+    0.05449014632866188,
+    0.05127200666470089,
+    0.04759935715040151,
+    0.0436069232596137,
+    0.039478654787843584,
+    0.03550352519504266,
+    0.03184079308259388,
+    0.028538564965849385,
+    0.02553963686840142,
+    0.022802554634469435,
+    0.020304117791516543,
+    0.01812042005538859,
+    0.016408292631947645,
+    0.015488721303531981,
+    0.015516506647475945,
+    0.015922338750198578,
+    0.016771323342010473,
+    0.0180958961391883,
+    0.019885814369723035,
+    0.02211185580919846,
+    0.024755184453669688,
+    0.027781698117617853,
+    0.03114899959060384,
+    0.03469568359982602,
+    0.038282818547355726,
+    0.041782312953622884,
+    0.04511805860886561,
+    0.04822934261382351,
+    0.05109337715961531,
+    0.05371326108686733,
+    0.05609367903339759,
+    0.0582430202492572,
+    0.0601233076432112,
+    0.061748050896806586,
+    0.06311285384986674,
+    0.06420445838073627,
+    0.06497842893925536,
+    0.06539839197215466,
+    0.06545921954617799,
+    0.0645724257270455,
+    0.06279957398663204,
+    0.06026935455599133,
+    0.05712547323791225,
+    0.053473043802607235,
+    0.04943258159990295,
+    0.04518216820242537,
+    0.040939744747819855,
+    0.03689862944909477,
+    0.033199525442850285,
+    0.030012513985820055,
+    0.027634315792850143,
+    0.02626215662571893,
+    0.026018614426805708,
+    0.026314434710468113,
+    0.027030384479602255,
+    0.028173708193076012,
+    0.029733537873225507,
+    0.0317029265812108,
+    0.03406072618428445,
+    0.036770729204384685,
+    0.03968660584829655,
+    0.04268135610933922,
+    0.04563848425021216,
+    0.04848544605929056,
+    0.051161361535245156,
+    0.053645283374052756,
+    0.05594326929043404,
+    0.05805953946438133,
+    0.06000421814191487,
+    0.06172593132767726,
+    0.06322153122239407,
+    0.06448463047857877,
+    0.06552819277297735,
+    0.06637027868121137,
+    0.06701429911660413,
+    0.06747384139776096,
+    0.06773461341577364,
+    0.06776527486327923,
+    0.06692842464189114,
+    0.06531496844107157,
+    0.06309687816297198,
+    0.0604240450591213,
+    0.057385004586598995,
+    0.05399916882144643,
+    0.050362097134336016,
+    0.0466179227516055,
+    0.04308900403235453,
+    0.04026236621348349,
+    0.038543609054840874,
+    0.03804938059669963,
+    0.03826168216485206,
+    0.03884514339217175,
+    0.03976220794473729,
+    0.04098731435074671,
+    0.04251531032970004,
+    0.04434054429313157,
+    0.04642925622692508,
+    0.04864478683747555,
+    0.05086189924787484,
+    0.05296816273373322,
+    0.05489971274720191,
+    0.05659525611930496,
+    0.058086383180143114,
+    0.059604974351669886,
+    0.061594388804886394,
+    0.06487013332760372,
+    0.06987342022105175,
+    0.07684203151617597,
+    0.08560585616087715,
+    0.09575552413050667,
+    0.1064529262153551,
+    0.1171844242510948,
+    0.12763261999111225,
+    0.1375079623200527,
+    0.14633825607162057,
+    0.1532458139481575,
+    0.15768872543731635,
+    0.15936875679390664,
+    0.15654600674211316,
+    0.14767687941049432,
+    0.13656451014328355,
+    0.12526127218694286,
+    0.11480152570389231,
+    0.1053981567196038,
+    0.0972109691922086,
+    0.09029592171209144,
+    0.08471830214918681,
+    0.0804567181837438,
+    0.07747888720588135,
+    0.0755850331130142,
+    0.07452849211765437,
+    0.07412594629001924,
+    0.07416607730647229,
+    0.07436320822160639,
+    0.07465416566271024,
+    0.07499452076789376,
+    0.07531785724371064,
+    0.07558125434075942,
+    0.07570550900685726,
+    0.07570984463339012,
+    0.07580181001491364,
+    0.07638649409788027,
+    0.07818014932646458,
+    0.08154480555438233,
+    0.08666624051583094,
+    0.09338181314736894,
+    0.10133379663273866,
+    0.10978794352777538,
+    0.11831446931449476,
+    0.12663366442072246,
+    0.13447523247178866,
+    0.1414019746298658,
+    0.1466258357906787,
+    0.14968099549735972,
+    0.1503122770899162,
+    0.14529420394764853,
+    0.13543152108688986,
+    0.12386937653174607,
+    0.11230226937293487,
+    0.10162042381462799,
+    0.09211847505221206,
+    0.0840607249572031,
+    0.07760207659369871,
+    0.07278861207052673,
+    0.06955635560889181,
+    0.06778744790006493,
+    0.06722862723314059,
+    0.06737341045670904,
+    0.06781490112681716,
+    0.06853312920132072,
+    0.06946470324364455,
+    0.07048604763146181,
+    0.07151358294060729,
+    0.07249261617376572,
+    0.07340724640019383,
+    0.07424093803812246,
+    0.07516288914424059,
+    0.07643013780658538,
+    0.07847750834452372,
+    0.08133827056210019,
+    0.08484446240229168,
+    0.08842446758875312,
+    0.0912386550025367,
+    0.09124247698524277,
+    0.06464609449551549
   ],
   "hihat_energy": [
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05
+    0.0042504477448528635,
+    0.004856937172764447,
+    0.005741480533330469,
+    0.006787653911323404,
+    0.00790883541916576,
+    0.009062187924103082,
+    0.010195751175310769,
+    0.011193773616080037,
+    0.011994052573964329,
+    0.012665702078059268,
+    0.013291185836433204,
+    0.013938982853933381,
+    0.014590860294058544,
+    0.015205863947043676,
+    0.015785848407583063,
+    0.01636376606849306,
+    0.016918823747552186,
+    0.017411722075897747,
+    0.0178361782736638,
+    0.018171360743347846,
+    0.018394714447174425,
+    0.018456390320667815,
+    0.018160498844079925,
+    0.017560151219772148,
+    0.016743912041497937,
+    0.015664144625161962,
+    0.014352018934034313,
+    0.012968806538025845,
+    0.011643393005990224,
+    0.010450812144289208,
+    0.009379393455026351,
+    0.008408084344116974,
+    0.007596371957882476,
+    0.007089901270181202,
+    0.007092165951395536,
+    0.007255017917253291,
+    0.007521510906738776,
+    0.007850615360779856,
+    0.008236000658940252,
+    0.00870526478661053,
+    0.009268613099536908,
+    0.009921713184644602,
+    0.01064872458620291,
+    0.011432060703369353,
+    0.01218172515735846,
+    0.012826860891608702,
+    0.013404311294836022,
+    0.01396732203878301,
+    0.014569215441158113,
+    0.015187812399561223,
+    0.015764935267069277,
+    0.01626042352428422,
+    0.01663829438280795,
+    0.01685086349911821,
+    0.016895042318161652,
+    0.016664161571633265,
+    0.016186041690646722,
+    0.015481028558947783,
+    0.014463993693198663,
+    0.01318437172336686,
+    0.011828864033055803,
+    0.010528078530936309,
+    0.009335826843000574,
+    0.008254949143476981,
+    0.007286654120390098,
+    0.0064289341999826145,
+    0.0056744415259113645,
+    0.005014098419445008,
+    0.004436249698872476,
+    0.003992070316829321,
+    0.003796595857130596,
+    0.0038686024416979,
+    0.004085790513577649,
+    0.0044045739713753276,
+    0.004787503380518951,
+    0.005224875269543543,
+    0.005728590282248062,
+    0.006304364719638832,
+    0.00696000624813424,
+    0.0076936806259129305,
+    0.008504245980234526,
+    0.009316127074931676,
+    0.010050376911221943,
+    0.010716094493826163,
+    0.011346386686877543,
+    0.01197733799074077,
+    0.012603614531037234,
+    0.01320339882212924,
+    0.013760627669703006,
+    0.01427097036154166,
+    0.014690401768379423,
+    0.014999908385453672,
+    0.015229795301483176,
+    0.0153891480224645,
+    0.01547369164473083,
+    0.015417283809386437,
+    0.015040839817496108,
+    0.014448727284265746,
+    0.013695215080061333,
+    0.01275734850122273,
+    0.011665553773625346,
+    0.01051885434129525,
+    0.00940562069354818,
+    0.008392248445818653,
+    0.00748283604295222,
+    0.006669010286294174,
+    0.005990843956170011,
+    0.005548601503308114,
+    0.005484871508609378,
+    0.0055879095675581344,
+    0.005781392106211508,
+    0.006041314853471183,
+    0.006371181509773315,
+    0.00678160580898316,
+    0.007269605643440287,
+    0.007838567301151268,
+    0.008488239929041495,
+    0.009223906041404113,
+    0.009979539011906069,
+    0.010676146480150932,
+    0.011308550607611547,
+    0.011895100063396218,
+    0.012455975612848292,
+    0.012992923871158921,
+    0.013507098198027796,
+    0.013994698270364689,
+    0.014456614817292695,
+    0.014836661052217835,
+    0.015097725861506912,
+    0.015282591382907077,
+    0.015444195335208069,
+    0.015641458679083252,
+    0.015857272762265444,
+    0.016028515686245366,
+    0.016114995171868304,
+    0.01605724646147247,
+    0.01564381390084568,
+    0.014990251893162441,
+    0.014267962714722814,
+    0.013528011190065487,
+    0.012723065232469915,
+    0.011720135174762314,
+    0.010667997970906647,
+    0.010205123114758092,
+    0.010540366471592474,
+    0.011638641319912962,
+    0.013449035112276908,
+    0.015648298993180067,
+    0.017961455060029292,
+    0.020251465210521444,
+    0.022480544236352117,
+    0.024628304767268423,
+    0.026736775708034836,
+    0.02883628444092597,
+    0.030925507055877946,
+    0.032750878144912746,
+    0.03407995805481558,
+    0.03499597089455065,
+    0.03565467653066953,
+    0.03620305907073047,
+    0.03671291577617045,
+    0.03772227543218287,
+    0.04025340630464472,
+    0.04578231514946415,
+    0.054262175556047815,
+    0.06412255924862065,
+    0.07426633178589716,
+    0.08412016875607252,
+    0.09362354568694367,
+    0.10273005548010725,
+    0.11147328421771688,
+    0.11949463574145584,
+    0.1259232147470209,
+    0.12913673790674052,
+    0.12768565698419262,
+    0.11934117382016182,
+    0.10934296745123996,
+    0.10062005413343138,
+    0.09396336978707906,
+    0.08940363463891814,
+    0.0862630973494589,
+    0.08386083411485756,
+    0.08158204259938988,
+    0.07896473403635043,
+    0.07610724510077996,
+    0.07332643612525307,
+    0.07078312612219778,
+    0.06820113451954085,
+    0.06497847939682241,
+    0.061079728867989194,
+    0.05718431101218206,
+    0.053999089903802686,
+    0.0513954847114179,
+    0.04905595159684938,
+    0.04709737405381888,
+    0.04558517870917983,
+    0.04448649809247769,
+    0.04373110144165551,
+    0.04404114322806455,
+    0.04579299060643458,
+    0.05032575765020325,
+    0.05762969194060929,
+    0.06628829606773645,
+    0.0752537380767028,
+    0.08397655016782345,
+    0.09240124045745851,
+    0.10050803184888948,
+    0.10834410832683608,
+    0.11559726029669846,
+    0.12149862777801881,
+    0.12456920968767868,
+    0.12377070435733205,
+    0.11645278892274222,
+    0.10720724822174417,
+    0.0984546576806295,
+    0.09053214175451688,
+    0.08361098351907102,
+    0.07793686567810774,
+    0.07383808279987858,
+    0.07090906573160626,
+    0.0683070301830796,
+    0.06578780206660423,
+    0.06341075790914188,
+    0.06142854880818615,
+    0.05985906748121869,
+    0.058587459643281554,
+    0.05753924282041016,
+    0.056538377307616294,
+    0.05526906621708262,
+    0.05327358513539554,
+    0.050616004286641286,
+    0.047865746943751876,
+    0.04543934678778972,
+    0.043447514778658235,
+    0.04231928847383433,
+    0.042471888008595235,
+    0.043376660376354195,
+    0.0447267248609941,
+    0.04571615085789849,
+    0.045851458635093933,
+    0.036232214663177734
   ],
   "vocal_energy": [
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1
+    0.006712960423901678,
+    0.007212202707730467,
+    0.008223033258849988,
+    0.009478360248108542,
+    0.010876828354389197,
+    0.012333682320521979,
+    0.013748428075849965,
+    0.015042325911371602,
+    0.016175223042554854,
+    0.017147715804384983,
+    0.018040513368243305,
+    0.018894731031689815,
+    0.019731811768098472,
+    0.020544607058394018,
+    0.021332227356418782,
+    0.022080851035516165,
+    0.022786325023214076,
+    0.023432731784900233,
+    0.023981775315275934,
+    0.02441929190655422,
+    0.024700756539086426,
+    0.02481238189313035,
+    0.024609314317972454,
+    0.023923917416437682,
+    0.022855539690705688,
+    0.02147611519113168,
+    0.01985998492496052,
+    0.018114919656292878,
+    0.016405809017325457,
+    0.014808664338365479,
+    0.013354502356907442,
+    0.012073560341089603,
+    0.011051096639049962,
+    0.010472239101381025,
+    0.010417650810685063,
+    0.010560569334493928,
+    0.010848981790829269,
+    0.01123724155699254,
+    0.011714239481000598,
+    0.012282155949020017,
+    0.012958830782192263,
+    0.013743740966587955,
+    0.01462755927028608,
+    0.015541685358062607,
+    0.016426328719414653,
+    0.01724383257598503,
+    0.017978703848655055,
+    0.01869154822093695,
+    0.019405684947713043,
+    0.020120140397900804,
+    0.020792272667026365,
+    0.02135703768476314,
+    0.021752622125898936,
+    0.0219542042623641,
+    0.021967823978143054,
+    0.021507421188834048,
+    0.020739423135241145,
+    0.01969038999834993,
+    0.01838162333396959,
+    0.016860555917098438,
+    0.015234016522735256,
+    0.013652997655141625,
+    0.012193885104412055,
+    0.010877520240858068,
+    0.009686838873725514,
+    0.008609167757343852,
+    0.007638150343117141,
+    0.006766550818597388,
+    0.006038315390565311,
+    0.005545002900933505,
+    0.005468430333282872,
+    0.005608810097661578,
+    0.005931476293383119,
+    0.006420969619835973,
+    0.007030378884338533,
+    0.007735448604911536,
+    0.00853119811574913,
+    0.009432832909112445,
+    0.01044435731943059,
+    0.011575238337266773,
+    0.012762601399347708,
+    0.013940042785489137,
+    0.015050317391397304,
+    0.016051503232267395,
+    0.016979968154963564,
+    0.017861662802466944,
+    0.018711825439983926,
+    0.01951778055492164,
+    0.020262764371044586,
+    0.02089607519918762,
+    0.02140174346483824,
+    0.02177399771543974,
+    0.022014847011510658,
+    0.02216041158387752,
+    0.022205641915321133,
+    0.022026112588819993,
+    0.02152843027387115,
+    0.02075691179246388,
+    0.019733204967491685,
+    0.01850191442915193,
+    0.017102730336189007,
+    0.015614209999951025,
+    0.014152487393743684,
+    0.012769782276187368,
+    0.01149655227956693,
+    0.010362180319167417,
+    0.009445725534324064,
+    0.00890228068636283,
+    0.008816904928167104,
+    0.008936895038958339,
+    0.009199911443398597,
+    0.009584656437387018,
+    0.010078207668573312,
+    0.01067932904266828,
+    0.011397051380317675,
+    0.012228304416010919,
+    0.01318389926098254,
+    0.014212533481867682,
+    0.015255571588952705,
+    0.016253130175119385,
+    0.017151144547634372,
+    0.017958853860333687,
+    0.01869554222429165,
+    0.01938373613846514,
+    0.02003030877578294,
+    0.02064809363393301,
+    0.021194586042141698,
+    0.021649442029162937,
+    0.022008901298149215,
+    0.022291877332025724,
+    0.022587535622428073,
+    0.02292713661422578,
+    0.023305071841937718,
+    0.023670463680608406,
+    0.02394826654798171,
+    0.0240814167741614,
+    0.024003219553680736,
+    0.023493693930091115,
+    0.022687102097908425,
+    0.021693325085782082,
+    0.020454410944941367,
+    0.018998473962370404,
+    0.01748916807560611,
+    0.01627672862815549,
+    0.015820857478866208,
+    0.015975402854320885,
+    0.016432634755703175,
+    0.017137033026330323,
+    0.018002458888599377,
+    0.018968067441419413,
+    0.020000704581038448,
+    0.02109831012375565,
+    0.02225153496645782,
+    0.023470286887860906,
+    0.024689853951665258,
+    0.025836956806049645,
+    0.026843946761012392,
+    0.027659972206142195,
+    0.028321452177103138,
+    0.02888227308474385,
+    0.029643498298097846,
+    0.031147887609677013,
+    0.03442284748905426,
+    0.04000236376488822,
+    0.047887164362391085,
+    0.05753888058291705,
+    0.0678870463646627,
+    0.07831241211657389,
+    0.08845443742233486,
+    0.09823345860323468,
+    0.10737692988287735,
+    0.11538381625709312,
+    0.12122114814607916,
+    0.12424126468705596,
+    0.12433296239665004,
+    0.1171972353360217,
+    0.10739666991461833,
+    0.097634456708995,
+    0.08917654031634444,
+    0.08205892524810846,
+    0.07607401146165445,
+    0.07086578721227911,
+    0.06616406899200637,
+    0.061877158243502706,
+    0.05800344099480553,
+    0.05464526609546119,
+    0.051766693063425226,
+    0.04920172196241313,
+    0.04679573506673147,
+    0.044490592299256185,
+    0.042434951522053815,
+    0.04073858384177378,
+    0.03945368254862687,
+    0.03849071149558423,
+    0.03769004668569207,
+    0.03698765804214922,
+    0.036391400811998764,
+    0.03646579075901929,
+    0.0372628868131984,
+    0.03972798962086415,
+    0.044366675901757344,
+    0.051188131194980876,
+    0.059700083368961564,
+    0.06892958968974247,
+    0.07830073697707687,
+    0.0874807061057702,
+    0.09639142194830563,
+    0.10478274608761666,
+    0.11220389669441616,
+    0.1177135137990172,
+    0.12070506124404107,
+    0.1210444911971507,
+    0.11518820138854599,
+    0.10645525978040332,
+    0.09719859429906488,
+    0.0886165018296065,
+    0.08092964315115751,
+    0.07428439519836447,
+    0.06860246796504858,
+    0.0637365974606581,
+    0.05954273163250025,
+    0.055863822077958425,
+    0.052819406950631025,
+    0.05042041562464588,
+    0.04864079631139163,
+    0.047332730242210554,
+    0.04626702187954234,
+    0.04527390019732785,
+    0.04418882982947736,
+    0.04297047863121822,
+    0.041627886810057586,
+    0.040243456684960106,
+    0.03886838343133555,
+    0.037839609170425156,
+    0.03762095841523577,
+    0.03806621777295352,
+    0.03908720999331648,
+    0.0404987477062954,
+    0.04188729493755719,
+    0.042634199455140326,
+    0.034729333990735904
   ],
   "beat_strength": [
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5
+    0.0,
+    0.862557689208627,
+    0.00970532390264786,
+    0.029968049240254837,
+    0.038698033008915736,
+    0.06936548830529138,
+    0.319845278876202,
+    0.09647536871763919,
+    0.04690978739468482,
+    0.03609166975765454,
+    0.061353302858113565,
+    0.08286155519837508,
+    0.08594044999115533,
+    0.061232843211638105,
+    0.04754058364213349,
+    0.21801124662102167,
+    0.017296875763688945,
+    0.03905778597013244,
+    0.02041037346035643,
+    0.03407981159863632,
+    0.022431042442704587,
+    0.11399441956044587,
+    0.02655854246376499,
+    0.05984544221979604,
+    0.0418303142679418,
+    0.07235979984817768,
+    0.03917587556732523,
+    0.04040974709435681,
+    0.034242192822388565,
+    0.027208072071939968,
+    0.04735370992126006,
+    0.023608289766725004,
+    0.02747319049947947,
+    0.010168612083637125,
+    0.035383070037653834,
+    0.02169838849392891,
+    0.028484207770527018,
+    0.01263818807841158,
+    0.5592697340358558,
+    0.005344538943965741,
+    0.021487691473392516,
+    0.003126175127793901,
+    0.01589179504022344,
+    0.18076738418574356,
+    0.040981205509315104,
+    0.024595291516275916,
+    0.0026484026777314628,
+    0.11072211144053191,
+    0.006038313099139754,
+    0.03274630968597205,
+    0.0046046435800526486,
+    0.02075908499816162,
+    0.3910267136265062,
+    0.0174478617218761,
+    0.023570323165102866,
+    0.008548335758773997,
+    0.020575215834565265,
+    0.008259153062934803,
+    0.02238228513126066,
+    0.011476881267574717,
+    0.02276604241619662,
+    0.010317953848188949,
+    0.012722092512140714,
+    0.010818418365889126,
+    0.00631167614685458,
+    0.008645774017148155,
+    0.008108501410907748,
+    0.0054602707416993145,
+    0.012290960300228186,
+    0.028467867047012627,
+    0.005234884483465742,
+    0.007419157483661514,
+    0.006318190554103747,
+    0.007360492133017165,
+    0.0018912701529083284,
+    0.516037235529556,
+    0.018225486922950118,
+    0.013559903554917832,
+    0.01477243987714429,
+    0.008589377677286505,
+    0.02805534964526911,
+    0.03344383505251888,
+    0.007810596728508665,
+    0.005893185782866226,
+    0.325784615341121,
+    0.013381085925567604,
+    0.027688726242386073,
+    0.019902176376325624,
+    0.009546116026436546,
+    0.15803007743079378,
+    0.03996844731651502,
+    0.010760687915443025,
+    0.014274489733410231,
+    0.04913564644762127,
+    0.013743325691133769,
+    0.04349491623351505,
+    0.01600679157801989,
+    0.019251357272333514,
+    0.021491007638685798,
+    0.02825100378634436,
+    0.019378194489938376,
+    0.025093659688994876,
+    0.0066689896377779,
+    0.013548335665632854,
+    0.014520112044813063,
+    0.021538704531823633,
+    0.0072659289400839435,
+    0.01190482593633826,
+    0.009026788507885481,
+    0.006394794253331609,
+    0.012298941241600183,
+    0.00911908945118547,
+    0.1757959951334043,
+    0.031146235903105623,
+    0.015437756347681861,
+    0.01231968923639599,
+    0.06291602010180898,
+    0.014077519368538145,
+    0.05007322745950023,
+    0.008088593650203027,
+    0.007328172912448262,
+    0.33377132929923164,
+    0.024278802835630324,
+    0.021203046270089163,
+    0.018513145755172856,
+    0.023717477090735007,
+    0.03971515666769741,
+    0.04790681457774465,
+    0.008703667107897686,
+    0.009691359087811612,
+    0.2831965966701686,
+    0.009409775895521772,
+    0.039378950668718916,
+    0.01861762716710459,
+    0.021302368512444016,
+    0.1376796967005656,
+    0.05727647802238459,
+    0.013442030550956881,
+    0.009557766372082444,
+    0.02563885165283805,
+    0.0368526829636447,
+    0.029912772762304963,
+    0.013978931145706877,
+    0.010972833873880688,
+    0.010613970883483603,
+    0.020747805147056497,
+    0.015778036037190614,
+    0.008984210550076513,
+    0.5518460427107272,
+    0.03761871018491818,
+    0.0642241576136715,
+    0.0231513217091408,
+    0.013932205032546706,
+    0.369789306058404,
+    0.0007035661486880453,
+    0.02114521314796702,
+    0.005866709070834667,
+    0.07861182320400358,
+    0.07892461271850211,
+    0.08753875425264909,
+    0.024029943160187858,
+    0.026904499145914675,
+    0.1572473300520713,
+    0.004531287081997156,
+    0.03273722709410583,
+    0.004891514540017543,
+    0.053422382142951835,
+    0.21046070110130277,
+    0.05145137304338192,
+    0.06282823326155829,
+    0.07439436698772565,
+    0.09926197750324652,
+    0.13111296901029665,
+    0.10031623345708388,
+    0.10984386325140955,
+    0.08653592807968581,
+    0.4042499016635407,
+    0.07072879849322826,
+    0.07544152946613895,
+    0.07119635442215204,
+    0.07763839223898296,
+    0.04262563379301703,
+    0.629563523513552,
+    0.04236678499067544,
+    0.065050596203248,
+    0.819522205569731,
+    0.013763430038159323,
+    0.04991709247947152,
+    0.012379305129659712,
+    0.0331249314152538,
+    0.34190144658079014,
+    0.01740762595116383,
+    0.021174128711087502,
+    0.017499306259450155,
+    0.5553775553727812,
+    0.12364712338331957,
+    0.05968192279847101,
+    0.019302820983197452,
+    0.02309231549758891,
+    0.4386648233538413,
+    0.008255777053255482,
+    0.015742315487699197,
+    0.006986376268760609,
+    0.7844001178436151,
+    0.019923043266355946,
+    0.0672161571080724,
+    0.07687982987941157,
+    0.10904620213238946,
+    0.08846828431098692,
+    0.10229494989793624,
+    0.1017708275103023,
+    0.08796524103009844,
+    0.08576734161719175,
+    0.11789051401489535,
+    0.07521283535678137,
+    0.07782113669724754,
+    0.07637648941255137,
+    0.07594170534649748,
+    0.04844087235176303,
+    0.04227512378353773,
+    0.026774278652498824,
+    0.05700875578694943,
+    0.6977361701187643,
+    0.0353398386971434,
+    0.030700919080901088,
+    0.05094289891255045,
+    0.037719860141816726,
+    0.09558240378731792,
+    0.04751719101203723,
+    0.024048654229563465,
+    0.02052279892992708,
+    1.0,
+    0.02474719502692403,
+    0.05247912787371229,
+    0.039095245156931316,
+    0.017746841178501088,
+    0.28163770611664407,
+    0.03747474012728084,
+    0.02686499749091393,
+    0.024694811719625686
   ],
   "spectral_centroid": [
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3
+    0.8829802108371713,
+    0.02100022574852594,
+    0.01868946776162785,
+    0.018785167137343784,
+    0.017716580260911278,
+    0.02644043766725057,
+    0.014138311051377304,
+    0.02183477494490545,
+    0.016062963457919275,
+    0.021143709196077064,
+    0.01913982466150599,
+    0.008519250296014013,
+    0.007919417256059961,
+    0.0041871281789116945,
+    0.005400012366069371,
+    0.009513630747998242,
+    0.006315278788986938,
+    0.0032179821803206233,
+    0.003092704379629053,
+    0.01806020546172382,
+    0.00918664136274202,
+    0.011712188843800613,
+    0.0045510897950806735,
+    0.003951789559302135,
+    0.004823464331231127,
+    0.00760676288461203,
+    0.008549670379217238,
+    0.007572952239651335,
+    0.013328470095352036,
+    0.014348177897961773,
+    0.01357790567189956,
+    0.024277550608464055,
+    0.016350307469644002,
+    0.022185482232156408,
+    0.01841885900787608,
+    0.024833538586824834,
+    0.011268650983870733,
+    0.0243610847453075,
+    0.013831753165796094,
+    0.009539797757652213,
+    0.004719801189908094,
+    0.0042491689328905185,
+    0.008286815581162921,
+    0.005485957599726575,
+    0.004479994023704624,
+    0.00274928912910071,
+    0.003488045372909822,
+    0.008514862285743538,
+    0.005135930426596161,
+    0.003182986418009577,
+    0.003250733390281369,
+    0.004305078243339853,
+    0.005568183351050201,
+    0.004180227945471613,
+    0.003205247118731048,
+    0.003478263287305249,
+    0.0035961045850605704,
+    0.0025367052624218137,
+    0.0018025086085983264,
+    0.0009770010476626376,
+    0.0003361565556996823,
+    4.7238034933535195e-05,
+    0.0009467774534412805,
+    0.0011526427201794403,
+    0.001834810511013062,
+    0.0048269091225296695,
+    0.007016293197548966,
+    0.008592342407808953,
+    0.028991964942377973,
+    0.010181768384094625,
+    0.014135634841867,
+    0.012772027998428795,
+    0.007889855585740865,
+    0.008179616928798143,
+    0.014330784629338381,
+    0.004575996399797926,
+    0.003791117319733546,
+    0.0012989068401784152,
+    0.001591292613033661,
+    0.008543054160434225,
+    0.00750976361205936,
+    0.0065945064407223085,
+    0.006900860839830352,
+    0.006667756969970853,
+    0.010835875069394355,
+    0.0073996487271594125,
+    0.006067761435955154,
+    0.0061838359979297,
+    0.011374284132897653,
+    0.010291795402475257,
+    0.006911100137466523,
+    0.0069140038903554865,
+    0.008291414296415443,
+    0.016870290996462832,
+    0.012166699727345838,
+    0.009566164659692183,
+    0.006874659987662045,
+    0.005791364034091362,
+    0.006990213366793582,
+    0.012832044842790631,
+    0.014526580250203055,
+    0.004036118403602995,
+    0.0036368388400270166,
+    0.006956854173800733,
+    0.014834348615590203,
+    0.008818768408391733,
+    0.01207016461116171,
+    0.01688291577443506,
+    0.014686105857217972,
+    0.02061982673675565,
+    0.01978325611756211,
+    0.018971884113488175,
+    0.0040880030770983665,
+    0.0028522118896529853,
+    0.0008156822667510869,
+    0.0008621976258318112,
+    0.007649224426771601,
+    0.00760817219990676,
+    0.006433661794397975,
+    0.007651720622778071,
+    0.008763934002545408,
+    0.008037479416257827,
+    0.006447811540097013,
+    0.0061070320099273784,
+    0.00704929862039143,
+    0.013514915738764283,
+    0.009861195829950039,
+    0.006386855283447908,
+    0.008411361560181406,
+    0.0070982950496441405,
+    0.009486958799311844,
+    0.007587565407460644,
+    0.003199965738992208,
+    0.007772792265571796,
+    0.013905185392621306,
+    0.0071002413905235364,
+    0.0056165072800785565,
+    0.007696339038776858,
+    0.008758157496188086,
+    0.016750434745439476,
+    0.008532343992117511,
+    0.009494089085977105,
+    0.009964192201741743,
+    0.00952487253763576,
+    0.009875442999340787,
+    0.014742168507666947,
+    0.009923560322870532,
+    0.012344823958583079,
+    0.5634987484098051,
+    0.1804574269329261,
+    0.04157748706904504,
+    0.01579941227671614,
+    0.010358725579049885,
+    0.01178544543727281,
+    0.007844931261761404,
+    0.0048093225406254745,
+    0.005967523024802214,
+    0.25125193144613567,
+    0.08392334187155959,
+    0.0182854176119113,
+    0.007503064466047215,
+    0.007422403548911755,
+    0.008930732557886043,
+    0.007336797975843358,
+    0.007772789664434038,
+    0.012855244548379717,
+    0.5077397837791209,
+    0.38582124704052295,
+    0.14051641551368696,
+    0.05814246977455773,
+    0.043553442946750974,
+    0.05837343988881586,
+    0.07419763899519721,
+    0.09391630816283042,
+    0.09156015098970638,
+    0.48249876497442584,
+    0.9190579491278187,
+    0.3174450112999542,
+    0.18157355973227826,
+    0.1025041235400265,
+    0.10339705272968147,
+    0.24149834876141965,
+    0.8679157007646248,
+    0.3667243434725815,
+    0.5085165814228335,
+    0.3383505003510422,
+    0.08188200781528229,
+    0.025283548904950784,
+    0.011071177004116452,
+    0.013238122879920199,
+    0.00928444545335858,
+    0.008254616399163327,
+    0.007050689039019219,
+    0.011369879389871574,
+    0.1648435284797095,
+    0.10697861271599626,
+    0.02548304109359865,
+    0.01655544736488977,
+    0.015117055938906202,
+    0.01029571511200681,
+    0.0058980627524209605,
+    0.005062753600281462,
+    0.008554342293466287,
+    0.3488467029792718,
+    0.21953295251652089,
+    0.10784022319044521,
+    0.058615172697084716,
+    0.038145762155556186,
+    0.034370662966543404,
+    0.03426555420769623,
+    0.04275109206866059,
+    0.05073726958401191,
+    0.6683467407925877,
+    0.6559221876873692,
+    0.2565765927539583,
+    0.21932701823032316,
+    0.1198975685960257,
+    0.12956010424534398,
+    0.11522180461370934,
+    0.11703384581010132,
+    0.09696073957518121,
+    0.6512184991426977,
+    0.26329849168069064,
+    0.07895321548833066,
+    0.028002006387960864,
+    0.014554095068476562,
+    0.012145000561413124,
+    0.013269280093936471,
+    0.010131040716439183,
+    0.01646239032946018,
+    0.06318391870981102,
+    0.31360779696636903,
+    0.0715448097178737,
+    0.028152174311389718,
+    0.013464739159428253,
+    0.01596600716799856,
+    0.014810414213653821,
+    0.009577850423628737,
+    0.009140160997506579,
+    0.34295800787128544
   ]
 }
 
@@ -2131,23 +3976,23 @@ chord_progression_sensitivity = 0.8  # New: Chord progression sensitivity
 # ENHANCED: Generate sophisticated color keyframes with harmonic relationships
 if audio_features and len(audio_features) > 0 and cube and cube.data.materials:
     # Get enhanced audio data arrays with all frequency bands
-    kick_data = audio_features.get('kick_energy', [0.0] * 120)
-    bass_data = audio_features.get('bass_energy', [0.0] * 120)
-    sub_bass_data = audio_features.get('sub_bass_energy', [0.0] * 120)
-    mid_bass_data = audio_features.get('mid_bass_energy', [0.0] * 120)
-    snare_data = audio_features.get('snare_energy', [0.0] * 120)
-    mid_data = audio_features.get('mid_energy', [0.0] * 120)
-    low_mid_data = audio_features.get('low_mid_energy', [0.0] * 120)
-    hihat_data = audio_features.get('hihat_energy', [0.0] * 120)
-    presence_data = audio_features.get('presence_energy', [0.0] * 120)
-    brilliance_data = audio_features.get('brilliance_energy', [0.0] * 120)
-    vocal_data = audio_features.get('vocal_energy', [0.0] * 120)
-    high_mid_data = audio_features.get('high_mid_energy', [0.0] * 120)
-    air_data = audio_features.get('air_energy', [0.0] * 120)
-    ultra_high_data = audio_features.get('ultra_high_energy', [0.0] * 120)
-    spectral_data = audio_features.get('spectral_centroid', [0.0] * 120)
-    beat_data = audio_features.get('beat_strength', [0.0] * 120)
-    onset_data = audio_features.get('onset_strength', [0.0] * 120)
+    kick_data = audio_features.get('kick_energy', [0.0] * 240)
+    bass_data = audio_features.get('bass_energy', [0.0] * 240)
+    sub_bass_data = audio_features.get('sub_bass_energy', [0.0] * 240)
+    mid_bass_data = audio_features.get('mid_bass_energy', [0.0] * 240)
+    snare_data = audio_features.get('snare_energy', [0.0] * 240)
+    mid_data = audio_features.get('mid_energy', [0.0] * 240)
+    low_mid_data = audio_features.get('low_mid_energy', [0.0] * 240)
+    hihat_data = audio_features.get('hihat_energy', [0.0] * 240)
+    presence_data = audio_features.get('presence_energy', [0.0] * 240)
+    brilliance_data = audio_features.get('brilliance_energy', [0.0] * 240)
+    vocal_data = audio_features.get('vocal_energy', [0.0] * 240)
+    high_mid_data = audio_features.get('high_mid_energy', [0.0] * 240)
+    air_data = audio_features.get('air_energy', [0.0] * 240)
+    ultra_high_data = audio_features.get('ultra_high_energy', [0.0] * 240)
+    spectral_data = audio_features.get('spectral_centroid', [0.0] * 240)
+    beat_data = audio_features.get('beat_strength', [0.0] * 240)
+    onset_data = audio_features.get('onset_strength', [0.0] * 240)
     
     # ADVANCED: Sophisticated harmonic color palette with musical theory relationships
     harmonic_palette = [
@@ -2249,11 +4094,11 @@ if audio_features and len(audio_features) > 0 and cube and cube.data.materials:
         emission_available = False
     
     # ENHANCED: Generate sophisticated color keyframes with harmonic relationships
-    frame_step = max(1, 120 // 100)  # More keyframes for smoother harmonic changes
+    frame_step = max(1, 240 // 100)  # More keyframes for smoother harmonic changes
     
-    for i in range(0, 120, frame_step):
-        frame = min(i, 120 - 1)
-        progress = frame / 120
+    for i in range(0, 240, frame_step):
+        frame = min(i, 240 - 1)
+        progress = frame / 240
         
         # Get enhanced audio values for this frame
         kick_val = kick_data[min(frame, len(kick_data) - 1)] if kick_data else 0.0
@@ -2276,7 +4121,14 @@ if audio_features and len(audio_features) > 0 and cube and cube.data.materials:
         
         # ADVANCED: Calculate sophisticated harmonic color relationships with musical theory
         # Detect harmonic progression based on audio features
-        harmonic_progression = self._calculate_harmonic_progression(kick_val, bass_val, snare_val, vocal_val, spectral_val)
+        # Calculate harmonic tension (0.0 = stable, 1.0 = high tension)
+        harmonic_tension = (snare_val * 0.4 + vocal_val * 0.3 + spectral_val * 0.3)
+        
+        # Calculate harmonic stability (0.0 = unstable, 1.0 = stable)
+        harmonic_stability = (kick_val * 0.6 + bass_val * 0.4)
+        
+        # Calculate harmonic progression (0.0 = root, 1.0 = dominant)
+        harmonic_progression = harmonic_tension * (1.0 - harmonic_stability)
         
         # Time-based harmonic color cycling with musical responsiveness
         harmonic_color_index = int((progress * len(harmonic_palette) * color_transition_speed) % len(harmonic_palette))
@@ -2478,11 +4330,11 @@ else:
                 (0.2, 0.8, 0.8, 1.0)   # Cyan
             ]
     
-            frame_step = max(1, 120 // 40)
+            frame_step = max(1, 240 // 40)
             
-            for i in range(0, 120, frame_step):
-                frame = min(i, 120 - 1)
-                progress = frame / 120
+            for i in range(0, 240, frame_step):
+                frame = min(i, 240 - 1)
+                progress = frame / 240
                 
                 # Enhanced harmonic color cycling
                 harmonic_color_index = int(progress * len(harmonic_color_palette)) % len(harmonic_color_palette)
@@ -2666,7 +4518,7 @@ cube.keyframe_insert(data_path="rotation_euler", frame=0)
 
 # Much slower rotation for subtle movement only
 cube.rotation_euler = (0, 0, math.radians(8))  # Much slower rotation - only 8 degrees over entire duration
-cube.keyframe_insert(data_path="rotation_euler", frame=120)
+cube.keyframe_insert(data_path="rotation_euler", frame=240)
 
 # Set rotation interpolation to smooth
 for fcurve in cube.animation_data.action.fcurves:
@@ -2694,7 +4546,7 @@ if main_camera:
     main_camera.animation_data_create()
     main_camera.animation_data.action = camera_action
     
-gi    # Camera movement parameters - SLIGHTLY ZOOMED IN for better focus
+    # Camera movement parameters - SLIGHTLY ZOOMED IN for better focus
     orbit_radius = 12.0  # Slightly closer distance from center (reduced from 15.0)
     orbit_height = 6.0   # Slightly lower position for better focus (reduced from 8.0)
     orbit_speed = 0.15  # Much slower rotation speed (degrees per frame) - reduced from 0.5
@@ -2718,11 +4570,11 @@ gi    # Camera movement parameters - SLIGHTLY ZOOMED IN for better focus
     print(f"📹 Camera orbit radius: 12.0 units")
     
     # Create camera position keyframes for smooth orbital motion
-    frame_step = max(1, 120 // 60)  # 60 keyframes for smooth motion
+    frame_step = max(1, 240 // 60)  # 60 keyframes for smooth motion
     
-    for i in range(0, 120, frame_step):
-        frame = min(i, 120 - 1)
-        progress = frame / 120
+    for i in range(0, 240, frame_step):
+        frame = min(i, 240 - 1)
+        progress = frame / 240
         
         # Calculate orbital position
         angle = progress * 2 * math.pi * orbit_speed  # Full rotation over duration
@@ -3133,11 +4985,11 @@ star_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["StarMappi
 star_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["StarMapping"].inputs[2].default_value', index=2)
 
 # ENHANCED: Create complex movement keyframes with different speeds and patterns
-frame_step = max(1, 120 // 30)  # More keyframes for smoother movement
+frame_step = max(1, 240 // 30)  # More keyframes for smoother movement
 
-for i in range(0, 120, frame_step):
-    frame = min(i, 120 - 1)
-    progress = frame / 120
+for i in range(0, 240, frame_step):
+    frame = min(i, 240 - 1)
+    progress = frame / 240
     
     # Deep nebula: Much slower cosmic movement (reduced by ~70%)
     nebula1_rot_x = progress * 0.015  # Much slower X rotation
@@ -3313,15 +5165,15 @@ for star_name in stars_to_animate:
                     )
                     
                     # Create keyframes based on audio with enhanced twinkling
-                    frame_step = max(1, 120 // 20)
+                    frame_step = max(1, 240 // 40)
                     
-                    for i in range(0, 120, frame_step):
-                        frame = min(i, 120 - 1)
+                    for i in range(0, 240, frame_step):
+                        frame = min(i, 240 - 1)
                         
                         # Get audio features for this frame
-                        hihat_energy = audio_features.get('hihat_energy', [0.0] * 120)[min(frame, len(audio_features.get('hihat_energy', [0.0] * 120)) - 1)] if audio_features.get('hihat_energy') else 0.0
-                        beat_strength = audio_features.get('beat_strength', [0.0] * 120)[min(frame, len(audio_features.get('beat_strength', [0.0] * 120)) - 1)] if audio_features.get('beat_strength') else 0.0
-                        air_energy = audio_features.get('air_energy', [0.0] * 120)[min(frame, len(audio_features.get('air_energy', [0.0] * 120)) - 1)] if audio_features.get('air_energy') else 0.0
+                        hihat_energy = audio_features.get('hihat_energy', [0.0] * 240)[min(frame, len(audio_features.get('hihat_energy', [0.0] * 240)) - 1)] if audio_features.get('hihat_energy') else 0.0
+                        beat_strength = audio_features.get('beat_strength', [0.0] * 240)[min(frame, len(audio_features.get('beat_strength', [0.0] * 240)) - 1)] if audio_features.get('beat_strength') else 0.0
+                        air_energy = audio_features.get('air_energy', [0.0] * 240)[min(frame, len(audio_features.get('air_energy', [0.0] * 240)) - 1)] if audio_features.get('air_energy') else 0.0
                         
                         # Calculate star brightness with enhanced twinkling effects
                         base_brightness = random.uniform(0.6, 1.2)  # Enhanced base brightness range
@@ -3545,14 +5397,14 @@ for i in range(4):  # We have 4 nebula volumes
                     )
                     
                     # Create keyframes based on audio
-                    frame_step = max(1, 120 // 20)
+                    frame_step = max(1, 240 // 40)
                     
-                    for j in range(0, 120, frame_step):
-                        frame = min(j, 120 - 1)
+                    for j in range(0, 240, frame_step):
+                        frame = min(j, 240 - 1)
                         
                         # Get audio features for this frame
-                        bass_energy = audio_features.get('bass_energy', [0.0] * 120)[min(frame, len(audio_features.get('bass_energy', [0.0] * 120)) - 1)] if audio_features.get('bass_energy') else 0.0
-                        beat_strength = audio_features.get('beat_strength', [0.0] * 120)[min(frame, len(audio_features.get('beat_strength', [0.0] * 120)) - 1)] if audio_features.get('beat_strength') else 0.0
+                        bass_energy = audio_features.get('bass_energy', [0.0] * 240)[min(frame, len(audio_features.get('bass_energy', [0.0] * 240)) - 1)] if audio_features.get('bass_energy') else 0.0
+                        beat_strength = audio_features.get('beat_strength', [0.0] * 240)[min(frame, len(audio_features.get('beat_strength', [0.0] * 240)) - 1)] if audio_features.get('beat_strength') else 0.0
                         
                         # Calculate nebula density based on audio
                         base_density = 0.2  # Base density
@@ -3596,14 +5448,14 @@ except:
 world_strength_curve = nebula_intensity_curve
 
 # Create audio-reactive keyframes based on audio features
-frame_step = max(1, 120 // 20)
+frame_step = max(1, 240 // 40)
 
-for i in range(0, 120, frame_step):
-    frame = min(i, 120 - 1)
+for i in range(0, 240, frame_step):
+    frame = min(i, 240 - 1)
     
     # Get audio features for this frame
-    rms_energy = audio_features.get('rms_energy', [0.0] * 120)[min(frame, len(audio_features.get('rms_energy', [0.0] * 120)) - 1)] if audio_features.get('rms_energy') else 0.0
-    beat_strength = audio_features.get('beat_strength', [0.0] * 120)[min(frame, len(audio_features.get('beat_strength', [0.0] * 120)) - 1)] if audio_features.get('beat_strength') else 0.0
+    rms_energy = audio_features.get('rms_energy', [0.0] * 240)[min(frame, len(audio_features.get('rms_energy', [0.0] * 240)) - 1)] if audio_features.get('rms_energy') else 0.0
+    beat_strength = audio_features.get('beat_strength', [0.0] * 240)[min(frame, len(audio_features.get('beat_strength', [0.0] * 240)) - 1)] if audio_features.get('beat_strength') else 0.0
     
     # Calculate space background reactivity
     base_intensity = 1.2  # Base world strength
@@ -3666,10 +5518,10 @@ volumetric_positions = [
 ]
 
 volumetric_colors = [
-    (0.8, 0.4, 1.0, 1.0),  # Purple volumetric light
-    (0.4, 0.8, 1.0, 1.0),  # Blue volumetric light
-    (1.0, 0.6, 0.4, 1.0),  # Orange volumetric light
-    (0.6, 1.0, 0.4, 1.0)   # Green volumetric light
+    (0.8, 0.4, 1.0),  # Purple volumetric light
+    (0.4, 0.8, 1.0),  # Blue volumetric light
+    (1.0, 0.6, 0.4),  # Orange volumetric light
+    (0.6, 1.0, 0.4)   # Green volumetric light
 ]
 
 for i, pos in enumerate(volumetric_positions):
@@ -3680,9 +5532,7 @@ for i, pos in enumerate(volumetric_positions):
     vol_light.data.size = 3.0  # Larger size for soft volumetric lighting
     vol_light.data.color = volumetric_colors[i]
     
-    # Enable volumetric lighting
-    vol_light.data.use_contact_shadow = True
-    vol_light.data.contact_shadow_distance = 5.0
+    # Enable volumetric lighting (contact shadow not available for area lights)
     
     volumetric_lights.append(vol_light)
 
@@ -3797,12 +5647,12 @@ cube.data.materials.append(material)
 print("✅ ULTRA-SMOOTH enhanced material created with MCP integration support")
 
 print("🌌 ENHANCED AUDIO-REACTIVE MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
-print(f"📊 Total frames: 120")
+print(f"📊 Total frames: 240")
 print(f"🎬 FPS: 24")
-print(f"⏱️ Duration: 5.00s")
+print(f"⏱️ Duration: 10.00s")
 print(f"🔑 Shape keys: {len(shape_key_names)}")
-print(f"🎯 Quality: PREVIEW")
-print(f"🔧 Subdivision: 1")
+print(f"🎯 Quality: MEDIUM")
+print(f"🔧 Subdivision: 2")
 print("🌌 Environment: Dark space background with subtle ambient lighting")
 print("🎨 Enhanced Material: Sophisticated node setup with noise textures, fresnel effects, and emission")
 print("💡 Professional Lighting: Three-point area lighting system")
@@ -3895,10 +5745,10 @@ scene.render.ffmpeg.audio_bitrate = 128
 scene.render.ffmpeg.audio_channels = "STEREO"
 scene.render.ffmpeg.audio_mixrate = 48000
 cycles = scene.cycles
-cycles.samples = 16
+cycles.samples = 64
 cycles.use_denoising = False
 cycles.device = "GPU"
-cycles.max_bounces = 2
+cycles.max_bounces = 4
 cycles.use_adaptive_sampling = False
 cycles.adaptive_threshold = 0.05
 cycles.denoiser = "OPENIMAGEDENOISE"
@@ -3930,5 +5780,5 @@ except Exception as e:
 
 
 # Save blend file
-bpy.ops.wm.save_as_mainfile(filepath="test_output.blend")
-print("💾 Blend file saved: test_output.blend")
+bpy.ops.wm.save_as_mainfile(filepath="output/mutating_cube_medium.blend")
+print("💾 Blend file saved: output/mutating_cube_medium.blend")

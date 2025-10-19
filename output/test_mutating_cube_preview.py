@@ -29,12 +29,12 @@ for action in bpy.data.actions:
 # Set scene properties
 scene = bpy.context.scene
 scene.frame_start = 0
-scene.frame_end = 120
+scene.frame_end = 240
 scene.frame_current = 0
 scene.render.fps = 24
 
 print("🎬 Creating ULTRA-SMOOTH mutating cube scene...")
-print(f"📊 Frames: 120, FPS: 24, Duration: 5.00s")
+print(f"📊 Frames: 240, FPS: 24, Duration: 10.00s")
 print(f"🎯 Quality Level: PREVIEW")
 print(f"🔧 Subdivision Level: 1")
 print("🚀 Features: CONTINUOUS motion, AUDIO-REACTIVE drivers, MCP integration")
@@ -197,102 +197,102 @@ shape_key = cube.data.shape_keys.key_blocks["SimpleDeform"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.135
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.7401101148745346
+shape_key.value = -0.19531797826659103
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.7807358906522177
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.6952865123634253
+shape_key.value = -1.039383994845882
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.6330524123231152
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.3201040054813593
+shape_key.value = -0.19251915633095606
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.1957204101783864
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.4984922353325009
+shape_key.value = -1.1924291210055105
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.5261271611616488
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.14807208744894726
+shape_key.value = -0.24489788478154617
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.06480909114098983
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.20513806000970314
+shape_key.value = 1.2
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.3829542872058929
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.07576183067875077
+shape_key.value = -0.7774465968899189
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.51737241420891
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.6208501383325123
+shape_key.value = -0.512098504799935
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.41169671300080446
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.29344447797449774
+shape_key.value = -0.17750144681721092
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.009247081065860044
+shape_key.value = -1.2
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.3131022853199637
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.6258810587678685
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.04605258850167826
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.9851678407219726
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.7768073489634337
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = 0.31532084879614986
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.8488624257139095
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.6865869844281886
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.8681846401158932
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.009686711790691138
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.39054164623998977
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -301,102 +301,102 @@ shape_key = cube.data.shape_keys.key_blocks["SimpleDeform.001"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.08
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.4161722860414081
+shape_key.value = 1.0
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.4387421614734543
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.3912702846463474
+shape_key.value = -0.38968756718704356
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.35669578462395285
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.18283555860075518
+shape_key.value = -0.39343086876258704
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.11373356121021469
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.2819401307402783
+shape_key.value = -0.787587762960799
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.29729286731202714
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.08726227080497075
+shape_key.value = -0.5672655257673167
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.031005050633883258
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.10896558889427953
+shape_key.value = -0.639402915184514
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.20775238178105165
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.03708990593263929
+shape_key.value = -0.9741147620474596
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.29242911900495
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.34991674351806246
+shape_key.value = -0.9413469202515504
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.2337203961115581
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.16802470998583208
+shape_key.value = -0.9506210023642931
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.0001372672588111773
+shape_key.value = -0.9906526739471255
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.1689457140666465
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.7111141285975318
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.654464876108352
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.8860501061869277
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.822328608094983
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.4697473133018786
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.033688448457719455
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.1827956954713067
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.12423998999765495
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.391600008017676
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = 0.0337292632955144
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -405,102 +405,102 @@ shape_key = cube.data.shape_keys.key_blocks["Shrinkwrap"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.048
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.2900440459498138
+shape_key.value = 0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.30629435626088714
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.2721146049453701
+shape_key.value = -0.8693653339360767
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.24722096492924603
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.12204160219254373
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.07228816407135459
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.19339689413300035
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.20445086446465963
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.05322883497957897
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.031923636456395954
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.08805522400388129
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.15918171488235722
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.03630473227150029
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.20094896568356405
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.24234005533300496
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.15867868520032188
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.11137779118979914
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.009698832426344074
+shape_key.value = -0.9
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.13124091412798553
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.8147091866732011
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.7945243141385914
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.7860608273080697
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.8115007160931094
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.7071097497003436
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.2590942301344278
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.520871492997211
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = -0.3716251146713071
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.03484995112962619
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.28054794041129394
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -509,102 +509,102 @@ shape_key = cube.data.shape_keys.key_blocks["Shrinkwrap.001"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.054000000000000006
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.33638472027478267
+shape_key.value = -0.18550392294398144
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.35534341563770155
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.31546703910293167
+shape_key.value = -0.6224706722305228
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.28642445908412034
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.14038186922463436
+shape_key.value = 0.02883585347002804
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.08233619141658031
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.22362970982183375
+shape_key.value = -0.5661032289255591
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.2365260085421028
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.06010030747617545
+shape_key.value = -0.04274923091893679
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.039244242532461886
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.10473109467119475
+shape_key.value = 0.7
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.18771200069608338
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.044355520983417045
+shape_key.value = -0.3196097739166094
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.23244045996415796
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.2807300645551724
+shape_key.value = -0.31039643640850895
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.18312513273370876
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.127940756388099
+shape_key.value = -0.010958646135589056
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.0133153044974014
+shape_key.value = -0.7
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.15511439981598305
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.4528678584111916
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.027784205377826332
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.5343188167980532
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.36172403283803395
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = 0.41475010430463755
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.30444068300838323
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.32905375241555906
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.5110465696064503
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.1356412617668752
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.25499801853458304
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -613,102 +613,102 @@ shape_key = cube.data.shape_keys.key_blocks["Shrinkwrap.002"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.009
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.10985168581242241
+shape_key.value = 0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.11662264844203629
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.1023810853939042
+shape_key.value = -0.49455615389561053
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.09200873538718586
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.03985066758022655
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.019120068363064405
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.06958203922208349
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.07418786019360814
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.011178681241491224
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.024301515190164977
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.04768967666828386
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.07732571453431548
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.02612697177979179
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.072728735701485
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.08997502305541873
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.05511611883346742
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.035407412995749614
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.015041180177643353
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.06568371421999394
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.4604982195601308
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.43294909678593685
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.4237979022031839
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.45877719999550315
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.47231644454663796
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.38352917178953544
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.32538659092166905
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = -0.24778354666039087
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = -0.14682053533456696
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.20221724373328692
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -717,102 +717,102 @@ shape_key = cube.data.shape_keys.key_blocks["Wave"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.037125000000000005
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.2791690459498139
+shape_key.value = 0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.29541935626088717
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.26123960494537013
+shape_key.value = -0.7106412976915716
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.236345964929246
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.11116660219254369
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.0614131640713546
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.18252189413300043
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.19357586446465952
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.042353834979578925
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.04279863645639597
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.09893022400388128
+shape_key.value = -0.7982068054690403
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.1700567148823572
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.04717973227150027
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.19007396568356394
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.23146505533300493
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.14780368520032183
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.10050279118979906
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.020573832426344037
+shape_key.value = -0.8
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.1421159141279855
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.6990704369964963
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.6618098782246841
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.7091660890772784
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.7211605444157342
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.565886600936514
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.1534221626879464
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.3656938688419528
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = -0.23046163622836513
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.11780342614100991
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.1548901149057056
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -821,102 +821,102 @@ shape_key = cube.data.shape_keys.key_blocks["Displace"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.1365
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.5735239718538305
+shape_key.value = -0.35331982901646464
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.6028648099154905
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.5411513700402516
+shape_key.value = -0.8871380106116538
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.4962045200111387
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.2701862261809817
+shape_key.value = 0.07235420011098848
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.1803536295732791
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.39902216996236184
+shape_key.value = -0.7850667437308448
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.41898072750563525
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.14594095204646196
+shape_key.value = -0.03948455463707845
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.0078065658240482425
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.1091552655625634
+shape_key.value = 1.0
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.2375780963153672
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.015716877712431087
+shape_key.value = -0.43805576149747827
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.41265785470643496
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.48739176657348116
+shape_key.value = -0.41854361343575275
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.3363365149450255
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.2509321229815817
+shape_key.value = 0.01199391506359282
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = 0.032321552563545464
+shape_key.value = -0.9998767939272108
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.18712942828664042
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.6358519526667561
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.03031877058879806
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.7616875841143107
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.5104573427904677
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = 0.5944981472120454
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.4289981114320518
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.4671835660710799
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.7156072658360504
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.1842852144946019
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.36554277943978897
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -925,102 +925,102 @@ shape_key = cube.data.shape_keys.key_blocks["Displace.001"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.0495
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.27137370878732936
+shape_key.value = 0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.28626982657247985
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.2549383878665893
+shape_key.value = -0.5194949621103672
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.23211921785180892
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.11737146867649842
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.07176415039874169
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.18278048628858368
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.1929132924259379
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.054293098731280666
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.02376333341836294
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.07521728867022448
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.1404165719754941
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.02777933791554195
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.18970321854326705
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.2276450507219212
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.1509554614336283
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.10759630859064918
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.0033905963908153498
+shape_key.value = -0.6
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.1148041712839867
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.5412511715552313
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.5163393745914658
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.5305902263552257
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.5372581149890769
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.4409076782854007
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.2014750892834723
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.2058555907983633
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = -0.15019751605901754
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.040638007443107194
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.073838287552912
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -1029,102 +1029,102 @@ shape_key = cube.data.shape_keys.key_blocks["Displace.002"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.03
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.16446891441656328
+shape_key.value = 0.4
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.17349686458938174
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.15450811385853896
+shape_key.value = -0.1407283037113018
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.1406783138495811
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.07113422344030204
+shape_key.value = -0.04480900589693987
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.04349342448408589
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.11077605229611134
+shape_key.value = -0.30606947434060766
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.11691714692481084
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.032904908321988294
+shape_key.value = -0.15862166389505236
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.014402020253553319
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.045586235557711824
+shape_key.value = -0.08611607491104711
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.08510095271242067
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.016835962373055707
+shape_key.value = -0.4
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.11497164760197996
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.13796669740722495
+shape_key.value = -0.4
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.09148815844462323
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.0652098839943328
+shape_key.value = -0.2768523464564627
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.0020549069035244658
+shape_key.value = -0.4
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.0695782856266586
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.30502276075643253
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.16140626850154605
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.32757598244032715
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.30931144061343324
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = -0.09637839144264182
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.06245892657541413
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = -0.0760873502573372
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.1343305880300053
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.08881647915843544
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = -0.041547159303718495
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -1133,102 +1133,102 @@ shape_key = cube.data.shape_keys.key_blocks["Displace.003"]
 
 # Set shape key value and insert keyframe for frame 0
 scene.frame_set(0)
-shape_key.value = 0.036
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 6
-scene.frame_set(6)
-shape_key.value = 0.23770337162484484
+shape_key.value = 0.22886192014810225
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 12
 scene.frame_set(12)
-shape_key.value = 0.25124529688407254
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 18
-scene.frame_set(18)
-shape_key.value = 0.2227621707878084
+shape_key.value = -0.034823995056582735
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 24
 scene.frame_set(24)
-shape_key.value = 0.20201747077437168
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 30
-scene.frame_set(30)
-shape_key.value = 0.0977013351604531
+shape_key.value = 0.08003005921850515
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 36
 scene.frame_set(36)
-shape_key.value = 0.05624013672612881
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 42
-scene.frame_set(42)
-shape_key.value = 0.157164078444167
+shape_key.value = -0.43778657812024174
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 48
 scene.frame_set(48)
-shape_key.value = 0.16637572038721626
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 54
-scene.frame_set(54)
-shape_key.value = 0.040357362482982446
+shape_key.value = 0.18549177262738847
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 60
 scene.frame_set(60)
-shape_key.value = -0.030603030380329955
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 66
-scene.frame_set(66)
-shape_key.value = -0.07737935333656772
+shape_key.value = 0.3828400018929069
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 72
 scene.frame_set(72)
-shape_key.value = -0.136651429068631
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 78
-scene.frame_set(78)
-shape_key.value = -0.034253943559583576
+shape_key.value = -0.3908748353109318
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 84
 scene.frame_set(84)
-shape_key.value = 0.16345747140296998
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 90
-scene.frame_set(90)
-shape_key.value = 0.19795004611083747
+shape_key.value = -0.1468957886175864
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 96
 scene.frame_set(96)
-shape_key.value = 0.12823223766693484
-shape_key.keyframe_insert(data_path="value")
-
-# Set shape key value and insert keyframe for frame 102
-scene.frame_set(102)
-shape_key.value = 0.08881482599149923
+shape_key.value = -0.2025412323158678
 shape_key.keyframe_insert(data_path="value")
 
 # Set shape key value and insert keyframe for frame 108
 scene.frame_set(108)
-shape_key.value = -0.012082360355286708
+shape_key.value = -0.5
 shape_key.keyframe_insert(data_path="value")
 
-# Set shape key value and insert keyframe for frame 114
-scene.frame_set(114)
-shape_key.value = -0.11336742843998789
+# Set shape key value and insert keyframe for frame 120
+scene.frame_set(120)
+shape_key.value = -0.15238873615532023
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 132
+scene.frame_set(132)
+shape_key.value = -0.0862642728359409
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 144
+scene.frame_set(144)
+shape_key.value = -0.448429621733994
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 156
+scene.frame_set(156)
+shape_key.value = -0.04573086651911562
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 168
+scene.frame_set(168)
+shape_key.value = 0.2548814701273222
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 180
+scene.frame_set(180)
+shape_key.value = -0.20482184665689168
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 192
+scene.frame_set(192)
+shape_key.value = 0.10607300259348607
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 204
+scene.frame_set(204)
+shape_key.value = 0.4968764753779178
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 216
+scene.frame_set(216)
+shape_key.value = 0.027942304236359794
+shape_key.keyframe_insert(data_path="value")
+
+# Set shape key value and insert keyframe for frame 228
+scene.frame_set(228)
+shape_key.value = 0.027426656241056113
 shape_key.keyframe_insert(data_path="value")
 
 
@@ -1239,878 +1239,13 @@ print("✅ OPTIMIZED shape key animations generated")
 # ADVANCED HARMONIC COLOR ANIMATION SYSTEM WITH DYNAMIC MATERIAL PROPERTIES
 print("🎨 Creating ADVANCED harmonic color system with sophisticated material property animations...")
 
-# Get the cube material for animation
-cube = bpy.data.objects.get("OptimizedMutatingCube")
-if not cube or not cube.data.materials:
-    print("⚠️  No cube material found for color animation")
-else:
-    material = cube.data.materials[0]
-    
-    # Create enhanced material action for dynamic color changes
-    material_action = bpy.data.actions.new(name="AdvancedHarmonicColorAnimation")
-    material.animation_data_create()
-    material.animation_data.action = material_action
+# Create enhanced material action for dynamic color changes
+material_action = bpy.data.actions.new(name="AdvancedHarmonicColorAnimation")
+material.animation_data_create()
+material.animation_data.action = material_action
 
 # Get audio feature data for color reactivity
-audio_features = {
-  "duration": 5.0,
-  "total_frames": 120,
-  "fps": 24,
-  "kick_energy": [
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1
-  ],
-  "bass_energy": [
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2,
-    0.2
-  ],
-  "snare_energy": [
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1
-  ],
-  "hihat_energy": [
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05,
-    0.05
-  ],
-  "vocal_energy": [
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1,
-    0.1
-  ],
-  "beat_strength": [
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5,
-    0.5
-  ],
-  "spectral_centroid": [
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3,
-    0.3
-  ]
-}
+audio_features = {}
 
 # ADVANCED color animation parameters with sophisticated harmonic relationships
 color_transition_speed = 2.0  # Enhanced speed for more dynamic changes
@@ -2129,25 +1264,25 @@ dissonance_detection = 0.4  # New: Dissonance detection for color shifts
 chord_progression_sensitivity = 0.8  # New: Chord progression sensitivity
 
 # ENHANCED: Generate sophisticated color keyframes with harmonic relationships
-if audio_features and len(audio_features) > 0 and cube and cube.data.materials:
+if audio_features and len(audio_features) > 0:
     # Get enhanced audio data arrays with all frequency bands
-    kick_data = audio_features.get('kick_energy', [0.0] * 120)
-    bass_data = audio_features.get('bass_energy', [0.0] * 120)
-    sub_bass_data = audio_features.get('sub_bass_energy', [0.0] * 120)
-    mid_bass_data = audio_features.get('mid_bass_energy', [0.0] * 120)
-    snare_data = audio_features.get('snare_energy', [0.0] * 120)
-    mid_data = audio_features.get('mid_energy', [0.0] * 120)
-    low_mid_data = audio_features.get('low_mid_energy', [0.0] * 120)
-    hihat_data = audio_features.get('hihat_energy', [0.0] * 120)
-    presence_data = audio_features.get('presence_energy', [0.0] * 120)
-    brilliance_data = audio_features.get('brilliance_energy', [0.0] * 120)
-    vocal_data = audio_features.get('vocal_energy', [0.0] * 120)
-    high_mid_data = audio_features.get('high_mid_energy', [0.0] * 120)
-    air_data = audio_features.get('air_energy', [0.0] * 120)
-    ultra_high_data = audio_features.get('ultra_high_energy', [0.0] * 120)
-    spectral_data = audio_features.get('spectral_centroid', [0.0] * 120)
-    beat_data = audio_features.get('beat_strength', [0.0] * 120)
-    onset_data = audio_features.get('onset_strength', [0.0] * 120)
+    kick_data = audio_features.get('kick_energy', [0.0] * 240)
+    bass_data = audio_features.get('bass_energy', [0.0] * 240)
+    sub_bass_data = audio_features.get('sub_bass_energy', [0.0] * 240)
+    mid_bass_data = audio_features.get('mid_bass_energy', [0.0] * 240)
+    snare_data = audio_features.get('snare_energy', [0.0] * 240)
+    mid_data = audio_features.get('mid_energy', [0.0] * 240)
+    low_mid_data = audio_features.get('low_mid_energy', [0.0] * 240)
+    hihat_data = audio_features.get('hihat_energy', [0.0] * 240)
+    presence_data = audio_features.get('presence_energy', [0.0] * 240)
+    brilliance_data = audio_features.get('brilliance_energy', [0.0] * 240)
+    vocal_data = audio_features.get('vocal_energy', [0.0] * 240)
+    high_mid_data = audio_features.get('high_mid_energy', [0.0] * 240)
+    air_data = audio_features.get('air_energy', [0.0] * 240)
+    ultra_high_data = audio_features.get('ultra_high_energy', [0.0] * 240)
+    spectral_data = audio_features.get('spectral_centroid', [0.0] * 240)
+    beat_data = audio_features.get('beat_strength', [0.0] * 240)
+    onset_data = audio_features.get('onset_strength', [0.0] * 240)
     
     # ADVANCED: Sophisticated harmonic color palette with musical theory relationships
     harmonic_palette = [
@@ -2215,45 +1350,33 @@ if audio_features and len(audio_features) > 0 and cube and cube.data.materials:
         'dissonance': (0.8, 0.2, 0.8, 1.0),  # New: Magenta for dissonance
     }
     
-    # Find the Principled BSDF node in the material
-    principled_node = None
-    for node in material.node_tree.nodes:
-        if node.type == 'BSDF_PRINCIPLED':
-            principled_node = node
-            break
+    # Create base color animation curves
+    base_color_r = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=0)
+    base_color_g = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=1)
+    base_color_b = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=2)
     
-    if principled_node:
-        # Create base color animation curves using node name
-        node_name = principled_node.name
-        base_color_r = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[0].default_value', index=0)
-        base_color_g = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[0].default_value', index=1)
-        base_color_b = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[0].default_value', index=2)
-        
-        # ADVANCED: Create dynamic material property animation curves
-        metallic_curve = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[6].default_value')
-        roughness_curve = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[9].default_value')
-        ior_curve = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[14].default_value')
-        
-        # Create emission color animation curves
-        try:
-            emission_r = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[19].default_value', index=0)
-            emission_g = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[19].default_value', index=1)
-            emission_b = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[19].default_value', index=2)
-            emission_strength = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[20].default_value')
-            emission_available = True
-        except:
-            emission_available = False
-            print("⚠️  Emission animation not available in this Blender version")
-    else:
-        print("⚠️  Principled BSDF node not found in material")
+    # ADVANCED: Create dynamic material property animation curves
+    metallic_curve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[6].default_value')
+    roughness_curve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[9].default_value')
+    ior_curve = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[14].default_value')
+    
+    # Create emission color animation curves
+    try:
+        emission_r = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[19].default_value', index=0)
+        emission_g = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[19].default_value', index=1)
+        emission_b = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[19].default_value', index=2)
+        emission_strength = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[20].default_value')
+        emission_available = True
+    except:
         emission_available = False
+        print("⚠️  Emission animation not available in this Blender version")
     
     # ENHANCED: Generate sophisticated color keyframes with harmonic relationships
-    frame_step = max(1, 120 // 100)  # More keyframes for smoother harmonic changes
+    frame_step = max(1, 240 // 100)  # More keyframes for smoother harmonic changes
     
-    for i in range(0, 120, frame_step):
-        frame = min(i, 120 - 1)
-        progress = frame / 120
+    for i in range(0, 240, frame_step):
+        frame = min(i, 240 - 1)
+        progress = frame / 240
         
         # Get enhanced audio values for this frame
         kick_val = kick_data[min(frame, len(kick_data) - 1)] if kick_data else 0.0
@@ -2379,34 +1502,32 @@ if audio_features and len(audio_features) > 0 and cube and cube.data.materials:
         g = max(0.0, min(1.0, g))
         b = max(0.0, min(1.0, b))
         
-        # Insert base color keyframes (only if curves exist)
-        if principled_node:
-            base_color_r.keyframe_points.insert(frame, r)
-            base_color_g.keyframe_points.insert(frame, g)
-            base_color_b.keyframe_points.insert(frame, b)
+        # Insert base color keyframes
+        base_color_r.keyframe_points.insert(frame, r)
+        base_color_g.keyframe_points.insert(frame, g)
+        base_color_b.keyframe_points.insert(frame, b)
         
-        # ADVANCED: Calculate and insert dynamic material property keyframes (only if curves exist)
-        if principled_node:
-            # Metallic property responds to bass and kick energy
-            metallic_base = 0.8
-            metallic_variation = (kick_val * 0.3 + bass_val * 0.2 + beat_val * 0.1) * material_property_responsiveness
-            metallic_value = max(0.0, min(1.0, metallic_base + metallic_variation))
-            metallic_curve.keyframe_points.insert(frame, metallic_value)
-            
-            # Roughness property responds to high frequencies and spectral content
-            roughness_base = 0.15
-            roughness_variation = (hihat_val * 0.2 + air_val * 0.15 + spectral_val * 0.1) * material_property_responsiveness
-            roughness_value = max(0.0, min(1.0, roughness_base + roughness_variation))
-            roughness_curve.keyframe_points.insert(frame, roughness_value)
-            
-            # IOR (Index of Refraction) responds to overall energy and harmonic content
-            ior_base = 1.8
-            ior_variation = (harmonic_audio_intensity * 0.3 + beat_val * 0.2) * material_property_responsiveness * 0.5
-            ior_value = max(1.0, min(2.5, ior_base + ior_variation))
-            ior_curve.keyframe_points.insert(frame, ior_value)
+        # ADVANCED: Calculate and insert dynamic material property keyframes
+        # Metallic property responds to bass and kick energy
+        metallic_base = 0.8
+        metallic_variation = (kick_val * 0.3 + bass_val * 0.2 + beat_val * 0.1) * material_property_responsiveness
+        metallic_value = max(0.0, min(1.0, metallic_base + metallic_variation))
+        metallic_curve.keyframe_points.insert(frame, metallic_value)
+        
+        # Roughness property responds to high frequencies and spectral content
+        roughness_base = 0.15
+        roughness_variation = (hihat_val * 0.2 + air_val * 0.15 + spectral_val * 0.1) * material_property_responsiveness
+        roughness_value = max(0.0, min(1.0, roughness_base + roughness_variation))
+        roughness_curve.keyframe_points.insert(frame, roughness_value)
+        
+        # IOR (Index of Refraction) responds to overall energy and harmonic content
+        ior_base = 1.8
+        ior_variation = (harmonic_audio_intensity * 0.3 + beat_val * 0.2) * material_property_responsiveness * 0.5
+        ior_value = max(1.0, min(2.5, ior_base + ior_variation))
+        ior_curve.keyframe_points.insert(frame, ior_value)
         
         # ENHANCED: Insert sophisticated emission color keyframes if available
-        if emission_available and principled_node:
+        if emission_available:
             # Enhanced emission colors with harmonic brightness
             kick_harmonic_brightness = kick_val * 2.5
             bass_harmonic_brightness = bass_val * 2.2
@@ -2433,71 +1554,48 @@ if audio_features and len(audio_features) > 0 and cube and cube.data.materials:
             emission_strength.keyframe_points.insert(frame, emission_strength_val)
     
     # ENHANCED: Apply sophisticated interpolation to all color curves
-    if principled_node and material_action:
-        for fcurve in material_action.fcurves:
-            for keyframe in fcurve.keyframe_points:
-                keyframe.interpolation = 'BEZIER'
-                keyframe.handle_left_type = 'FREE'
-                keyframe.handle_right_type = 'FREE'
-                # Enhanced handle adjustment for smoother harmonic transitions
-                keyframe.handle_left[0] = -0.3
-                keyframe.handle_right[0] = 0.3
-                keyframe.handle_left[1] = keyframe.co[1] * 0.1
-                keyframe.handle_right[1] = keyframe.co[1] * 0.1
+    for fcurve in material_action.fcurves:
+        for keyframe in fcurve.keyframe_points:
+            keyframe.interpolation = 'BEZIER'
+            keyframe.handle_left_type = 'FREE'
+            keyframe.handle_right_type = 'FREE'
+            # Enhanced handle adjustment for smoother harmonic transitions
+            keyframe.handle_left[0] = -0.3
+            keyframe.handle_right[0] = 0.3
+            keyframe.handle_left[1] = keyframe.co[1] * 0.1
+            keyframe.handle_right[1] = keyframe.co[1] * 0.1
     
     print("✅ ADVANCED harmonic color animations created with sophisticated audio reactivity, musical theory relationships, and dynamic material properties")
 else:
     print("⚠️  No audio data available for advanced harmonic color animation, using time-based harmonic colors only")
     
     # ENHANCED: Fallback harmonic color cycling
-    if cube and cube.data.materials:
-        material = cube.data.materials[0]
-        material_action = bpy.data.actions.new(name="FallbackHarmonicColorAnimation")
-        material.animation_data_create()
-        material.animation_data.action = material_action
-        
-        # Find the Principled BSDF node
-        principled_node = None
-        for node in material.node_tree.nodes:
-            if node.type == 'BSDF_PRINCIPLED':
-                principled_node = node
-                break
-        
-        if principled_node:
-            node_name = principled_node.name
-            base_color_r = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[0].default_value', index=0)
-            base_color_g = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[0].default_value', index=1)
-            base_color_b = material_action.fcurves.new(data_path=f'node_tree.nodes["{node_name}"].inputs[0].default_value', index=2)
-            
-            harmonic_color_palette = [
-                (0.8, 0.2, 0.2, 1.0),  # Deep red
-                (0.2, 0.8, 0.2, 1.0),  # Deep green
-                (0.2, 0.2, 0.8, 1.0),  # Deep blue
-                (0.8, 0.8, 0.2, 1.0),  # Yellow
-                (0.8, 0.2, 0.8, 1.0),  # Magenta
-                (0.2, 0.8, 0.8, 1.0)   # Cyan
-            ]
+    harmonic_color_palette = [
+        (0.8, 0.2, 0.2, 1.0),  # Deep red
+        (0.2, 0.8, 0.2, 1.0),  # Deep green
+        (0.2, 0.2, 0.8, 1.0),  # Deep blue
+        (0.8, 0.8, 0.2, 1.0),  # Yellow
+        (0.8, 0.2, 0.8, 1.0),  # Magenta
+        (0.2, 0.8, 0.8, 1.0)   # Cyan
+    ]
     
-            frame_step = max(1, 120 // 40)
-            
-            for i in range(0, 120, frame_step):
-                frame = min(i, 120 - 1)
-                progress = frame / 120
-                
-                # Enhanced harmonic color cycling
-                harmonic_color_index = int(progress * len(harmonic_color_palette)) % len(harmonic_color_palette)
-                harmonic_color = harmonic_color_palette[harmonic_color_index]
-                
-                base_color_r.keyframe_points.insert(frame, harmonic_color[0])
-                base_color_g.keyframe_points.insert(frame, harmonic_color[1])
-                base_color_b.keyframe_points.insert(frame, harmonic_color[2])
-            
-            # Apply smooth interpolation to fallback color animation
-            for fcurve in material_action.fcurves:
-                for keyframe in fcurve.keyframe_points:
-                    keyframe.interpolation = 'BEZIER'
-                    keyframe.handle_left_type = 'AUTO'
-                    keyframe.handle_right_type = 'AUTO'
+    base_color_r = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=0)
+    base_color_g = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=1)
+    base_color_b = material_action.fcurves.new(data_path='node_tree.nodes["Principled BSDF"].inputs[0].default_value', index=2)
+    
+    frame_step = max(1, 240 // 40)
+    
+    for i in range(0, 240, frame_step):
+        frame = min(i, 240 - 1)
+        progress = frame / 240
+        
+        # Enhanced harmonic color cycling
+        harmonic_color_index = int(progress * len(harmonic_color_palette)) % len(harmonic_color_palette)
+        harmonic_color = harmonic_color_palette[harmonic_color_index]
+        
+        base_color_r.keyframe_points.insert(frame, harmonic_color[0])
+        base_color_g.keyframe_points.insert(frame, harmonic_color[1])
+        base_color_b.keyframe_points.insert(frame, harmonic_color[2])
     
     print("✅ ENHANCED harmonic color cycling created")
 
@@ -2666,7 +1764,7 @@ cube.keyframe_insert(data_path="rotation_euler", frame=0)
 
 # Much slower rotation for subtle movement only
 cube.rotation_euler = (0, 0, math.radians(8))  # Much slower rotation - only 8 degrees over entire duration
-cube.keyframe_insert(data_path="rotation_euler", frame=120)
+cube.keyframe_insert(data_path="rotation_euler", frame=240)
 
 # Set rotation interpolation to smooth
 for fcurve in cube.animation_data.action.fcurves:
@@ -2718,11 +1816,11 @@ gi    # Camera movement parameters - SLIGHTLY ZOOMED IN for better focus
     print(f"📹 Camera orbit radius: 12.0 units")
     
     # Create camera position keyframes for smooth orbital motion
-    frame_step = max(1, 120 // 60)  # 60 keyframes for smooth motion
+    frame_step = max(1, 240 // 60)  # 60 keyframes for smooth motion
     
-    for i in range(0, 120, frame_step):
-        frame = min(i, 120 - 1)
-        progress = frame / 120
+    for i in range(0, 240, frame_step):
+        frame = min(i, 240 - 1)
+        progress = frame / 240
         
         # Calculate orbital position
         angle = progress * 2 * math.pi * orbit_speed  # Full rotation over duration
@@ -3133,11 +2231,11 @@ star_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["StarMappi
 star_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["StarMapping"].inputs[2].default_value', index=2)
 
 # ENHANCED: Create complex movement keyframes with different speeds and patterns
-frame_step = max(1, 120 // 30)  # More keyframes for smoother movement
+frame_step = max(1, 240 // 30)  # More keyframes for smoother movement
 
-for i in range(0, 120, frame_step):
-    frame = min(i, 120 - 1)
-    progress = frame / 120
+for i in range(0, 240, frame_step):
+    frame = min(i, 240 - 1)
+    progress = frame / 240
     
     # Deep nebula: Much slower cosmic movement (reduced by ~70%)
     nebula1_rot_x = progress * 0.015  # Much slower X rotation
@@ -3194,13 +2292,13 @@ for fcurve in space_action.fcurves:
 
 print("✅ ENHANCED multi-layer cosmic space environment created with sophisticated nebula layers, dynamic star fields, and complex atmospheric effects")
 
-# ENHANCED STARFIELD CREATION - DYNAMIC AND IMMERSIVE
-print("⭐ Creating ENHANCED dynamic immersive starfield...")
+# OPTIMIZED STARFIELD CREATION - EFFICIENT AND IMMERSIVE
+print("⭐ Creating OPTIMIZED immersive starfield...")
 
 # Create multiple star objects for better visibility with optimized distribution
 star_positions = []
 # Create stars in a spherical distribution around the scene
-for i in range(8):  # Increased from 4 to 8 stars for better coverage
+for i in range(4):  # Absolute minimum - just 4 stars around the cube
     # Random positions in a large sphere around the scene
     # Use spherical distribution for more natural star field
     phi = random.uniform(0, 2 * math.pi)  # Azimuthal angle
@@ -3279,14 +2377,14 @@ for i, pos in enumerate(star_positions):
 
 print("✅ OPTIMIZED starfield with 150 stars in spherical distribution created")
 
-# ENHANCED AUDIO-REACTIVE STAR ANIMATIONS WITH TWINKLING
-print("⭐ Adding ENHANCED audio-reactive star animations with twinkling effects...")
+# AUDIO-REACTIVE STAR ANIMATIONS
+print("⭐ Adding audio-reactive star animations...")
 
 # Create audio-reactive animations for stars
-star_audio_action = bpy.data.actions.new(name="EnhancedStarAudioReactiveAnimation")
+star_audio_action = bpy.data.actions.new(name="StarAudioReactiveAnimation")
 
-# Animate more stars for better effect - 4 stars total
-stars_to_animate = [f"Star_{i:03d}" for i in range(0, 8, 2)]  # 4 stars total
+# Animate absolute minimum stars - just 2 stars for subtle effect
+stars_to_animate = [f"Star_{i:03d}" for i in range(0, 4, 2)]  # 2 stars total (absolute minimum)
 
 for star_name in stars_to_animate:
     if star_name in bpy.data.objects:
@@ -3312,35 +2410,22 @@ for star_name in stars_to_animate:
                         index=0
                     )
                     
-                    # Create keyframes based on audio with enhanced twinkling
-                    frame_step = max(1, 120 // 20)
+                    # Create keyframes based on audio
+                    frame_step = max(1, 240 // 20)
                     
-                    for i in range(0, 120, frame_step):
-                        frame = min(i, 120 - 1)
+                    for i in range(0, 240, frame_step):
+                        frame = min(i, 240 - 1)
                         
                         # Get audio features for this frame
-                        hihat_energy = audio_features.get('hihat_energy', [0.0] * 120)[min(frame, len(audio_features.get('hihat_energy', [0.0] * 120)) - 1)] if audio_features.get('hihat_energy') else 0.0
-                        beat_strength = audio_features.get('beat_strength', [0.0] * 120)[min(frame, len(audio_features.get('beat_strength', [0.0] * 120)) - 1)] if audio_features.get('beat_strength') else 0.0
-                        air_energy = audio_features.get('air_energy', [0.0] * 120)[min(frame, len(audio_features.get('air_energy', [0.0] * 120)) - 1)] if audio_features.get('air_energy') else 0.0
+                        hihat_energy = audio_features.get('hihat_energy', [0.0] * 240)[min(frame, len(audio_features.get('hihat_energy', [0.0] * 240)) - 1)] if audio_features.get('hihat_energy') else 0.0
+                        beat_strength = audio_features.get('beat_strength', [0.0] * 240)[min(frame, len(audio_features.get('beat_strength', [0.0] * 240)) - 1)] if audio_features.get('beat_strength') else 0.0
                         
-                        # Calculate star brightness with enhanced twinkling effects
-                        base_brightness = random.uniform(0.6, 1.2)  # Enhanced base brightness range
+                        # Calculate star brightness based on audio - absolute minimum for ultra-subtle stars
+                        base_brightness = random.uniform(0.5, 1.0)  # Absolute minimum base brightness
+                        audio_brightness = hihat_energy * 0.2  # Minimal audio reactivity
+                        beat_brightness = beat_strength * 1.5  # Beats make stars pulse
                         
-                        # Audio-reactive brightness
-                        audio_brightness = hihat_energy * 0.4  # Increased audio reactivity
-                        beat_brightness = beat_strength * 2.0  # Enhanced beat responsiveness
-                        air_brightness = air_energy * 0.3  # Air frequencies affect twinkling
-                        
-                        # Enhanced twinkling effect with multiple sine waves
-                        twinkle_slow = 0.2 * math.sin(frame * 0.05)  # Slow twinkle
-                        twinkle_fast = 0.15 * math.sin(frame * 0.15)  # Fast twinkle
-                        twinkle_random = 0.1 * (random.random() - 0.5)  # Random variation
-                        
-                        # Combine all brightness factors
-                        total_brightness = base_brightness + audio_brightness + beat_brightness + air_brightness + twinkle_slow + twinkle_fast + twinkle_random
-                        
-                        # Clamp brightness to reasonable range
-                        total_brightness = max(0.3, min(2.0, total_brightness))
+                        total_brightness = base_brightness + audio_brightness + beat_brightness
                         
                         # Insert keyframe
                         brightness_curve.keyframe_points.insert(frame, total_brightness)
@@ -3405,113 +2490,6 @@ for i, pos in enumerate(nebula_positions):
 
 print("✅ Enhanced nebula volumetric effects created")
 
-# ENHANCED ATMOSPHERIC EFFECTS - COSMIC DUST AND AURORA
-print("🌫️ Creating ENHANCED atmospheric effects...")
-
-# Create cosmic dust particles with multiple layers
-dust_positions = [
-    (8, 3, 2), (-6, -2, 1), (4, -8, 3), (-10, 6, 0),
-    (12, -4, 4), (-8, 8, 2), (6, 2, 1), (-4, -6, 3)
-]
-
-# Configure dust properties with different colors and sizes
-dust_colors = [
-    (0.1, 0.05, 0.2, 1.0),  # Dark purple dust
-    (0.05, 0.1, 0.3, 1.0),  # Dark blue dust
-    (0.2, 0.05, 0.3, 1.0),  # Purple-blue dust
-    (0.05, 0.2, 0.1, 1.0),  # Dark green dust
-    (0.3, 0.1, 0.1, 1.0),   # Dark red dust
-    (0.1, 0.3, 0.1, 1.0),   # Dark green dust
-    (0.2, 0.1, 0.2, 1.0),   # Purple dust
-    (0.1, 0.2, 0.3, 1.0)    # Blue dust
-]
-
-for i, pos in enumerate(dust_positions):
-    bpy.ops.object.volume_add(location=pos)
-    dust_volume = bpy.context.active_object
-    dust_volume.name = f"CosmicDust_{i:02d}"
-    dust_volume.scale = (8, 8, 8)  # Smaller volumes for dust particles
-    
-    # Create dust volume material
-    dust_material = bpy.data.materials.new(name=f"CosmicDustMaterial_{i:02d}")
-    dust_material.use_nodes = True
-    dust_nodes = dust_material.node_tree.nodes
-    dust_links = dust_material.node_tree.links
-    
-    # Clear default nodes
-    dust_nodes.clear()
-    
-    # Add Volume Principled
-    volume_principled = dust_nodes.new(type='ShaderNodeVolumePrincipled')
-    volume_principled.location = (0, 0)
-    
-    # Add Output
-    dust_output = dust_nodes.new(type='ShaderNodeOutputMaterial')
-    dust_output.location = (300, 0)
-    
-    volume_principled.inputs['Color'].default_value = dust_colors[i]
-    volume_principled.inputs['Density'].default_value = 0.1  # Lower density for dust
-    volume_principled.inputs['Anisotropy'].default_value = 0.1  # Less scattering
-    
-    # Connect dust material
-    dust_links.new(volume_principled.outputs['Volume'], dust_output.inputs['Volume'])
-    
-    # Assign dust material
-    dust_volume.data.materials.append(dust_material)
-
-print("✅ Enhanced cosmic dust atmospheric effects created")
-
-# ENHANCED AURORA-LIKE EFFECTS
-print("🌌 Creating ENHANCED aurora-like effects...")
-
-# Create aurora volumes with flowing patterns
-aurora_positions = [
-    (0, 15, 8), (0, -15, 8), (15, 0, 6), (-15, 0, 6)
-]
-
-# Configure aurora properties with flowing colors
-aurora_colors = [
-    (0.1, 0.8, 0.3, 1.0),  # Green aurora
-    (0.2, 0.3, 0.8, 1.0),  # Blue aurora
-    (0.8, 0.2, 0.6, 1.0),  # Pink aurora
-    (0.6, 0.8, 0.2, 1.0)   # Yellow-green aurora
-]
-
-for i, pos in enumerate(aurora_positions):
-    bpy.ops.object.volume_add(location=pos)
-    aurora_volume = bpy.context.active_object
-    aurora_volume.name = f"AuroraEffect_{i:02d}"
-    aurora_volume.scale = (20, 5, 15)  # Elongated volumes for aurora effect
-    
-    # Create aurora volume material
-    aurora_material = bpy.data.materials.new(name=f"AuroraMaterial_{i:02d}")
-    aurora_material.use_nodes = True
-    aurora_nodes = aurora_material.node_tree.nodes
-    aurora_links = aurora_material.node_tree.links
-    
-    # Clear default nodes
-    aurora_nodes.clear()
-    
-    # Add Volume Principled
-    volume_principled = aurora_nodes.new(type='ShaderNodeVolumePrincipled')
-    volume_principled.location = (0, 0)
-    
-    # Add Output
-    aurora_output = aurora_nodes.new(type='ShaderNodeOutputMaterial')
-    aurora_output.location = (300, 0)
-    
-    volume_principled.inputs['Color'].default_value = aurora_colors[i]
-    volume_principled.inputs['Density'].default_value = 0.15  # Medium density for aurora
-    volume_principled.inputs['Anisotropy'].default_value = 0.5  # More scattering for aurora effect
-    
-    # Connect aurora material
-    aurora_links.new(volume_principled.outputs['Volume'], aurora_output.inputs['Volume'])
-    
-    # Assign aurora material
-    aurora_volume.data.materials.append(aurora_material)
-
-print("✅ Enhanced aurora-like atmospheric effects created")
-
 # AUDIO-REACTIVE NEBULA ANIMATIONS
 print("🌫️ Adding audio-reactive nebula animations...")
 
@@ -3545,14 +2523,14 @@ for i in range(4):  # We have 4 nebula volumes
                     )
                     
                     # Create keyframes based on audio
-                    frame_step = max(1, 120 // 20)
+                    frame_step = max(1, 240 // 20)
                     
-                    for j in range(0, 120, frame_step):
-                        frame = min(j, 120 - 1)
+                    for j in range(0, 240, frame_step):
+                        frame = min(j, 240 - 1)
                         
                         # Get audio features for this frame
-                        bass_energy = audio_features.get('bass_energy', [0.0] * 120)[min(frame, len(audio_features.get('bass_energy', [0.0] * 120)) - 1)] if audio_features.get('bass_energy') else 0.0
-                        beat_strength = audio_features.get('beat_strength', [0.0] * 120)[min(frame, len(audio_features.get('beat_strength', [0.0] * 120)) - 1)] if audio_features.get('beat_strength') else 0.0
+                        bass_energy = audio_features.get('bass_energy', [0.0] * 240)[min(frame, len(audio_features.get('bass_energy', [0.0] * 240)) - 1)] if audio_features.get('bass_energy') else 0.0
+                        beat_strength = audio_features.get('beat_strength', [0.0] * 240)[min(frame, len(audio_features.get('beat_strength', [0.0] * 240)) - 1)] if audio_features.get('beat_strength') else 0.0
                         
                         # Calculate nebula density based on audio
                         base_density = 0.2  # Base density
@@ -3596,14 +2574,14 @@ except:
 world_strength_curve = nebula_intensity_curve
 
 # Create audio-reactive keyframes based on audio features
-frame_step = max(1, 120 // 20)
+frame_step = max(1, 240 // 20)
 
-for i in range(0, 120, frame_step):
-    frame = min(i, 120 - 1)
+for i in range(0, 240, frame_step):
+    frame = min(i, 240 - 1)
     
     # Get audio features for this frame
-    rms_energy = audio_features.get('rms_energy', [0.0] * 120)[min(frame, len(audio_features.get('rms_energy', [0.0] * 120)) - 1)] if audio_features.get('rms_energy') else 0.0
-    beat_strength = audio_features.get('beat_strength', [0.0] * 120)[min(frame, len(audio_features.get('beat_strength', [0.0] * 120)) - 1)] if audio_features.get('beat_strength') else 0.0
+    rms_energy = audio_features.get('rms_energy', [0.0] * 240)[min(frame, len(audio_features.get('rms_energy', [0.0] * 240)) - 1)] if audio_features.get('rms_energy') else 0.0
+    beat_strength = audio_features.get('beat_strength', [0.0] * 240)[min(frame, len(audio_features.get('beat_strength', [0.0] * 240)) - 1)] if audio_features.get('beat_strength') else 0.0
     
     # Calculate space background reactivity
     base_intensity = 1.2  # Base world strength
@@ -3653,90 +2631,6 @@ fill_light.data.size = 3.0
 fill_light.data.color = (1.0, 1.0, 0.9)  # Neutral white
 
 print("✅ PROFESSIONAL three-point lighting setup with area lights")
-
-# ENHANCED VOLUMETRIC LIGHTING SYSTEM
-print("💡 Creating ENHANCED volumetric lighting system...")
-
-# Add volumetric lighting effects
-volumetric_lights = []
-
-# Create additional volumetric lights for enhanced atmosphere
-volumetric_positions = [
-    (5, 5, 8), (-5, -5, 6), (8, -3, 7), (-3, 8, 5)
-]
-
-volumetric_colors = [
-    (0.8, 0.4, 1.0, 1.0),  # Purple volumetric light
-    (0.4, 0.8, 1.0, 1.0),  # Blue volumetric light
-    (1.0, 0.6, 0.4, 1.0),  # Orange volumetric light
-    (0.6, 1.0, 0.4, 1.0)   # Green volumetric light
-]
-
-for i, pos in enumerate(volumetric_positions):
-    bpy.ops.object.light_add(type='AREA', location=pos)
-    vol_light = bpy.context.active_object
-    vol_light.name = f"VolumetricLight_{i:02d}"
-    vol_light.data.energy = 25  # Lower energy for volumetric effect
-    vol_light.data.size = 3.0  # Larger size for soft volumetric lighting
-    vol_light.data.color = volumetric_colors[i]
-    
-    # Enable volumetric lighting
-    vol_light.data.use_contact_shadow = True
-    vol_light.data.contact_shadow_distance = 5.0
-    
-    volumetric_lights.append(vol_light)
-
-print("✅ Enhanced volumetric lighting system created")
-
-# ENHANCED GOD RAYS AND LIGHT BEAMS
-print("☀️ Creating ENHANCED god rays and light beams...")
-
-# Create god ray volumes
-god_ray_positions = [
-    (0, 0, 12), (8, 8, 10), (-8, -8, 10), (12, -6, 8)
-]
-
-god_ray_colors = [
-    (1.0, 0.9, 0.7, 1.0),  # Warm white god rays
-    (0.8, 0.9, 1.0, 1.0),  # Cool white god rays
-    (1.0, 0.8, 0.9, 1.0),  # Pink god rays
-    (0.9, 1.0, 0.8, 1.0)   # Green-white god rays
-]
-
-for i, pos in enumerate(god_ray_positions):
-    bpy.ops.object.volume_add(location=pos)
-    god_ray_volume = bpy.context.active_object
-    god_ray_volume.name = f"GodRayVolume_{i:02d}"
-    god_ray_volume.scale = (15, 15, 20)  # Elongated volumes for god rays
-    
-    # Create god ray volume material
-    god_ray_material = bpy.data.materials.new(name=f"GodRayMaterial_{i:02d}")
-    god_ray_material.use_nodes = True
-    god_ray_nodes = god_ray_material.node_tree.nodes
-    god_ray_links = god_ray_material.node_tree.links
-    
-    # Clear default nodes
-    god_ray_nodes.clear()
-    
-    # Add Volume Principled
-    volume_principled = god_ray_nodes.new(type='ShaderNodeVolumePrincipled')
-    volume_principled.location = (0, 0)
-    
-    # Add Output
-    god_ray_output = god_ray_nodes.new(type='ShaderNodeOutputMaterial')
-    god_ray_output.location = (300, 0)
-    
-    volume_principled.inputs['Color'].default_value = god_ray_colors[i]
-    volume_principled.inputs['Density'].default_value = 0.08  # Low density for god rays
-    volume_principled.inputs['Anisotropy'].default_value = 0.8  # High anisotropy for beam effect
-    
-    # Connect god ray material
-    god_ray_links.new(volume_principled.outputs['Volume'], god_ray_output.inputs['Volume'])
-    
-    # Assign god ray material
-    god_ray_volume.data.materials.append(god_ray_material)
-
-print("✅ Enhanced god rays and light beams created")
 
 # MCP INTEGRATION: Enhance materials with PolyHaven assets
 print("🎨 Checking MCP integrations for enhanced materials...")
@@ -3797,9 +2691,9 @@ cube.data.materials.append(material)
 print("✅ ULTRA-SMOOTH enhanced material created with MCP integration support")
 
 print("🌌 ENHANCED AUDIO-REACTIVE MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
-print(f"📊 Total frames: 120")
+print(f"📊 Total frames: 240")
 print(f"🎬 FPS: 24")
-print(f"⏱️ Duration: 5.00s")
+print(f"⏱️ Duration: 10.00s")
 print(f"🔑 Shape keys: {len(shape_key_names)}")
 print(f"🎯 Quality: PREVIEW")
 print(f"🔧 Subdivision: 1")
@@ -3930,5 +2824,5 @@ except Exception as e:
 
 
 # Save blend file
-bpy.ops.wm.save_as_mainfile(filepath="test_output.blend")
-print("💾 Blend file saved: test_output.blend")
+bpy.ops.wm.save_as_mainfile(filepath="output/test_mutating_cube_preview.blend")
+print("💾 Blend file saved: output/test_mutating_cube_preview.blend")
