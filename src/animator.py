@@ -1244,14 +1244,13 @@ try:
     # Download cosmic/space-themed textures
     cosmic_textures = [
         {"id": "cosmic_energy", "type": "textures", "resolution": "1k"},
-        {"id": "nebula_gas", "type": "textures", "resolution": "1k"},
-        {"id": "star_field", "type": "textures", "resolution": "1k"}
+        {"id": "abstract_pattern", "type": "textures", "resolution": "1k"}
     ]
     
     # Download space environment HDRI
     space_hdris = [
-        {"id": "space_nebula", "type": "hdris", "resolution": "1k"},
-        {"id": "cosmic_void", "type": "hdris", "resolution": "1k"}
+        {"id": "dark_space", "type": "hdris", "resolution": "1k"},
+        {"id": "minimal_void", "type": "hdris", "resolution": "1k"}
     ]
     
     print("✅ PolyHaven assets identified for download")
@@ -1758,10 +1757,10 @@ if not bpy.data.objects.get("Camera") and not bpy.data.objects.get("Camera.001")
 else:
     print("✅ Using existing camera with enhanced movement")
 
-# ENHANCED SPACE ENVIRONMENT SETUP - MULTI-LAYER COSMIC BACKGROUND
-print("🌌 Creating ENHANCED multi-layer cosmic space environment...")
+# SIMPLE WORLD SETUP - Clean background without stars/nebula
+print("🌌 Setting up clean world background...")
 
-# Setup World Shader for advanced space background
+# Setup simple World Shader
 world = bpy.context.scene.world
 world.use_nodes = True
 world_nodes = world.node_tree.nodes
@@ -1776,720 +1775,19 @@ background_node.location = (0, 0)
 
 # Add World Output
 world_output = world_nodes.new(type='ShaderNodeOutputWorld')
-world_output.location = (500, 0)
+world_output.location = (300, 0)
 
-# Add Texture Coordinate
-tex_coord = world_nodes.new(type='ShaderNodeTexCoord')
-tex_coord.location = (-1800, 0)
-
-# ENHANCED: Add multiple mapping nodes for different layers
-mapping_nebula1 = world_nodes.new(type='ShaderNodeMapping')
-mapping_nebula1.location = (-1500, 200)
-mapping_nebula1.name = "NebulaMapping1"
-
-mapping_nebula2 = world_nodes.new(type='ShaderNodeMapping')
-mapping_nebula2.location = (-1500, 0)
-mapping_nebula2.name = "NebulaMapping2"
-
-mapping_nebula3 = world_nodes.new(type='ShaderNodeMapping')
-mapping_nebula3.location = (-1500, -200)
-mapping_nebula3.name = "NebulaMapping3"
-
-mapping_dust = world_nodes.new(type='ShaderNodeMapping')
-mapping_dust.location = (-1500, -400)
-mapping_dust.name = "DustMapping"
-
-mapping_stars = world_nodes.new(type='ShaderNodeMapping')
-mapping_stars.location = (-1500, -600)
-mapping_stars.name = "StarMapping"
-
-# ENHANCED: Add multiple nebula noise textures for depth layers
-nebula_noise1 = world_nodes.new(type='ShaderNodeTexNoise')
-nebula_noise1.location = (-1200, 200)
-nebula_noise1.inputs['Scale'].default_value = 0.02  # Large scale for deep background nebula
-nebula_noise1.inputs['Detail'].default_value = 20.0
-nebula_noise1.inputs['Roughness'].default_value = 0.8
-nebula_noise1.name = "DeepNebulaNoise"
-
-nebula_noise2 = world_nodes.new(type='ShaderNodeTexNoise')
-nebula_noise2.location = (-1200, 0)
-nebula_noise2.inputs['Scale'].default_value = 0.05  # Medium scale for mid-layer nebula
-nebula_noise2.inputs['Detail'].default_value = 15.0
-nebula_noise2.inputs['Roughness'].default_value = 0.7
-nebula_noise2.name = "MidNebulaNoise"
-
-nebula_noise3 = world_nodes.new(type='ShaderNodeTexNoise')
-nebula_noise3.location = (-1200, -200)
-nebula_noise3.inputs['Scale'].default_value = 0.1  # Small scale for foreground nebula
-nebula_noise3.inputs['Detail'].default_value = 12.0
-nebula_noise3.inputs['Roughness'].default_value = 0.6
-nebula_noise3.name = "ForegroundNebulaNoise"
-
-# ENHANCED: Add additional noise texture for more complex nebula patterns (Musgrave replacement)
-nebula_musgrave = world_nodes.new(type='ShaderNodeTexNoise')
-nebula_musgrave.location = (-1200, -100)
-nebula_musgrave.inputs['Scale'].default_value = 0.08
-nebula_musgrave.inputs['Detail'].default_value = 10.0
-nebula_musgrave.inputs['Roughness'].default_value = 0.8
-nebula_musgrave.name = "NebulaMusgrave"
-
-# Enhanced space dust with multiple layers
-dust_noise1 = world_nodes.new(type='ShaderNodeTexNoise')
-dust_noise1.location = (-1200, -400)
-dust_noise1.inputs['Scale'].default_value = 0.15  # Large dust particles
-dust_noise1.inputs['Detail'].default_value = 6.0
-dust_noise1.inputs['Roughness'].default_value = 0.4
-dust_noise1.name = "LargeDustNoise"
-
-dust_noise2 = world_nodes.new(type='ShaderNodeTexNoise')
-dust_noise2.location = (-1200, -500)
-dust_noise2.inputs['Scale'].default_value = 0.3  # Small dust particles
-dust_noise2.inputs['Detail'].default_value = 8.0
-dust_noise2.inputs['Roughness'].default_value = 0.5
-dust_noise2.name = "SmallDustNoise"
-
-# Enhanced star field with multiple scales
-star_voronoi1 = world_nodes.new(type='ShaderNodeTexVoronoi')
-star_voronoi1.location = (-1200, -600)
-star_voronoi1.inputs['Scale'].default_value = 200.0  # Bright stars
-star_voronoi1.inputs['Randomness'].default_value = 0.98
-star_voronoi1.name = "BrightStars"
-
-star_voronoi2 = world_nodes.new(type='ShaderNodeTexVoronoi')
-star_voronoi2.location = (-1200, -700)
-star_voronoi2.inputs['Scale'].default_value = 500.0  # Dim stars
-star_voronoi2.inputs['Randomness'].default_value = 0.95
-star_voronoi2.name = "DimStars"
-
-# ENHANCED: Add multiple color ramps for different nebula layers
-nebula_colorramp1 = world_nodes.new(type='ShaderNodeValToRGB')
-nebula_colorramp1.location = (-900, 200)
-nebula_colorramp1.name = "DeepNebulaColorRamp"
-
-nebula_colorramp2 = world_nodes.new(type='ShaderNodeValToRGB')
-nebula_colorramp2.location = (-900, 0)
-nebula_colorramp2.name = "MidNebulaColorRamp"
-
-nebula_colorramp3 = world_nodes.new(type='ShaderNodeValToRGB')
-nebula_colorramp3.location = (-900, -200)
-nebula_colorramp3.name = "ForegroundNebulaColorRamp"
-
-# Enhanced Musgrave color ramp
-musgrave_colorramp = world_nodes.new(type='ShaderNodeValToRGB')
-musgrave_colorramp.location = (-900, -100)
-musgrave_colorramp.name = "MusgraveColorRamp"
-
-# Enhanced dust color ramps
-dust_colorramp1 = world_nodes.new(type='ShaderNodeValToRGB')
-dust_colorramp1.location = (-900, -400)
-dust_colorramp1.name = "LargeDustColorRamp"
-
-dust_colorramp2 = world_nodes.new(type='ShaderNodeValToRGB')
-dust_colorramp2.location = (-900, -500)
-dust_colorramp2.name = "SmallDustColorRamp"
-
-# Enhanced star field color ramps
-star_colorramp1 = world_nodes.new(type='ShaderNodeValToRGB')
-star_colorramp1.location = (-900, -600)
-star_colorramp1.name = "BrightStarsColorRamp"
-
-star_colorramp2 = world_nodes.new(type='ShaderNodeValToRGB')
-star_colorramp2.location = (-900, -700)
-star_colorramp2.name = "DimStarsColorRamp"
-
-# Add final Mix Shader to combine everything with stars (not used anymore)
-# final_mix = world_nodes.new(type='ShaderNodeMixShader')
-# final_mix.location = (200, 0)
-
-# ENHANCED: Connect texture coordinates to all mapping nodes
-world_links.new(tex_coord.outputs['Generated'], mapping_nebula1.inputs['Vector'])
-world_links.new(tex_coord.outputs['Generated'], mapping_nebula2.inputs['Vector'])
-world_links.new(tex_coord.outputs['Generated'], mapping_nebula3.inputs['Vector'])
-world_links.new(tex_coord.outputs['Generated'], mapping_dust.inputs['Vector'])
-world_links.new(tex_coord.outputs['Generated'], mapping_stars.inputs['Vector'])
-
-# ENHANCED: Connect mappings to texture nodes
-world_links.new(mapping_nebula1.outputs['Vector'], nebula_noise1.inputs['Vector'])
-world_links.new(mapping_nebula2.outputs['Vector'], nebula_noise2.inputs['Vector'])
-world_links.new(mapping_nebula3.outputs['Vector'], nebula_noise3.inputs['Vector'])
-world_links.new(mapping_nebula2.outputs['Vector'], nebula_musgrave.inputs['Vector'])
-world_links.new(mapping_dust.outputs['Vector'], dust_noise1.inputs['Vector'])
-world_links.new(mapping_dust.outputs['Vector'], dust_noise2.inputs['Vector'])
-world_links.new(mapping_stars.outputs['Vector'], star_voronoi1.inputs['Vector'])
-world_links.new(mapping_stars.outputs['Vector'], star_voronoi2.inputs['Vector'])
-
-# ENHANCED: Configure deep nebula gradient colors (deepest space)
-nebula_colorramp1.color_ramp.elements[0].color = (0.002, 0.002, 0.01, 1.0)  # Deepest space black
-nebula_colorramp1.color_ramp.elements[1].color = (0.1, 0.02, 0.2, 1.0)     # Deep purple nebula
-nebula_colorramp1.color_ramp.elements[0].position = 0.0
-nebula_colorramp1.color_ramp.elements[1].position = 0.9
-
-# Add third color element for cosmic highlights
-nebula_colorramp1.color_ramp.elements.new(0.7)
-nebula_colorramp1.color_ramp.elements[2].color = (0.05, 0.15, 0.3, 1.0)   # Deep cosmic blue
-nebula_colorramp1.color_ramp.elements[2].position = 0.7
-
-# ENHANCED: Configure mid-layer nebula gradient colors
-nebula_colorramp2.color_ramp.elements[0].color = (0.01, 0.01, 0.03, 1.0)   # Dark space
-nebula_colorramp2.color_ramp.elements[1].color = (0.3, 0.1, 0.5, 1.0)     # Purple nebula
-nebula_colorramp2.color_ramp.elements[0].position = 0.2
-nebula_colorramp2.color_ramp.elements[1].position = 0.8
-
-# Add cosmic highlights
-nebula_colorramp2.color_ramp.elements.new(0.6)
-nebula_colorramp2.color_ramp.elements[2].color = (0.2, 0.4, 0.7, 1.0)     # Cosmic blue
-nebula_colorramp2.color_ramp.elements[2].position = 0.6
-
-# ENHANCED: Configure foreground nebula gradient colors
-nebula_colorramp3.color_ramp.elements[0].color = (0.02, 0.02, 0.05, 1.0)  # Dark space
-nebula_colorramp3.color_ramp.elements[1].color = (0.5, 0.2, 0.8, 1.0)     # Bright purple nebula
-nebula_colorramp3.color_ramp.elements[0].position = 0.3
-nebula_colorramp3.color_ramp.elements[1].position = 0.7
-
-# Add bright highlights
-nebula_colorramp3.color_ramp.elements.new(0.5)
-nebula_colorramp3.color_ramp.elements[2].color = (0.4, 0.6, 1.0, 1.0)     # Bright cosmic blue
-nebula_colorramp3.color_ramp.elements[2].position = 0.5
-
-# ENHANCED: Configure Musgrave texture colors
-musgrave_colorramp.color_ramp.elements[0].color = (0.01, 0.01, 0.02, 1.0)  # Dark space
-musgrave_colorramp.color_ramp.elements[1].color = (0.2, 0.1, 0.4, 1.0)    # Purple nebula
-musgrave_colorramp.color_ramp.elements[0].position = 0.4
-musgrave_colorramp.color_ramp.elements[1].position = 0.8
-
-# Add cosmic highlights
-musgrave_colorramp.color_ramp.elements.new(0.6)
-musgrave_colorramp.color_ramp.elements[2].color = (0.1, 0.3, 0.6, 1.0)   # Cosmic blue
-musgrave_colorramp.color_ramp.elements[2].position = 0.6
-
-# ENHANCED: Configure space dust colors with multiple layers
-dust_colorramp1.color_ramp.elements[0].color = (0.01, 0.01, 0.03, 1.0)   # Dark dust
-dust_colorramp1.color_ramp.elements[1].color = (0.05, 0.02, 0.08, 1.0)   # Light dust
-dust_colorramp1.color_ramp.elements[0].position = 0.7
-dust_colorramp1.color_ramp.elements[1].position = 1.0
-
-dust_colorramp2.color_ramp.elements[0].color = (0.005, 0.005, 0.015, 1.0)  # Very dark dust
-dust_colorramp2.color_ramp.elements[1].color = (0.03, 0.01, 0.05, 1.0)    # Dim dust
-dust_colorramp2.color_ramp.elements[0].position = 0.8
-dust_colorramp2.color_ramp.elements[1].position = 1.0
-
-# ENHANCED: Configure star field with multiple brightness levels
-star_colorramp1.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)      # Black space
-star_colorramp1.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)      # Bright white stars
-star_colorramp1.color_ramp.elements[0].position = 0.98  # Most space is black
-star_colorramp1.color_ramp.elements[1].position = 1.0
-
-# Add colored bright stars
-star_colorramp1.color_ramp.elements.new(0.99)
-star_colorramp1.color_ramp.elements[2].color = (0.8, 0.9, 1.0, 1.0)      # Blue bright stars
-star_colorramp1.color_ramp.elements[2].position = 0.99
-
-star_colorramp2.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 1.0)      # Black space
-star_colorramp2.color_ramp.elements[1].color = (0.6, 0.6, 0.6, 1.0)      # Dim stars
-star_colorramp2.color_ramp.elements[0].position = 0.95  # Most space is black
-star_colorramp2.color_ramp.elements[1].position = 1.0
-
-# Add colored dim stars
-star_colorramp2.color_ramp.elements.new(0.97)
-star_colorramp2.color_ramp.elements[2].color = (0.5, 0.6, 0.8, 1.0)      # Blue dim stars
-star_colorramp2.color_ramp.elements[2].position = 0.97
-
-# ENHANCED: Create sophisticated mixing system for multi-layer background
-# Mix deep nebula layers
-deep_nebula_mix = world_nodes.new(type='ShaderNodeMixRGB')
-deep_nebula_mix.location = (-600, 100)
-deep_nebula_mix.blend_type = 'ADD'
-deep_nebula_mix.name = "DeepNebulaMix"
-
-# Mix mid-layer nebula
-mid_nebula_mix = world_nodes.new(type='ShaderNodeMixRGB')
-mid_nebula_mix.location = (-600, 0)
-mid_nebula_mix.blend_type = 'ADD'
-mid_nebula_mix.name = "MidNebulaMix"
-
-# Mix foreground nebula
-foreground_nebula_mix = world_nodes.new(type='ShaderNodeMixRGB')
-foreground_nebula_mix.location = (-600, -100)
-foreground_nebula_mix.blend_type = 'ADD'
-foreground_nebula_mix.name = "ForegroundNebulaMix"
-
-# Mix dust layers
-dust_mix = world_nodes.new(type='ShaderNodeMixRGB')
-dust_mix.location = (-600, -400)
-dust_mix.blend_type = 'ADD'
-dust_mix.name = "DustMix"
-
-# Mix star layers
-star_mix = world_nodes.new(type='ShaderNodeMixRGB')
-star_mix.location = (-600, -600)
-star_mix.blend_type = 'ADD'
-star_mix.name = "StarMix"
-
-# Final nebula combination
-final_nebula_mix = world_nodes.new(type='ShaderNodeMixRGB')
-final_nebula_mix.location = (-300, 0)
-final_nebula_mix.blend_type = 'ADD'
-final_nebula_mix.name = "FinalNebulaMix"
-
-# Final background combination
-final_background_mix = world_nodes.new(type='ShaderNodeMixRGB')
-final_background_mix.location = (200, 0)
-final_background_mix.blend_type = 'ADD'
-final_background_mix.name = "FinalBackgroundMix"
-
-# ENHANCED: Connect textures to color ramps
-world_links.new(nebula_noise1.outputs['Fac'], nebula_colorramp1.inputs['Fac'])
-world_links.new(nebula_noise2.outputs['Fac'], nebula_colorramp2.inputs['Fac'])
-world_links.new(nebula_noise3.outputs['Fac'], nebula_colorramp3.inputs['Fac'])
-world_links.new(nebula_musgrave.outputs['Fac'], musgrave_colorramp.inputs['Fac'])
-world_links.new(dust_noise1.outputs['Fac'], dust_colorramp1.inputs['Fac'])
-world_links.new(dust_noise2.outputs['Fac'], dust_colorramp2.inputs['Fac'])
-world_links.new(star_voronoi1.outputs['Distance'], star_colorramp1.inputs['Fac'])
-world_links.new(star_voronoi2.outputs['Distance'], star_colorramp2.inputs['Fac'])
-
-# ENHANCED: Mix nebula layers with depth-based blending
-world_links.new(nebula_colorramp1.outputs['Color'], deep_nebula_mix.inputs[1])
-world_links.new(musgrave_colorramp.outputs['Color'], deep_nebula_mix.inputs[2])
-
-world_links.new(nebula_colorramp2.outputs['Color'], mid_nebula_mix.inputs[1])
-world_links.new(nebula_colorramp3.outputs['Color'], mid_nebula_mix.inputs[2])
-
-world_links.new(nebula_colorramp3.outputs['Color'], foreground_nebula_mix.inputs[1])
-world_links.new(musgrave_colorramp.outputs['Color'], foreground_nebula_mix.inputs[2])
-
-# Mix dust layers
-world_links.new(dust_colorramp1.outputs['Color'], dust_mix.inputs[1])
-world_links.new(dust_colorramp2.outputs['Color'], dust_mix.inputs[2])
-
-# Mix star layers
-world_links.new(star_colorramp1.outputs['Color'], star_mix.inputs[1])
-world_links.new(star_colorramp2.outputs['Color'], star_mix.inputs[2])
-
-# Combine all nebula layers
-world_links.new(deep_nebula_mix.outputs['Color'], final_nebula_mix.inputs[1])
-world_links.new(mid_nebula_mix.outputs['Color'], final_nebula_mix.inputs[2])
-
-# Final background combination
-world_links.new(final_nebula_mix.outputs['Color'], final_background_mix.inputs[1])
-world_links.new(dust_mix.outputs['Color'], final_background_mix.inputs[2])
-
-# Add stars on top
-world_links.new(final_background_mix.outputs['Color'], background_node.inputs['Color'])
-world_links.new(star_mix.outputs['Color'], background_node.inputs['Color'])
-
-# Connect to world output
+# Connect simple background
 world_links.new(background_node.outputs['Background'], world_output.inputs['Surface'])
 
-# Set world strength for proper space atmosphere
-background_node.inputs['Strength'].default_value = 1.2  # Slightly enhanced for better visibility
+# Set simple dark background
+background_node.inputs['Color'].default_value = (0.05, 0.05, 0.1, 1.0)  # Dark blue-gray
+background_node.inputs['Strength'].default_value = 1.0
 
-# ENHANCED: Add sophisticated animation to multi-layer space background
-print("🌌 Adding ENHANCED multi-layer space background animation...")
+# Set world properties
+world.color = (0.05, 0.05, 0.1)  # Dark blue-gray base
 
-# Create enhanced space animation action
-space_action = bpy.data.actions.new(name="EnhancedSpaceBackgroundAnimation")
-world.animation_data_create()
-world.animation_data.action = space_action
-
-# ENHANCED: Animate all mapping nodes with different movement patterns
-# Deep nebula mapping (slowest, cosmic time scale)
-nebula1_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping1"].inputs[2].default_value', index=0)
-nebula1_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping1"].inputs[2].default_value', index=1)
-nebula1_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping1"].inputs[2].default_value', index=2)
-
-# Mid-layer nebula mapping (medium speed)
-nebula2_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping2"].inputs[2].default_value', index=0)
-nebula2_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping2"].inputs[2].default_value', index=1)
-nebula2_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping2"].inputs[2].default_value', index=2)
-
-# Foreground nebula mapping (faster movement)
-nebula3_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping3"].inputs[2].default_value', index=0)
-nebula3_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping3"].inputs[2].default_value', index=1)
-nebula3_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["NebulaMapping3"].inputs[2].default_value', index=2)
-
-# Dust mapping (particle-like movement)
-dust_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["DustMapping"].inputs[2].default_value', index=0)
-dust_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["DustMapping"].inputs[2].default_value', index=1)
-dust_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["DustMapping"].inputs[2].default_value', index=2)
-
-# Star mapping (very slow, stellar movement)
-star_rotation_x = space_action.fcurves.new(data_path='node_tree.nodes["StarMapping"].inputs[2].default_value', index=0)
-star_rotation_y = space_action.fcurves.new(data_path='node_tree.nodes["StarMapping"].inputs[2].default_value', index=1)
-star_rotation_z = space_action.fcurves.new(data_path='node_tree.nodes["StarMapping"].inputs[2].default_value', index=2)
-
-# ENHANCED: Create complex movement keyframes with different speeds and patterns
-frame_step = max(1, {self.total_frames} // 30)  # More keyframes for smoother movement
-
-for i in range(0, {self.total_frames}, frame_step):
-    frame = min(i, {self.total_frames} - 1)
-    progress = frame / {self.total_frames}
-    
-    # Deep nebula: Much slower cosmic movement (reduced by ~70%)
-    nebula1_rot_x = progress * 0.015  # Much slower X rotation
-    nebula1_rot_y = progress * 0.009  # Much slower Y rotation
-    nebula1_rot_z = progress * 0.024  # Much slower Z rotation
-    
-    # Mid-layer nebula: Much slower cosmic movement (reduced by ~70%)
-    nebula2_rot_x = progress * 0.03   # Much slower X rotation
-    nebula2_rot_y = progress * 0.024  # Much slower Y rotation
-    nebula2_rot_z = progress * 0.036  # Much slower Z rotation
-    
-    # Foreground nebula: Much slower movement (reduced by ~70%)
-    nebula3_rot_x = progress * 0.045  # Much slower X rotation
-    nebula3_rot_y = progress * 0.036  # Much slower Y rotation
-    nebula3_rot_z = progress * 0.054  # Much slower Z rotation
-    
-    # Dust: Much slower particle-like movement with reduced turbulence (reduced by ~70%)
-    dust_rot_x = progress * 0.06 + math.sin(progress * math.pi * 4) * 0.015  # Much slower turbulent X
-    dust_rot_y = progress * 0.054 + math.cos(progress * math.pi * 3) * 0.012  # Much slower turbulent Y
-    dust_rot_z = progress * 0.048 + math.sin(progress * math.pi * 5) * 0.009  # Much slower turbulent Z
-    
-    # Stars: Much slower stellar movement (reduced by ~70%)
-    star_rot_x = progress * 0.006  # Much slower X rotation
-    star_rot_y = progress * 0.009  # Much slower Y rotation
-    star_rot_z = progress * 0.012  # Much slower Z rotation
-    
-    # Insert keyframes for all mapping nodes
-    nebula1_rotation_x.keyframe_points.insert(frame, nebula1_rot_x)
-    nebula1_rotation_y.keyframe_points.insert(frame, nebula1_rot_y)
-    nebula1_rotation_z.keyframe_points.insert(frame, nebula1_rot_z)
-    
-    nebula2_rotation_x.keyframe_points.insert(frame, nebula2_rot_x)
-    nebula2_rotation_y.keyframe_points.insert(frame, nebula2_rot_y)
-    nebula2_rotation_z.keyframe_points.insert(frame, nebula2_rot_z)
-    
-    nebula3_rotation_x.keyframe_points.insert(frame, nebula3_rot_x)
-    nebula3_rotation_y.keyframe_points.insert(frame, nebula3_rot_y)
-    nebula3_rotation_z.keyframe_points.insert(frame, nebula3_rot_z)
-    
-    dust_rotation_x.keyframe_points.insert(frame, dust_rot_x)
-    dust_rotation_y.keyframe_points.insert(frame, dust_rot_y)
-    dust_rotation_z.keyframe_points.insert(frame, dust_rot_z)
-    
-    star_rotation_x.keyframe_points.insert(frame, star_rot_x)
-    star_rotation_y.keyframe_points.insert(frame, star_rot_y)
-    star_rotation_z.keyframe_points.insert(frame, star_rot_z)
-
-# Apply smooth interpolation to space animation
-for fcurve in space_action.fcurves:
-    for keyframe in fcurve.keyframe_points:
-        keyframe.interpolation = 'BEZIER'
-        keyframe.handle_left_type = 'AUTO'
-        keyframe.handle_right_type = 'AUTO'
-
-print("✅ ENHANCED multi-layer cosmic space environment created with sophisticated nebula layers, dynamic star fields, and complex atmospheric effects")
-
-# OPTIMIZED STARFIELD CREATION - EFFICIENT AND IMMERSIVE
-print("⭐ Creating OPTIMIZED immersive starfield...")
-
-# Create multiple star objects for better visibility with optimized distribution
-star_positions = []
-# Create stars in a spherical distribution around the scene
-for i in range(4):  # Absolute minimum - just 4 stars around the cube
-    # Random positions in a large sphere around the scene
-    # Use spherical distribution for more natural star field
-    phi = random.uniform(0, 2 * math.pi)  # Azimuthal angle
-    costheta = random.uniform(-1, 1)      # Cosine of polar angle
-    theta = math.acos(costheta)           # Polar angle
-    r = random.uniform(15, 25)            # Closer distance from center (reduced from 40-80)
-    
-    x = r * math.sin(theta) * math.cos(phi)
-    y = r * math.sin(theta) * math.sin(phi)
-    z = r * math.cos(theta)
-    star_positions.append((x, y, z))
-
-# Create optimized star material with color variation
-star_material = bpy.data.materials.new(name="OptimizedStarMaterial")
-star_material.use_nodes = True
-star_nodes = star_material.node_tree.nodes
-star_links = star_material.node_tree.links
-
-# Clear default nodes
-star_nodes.clear()
-
-# Add Emission shader for bright glowing stars
-star_emission = star_nodes.new(type='ShaderNodeEmission')
-star_emission.location = (0, 0)
-star_emission.inputs['Color'].default_value = (1.0, 1.0, 1.0, 1.0)
-star_emission.inputs['Strength'].default_value = 0.8  # Absolute minimum brightness
-
-# Add Output
-star_output = star_nodes.new(type='ShaderNodeOutputMaterial')
-star_output.location = (300, 0)
-
-# Connect star material
-star_links.new(star_emission.outputs['Emission'], star_output.inputs['Surface'])
-
-# Create star objects with optimized properties
-for i, pos in enumerate(star_positions):
-    bpy.ops.mesh.primitive_uv_sphere_add(radius=0.05, location=pos)  # Smaller radius
-    star = bpy.context.active_object
-    star.name = f"Star_{{i:03d}}"
-    
-    # Create individual star material for color variation
-    individual_star_material = bpy.data.materials.new(name=f"StarMaterial_{{i:03d}}")
-    individual_star_material.use_nodes = True
-    star_nodes = individual_star_material.node_tree.nodes
-    star_links = individual_star_material.node_tree.links
-    
-    # Clear default nodes
-    star_nodes.clear()
-    
-    # Add Emission shader for bright glowing stars
-    star_emission = star_nodes.new(type='ShaderNodeEmission')
-    star_emission.location = (0, 0)
-    
-    # Add Output
-    star_output = star_nodes.new(type='ShaderNodeOutputMaterial')
-    star_output.location = (300, 0)
-    
-    # Connect star material
-    star_links.new(star_emission.outputs['Emission'], star_output.inputs['Surface'])
-    
-    # Add subtle random color variation to stars
-    star_color_variation = random.uniform(0.8, 1.2)
-    star_emission.inputs['Color'].default_value = (
-        star_color_variation,
-        star_color_variation * random.uniform(0.9, 1.1),
-        star_color_variation * random.uniform(0.8, 1.2),
-        1.0
-    )
-    star_emission.inputs['Strength'].default_value = random.uniform(0.5, 1.0)  # Absolute minimum brightness range
-    
-    # Assign individual star material
-    star.data.materials.append(individual_star_material)
-    
-    # Make stars very small but bright
-    star.scale = (0.05, 0.05, 0.05)  # Smaller scale for better performance
-
-print("✅ OPTIMIZED starfield with 150 stars in spherical distribution created")
-
-# AUDIO-REACTIVE STAR ANIMATIONS
-print("⭐ Adding audio-reactive star animations...")
-
-# Create audio-reactive animations for stars
-star_audio_action = bpy.data.actions.new(name="StarAudioReactiveAnimation")
-
-# Animate absolute minimum stars - just 2 stars for subtle effect
-stars_to_animate = [f"Star_{{i:03d}}" for i in range(0, 4, 2)]  # 2 stars total (absolute minimum)
-
-for star_name in stars_to_animate:
-    if star_name in bpy.data.objects:
-        star_obj = bpy.data.objects[star_name]
-        star_obj.animation_data_create()
-        star_obj.animation_data.action = star_audio_action
-        
-        # Get star material
-        if star_obj.data.materials:
-            star_material = star_obj.data.materials[0]
-            if star_material.use_nodes:
-                # Find emission node
-                emission_node = None
-                for node in star_material.node_tree.nodes:
-                    if node.type == 'EMISSION':
-                        emission_node = node
-                        break
-                
-                if emission_node:
-                    # Create audio-reactive brightness animation
-                    brightness_curve = star_audio_action.fcurves.new(
-                        data_path=f'materials["{{star_material.name}}"].node_tree.nodes["Emission"].inputs[1].default_value',
-                        index=0
-                    )
-                    
-                    # Create keyframes based on audio
-                    frame_step = max(1, {self.total_frames} // {self.config['keyframe_density']})
-                    
-                    for i in range(0, {self.total_frames}, frame_step):
-                        frame = min(i, {self.total_frames} - 1)
-                        
-                        # Get audio features for this frame
-                        hihat_energy = audio_features.get('hihat_energy', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('hihat_energy', [0.0] * {self.total_frames})) - 1)] if audio_features.get('hihat_energy') else 0.0
-                        beat_strength = audio_features.get('beat_strength', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('beat_strength', [0.0] * {self.total_frames})) - 1)] if audio_features.get('beat_strength') else 0.0
-                        
-                        # Calculate star brightness based on audio - absolute minimum for ultra-subtle stars
-                        base_brightness = random.uniform(0.5, 1.0)  # Absolute minimum base brightness
-                        audio_brightness = hihat_energy * 0.2  # Minimal audio reactivity
-                        beat_brightness = beat_strength * 1.5  # Beats make stars pulse
-                        
-                        total_brightness = base_brightness + audio_brightness + beat_brightness
-                        
-                        # Insert keyframe
-                        brightness_curve.keyframe_points.insert(frame, total_brightness)
-
-# Apply smooth interpolation to star animations
-for fcurve in star_audio_action.fcurves:
-    for keyframe in fcurve.keyframe_points:
-        keyframe.interpolation = 'BEZIER'
-        keyframe.handle_left_type = 'AUTO'
-        keyframe.handle_right_type = 'AUTO'
-
-print("✅ Audio-reactive star animations added")
-
-# Add enhanced nebula/space dust volumetric effects
-print("🌫️ Creating enhanced nebula effects...")
-
-# Create multiple nebula volumes for better effect
-nebula_positions = [
-    (10, 5, 3), (-8, -3, 2), (5, -10, 4), (-12, 8, 1)
-]
-
-# Configure nebula properties with different colors
-nebula_colors = [
-    (0.4, 0.1, 0.6, 1.0),  # Purple nebula
-    (0.2, 0.3, 0.8, 1.0),  # Blue nebula
-    (0.6, 0.2, 0.8, 1.0),  # Magenta nebula
-    (0.1, 0.4, 0.7, 1.0)   # Cyan nebula
-]
-
-for i, pos in enumerate(nebula_positions):
-    bpy.ops.object.volume_add(location=pos)
-    nebula_volume = bpy.context.active_object
-    nebula_volume.name = f"NebulaVolume_{{i:02d}}"
-    nebula_volume.scale = (15, 15, 15)  # Large volume for space
-    
-    # Create nebula volume material
-    nebula_material = bpy.data.materials.new(name=f"NebulaMaterial_{{i:02d}}")
-    nebula_material.use_nodes = True
-    nebula_nodes = nebula_material.node_tree.nodes
-    nebula_links = nebula_material.node_tree.links
-    
-    # Clear default nodes
-    nebula_nodes.clear()
-    
-    # Add Volume Principled
-    volume_principled = nebula_nodes.new(type='ShaderNodeVolumePrincipled')
-    volume_principled.location = (0, 0)
-    
-    # Add Output
-    nebula_output = nebula_nodes.new(type='ShaderNodeOutputMaterial')
-    nebula_output.location = (300, 0)
-    
-    volume_principled.inputs['Color'].default_value = nebula_colors[i]
-    volume_principled.inputs['Density'].default_value = 0.2  # Higher density for visibility
-    volume_principled.inputs['Anisotropy'].default_value = 0.3  # More scattering
-    
-    # Connect nebula material
-    nebula_links.new(volume_principled.outputs['Volume'], nebula_output.inputs['Volume'])
-    
-    # Assign nebula material
-    nebula_volume.data.materials.append(nebula_material)
-
-print("✅ Enhanced nebula volumetric effects created")
-
-# AUDIO-REACTIVE NEBULA ANIMATIONS
-print("🌫️ Adding audio-reactive nebula animations...")
-
-# Create audio-reactive animations for nebula volumes
-nebula_audio_action = bpy.data.actions.new(name="NebulaAudioReactiveAnimation")
-
-# Animate nebula density and color based on audio
-for i in range(4):  # We have 4 nebula volumes
-    nebula_name = f"NebulaVolume_{{i:02d}}"
-    if nebula_name in bpy.data.objects:
-        nebula_obj = bpy.data.objects[nebula_name]
-        nebula_obj.animation_data_create()
-        nebula_obj.animation_data.action = nebula_audio_action
-        
-        # Get nebula material
-        if nebula_obj.data.materials:
-            nebula_material = nebula_obj.data.materials[0]
-            if nebula_material.use_nodes:
-                # Find volume principled node
-                volume_node = None
-                for node in nebula_material.node_tree.nodes:
-                    if node.type == 'VOLUME_PRINCIPLED':
-                        volume_node = node
-                        break
-                
-                if volume_node:
-                    # Create audio-reactive density animation
-                    density_curve = nebula_audio_action.fcurves.new(
-                        data_path=f'materials["{{nebula_material.name}}"].node_tree.nodes["Volume Principled"].inputs[1].default_value',
-                        index=0
-                    )
-                    
-                    # Create keyframes based on audio
-                    frame_step = max(1, {self.total_frames} // {self.config['keyframe_density']})
-                    
-                    for j in range(0, {self.total_frames}, frame_step):
-                        frame = min(j, {self.total_frames} - 1)
-                        
-                        # Get audio features for this frame
-                        bass_energy = audio_features.get('bass_energy', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('bass_energy', [0.0] * {self.total_frames})) - 1)] if audio_features.get('bass_energy') else 0.0
-                        beat_strength = audio_features.get('beat_strength', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('beat_strength', [0.0] * {self.total_frames})) - 1)] if audio_features.get('beat_strength') else 0.0
-                        
-                        # Calculate nebula density based on audio
-                        base_density = 0.2  # Base density
-                        audio_density = bass_energy * 0.3  # Bass affects nebula
-                        beat_density = beat_strength * 0.2  # Beats make nebula pulse
-                        
-                        total_density = base_density + audio_density + beat_density
-                        
-                        # Insert keyframe
-                        density_curve.keyframe_points.insert(frame, total_density)
-
-# Apply smooth interpolation to nebula animations
-for fcurve in nebula_audio_action.fcurves:
-    for keyframe in fcurve.keyframe_points:
-        keyframe.interpolation = 'BEZIER'
-        keyframe.handle_left_type = 'AUTO'
-        keyframe.handle_right_type = 'AUTO'
-
-print("✅ Audio-reactive nebula animations added")
-
-# AUDIO-REACTIVE SPACE BACKGROUND ELEMENTS
-print("🎵 Adding audio-reactive space background elements...")
-
-# Create audio-reactive animations for space background
-space_audio_action = bpy.data.actions.new(name="SpaceAudioReactiveAnimation")
-world.animation_data_create()
-world.animation_data.action = space_audio_action
-
-# Audio-reactive nebula color intensity
-try:
-    nebula_intensity_curve = space_audio_action.fcurves.new(data_path='node_tree.nodes["Background"].inputs[1].default_value', index=0)
-except:
-    # F-Curve already exists, find it
-    nebula_intensity_curve = None
-    for fcurve in space_audio_action.fcurves:
-        if fcurve.data_path == 'node_tree.nodes["Background"].inputs[1].default_value' and fcurve.array_index == 0:
-            nebula_intensity_curve = fcurve
-            break
-
-# Audio-reactive star brightness (affects world strength) - use the same curve as nebula
-world_strength_curve = nebula_intensity_curve
-
-# Create audio-reactive keyframes based on audio features
-frame_step = max(1, {self.total_frames} // {self.config['keyframe_density']})
-
-for i in range(0, {self.total_frames}, frame_step):
-    frame = min(i, {self.total_frames} - 1)
-    
-    # Get audio features for this frame
-    rms_energy = audio_features.get('rms_energy', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('rms_energy', [0.0] * {self.total_frames})) - 1)] if audio_features.get('rms_energy') else 0.0
-    beat_strength = audio_features.get('beat_strength', [0.0] * {self.total_frames})[min(frame, len(audio_features.get('beat_strength', [0.0] * {self.total_frames})) - 1)] if audio_features.get('beat_strength') else 0.0
-    
-    # Calculate space background reactivity
-    base_intensity = 1.2  # Base world strength
-    audio_intensity = rms_energy * 0.5  # Scale down for subtlety
-    beat_boost = beat_strength * 0.3  # Beat-responsive boost
-    
-    # Combine audio features for space background intensity
-    total_intensity = base_intensity + audio_intensity + beat_boost
-    
-    # Insert keyframes for audio-reactive space background
-    nebula_intensity_curve.keyframe_points.insert(frame, total_intensity)
-    world_strength_curve.keyframe_points.insert(frame, total_intensity)
-
-# Apply smooth interpolation to audio-reactive space animation
-for fcurve in space_audio_action.fcurves:
-    for keyframe in fcurve.keyframe_points:
-        keyframe.interpolation = 'BEZIER'
-        keyframe.handle_left_type = 'AUTO'
-        keyframe.handle_right_type = 'AUTO'
-
-print("✅ Audio-reactive space background elements added")
+print("✅ Clean world background setup complete")
 
 # PROFESSIONAL LIGHTING SETUP: Three-point lighting with area lights
 # Main key light (warm white)
@@ -2577,14 +1875,14 @@ cube.data.materials.append(material)
 
 print("✅ ULTRA-SMOOTH enhanced material created with MCP integration support")
 
-print("🌌 ENHANCED AUDIO-REACTIVE MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
+print("🌌 CLEAN AUDIO-REACTIVE MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
 print(f"📊 Total frames: {self.total_frames}")
 print(f"🎬 FPS: {self.fps}")
 print(f"⏱️ Duration: {self.duration:.2f}s")
 print(f"🔑 Shape keys: {{len(shape_key_names)}}")
 print(f"🎯 Quality: {self.quality_level.upper()}")
 print(f"🔧 Subdivision: {self.config['subdivision']}")
-print("🌌 Environment: Dark space background with subtle ambient lighting")
+print("🌌 Environment: Clean dark background without stars/nebula")
 print("🎨 Enhanced Material: Sophisticated node setup with noise textures, fresnel effects, and emission")
 print("💡 Professional Lighting: Three-point area lighting system")
 print("📹 Enhanced Camera: Slow orbital movement with model tracking and dynamic framing")
@@ -2594,73 +1892,19 @@ print("✨ Optimizations: Beveled edges, subdivision surface, smooth shading, pr
 print("🎨 Color System: Frequency-specific colors, beat-responsive changes, spectral influence, enhanced mixing")
 print("📹 Camera System: Dynamic orbital movement, model tracking, smooth interpolation, padding for full view")
 
-# SPACE BACKGROUND PERFORMANCE OPTIMIZATIONS
-print("⚡ Applying space background performance optimizations...")
-
-# Optimize star rendering for better performance
-for i in range(150):
-    star_name = f"Star_{{i:03d}}"
-    if star_name in bpy.data.objects:
-        star_obj = bpy.data.objects[star_name]
-        
-        # Enable instancing for stars (if supported)
-        star_obj.instance_type = 'NONE'  # Disable instancing for individual control
-        
-        # Optimize star visibility settings
-        star_obj.hide_render = False
-        star_obj.hide_viewport = False
-        
-        # Set optimal display settings
-        star_obj.display_type = 'SOLID'
-        
-        # Optimize star material for performance
-        if star_obj.data.materials:
-            star_material = star_obj.data.materials[0]
-            if star_material.use_nodes:
-                # Ensure emission shader is optimized
-                for node in star_material.node_tree.nodes:
-                    if node.type == 'EMISSION':
-                        # Set optimal emission strength range
-                        if node.inputs['Strength'].default_value > 15.0:
-                            node.inputs['Strength'].default_value = 15.0
-
-# Optimize nebula volumes for better performance
-for i in range(4):
-    nebula_name = f"NebulaVolume_{{i:02d}}"
-    if nebula_name in bpy.data.objects:
-        nebula_obj = bpy.data.objects[nebula_name]
-        
-        # Optimize volume rendering settings
-        nebula_obj.hide_render = False
-        nebula_obj.hide_viewport = False
-        
-        # Set optimal display settings for volumes
-        nebula_obj.display_type = 'WIRE'  # Wireframe in viewport for performance
-        
-        # Optimize volume material
-        if nebula_obj.data.materials:
-            nebula_material = nebula_obj.data.materials[0]
-            if nebula_material.use_nodes:
-                # Ensure volume principled is optimized
-                for node in nebula_material.node_tree.nodes:
-                    if node.type == 'VOLUME_PRINCIPLED':
-                        # Set optimal density range
-                        if node.inputs['Density'].default_value > 1.0:
-                            node.inputs['Density'].default_value = 1.0
+# SIMPLE BACKGROUND PERFORMANCE OPTIMIZATIONS
+print("⚡ Applying simple background performance optimizations...")
 
 # Optimize world shader for better performance
 world = bpy.context.scene.world
 if world.use_nodes:
-    # Reduce noise texture complexity for better performance
+    # Ensure simple background setup
     for node in world.node_tree.nodes:
-        if node.type == 'TEX_NOISE':
-            # Optimize noise texture settings
-            if node.inputs['Detail'].default_value > 10.0:
-                node.inputs['Detail'].default_value = 10.0
-            if node.inputs['Scale'].default_value < 0.01:
-                node.inputs['Scale'].default_value = 0.01
+        if node.type == 'BACKGROUND':
+            # Set optimal background settings
+            node.inputs['Strength'].default_value = 1.0
 
-print("✅ Space background performance optimizations applied")
+print("✅ Simple background performance optimizations applied")
 
 # PROFESSIONAL RENDER SETTINGS: Cinematic quality output
 {self._generate_professional_render_settings(render_settings)}
@@ -2908,10 +2152,12 @@ except Exception as e:
         script_path = Path(script_path)
         script_path.parent.mkdir(parents=True, exist_ok=True)
         
-        # Generate the scene
+        # Generate the scene with blend file path
         self.create_mutating_cube_scene(str(script_path), render_settings, blend_path)
         
         print(f"🎬 OPTIMIZED mutating cube animation script saved: {script_path}")
+        if blend_path:
+            print(f"💾 Blend file will be saved to: {blend_path}")
         return str(script_path)
 
 
