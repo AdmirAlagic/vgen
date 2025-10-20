@@ -334,7 +334,7 @@ class EnhancedAudioAnalyzer:
         
         # Enhanced shape key mappings with more sophisticated audio analysis
         shape_key_mappings = {
-            'SimpleDeform': {
+            'GoldenSpiral': {
                 'primary': 'kick_energy',
                 'secondary': 'sub_bass_energy',
                 'tertiary': 'bass_energy',
@@ -343,7 +343,7 @@ class EnhancedAudioAnalyzer:
                 'sensitivity': 1.6,
                 'response_type': 'punchy'
             },
-            'SimpleDeform.001': {
+            'FibonacciWave': {
                 'primary': 'snare_energy',
                 'secondary': 'mid_energy',
                 'tertiary': 'spectral_contrast',
@@ -352,7 +352,7 @@ class EnhancedAudioAnalyzer:
                 'sensitivity': 1.3,
                 'response_type': 'rhythmic'
             },
-            'Wave': {
+            'DivineProportion': {
                 'primary': 'vocal_energy',
                 'secondary': 'high_mid_energy',
                 'tertiary': 'spectral_centroid',
@@ -361,7 +361,7 @@ class EnhancedAudioAnalyzer:
                 'sensitivity': 1.1,
                 'response_type': 'flowing'
             },
-            'Displace': {
+            'GoldenBreath': {
                 'primary': 'bass_energy',
                 'secondary': 'mid_bass_energy',
                 'tertiary': 'kick_energy',
@@ -370,7 +370,7 @@ class EnhancedAudioAnalyzer:
                 'sensitivity': 1.4,
                 'response_type': 'pulsing'
             },
-            'Displace.001': {
+            'HarmonicPulse': {
                 'primary': 'hihat_energy',
                 'secondary': 'presence_energy',
                 'tertiary': 'air_energy',
@@ -379,7 +379,7 @@ class EnhancedAudioAnalyzer:
                 'sensitivity': 0.9,
                 'response_type': 'sparkly'
             },
-            'Displace.002': {
+            'SacredGeometry': {
                 'primary': 'snare_energy',
                 'secondary': 'low_mid_energy',
                 'tertiary': 'spectral_contrast',
@@ -388,7 +388,7 @@ class EnhancedAudioAnalyzer:
                 'sensitivity': 1.2,
                 'response_type': 'crisp'
             },
-            'Displace.003': {
+            'CosmicDance': {
                 'primary': 'rms_energy',
                 'secondary': 'mid_energy',
                 'tertiary': 'spectral_flux',
@@ -397,7 +397,7 @@ class EnhancedAudioAnalyzer:
                 'sensitivity': 1.5,
                 'response_type': 'dynamic'
             },
-            'Shrinkwrap': {
+            'EtherealFlow': {
                 'primary': 'vocal_energy',
                 'secondary': 'high_mid_energy',
                 'tertiary': 'spectral_centroid',
@@ -406,7 +406,7 @@ class EnhancedAudioAnalyzer:
                 'sensitivity': 1.0,
                 'response_type': 'organic'
             },
-            'Shrinkwrap.001': {
+            'CelestialRhythm': {
                 'primary': 'bass_energy',
                 'secondary': 'mid_bass_energy',
                 'tertiary': 'kick_energy',
@@ -415,7 +415,7 @@ class EnhancedAudioAnalyzer:
                 'sensitivity': 1.3,
                 'response_type': 'deep'
             },
-            'Shrinkwrap.002': {
+            'UniversalHarmony': {
                 'primary': 'hihat_energy',
                 'secondary': 'brilliance_energy',
                 'tertiary': 'air_energy',

@@ -48,44 +48,101 @@ def analyze_audio(audio_path: str, fps: int = 30) -> Dict:
     
     return features
 
-def create_enhanced_blender_script(features: Dict, output_path: str) -> str:
-    """Create OPTIMIZED Blender script with enhanced audio responsiveness and smooth animations."""
-    print("🚀 Creating OPTIMIZED mutating cube Blender script with enhanced responsiveness")
+def create_enhanced_blender_script(features: Dict, output_path: str, quality_mode: str = 'high', style: str = 'cinematic') -> str:
+    """Create Blender script with specified style (cinematic or polyfjord)."""
+    
+    if style == 'polyfjord':
+        return create_polyfjord_style_script(features, output_path, quality_mode)
+    else:
+        return create_cinematic_style_script(features, output_path, quality_mode)
+
+def create_polyfjord_style_script(features: Dict, output_path: str, quality_mode: str = 'high') -> str:
+    """Create POLYFJORD-STYLE Blender script with smooth shape morphing and professional quality."""
+    print("🎬 Creating POLYFJORD-STYLE professional audio visualizer script")
     
     # Create temp directory if it doesn't exist
     temp_dir = Path(__file__).parent / "output" / "temp"
     temp_dir.mkdir(parents=True, exist_ok=True)
     
-    # Import the optimized mutating cube animator
+    # Import the Polyfjord-style visualizer
+    sys.path.insert(0, str(Path(__file__).parent / "output"))
+    try:
+        from simple_polyfjord_visualizer import PolyfjordStyleVisualizer
+    except ImportError:
+        print("❌ Polyfjord-style visualizer not found. Please check output/simple_polyfjord_visualizer.py")
+        sys.exit(1)
+    
+    # Map quality modes to Polyfjord quality levels
+    quality_mapping = {
+        'ultra_fast': 'preview',   # Fastest quality
+        'fast': 'high',           # High quality
+        'balanced': 'cinematic',  # Cinematic quality
+        'high': 'cinematic',      # Cinematic quality
+        'ultra': 'broadcast'      # Broadcast quality
+    }
+    
+    quality_level = quality_mapping.get(quality_mode, 'cinematic')
+    visualizer = PolyfjordStyleVisualizer(features, quality_level)
+    
+    # Generate Polyfjord-style script
+    script_path = temp_dir / "polyfjord_style_scene.py"
+    blend_path = temp_dir / "scene.blend"
+    
+    # Create the scene script
+    saved_script_path = visualizer.create_polyfjord_style_scene(str(script_path), str(blend_path))
+    
+    print(f"✅ POLYFJORD-STYLE professional audio visualizer script created: {saved_script_path}")
+    print(f"🎬 Blend file will be saved to: {blend_path}")
+    print("🚀 Features: SMOOTH Shape Morphing | PROFESSIONAL Colors | NO Position Changes")
+    print("🎵 Polyfjord Features: Frequency-specific responses, Professional materials, Commercial quality")
+    return saved_script_path
+
+def create_cinematic_style_script(features: Dict, output_path: str, quality_mode: str = 'high') -> str:
+    """Create CINEMATIC Blender script with dramatic shape changes and ultra-smooth animations."""
+    print("🎬 Creating CINEMATIC mutating cube Blender script with dramatic improvements")
+    
+    # Create temp directory if it doesn't exist
+    temp_dir = Path(__file__).parent / "output" / "temp"
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Import the original animator with cinematic mode
     sys.path.insert(0, str(Path(__file__).parent))
     try:
         from src.animator import MutatingCubeAnimator
     except ImportError:
         print("❌ Animator not found. Please check src/animator.py")
         sys.exit(1)
+        
+    # Map quality modes to animator quality levels (cinematic mode enabled)
+    quality_mapping = {
+        'ultra_fast': 'fast',      # Fastest cinematic quality
+        'fast': 'balanced',        # Balanced cinematic quality
+        'balanced': 'high',        # High cinematic quality
+        'high': 'ultra',           # Ultra cinematic quality
+        'ultra': 'cinematic'       # Maximum cinematic quality
+    }
     
-    # Use high quality by default for professional output with optimized settings
-    quality_level = 'high'
+    quality_level = quality_mapping.get(quality_mode, 'high')
     animator = MutatingCubeAnimator(features, quality_level)
     
-    # Generate optimized mutating cube script
-    script_path = temp_dir / "optimized_mutating_cube_scene.py"
+    # Generate cinematic mutating cube script
+    script_path = temp_dir / "cinematic_mutating_cube_scene.py"
     blend_path = temp_dir / "scene.blend"
     
-    # Use the save_script method with optimized settings
+    # Use the original animator's save_script method with cinematic mode
     saved_script_path = animator.save_script(str(script_path), None, str(blend_path))
     
-    print(f"✅ OPTIMIZED mutating cube Blender script created: {saved_script_path}")
+    print(f"✅ CINEMATIC mutating cube Blender script created: {saved_script_path}")
     print(f"🎬 Blend file will be saved to: {blend_path}")
-    print("🚀 Features: ENHANCED Audio Responsiveness | ULTRA-SMOOTH Animations | MUSICAL Color Transitions")
-    print("🎵 Optimizations: Multi-stage smoothing, Musical-aware processing, Frequency-specific colors")
+    print("🚀 Features: CINEMATIC Audio Responsiveness | DRAMATIC Shape Changes | ULTRA-SMOOTH Animations")
+    print("🎵 Cinematic Features: Multi-layer deformation, Procedural geometry, Beat-synchronized transitions")
     return saved_script_path
 
 
 def run_blender_script(script_path: str) -> bool:
-    """Run the Blender script."""
+    """Run the Blender script and stream Blender output for diagnostics."""
     print(f"🚀 Running enhanced Blender script: {script_path}")
-    
+
     # Try to find Blender executable
     blender_paths = [
         '/Applications/Blender.app/Contents/MacOS/Blender',  # macOS default - prioritize direct path
@@ -114,20 +171,33 @@ def run_blender_script(script_path: str) -> bool:
     
     try:
         cmd = [blender_cmd, '--background', '--python', script_path]
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
-        
-        if result.returncode == 0:
+        print(f"🔧 Blender command: {' '.join(cmd)}")
+        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, universal_newlines=True)
+
+        print("📈 Blender script output:")
+        output_lines = []
+        while True:
+            line = process.stdout.readline()
+            if line == '' and process.poll() is not None:
+                break
+            if line:
+                line_stripped = line.rstrip()
+                output_lines.append(line_stripped)
+                print(f"🔧 Blender: {line_stripped}")
+
+        return_code = process.wait()
+        if return_code == 0:
             print("✅ Enhanced Blender script executed successfully")
-            print("\n📊 Output:")
-            print(result.stdout)
             return True
         else:
-            print("❌ Enhanced Blender script failed")
-            print(f"Return code: {result.returncode}")
-            print("\n📊 Error output:")
-            print(result.stderr)
+            print(f"❌ Enhanced Blender script failed with code: {return_code}")
+            # Print any remaining buffered output
+            remaining = process.stdout.read()
+            if remaining:
+                for ln in remaining.splitlines():
+                    print(f"🔧 Blender: {ln}")
             return False
-            
+
     except subprocess.TimeoutExpired:
         print("❌ Enhanced Blender script timed out (10 minutes)")
         return False
@@ -803,28 +873,38 @@ def _optimized_ffmpeg_conversion(frame_files: List[Path], output_path: str, sett
 def main():
     """Main function."""
     if len(sys.argv) < 2:
-        print("Usage: python generate_video.py <audio_file> [output_name] [quality_mode]")
-        print("\nThis application uses the OPTIMIZED MUTATING CUBE animation system with:")
-        print("  - ENHANCED audio responsiveness with multi-frequency analysis")
-        print("  - ULTRA-SMOOTH animations with musical-aware smoothing")
-        print("  - MUSICAL color transitions with frequency-specific colors")
-        print("  - RESPONSE-TYPE processing for different musical elements")
-        print("  - MULTI-STAGE smoothing for seamless transitions")
-        print("  - OPTIMIZED rendering with direct MP4 output")
-        print("  - AUDIO integration - original audio included in final video")
+        print("Usage: python generate_video.py <audio_file> [output_name] [quality_mode] [style]")
+        print("\nThis application supports two animation styles:")
+        print("\n🎬 CINEMATIC STYLE (default):")
+        print("  - CINEMATIC audio responsiveness with dramatic shape changes")
+        print("  - ULTRA-SMOOTH animations with continuous flow")
+        print("  - DRAMATIC shape morphing with multi-layer deformation")
+        print("  - PROCEDURAL geometry for complex organic shapes")
+        print("  - BEAT-SYNCHRONIZED transitions for musical elements")
+        print("\n🎨 POLYFJORD STYLE:")
+        print("  - SMOOTH shape morphing (NO position changes)")
+        print("  - PROFESSIONAL color transitions")
+        print("  - FREQUENCY-SPECIFIC responses")
+        print("  - COMMERCIAL-GRADE materials and lighting")
+        print("  - GEOMETRY NODES integration")
         print("\nQuality modes:")
         print("  ultra_fast - 720p, 32 samples, fastest rendering")
         print("  fast       - 720p, 64 samples, quick rendering")
         print("  balanced   - 1080p, 128 samples, good quality/speed (default)")
         print("  high       - 1080p, 256 samples, high quality")
         print("  ultra      - 1080p, 512 samples, maximum quality")
-        print("\nExample:")
-        print("  python generate_video.py music.wav my_video balanced")
+        print("\nStyle options:")
+        print("  cinematic - Dramatic shape changes with position movement (default)")
+        print("  polyfjord - Smooth shape morphing only, no position changes")
+        print("\nExamples:")
+        print("  python generate_video.py music.wav my_video balanced cinematic")
+        print("  python generate_video.py music.wav my_video balanced polyfjord")
         sys.exit(1)
     
     audio_file = sys.argv[1]
     output_name = sys.argv[2] if len(sys.argv) > 2 else Path(audio_file).stem
     quality_mode = sys.argv[3] if len(sys.argv) > 3 else 'balanced'
+    style = sys.argv[4] if len(sys.argv) > 4 else 'cinematic'
     
     # Validate quality mode
     valid_modes = ['ultra_fast', 'fast', 'balanced', 'high', 'ultra']
@@ -833,13 +913,26 @@ def main():
         print(f"Valid modes: {', '.join(valid_modes)}")
         sys.exit(1)
     
-    print("🎬 OPTIMIZED AUDIO-REACTIVE VIDEO GENERATOR")
+    # Validate style
+    valid_styles = ['cinematic', 'polyfjord']
+    if style not in valid_styles:
+        print(f"❌ Invalid style: {style}")
+        print(f"Valid styles: {', '.join(valid_styles)}")
+        sys.exit(1)
+    
+    print("🎬 ENHANCED AUDIO-REACTIVE VIDEO GENERATOR")
     print("=" * 60)
     print(f"🎵 Audio: {audio_file}")
     print(f"📹 Output: {output_name}")
-    print("🎨 Style: OPTIMIZED Mutating Cube (Enhanced Responsiveness)")
-    print("🚀 Features: ENHANCED Audio Analysis, ULTRA-SMOOTH Animations, MUSICAL Color Transitions")
-    print("🎵 Optimizations: Multi-frequency bands, Musical smoothing, Response-type processing")
+    print(f"🎨 Style: {style.upper()}")
+    print(f"⚡ Quality: {quality_mode.upper()}")
+    
+    if style == 'polyfjord':
+        print("🚀 Features: SMOOTH Shape Morphing | PROFESSIONAL Colors | NO Position Changes")
+        print("🎵 Polyfjord Features: Frequency-specific responses, Professional materials, Commercial quality")
+    else:
+        print("🚀 Features: CINEMATIC Audio Responsiveness | DRAMATIC Shape Changes | ULTRA-SMOOTH Animations")
+        print("🎵 Cinematic Features: Multi-layer deformation, Procedural geometry, Beat-synchronized transitions")
     print("=" * 60)
     
     try:
@@ -847,7 +940,7 @@ def main():
         features = analyze_audio(audio_file)
         
         # Step 2: Create enhanced Blender script
-        script_path = create_enhanced_blender_script(features, output_name)
+        script_path = create_enhanced_blender_script(features, output_name, quality_mode, style)
         
         # Step 3: Run enhanced Blender script
         if not run_blender_script(script_path):
@@ -876,9 +969,13 @@ def main():
                 print(f"⚡ Using specified quality mode: {quality_mode.upper()} (duration: {duration_minutes:.1f} min)")
             
             if render_video(str(blend_path), str(video_path), quality_mode, audio_file, features['total_frames']):
-                print(f"\n🎉 SUCCESS! OPTIMIZED mutating cube video created: {video_path}")
-                print("🚀 Features: ENHANCED Audio Responsiveness, ULTRA-SMOOTH Animations, MUSICAL Color Transitions")
-                print("🎵 Optimizations: Multi-frequency analysis, Musical smoothing, Response-type processing")
+                print(f"\n🎉 SUCCESS! {style.upper()} style video created: {video_path}")
+                if style == 'polyfjord':
+                    print("🚀 Features: SMOOTH Shape Morphing, PROFESSIONAL Colors, NO Position Changes")
+                    print("🎵 Polyfjord Features: Frequency-specific responses, Professional materials, Commercial quality")
+                else:
+                    print("🚀 Features: CINEMATIC Audio Responsiveness, DRAMATIC Shape Changes, ULTRA-SMOOTH Animations")
+                    print("🎵 Cinematic Features: Multi-layer deformation, Procedural geometry, Beat-synchronized transitions")
                 print(f"⚡ Performance: Direct MP4 rendering, Adaptive quality, Hardware acceleration")
                 print("🎵 Audio: Original audio file included in video")
             else:
