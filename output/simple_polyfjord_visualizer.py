@@ -681,14 +681,15 @@ for frame in range(0, {self.total_frames} + 1):
         except Exception:
             pass
 
-        # Subtle camera orbit for dynamism (true orbit around main object via rig)
+        # ENHANCED FLOWING-THROUGH-SPACE CAMERA SYSTEM
+        # Dramatic camera movement synchronized to music tempo and audio intensity
         try:
             cam = bpy.data.objects.get("Camera")
             if cam is None:
-                bpy.ops.object.camera_add(enter_editmode=False, align='VIEW', location=(6.0, -6.0, 4.0), rotation=(1.1, 0.0, 0.8))
+                bpy.ops.object.camera_add(enter_editmode=False, align='VIEW', location=(8.0, -8.0, 6.0), rotation=(1.1, 0.0, 0.8))
                 cam = bpy.context.object
-                # Camera defaults for good framing
-                cam.data.lens = 50.0  # mm
+                # Camera defaults for cinematic framing
+                cam.data.lens = 35.0  # Wider lens for more dynamic feel
                 cam.data.clip_start = 0.01
                 cam.data.clip_end = 1000.0
 
@@ -707,15 +708,15 @@ for frame in range(0, {self.total_frames} + 1):
             # Zero camera local rotation so the constraint fully controls aiming
             cam.rotation_euler = (0.0, 0.0, 0.0)
 
-            # Optional: set Depth of Field to the object for visual focus
+            # Enhanced Depth of Field for cinematic focus
             try:
                 cam.data.dof.use_dof = True
                 cam.data.dof.focus_object = obj
-                cam.data.dof.aperture_fstop = 2.8
+                cam.data.dof.aperture_fstop = 1.8  # More dramatic bokeh
             except Exception:
                 pass
 
-            # Ensure a rig empty exists and parent camera to it for true orbiting
+            # Create enhanced camera rig system for flowing movement
             rig = bpy.data.objects.get("CameraRig")
             if rig is None:
                 bpy.ops.object.empty_add(type='PLAIN_AXES', align='WORLD', location=obj.location)
@@ -730,17 +731,90 @@ for frame in range(0, {self.total_frames} + 1):
             # Keep rig centered on the main object
             rig.location = obj.location.copy()
 
-            # Orbit angle and radius; animate rig rotation, keep camera at local offset
-            ang = 2.0 * math.pi * tnorm
-            orbit_r = 7.0 + 0.6 * (rms ** 0.8)
+            # ENHANCED FLOWING-THROUGH-SPACE MOVEMENT
+            # Multi-layered camera movement synchronized to music tempo and intensity
+            
+            # Base tempo-driven orbit (slower, more cinematic)
+            tempo_factor = 1.0
+            if 'tempo' in features_data and features_data['tempo'] > 0:
+                # Normalize tempo to 0.5-2.0 range for smooth movement
+                tempo_factor = max(0.5, min(2.0, features_data['tempo'] / 120.0))
+            
+            # Primary orbit: slow, majestic movement
+            base_orbit_speed = 0.3 * tempo_factor  # Slower base speed
+            ang = 2.0 * math.pi * tnorm * base_orbit_speed
+            
+            # Secondary orbit: faster, beat-synchronized movement
+            beat_orbit = 0.0
+            if beat > 0.6:  # Only on strong beats
+                beat_orbit = 0.8 * math.sin(2.0 * math.pi * tnorm * 4.0 * tempo_factor) * (beat ** 1.5)
+            
+            # Combined orbit angle with audio modulation
+            total_angle = ang + beat_orbit
+            
+            # Dynamic orbit radius based on audio intensity and phase
+            base_radius = 8.0
+            intensity_radius = 2.0 * (rms ** 0.7)  # RMS-driven distance variation
+            beat_radius = 1.5 * (kick ** 1.2) + 1.0 * (bass ** 0.9)  # Beat-driven distance spikes
+            phase_radius = 1.0 * phase_intensity  # Phase-driven distance
+            
+            orbit_r = base_radius + intensity_radius + beat_radius + phase_radius
+            
+            # Vertical movement: flowing up and down with music
+            vertical_base = 4.0
+            vertical_wave = 2.0 * math.sin(2.0 * math.pi * tnorm * 0.5 * tempo_factor)  # Slow vertical wave
+            vertical_beat = 1.5 * (snare ** 0.8) + 1.0 * (hihat_energy ** 0.7)  # Beat-driven vertical spikes
+            vertical_phase = 1.0 * phase_intensity  # Phase-driven vertical movement
+            
+            vertical_offset = vertical_base + vertical_wave + vertical_beat + vertical_phase
+            
+            # Set camera position with enhanced flowing movement
+            cam.location = mathutils.Vector((
+                orbit_r * math.cos(total_angle),
+                orbit_r * math.sin(total_angle),
+                vertical_offset
+            ))
 
-            # Set the camera's local offset (elliptical height varies with morph drive)
-            cam.location = mathutils.Vector((orbit_r, 0.0, 3.5 + 0.8 * (0.6 * cur_drive + 0.4 * nxt_drive)))
+            # Multi-axis rig rotation for flowing-through-space effect
+            # Primary rotation around Z (horizontal orbit)
+            rig.rotation_euler[2] = total_angle
+            
+            # Secondary rotation around X (vertical tilt) - subtle
+            tilt_angle = 0.1 * math.sin(2.0 * math.pi * tnorm * 0.3 * tempo_factor) * phase_intensity
+            rig.rotation_euler[0] = tilt_angle
+            
+            # Tertiary rotation around Y (roll) - very subtle for cinematic feel
+            roll_angle = 0.05 * math.cos(2.0 * math.pi * tnorm * 0.4 * tempo_factor) * (rms ** 0.5)
+            rig.rotation_euler[1] = roll_angle
 
-            # Apply smooth orbit by rotating the rig (around Z) with slight intensity modulation
-            rig.rotation_euler[2] = ang * (0.5 + 0.2 * phase_intensity)
+            # OBJECT ROTATION: Main object rotates in sync with music for flowing effect
+            # Multi-axis rotation synchronized to different audio features
+            
+            # Primary rotation: slow, majestic spin
+            primary_rotation_speed = 0.2 * tempo_factor
+            primary_angle = 2.0 * math.pi * tnorm * primary_rotation_speed
+            
+            # Secondary rotation: beat-synchronized
+            beat_rotation_x = 0.0
+            beat_rotation_y = 0.0
+            beat_rotation_z = 0.0
+            
+            if beat > 0.5:
+                beat_rotation_x = 0.3 * math.sin(2.0 * math.pi * tnorm * 6.0 * tempo_factor) * (beat ** 1.3)
+                beat_rotation_y = 0.4 * math.cos(2.0 * math.pi * tnorm * 4.0 * tempo_factor) * (beat ** 1.2)
+                beat_rotation_z = 0.5 * math.sin(2.0 * math.pi * tnorm * 8.0 * tempo_factor) * (beat ** 1.4)
+            
+            # Bass-driven rotation spikes
+            bass_rotation = 0.0
+            if bass > 0.7:
+                bass_rotation = 0.2 * (bass ** 1.5) * math.sin(2.0 * math.pi * tnorm * 2.0 * tempo_factor)
+            
+            # Apply multi-axis rotation to main object
+            obj.rotation_euler[0] = primary_angle + beat_rotation_x + bass_rotation
+            obj.rotation_euler[1] = primary_angle * 0.7 + beat_rotation_y + bass_rotation * 0.5
+            obj.rotation_euler[2] = primary_angle * 1.3 + beat_rotation_z + bass_rotation * 0.8
 
-            # Dynamic framing: adjust distance to maintain composition based on object size
+            # Dynamic framing: adjust distance based on object size and audio intensity
             try:
                 dx = getattr(obj.dimensions, 'x', obj.dimensions[0])
                 dy = getattr(obj.dimensions, 'y', obj.dimensions[1])
@@ -748,21 +822,27 @@ for frame in range(0, {self.total_frames} + 1):
                 bbox_size = max(float(dx), float(dy), float(dz))
                 fov = getattr(cam.data, 'angle_y', None) or getattr(cam.data, 'angle', 0.857)
                 fov = float(fov) if fov and fov > 1e-3 else 0.857
-                desired_dist = max(1.5, (bbox_size * 0.6) / max(1e-6, math.tan(0.5 * fov)))
-                # Normalize current local XY and scale to desired radius (keeps orbit around object)
+                desired_dist = max(2.0, (bbox_size * 0.8) / max(1e-6, math.tan(0.5 * fov)))
+                
+                # Audio-driven distance adjustment
+                audio_distance_factor = 1.0 + 0.3 * (rms ** 0.6) + 0.2 * (beat ** 0.8)
+                desired_dist *= audio_distance_factor
+                
+                # Normalize current local XY and scale to desired radius
                 xy = mathutils.Vector((cam.location.x, cam.location.y))
                 if xy.length > 1e-6:
                     xy.normalize()
-                    scale = desired_dist * 1.1
+                    scale = desired_dist
                     cam.location.x = xy.x * scale
                     cam.location.y = xy.y * scale
             except Exception:
                 pass
 
-            # Keyframes for smooth motion
-            if frame % 8 == 0:
+            # Enhanced keyframes for ultra-smooth motion
+            if frame % 4 == 0:  # More frequent keyframes for smoother motion
                 rig.keyframe_insert(data_path="rotation_euler")
                 cam.keyframe_insert(data_path="location")
+                obj.keyframe_insert(data_path="rotation_euler")
         except Exception:
             pass
 
