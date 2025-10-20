@@ -351,6 +351,35 @@ except Exception as e:
 scene = bpy.context.scene
 render = scene.render
 
+# Prefer GPU for Cycles (Metal on macOS) without breaking functionality
+try:
+    scene.render.engine = 'CYCLES'
+    prefs = bpy.context.preferences
+    caddon = prefs.addons.get('cycles')
+    if caddon:
+        cprefs = caddon.preferences
+        try:
+            cprefs.compute_device_type = 'METAL'
+        except Exception:
+            try:
+                cprefs.compute_device_type = 'CUDA'
+            except Exception:
+                pass
+        try:
+            cprefs.get_devices()
+        except Exception:
+            pass
+        try:
+            for dev in getattr(cprefs, 'devices', []):
+                if getattr(dev, 'type', 'CPU') != 'CPU':
+                    dev.use = True
+        except Exception:
+            pass
+    scene.cycles.device = 'GPU'
+    print("✅ Cycles GPU enabled (Metal/CUDA where available)")
+except Exception as _gpu_e:
+    print(f"⚠️ GPU enable skipped: {{_gpu_e}}")
+
 # Ensure scene has proper frame range and animation
 scene.frame_start = 0
 scene.frame_end = {total_frames}
@@ -617,6 +646,35 @@ except Exception as e:
 # Set optimized render settings
 scene = bpy.context.scene
 render = scene.render
+
+# Prefer GPU for Cycles (Metal on macOS) without breaking functionality
+try:
+    scene.render.engine = 'CYCLES'
+    prefs = bpy.context.preferences
+    caddon = prefs.addons.get('cycles')
+    if caddon:
+        cprefs = caddon.preferences
+        try:
+            cprefs.compute_device_type = 'METAL'
+        except Exception:
+            try:
+                cprefs.compute_device_type = 'CUDA'
+            except Exception:
+                pass
+        try:
+            cprefs.get_devices()
+        except Exception:
+            pass
+        try:
+            for dev in getattr(cprefs, 'devices', []):
+                if getattr(dev, 'type', 'CPU') != 'CPU':
+                    dev.use = True
+        except Exception:
+            pass
+    scene.cycles.device = 'GPU'
+    print("✅ Cycles GPU enabled (Metal/CUDA where available)")
+except Exception as _gpu_e:
+    print(f"⚠️ GPU enable skipped: {{_gpu_e}}")
 
 # Ensure scene has proper frame range and animation
 scene.frame_start = 0

@@ -101,6 +101,35 @@ print(f"📊 Frames: {self.total_frames}, FPS: {self.fps}, Duration: {self.durat
 print(f"🎯 Quality Level: {self.quality_level.upper()}")
 print("🚀 Features: SMOOTH morphing, PROFESSIONAL colors, GEOMETRY NODES, COMMERCIAL quality")
 
+# Ensure Cycles GPU (Metal on macOS) when available
+try:
+    scene.render.engine = 'CYCLES'
+    prefs = bpy.context.preferences
+    caddon = prefs.addons.get('cycles')
+    if caddon:
+        cprefs = caddon.preferences
+        try:
+            cprefs.compute_device_type = 'METAL'
+        except Exception:
+            try:
+                cprefs.compute_device_type = 'CUDA'
+            except Exception:
+                pass
+        try:
+            cprefs.get_devices()
+        except Exception:
+            pass
+        try:
+            for dev in getattr(cprefs, 'devices', []):
+                if getattr(dev, 'type', 'CPU') != 'CPU':
+                    dev.use = True
+        except Exception:
+            pass
+    scene.cycles.device = 'GPU'
+    print("✅ Cycles GPU enabled (Metal/CUDA where available)")
+except Exception as _gpu_e:
+    print(f"⚠️ GPU enable skipped: {{_gpu_e}}")
+
 # Create professional base shape - ICO sphere for organic morphing
 bpy.ops.mesh.primitive_ico_sphere_add(
     subdivisions=3, 
@@ -180,6 +209,33 @@ links.new(emission_node.outputs["Emission"], mix_shader.inputs[2])
 links.new(mix_shader.outputs["Shader"], output_node.inputs["Surface"])
 
 print("✅ Professional material system created")
+
+# Add dramatic, audio-driven geometry modifiers (no topology change)
+# Displace: bass/kick-driven surface explosion
+disp_mod = obj.modifiers.new(name="AudioDisplace", type='DISPLACE')
+disp_mod.mid_level = 0.0
+disp_mod.strength = 0.0
+disp_mod.direction = 'NORMAL'
+try:
+    tex = bpy.data.textures.new(name="AudioDisplaceTex", type='CLOUDS')
+    tex.noise_scale = 0.6
+    disp_mod.texture = tex
+except Exception as e:
+    print(f"⚠️ Could not create texture for Displace: {{e}}")
+
+# Twist: simple, dramatic rotational deformation (Z axis)
+twist_mod = obj.modifiers.new(name="AudioTwist", type='SIMPLE_DEFORM')
+twist_mod.deform_method = 'TWIST'
+twist_mod.angle = 0.0
+try:
+    twist_mod.deform_axis = 'Z'
+except Exception:
+    pass
+
+# Cast: global organicization factor driven by RMS to morph silhouette
+cast_mod = obj.modifiers.new(name="AudioCast", type='CAST')
+cast_mod.factor = 0.0
+cast_mod.cast_type = 'SPHERE'
 
 """
 Create multiple abstract shape keys with subtle golden-ratio-inspired patterns
@@ -353,6 +409,53 @@ for frame in range(0, {self.total_frames} + 1):
     if frame % 6 == 0:
         obj.keyframe_insert(data_path="scale")
 
+        # Dramatic shape transformations via modifiers (audio-driven)
+        kick = feature_at("kick_energy", frame, 0.0)
+        bass = feature_at("bass_energy", frame, 0.0)
+        snare = feature_at("snare_energy", frame, 0.0)
+        beat = feature_at("beat_strength", frame, 0.0)
+
+        # Displace: respond strongly to kick/bass with non-linear curve
+        disp_strength = 2.2 * (kick ** 1.2) + 1.6 * (bass ** 1.1)
+        # Add transient spike on strong beats
+        if beat > 0.65:
+            disp_strength += 0.8 * beat
+        disp_mod.strength = disp_strength
+        if frame % 2 == 0:
+            try:
+                obj.modifiers["AudioDisplace"].keyframe_insert(data_path="strength")
+            except Exception:
+                pass
+
+        # Twist angle: simple & dramatic; combine kick/snare/bass with beat spikes
+        twist_energy = 0.55 * snare + 0.5 * kick + 0.45 * bass + 0.35 * beat
+        twist_energy = max(0.0, min(1.0, twist_energy))
+        if beat > 0.7:
+            twist_energy = min(1.0, twist_energy + 0.2 * beat)
+        # Sublinear power for more response at low levels, higher max angle for drama
+        twist_angle = (twist_energy ** 0.8) * (math.pi * 1.4)
+        twist_mod.angle = twist_angle
+        if frame % 2 == 0:
+            try:
+                obj.modifiers["AudioTwist"].keyframe_insert(data_path="angle")
+            except Exception:
+                pass
+
+        # Cast factor: overall organic roundness with RMS and highs adding shimmer
+        highs = feature_at("hihat_energy", frame, 0.0)
+        cast_factor = min(1.0, 0.15 + 0.7 * (rms ** 0.8) + 0.15 * (highs ** 0.9))
+        cast_mod.factor = cast_factor
+        if frame % 4 == 0:
+            try:
+                obj.modifiers["AudioCast"].keyframe_insert(data_path="factor")
+            except Exception:
+                pass
+
+        # Beat impact flash: brief emission pop for perceived punch
+        if beat > 0.7 and frame % 2 == 0:
+            emission_node.inputs["Strength"].default_value = es + 1.2 * beat
+            emission_node.inputs["Strength"].keyframe_insert(data_path="default_value")
+
 print("✅ Audio-driven abstract morphing animation created")
 
 # Set interpolation to Bezier for smooth transitions
@@ -401,7 +504,7 @@ except Exception as e:
         print(f"✅ Saved using save_mainfile to: {{blend_file_path}}")
     except Exception as e2:
         print(f"❌ Secondary save attempt failed: {{e2}}")
-        print(f"📝 Scene script available at: {{output_path}}")
+        print(f"📝 Scene script available at: {{blend_file_path}}")
 
 print("🎉 POLYFJORD-STYLE PROFESSIONAL AUDIO VISUALIZER SCENE COMPLETE!")
 print("🎵 Features: Smooth morphing, Professional colors, Commercial quality")
