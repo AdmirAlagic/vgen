@@ -360,6 +360,13 @@ if scene.render.engine == 'CYCLES':
     cycles.samples = {settings['samples']}
     cycles.use_denoising = True
     cycles.device = 'GPU'
+    # Persist data across frames to avoid reloading kernels/denoiser each frame
+    cycles.use_persistent_data = True
+    # Prefer a stable denoiser to minimize kernel reloads (OptiX not on Metal)
+    try:
+        cycles.denoiser = 'OPENIMAGEDENOISE'
+    except Exception:
+        pass
     
     # Ultra-fast optimizations
     if '{quality_mode}' == 'ultra_fast':
@@ -653,6 +660,13 @@ if scene.render.engine == 'CYCLES':
     cycles.samples = {settings['samples']}
     cycles.use_denoising = True
     cycles.device = 'GPU'
+    # Persist data across frames to avoid reloading kernels/denoiser each frame
+    cycles.use_persistent_data = True
+    # Prefer a stable denoiser to minimize kernel reloads (OptiX not on Metal)
+    try:
+        cycles.denoiser = 'OPENIMAGEDENOISE'
+    except Exception:
+        pass
     
     # Ultra-fast optimizations
     if '{quality_mode}' == 'ultra_fast':
