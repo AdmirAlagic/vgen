@@ -159,6 +159,7 @@ import math
 import random
 import json
 import mathutils
+import colorsys
 
 print("🎬 Creating POLYFJORD-STYLE professional audio visualizer scene...")
 
@@ -433,6 +434,24 @@ cross = max(int(segment * {self.style_cfg['cross_frac']}), 6)
 for frame in range(0, {self.total_frames} + 1):
     scene.frame_set(frame)
     t = frame / max(1, {self.fps})
+    tnorm = frame / max(1, {self.total_frames})  # 0..1 timeline position
+
+    # Phase evolution over time for complexity: intro->build->drop->outro
+    # Compute smooth step weights for phases
+    def smoothstep(x0, x1, x):
+        if x <= x0: return 0.0
+        if x >= x1: return 1.0
+        x = (x - x0) / max(1e-6, (x1 - x0))
+        return x * x * (3.0 - 2.0 * x)
+
+    w_intro = 1.0 - smoothstep(0.08, 0.18, tnorm)
+    w_build = smoothstep(0.10, 0.35, tnorm) * (1.0 - smoothstep(0.55, 0.65, tnorm))
+    w_drop  = smoothstep(0.45, 0.60, tnorm) * (1.0 - smoothstep(0.78, 0.90, tnorm))
+    w_outro = smoothstep(0.82, 0.95, tnorm)
+
+    # Phase multipliers influence intensity and smoothness
+    phase_intensity = 0.6 * w_intro + 0.9 * w_build + 1.35 * w_drop + 0.7 * w_outro
+    phase_smooth    = 1.2 * w_intro + 1.0 * w_build + 0.85 * w_drop + 1.15 * w_outro
 
     # Determine active segment and neighbors for crossfade
     seg_idx = min(num_shapes - 1, frame // segment)
@@ -466,9 +485,9 @@ for frame in range(0, {self.total_frames} + 1):
     cur_val = feature_at(cur_feat, frame, 0.0)
     nxt_val = feature_at(nxt_feat, frame, 0.0)
 
-    # Gentle response curve for smoothness
-    cur_drive = (max(0.0, min(1.0, cur_val)) ** {self.style_cfg['drive_exp']}) * 0.95
-    nxt_drive = (max(0.0, min(1.0, nxt_val)) ** {self.style_cfg['drive_exp']}) * 0.95
+    # Gentle response curve for smoothness, modulated by phase_smooth
+    cur_drive = (max(0.0, min(1.0, cur_val)) ** max(0.55, {self.style_cfg['drive_exp']} * phase_smooth)) * 0.95
+    nxt_drive = (max(0.0, min(1.0, nxt_val)) ** max(0.55, {self.style_cfg['drive_exp']} * phase_smooth)) * 0.95
 
     # Apply crossfade and insert keyframes sparsely for Bezier smoothing
     obj.data.shape_keys.key_blocks[cur_name].value = cur_drive * (1.0 - w_next)
@@ -478,22 +497,37 @@ for frame in range(0, {self.total_frames} + 1):
     if frame % {self.style_cfg['kf_stride']} == 0:
         obj.data.shape_keys.key_blocks[nxt_name].keyframe_insert(data_path="value")
 
-    # Material reactivity: emission strength and tint
-    es = 1.0 + 3.0 * (0.6 * cur_drive + 0.4 * nxt_drive)
+    # Material reactivity: emission strength and color via HSV from audio bands
+    # Hue from spectral centroid, saturation from highs (hihat), value from RMS
+    spec_cent = feature_at("spectral_centroid", frame, 0.5)  # expected 0..1 normalized upstream
+    highs = feature_at("hihat_energy", frame, 0.0)
+    rms = feature_at("rms_energy", frame, 0.5)
+
+    hue = max(0.0, min(1.0, 0.62 * spec_cent + 0.05 * math.sin(6.283 * tnorm)))  # subtle time swirl
+    sat = max(0.15, min(1.0, 0.25 + 0.9 * (highs ** 0.85)))
+    val = max(0.25, min(1.0, 0.35 + 0.75 * (rms ** 0.9)))
+    (cr, cg, cb) = colorsys.hsv_to_rgb(hue, sat, val)
+
+    # Emission strength blends morph drives with phase intensity and beats (later)
+    es = 1.0 + 3.0 * phase_intensity * (0.6 * cur_drive + 0.4 * nxt_drive)
     emission_node.inputs["Strength"].default_value = es
     if frame % {self.style_cfg['kf_stride']} == 0:
         emission_node.inputs["Strength"].keyframe_insert(data_path="default_value")
 
-    hue = 0.6 * cur_drive + 0.4 * nxt_drive
-    color_r = 0.4 + 0.6 * math.sin(hue * math.pi * 1.2)
-    color_g = 0.3 + 0.6 * math.sin(hue * math.pi * 1.2 + math.pi/3)
-    color_b = 0.2 + 0.6 * math.sin(hue * math.pi * 1.2 + math.pi/2)
-    emission_node.inputs["Color"].default_value = (color_r, color_g, color_b, 1.0)
+    # Apply reactive color
+    emission_node.inputs["Color"].default_value = (cr, cg, cb, 1.0)
+    # Slightly tint base color too for cohesive look
+    try:
+        principled_node.inputs["Base Color"].default_value = (0.6 * cr + 0.4 * principled_node.inputs["Base Color"].default_value[0],
+                                                               0.6 * cg + 0.4 * principled_node.inputs["Base Color"].default_value[1],
+                                                               0.6 * cb + 0.4 * principled_node.inputs["Base Color"].default_value[2],
+                                                               1.0)
+    except Exception:
+        pass
     if frame % {self.style_cfg['kf_stride']} == 0:
         emission_node.inputs["Color"].keyframe_insert(data_path="default_value")
 
     # Subtle global scale breathing synced to RMS
-    rms = feature_at("rms_energy", frame, 0.5)
     scale_factor = 1.0 + 0.15 * (rms ** 0.9)
     obj.scale = (scale_factor, scale_factor, scale_factor)
     if frame % max(2, {self.style_cfg['kf_stride']} + 2) == 0:
@@ -506,7 +540,7 @@ for frame in range(0, {self.total_frames} + 1):
         beat = feature_at("beat_strength", frame, 0.0)
 
         # Displace: respond strongly to kick/bass with non-linear curve
-        disp_strength = {self.style_cfg['disp_mult_kick']} * (kick ** 1.2) + {self.style_cfg['disp_mult_bass']} * (bass ** 1.1)
+        disp_strength = ({self.style_cfg['disp_mult_kick']} * (kick ** 1.2) + {self.style_cfg['disp_mult_bass']} * (bass ** 1.1)) * phase_intensity
         # Add transient spike on strong beats
         if beat > 0.65:
             disp_strength += 0.8 * beat
@@ -523,7 +557,7 @@ for frame in range(0, {self.total_frames} + 1):
         if beat > 0.7:
             twist_energy = min(1.0, twist_energy + 0.2 * beat)
         # Sublinear power for more response at low levels, higher max angle for drama
-        twist_angle = (twist_energy ** 0.8) * (math.pi * (1.0 + {self.style_cfg['twist_mult']} * 0.7))
+        twist_angle = (twist_energy ** 0.8) * (math.pi * (1.0 + {self.style_cfg['twist_mult']} * 0.7)) * phase_intensity
         twist_mod.angle = twist_angle
         if frame % 2 == 0:
             try:
@@ -533,7 +567,7 @@ for frame in range(0, {self.total_frames} + 1):
 
         # Cast factor: overall organic roundness with RMS and highs adding shimmer
         highs = feature_at("hihat_energy", frame, 0.0)
-        cast_factor = min(1.0, {self.style_cfg['cast_base']} + {self.style_cfg['cast_mult_rms']} * (rms ** 0.8) + {self.style_cfg['cast_mult_highs']} * (highs ** 0.9))
+        cast_factor = min(1.0, ({self.style_cfg['cast_base']} + {self.style_cfg['cast_mult_rms']} * (rms ** 0.8) + {self.style_cfg['cast_mult_highs']} * (highs ** 0.9)) * (0.85 + 0.3 * phase_intensity))
         cast_mod.factor = cast_factor
         if frame % 4 == 0:
             try:
@@ -545,6 +579,111 @@ for frame in range(0, {self.total_frames} + 1):
         if beat > 0.7 and frame % 2 == 0:
             emission_node.inputs["Strength"].default_value = es + 1.2 * beat
             emission_node.inputs["Strength"].keyframe_insert(data_path="default_value")
+
+        # Additional complexity: add a subtle ripple via a second Displace on highs/contrast
+        try:
+            if "AudioRipple" not in obj.modifiers:
+                ripple = obj.modifiers.new(name="AudioRipple", type='DISPLACE')
+                ripple.direction = 'Z'
+                ripple.mid_level = 0.0
+                tex2 = bpy.data.textures.new(name="AudioRippleTex", type='CLOUDS')
+                tex2.noise_scale = 0.25
+                tex2.noise_depth = 2
+                ripple.texture = tex2
+            ripple = obj.modifiers["AudioRipple"]
+            contrast = feature_at("spectral_contrast", frame, 0.0)
+            ripple_strength = 0.35 * (highs ** 0.9) + 0.25 * (contrast ** 0.8)
+            ripple_strength *= (0.6 + 0.8 * w_build + 1.2 * w_drop)
+            ripple.strength = ripple_strength
+            if frame % {self.style_cfg['kf_stride']} == 0:
+                ripple.keyframe_insert(data_path="strength")
+        except Exception:
+            pass
+
+        # Subtle camera orbit for dynamism (true orbit around main object via rig)
+        try:
+            cam = bpy.data.objects.get("Camera")
+            if cam is None:
+                bpy.ops.object.camera_add(enter_editmode=False, align='VIEW', location=(6.0, -6.0, 4.0), rotation=(1.1, 0.0, 0.8))
+                cam = bpy.context.object
+                # Camera defaults for good framing
+                cam.data.lens = 50.0  # mm
+                cam.data.clip_start = 0.01
+                cam.data.clip_end = 1000.0
+
+            # Ensure camera has a proper Track To constraint targeting the main object
+            track_to = None
+            for c in cam.constraints:
+                if c.type == 'TRACK_TO':
+                    track_to = c
+                    break
+            if track_to is None:
+                track_to = cam.constraints.new(type='TRACK_TO')
+            track_to.target = obj
+            track_to.track_axis = 'TRACK_NEGATIVE_Z'
+            track_to.up_axis = 'UP_Y'
+            
+            # Zero camera local rotation so the constraint fully controls aiming
+            cam.rotation_euler = (0.0, 0.0, 0.0)
+
+            # Optional: set Depth of Field to the object for visual focus
+            try:
+                cam.data.dof.use_dof = True
+                cam.data.dof.focus_object = obj
+                cam.data.dof.aperture_fstop = 2.8
+            except Exception:
+                pass
+
+            # Ensure a rig empty exists and parent camera to it for true orbiting
+            rig = bpy.data.objects.get("CameraRig")
+            if rig is None:
+                bpy.ops.object.empty_add(type='PLAIN_AXES', align='WORLD', location=obj.location)
+                rig = bpy.context.object
+                rig.name = "CameraRig"
+            
+            # Parent camera to rig while keeping current transform
+            if cam.parent is None or cam.parent.name != rig.name:
+                cam.parent = rig
+                cam.matrix_parent_inverse = rig.matrix_world.inverted()
+
+            # Keep rig centered on the main object
+            rig.location = obj.location.copy()
+
+            # Orbit angle and radius; animate rig rotation, keep camera at local offset
+            ang = 2.0 * math.pi * tnorm
+            orbit_r = 7.0 + 0.6 * (rms ** 0.8)
+
+            # Set the camera's local offset (elliptical height varies with morph drive)
+            cam.location = mathutils.Vector((orbit_r, 0.0, 3.5 + 0.8 * (0.6 * cur_drive + 0.4 * nxt_drive)))
+
+            # Apply smooth orbit by rotating the rig (around Z) with slight intensity modulation
+            rig.rotation_euler[2] = ang * (0.5 + 0.2 * phase_intensity)
+
+            # Dynamic framing: adjust distance to maintain composition based on object size
+            try:
+                dx = getattr(obj.dimensions, 'x', obj.dimensions[0])
+                dy = getattr(obj.dimensions, 'y', obj.dimensions[1])
+                dz = getattr(obj.dimensions, 'z', obj.dimensions[2])
+                bbox_size = max(float(dx), float(dy), float(dz))
+                fov = getattr(cam.data, 'angle_y', None) or getattr(cam.data, 'angle', 0.857)
+                fov = float(fov) if fov and fov > 1e-3 else 0.857
+                desired_dist = max(1.5, (bbox_size * 0.6) / max(1e-6, math.tan(0.5 * fov)))
+                # Normalize current local XY and scale to desired radius (keeps orbit around object)
+                xy = mathutils.Vector((cam.location.x, cam.location.y))
+                if xy.length > 1e-6:
+                    xy.normalize()
+                    scale = desired_dist * 1.1
+                    cam.location.x = xy.x * scale
+                    cam.location.y = xy.y * scale
+            except Exception:
+                pass
+
+            # Keyframes for smooth motion
+            if frame % 8 == 0:
+                rig.keyframe_insert(data_path="rotation_euler")
+                cam.keyframe_insert(data_path="location")
+        except Exception:
+            pass
 
 print("✅ Audio-driven abstract morphing animation created")
 
