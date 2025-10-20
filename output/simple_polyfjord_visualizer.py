@@ -276,20 +276,20 @@ noise_texture.inputs["Scale"].default_value = 5.0
 noise_texture.inputs["Detail"].default_value = 10.0
 noise_texture.inputs["Roughness"].default_value = 0.5
 
-# Set up color ramp
+# Set up vivid color ramp with more saturated colors
 color_ramp.color_ramp.elements[0].position = 0.0
-color_ramp.color_ramp.elements[0].color = (0.1, 0.2, 0.4, 1.0)
+color_ramp.color_ramp.elements[0].color = (0.2, 0.1, 0.6, 1.0)  # Deep purple-blue
 color_ramp.color_ramp.elements[1].position = 1.0
-color_ramp.color_ramp.elements[1].color = (0.4, 0.6, 0.9, 1.0)
+color_ramp.color_ramp.elements[1].color = (0.8, 0.4, 1.0, 1.0)  # Bright magenta-purple
 
-# Principled BSDF settings
-principled_node.inputs["Metallic"].default_value = 0.8
-principled_node.inputs["Roughness"].default_value = 0.3
-principled_node.inputs["IOR"].default_value = 1.45
+# Principled BSDF settings - more reflective for vividness
+principled_node.inputs["Metallic"].default_value = 0.9
+principled_node.inputs["Roughness"].default_value = 0.2
+principled_node.inputs["IOR"].default_value = 1.5
 
-# Emission settings
-emission_node.inputs["Strength"].default_value = 2.0
-emission_node.inputs["Color"].default_value = (1.0, 0.3, 0.1, 1.0)
+# Enhanced emission settings for vivid glow
+emission_node.inputs["Strength"].default_value = 3.5
+emission_node.inputs["Color"].default_value = (1.0, 0.5, 0.2, 1.0)  # Bright orange
 
 # Links
 links.new(noise_texture.outputs["Fac"], color_ramp.inputs["Fac"])
@@ -497,31 +497,51 @@ for frame in range(0, {self.total_frames} + 1):
     if frame % {self.style_cfg['kf_stride']} == 0:
         obj.data.shape_keys.key_blocks[nxt_name].keyframe_insert(data_path="value")
 
-    # Material reactivity: emission strength and color via HSV from audio bands
-    # Hue from spectral centroid, saturation from highs (hihat), value from RMS
+    # Material reactivity: vivid emission strength and color via HSV from audio bands
+    # Hue from spectral centroid with dynamic range, saturation boosted, value enhanced
     spec_cent = feature_at("spectral_centroid", frame, 0.5)  # expected 0..1 normalized upstream
     highs = feature_at("hihat_energy", frame, 0.0)
     rms = feature_at("rms_energy", frame, 0.5)
+    bass = feature_at("bass_energy", frame, 0.0)
+    kick = feature_at("kick_energy", frame, 0.0)
 
-    hue = max(0.0, min(1.0, 0.62 * spec_cent + 0.05 * math.sin(6.283 * tnorm)))  # subtle time swirl
-    sat = max(0.15, min(1.0, 0.25 + 0.9 * (highs ** 0.85)))
-    val = max(0.25, min(1.0, 0.35 + 0.75 * (rms ** 0.9)))
+    # More dynamic hue range with bass/kick influence for vivid color shifts
+    hue_base = 0.5 + 0.4 * spec_cent  # 0.5-0.9 range
+    hue_shift = 0.3 * math.sin(6.283 * tnorm) + 0.2 * (bass ** 0.7) + 0.15 * (kick ** 0.8)
+    hue = max(0.0, min(1.0, hue_base + hue_shift))
+    
+    # Boosted saturation for vivid colors
+    sat_base = 0.4 + 0.8 * (highs ** 0.7)  # 0.4-1.2 range, clamped
+    sat_boost = 0.3 * (rms ** 0.6) + 0.2 * (bass ** 0.5)
+    sat = max(0.6, min(1.0, sat_base + sat_boost))  # Minimum 60% saturation
+    
+    # Enhanced value/brightness for vividness
+    val_base = 0.5 + 0.6 * (rms ** 0.8)  # 0.5-1.1 range
+    val_boost = 0.3 * (kick ** 0.9) + 0.2 * (bass ** 0.7)
+    val = max(0.6, min(1.0, val_base + val_boost))  # Minimum 60% brightness
+    
     (cr, cg, cb) = colorsys.hsv_to_rgb(hue, sat, val)
 
-    # Emission strength blends morph drives with phase intensity and beats (later)
-    es = 1.0 + 3.0 * phase_intensity * (0.6 * cur_drive + 0.4 * nxt_drive)
+    # Enhanced emission strength for vivid glow
+    base_emission = 2.0 + 4.0 * phase_intensity * (0.6 * cur_drive + 0.4 * nxt_drive)
+    beat_boost = 1.5 * (kick ** 1.1) + 1.0 * (bass ** 0.9)
+    es = base_emission + beat_boost
     emission_node.inputs["Strength"].default_value = es
     if frame % {self.style_cfg['kf_stride']} == 0:
         emission_node.inputs["Strength"].keyframe_insert(data_path="default_value")
 
-    # Apply reactive color
+    # Apply vivid reactive color with enhanced saturation
     emission_node.inputs["Color"].default_value = (cr, cg, cb, 1.0)
-    # Slightly tint base color too for cohesive look
+    
+    # More prominent base color tinting for cohesive vivid look
     try:
-        principled_node.inputs["Base Color"].default_value = (0.6 * cr + 0.4 * principled_node.inputs["Base Color"].default_value[0],
-                                                               0.6 * cg + 0.4 * principled_node.inputs["Base Color"].default_value[1],
-                                                               0.6 * cb + 0.4 * principled_node.inputs["Base Color"].default_value[2],
-                                                               1.0)
+        base_color_boost = 0.8  # Increased from 0.6
+        principled_node.inputs["Base Color"].default_value = (
+            base_color_boost * cr + (1.0 - base_color_boost) * principled_node.inputs["Base Color"].default_value[0],
+            base_color_boost * cg + (1.0 - base_color_boost) * principled_node.inputs["Base Color"].default_value[1],
+            base_color_boost * cb + (1.0 - base_color_boost) * principled_node.inputs["Base Color"].default_value[2],
+            1.0
+        )
     except Exception:
         pass
     if frame % {self.style_cfg['kf_stride']} == 0:
@@ -575,9 +595,10 @@ for frame in range(0, {self.total_frames} + 1):
             except Exception:
                 pass
 
-        # Beat impact flash: brief emission pop for perceived punch
+        # Enhanced beat impact flash: vivid emission pop for perceived punch
         if beat > 0.7 and frame % 2 == 0:
-            emission_node.inputs["Strength"].default_value = es + 1.2 * beat
+            flash_strength = es + 2.5 * beat  # Increased from 1.2
+            emission_node.inputs["Strength"].default_value = flash_strength
             emission_node.inputs["Strength"].keyframe_insert(data_path="default_value")
 
         # Additional complexity: add a subtle ripple via a second Displace on highs/contrast
