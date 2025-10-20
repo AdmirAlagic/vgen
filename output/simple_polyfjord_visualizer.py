@@ -10,13 +10,23 @@ Based on Polyfjord's "Making an Audio Visualizer in Blender 4.5" tutorial
 """
 
 class PolyfjordStyleVisualizer:
-    def __init__(self, audio_features, quality_level='cinematic'):
-        """Initialize the Polyfjord-style visualizer."""
+    def __init__(self, audio_features, quality_level='cinematic', morph_style: str = 'flow'):
+        """Initialize the Polyfjord-style visualizer.
+
+        morph_style options:
+        - flow: smooth, elegant crossfades (default)
+        - impact: dramatic spikes and strong deformation
+        - twist: pronounced twists and torsion
+        - ripple: high-frequency surface ripples
+        - breathe: organic breathing and roundness
+        - spike: sharp kick-driven spikes
+        """
         self.features = audio_features
         self.total_frames = audio_features.get('total_frames', 300)
         self.fps = audio_features.get('fps', 30)
         self.duration = audio_features.get('duration', 10.0)
         self.quality_level = quality_level
+        self.morph_style = (morph_style or 'flow').lower()
         
         # Quality configurations
         self.quality_configs = {
@@ -27,6 +37,85 @@ class PolyfjordStyleVisualizer:
         }
         
         self.config = self.quality_configs.get(quality_level, self.quality_configs['cinematic'])
+
+        # Morph style configurations (affects intensity, smoothness, crossfades)
+        self.style_configs = {
+            'flow': {
+                'drive_exp': 0.85,
+                'disp_mult_kick': 2.0,
+                'disp_mult_bass': 1.4,
+                'twist_mult': 1.0,
+                'cast_base': 0.12,
+                'cast_mult_rms': 0.6,
+                'cast_mult_highs': 0.15,
+                'segment_min': 14,
+                'cross_frac': 0.35,
+                'kf_stride': 4
+            },
+            'impact': {
+                'drive_exp': 0.7,
+                'disp_mult_kick': 3.0,
+                'disp_mult_bass': 2.0,
+                'twist_mult': 1.5,
+                'cast_base': 0.18,
+                'cast_mult_rms': 0.9,
+                'cast_mult_highs': 0.2,
+                'segment_min': 10,
+                'cross_frac': 0.25,
+                'kf_stride': 3
+            },
+            'twist': {
+                'drive_exp': 0.8,
+                'disp_mult_kick': 1.4,
+                'disp_mult_bass': 1.0,
+                'twist_mult': 2.0,
+                'cast_base': 0.1,
+                'cast_mult_rms': 0.5,
+                'cast_mult_highs': 0.1,
+                'segment_min': 12,
+                'cross_frac': 0.3,
+                'kf_stride': 3
+            },
+            'ripple': {
+                'drive_exp': 0.9,
+                'disp_mult_kick': 1.6,
+                'disp_mult_bass': 1.2,
+                'twist_mult': 0.8,
+                'cast_base': 0.11,
+                'cast_mult_rms': 0.6,
+                'cast_mult_highs': 0.25,
+                'segment_min': 12,
+                'cross_frac': 0.4,
+                'kf_stride': 2
+            },
+            'breathe': {
+                'drive_exp': 0.95,
+                'disp_mult_kick': 1.2,
+                'disp_mult_bass': 1.0,
+                'twist_mult': 0.9,
+                'cast_base': 0.2,
+                'cast_mult_rms': 1.0,
+                'cast_mult_highs': 0.1,
+                'segment_min': 16,
+                'cross_frac': 0.45,
+                'kf_stride': 5
+            },
+            'spike': {
+                'drive_exp': 0.65,
+                'disp_mult_kick': 3.5,
+                'disp_mult_bass': 1.4,
+                'twist_mult': 1.2,
+                'cast_base': 0.08,
+                'cast_mult_rms': 0.5,
+                'cast_mult_highs': 0.15,
+                'segment_min': 8,
+                'cross_frac': 0.2,
+                'kf_stride': 2
+            },
+        }
+        if self.morph_style not in self.style_configs:
+            self.morph_style = 'flow'
+        self.style_cfg = self.style_configs[self.morph_style]
     
     def create_polyfjord_style_scene(self, output_path: str, blend_path: str = None):
         """Create Polyfjord-style professional audio-reactive scene."""
@@ -99,6 +188,7 @@ scene.render.fps = {self.fps}
 print("🎬 Creating POLYFJORD-STYLE professional audio visualizer scene...")
 print(f"📊 Frames: {self.total_frames}, FPS: {self.fps}, Duration: {self.duration:.2f}s")
 print(f"🎯 Quality Level: {self.quality_level.upper()}")
+print(f"🎨 Morph Style: {self.morph_style.upper()}")
 print("🚀 Features: SMOOTH morphing, PROFESSIONAL colors, GEOMETRY NODES, COMMERCIAL quality")
 
 # Ensure Cycles GPU (Metal on macOS) when available
@@ -332,13 +422,13 @@ def feature_at(name: str, idx: int, default: float = 0.0) -> float:
 # Map each shape key to a driving feature (loaded from host-provided JSON)
 shape_feature_map = json.loads("""{shape_feature_json}""")
 
-# Create audio-reactive animation across the timeline
+# Create audio-reactive animation across the timeline (style-tunable)
 print("🎵 Creating audio-driven smooth morphing across abstract shapes...")
 
 # Progress through shapes over time with overlap crossfade
 num_shapes = len(shape_names)
-segment = max(12, int({self.total_frames} / max(1, num_shapes)))
-cross = max(6, int(segment * 0.25))
+segment = max({self.style_cfg['segment_min']}, int({self.total_frames} / max(1, num_shapes)))
+cross = max(int(segment * {self.style_cfg['cross_frac']}), 6)
 
 for frame in range(0, {self.total_frames} + 1):
     scene.frame_set(frame)
@@ -377,21 +467,21 @@ for frame in range(0, {self.total_frames} + 1):
     nxt_val = feature_at(nxt_feat, frame, 0.0)
 
     # Gentle response curve for smoothness
-    cur_drive = (max(0.0, min(1.0, cur_val)) ** 0.85) * 0.9
-    nxt_drive = (max(0.0, min(1.0, nxt_val)) ** 0.85) * 0.9
+    cur_drive = (max(0.0, min(1.0, cur_val)) ** {self.style_cfg['drive_exp']}) * 0.95
+    nxt_drive = (max(0.0, min(1.0, nxt_val)) ** {self.style_cfg['drive_exp']}) * 0.95
 
     # Apply crossfade and insert keyframes sparsely for Bezier smoothing
     obj.data.shape_keys.key_blocks[cur_name].value = cur_drive * (1.0 - w_next)
-    if frame % 4 == 0:
+    if frame % {self.style_cfg['kf_stride']} == 0:
         obj.data.shape_keys.key_blocks[cur_name].keyframe_insert(data_path="value")
     obj.data.shape_keys.key_blocks[nxt_name].value = nxt_drive * w_next
-    if frame % 4 == 0:
+    if frame % {self.style_cfg['kf_stride']} == 0:
         obj.data.shape_keys.key_blocks[nxt_name].keyframe_insert(data_path="value")
 
     # Material reactivity: emission strength and tint
     es = 1.0 + 3.0 * (0.6 * cur_drive + 0.4 * nxt_drive)
     emission_node.inputs["Strength"].default_value = es
-    if frame % 4 == 0:
+    if frame % {self.style_cfg['kf_stride']} == 0:
         emission_node.inputs["Strength"].keyframe_insert(data_path="default_value")
 
     hue = 0.6 * cur_drive + 0.4 * nxt_drive
@@ -399,14 +489,14 @@ for frame in range(0, {self.total_frames} + 1):
     color_g = 0.3 + 0.6 * math.sin(hue * math.pi * 1.2 + math.pi/3)
     color_b = 0.2 + 0.6 * math.sin(hue * math.pi * 1.2 + math.pi/2)
     emission_node.inputs["Color"].default_value = (color_r, color_g, color_b, 1.0)
-    if frame % 4 == 0:
+    if frame % {self.style_cfg['kf_stride']} == 0:
         emission_node.inputs["Color"].keyframe_insert(data_path="default_value")
 
     # Subtle global scale breathing synced to RMS
     rms = feature_at("rms_energy", frame, 0.5)
     scale_factor = 1.0 + 0.15 * (rms ** 0.9)
     obj.scale = (scale_factor, scale_factor, scale_factor)
-    if frame % 6 == 0:
+    if frame % max(2, {self.style_cfg['kf_stride']} + 2) == 0:
         obj.keyframe_insert(data_path="scale")
 
         # Dramatic shape transformations via modifiers (audio-driven)
@@ -416,7 +506,7 @@ for frame in range(0, {self.total_frames} + 1):
         beat = feature_at("beat_strength", frame, 0.0)
 
         # Displace: respond strongly to kick/bass with non-linear curve
-        disp_strength = 2.2 * (kick ** 1.2) + 1.6 * (bass ** 1.1)
+        disp_strength = {self.style_cfg['disp_mult_kick']} * (kick ** 1.2) + {self.style_cfg['disp_mult_bass']} * (bass ** 1.1)
         # Add transient spike on strong beats
         if beat > 0.65:
             disp_strength += 0.8 * beat
@@ -433,7 +523,7 @@ for frame in range(0, {self.total_frames} + 1):
         if beat > 0.7:
             twist_energy = min(1.0, twist_energy + 0.2 * beat)
         # Sublinear power for more response at low levels, higher max angle for drama
-        twist_angle = (twist_energy ** 0.8) * (math.pi * 1.4)
+        twist_angle = (twist_energy ** 0.8) * (math.pi * (1.0 + {self.style_cfg['twist_mult']} * 0.7))
         twist_mod.angle = twist_angle
         if frame % 2 == 0:
             try:
@@ -443,7 +533,7 @@ for frame in range(0, {self.total_frames} + 1):
 
         # Cast factor: overall organic roundness with RMS and highs adding shimmer
         highs = feature_at("hihat_energy", frame, 0.0)
-        cast_factor = min(1.0, 0.15 + 0.7 * (rms ** 0.8) + 0.15 * (highs ** 0.9))
+        cast_factor = min(1.0, {self.style_cfg['cast_base']} + {self.style_cfg['cast_mult_rms']} * (rms ** 0.8) + {self.style_cfg['cast_mult_highs']} * (highs ** 0.9))
         cast_mod.factor = cast_factor
         if frame % 4 == 0:
             try:
