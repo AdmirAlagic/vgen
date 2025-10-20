@@ -348,65 +348,82 @@ for sname in shape_names:
     sk = obj.shape_key_add(name=sname)
     sk.value = 0.0
     data = sk.data
-    # Minimal, stable deformations per pattern (no topology change)
+    # Enhanced, more dynamic deformations per pattern (no topology change)
     if "GoldenSpiral" in sname:
         for v in data:
             c = mathutils.Vector((0, 0, 0))
             d = (v.co - c).length
             dirn = (v.co - c).normalized()
-            v.co = c + dirn * d * (1.0 + d * 0.25 * phi_inv)
+            # Spiral expansion with golden ratio harmonics
+            spiral_factor = 1.0 + d * 0.4 * phi_inv + math.sin(d * phi * 3) * 0.15 * phi_inv
+            v.co = c + dirn * d * spiral_factor
     elif "FibonacciWave" in sname:
         for v in data:
-            v.co += mathutils.Vector((
-                math.sin(v.co.x * phi) * 0.18 * phi_inv,
-                math.cos(v.co.y * phi) * 0.18 * phi_inv,
-                math.sin(v.co.z * phi_inv) * 0.14 * phi_inv
-            ))
+            # Multi-frequency wave interference
+            wave1 = math.sin(v.co.x * phi) * 0.25 * phi_inv
+            wave2 = math.cos(v.co.y * phi * 2) * 0.2 * phi_inv
+            wave3 = math.sin(v.co.z * phi_inv * 3) * 0.18 * phi_inv
+            v.co += mathutils.Vector((wave1, wave2, wave3))
     elif "DivineProportion" in sname:
         for v in data:
             c = mathutils.Vector((0, 0, 0))
             d = (v.co - c).length
             dirn = (v.co - c).normalized()
-            v.co = c + dirn * d * (phi_inv + d * 0.35 * phi_inv)
+            # Complex golden ratio scaling with harmonics
+            scale_factor = phi_inv + d * 0.5 * phi_inv + math.cos(d * phi * 2) * 0.2 * phi_inv
+            v.co = c + dirn * d * scale_factor
     elif "GoldenBreath" in sname:
         for v in data:
             c = mathutils.Vector((0, 0, 0))
             d = (v.co - c).length
             dirn = (v.co - c).normalized()
-            v.co = c + dirn * d * (1.0 + math.sin(d * phi) * 0.22 * phi_inv)
+            # Breathing pattern with multiple frequencies
+            breath1 = math.sin(d * phi) * 0.3 * phi_inv
+            breath2 = math.cos(d * phi * 1.618) * 0.15 * phi_inv
+            v.co = c + dirn * d * (1.0 + breath1 + breath2)
     elif "HarmonicPulse" in sname:
         for v in data:
-            v.co += mathutils.Vector((
-                math.sin(v.co.x * 2 * phi) * 0.12 * phi_inv,
-                math.cos(v.co.y * 2 * phi) * 0.12 * phi_inv,
-                math.sin(v.co.z * 2 * phi_inv) * 0.09 * phi_inv
-            ))
+            # Harmonic interference patterns
+            pulse_x = math.sin(v.co.x * 2 * phi) * 0.18 * phi_inv + math.cos(v.co.x * phi * 4) * 0.1 * phi_inv
+            pulse_y = math.cos(v.co.y * 2 * phi) * 0.18 * phi_inv + math.sin(v.co.y * phi * 4) * 0.1 * phi_inv
+            pulse_z = math.sin(v.co.z * 2 * phi_inv) * 0.15 * phi_inv + math.cos(v.co.z * phi_inv * 4) * 0.08 * phi_inv
+            v.co += mathutils.Vector((pulse_x, pulse_y, pulse_z))
     elif "SacredGeometry" in sname:
         for v in data:
             d = v.co.length
-            v.co += v.co.normalized() * (math.cos(d * 2.618) * 0.16 * phi_inv)
+            # Sacred geometry with multiple harmonic layers
+            geom1 = math.cos(d * 2.618) * 0.2 * phi_inv
+            geom2 = math.sin(d * phi * 1.414) * 0.12 * phi_inv
+            v.co += v.co.normalized() * (geom1 + geom2)
     elif "CosmicDance" in sname:
         for v in data:
-            v.co += mathutils.Vector((
-                math.sin(v.co.x * 3 * phi) * 0.11 * phi_inv,
-                math.cos(v.co.y * 3 * phi) * 0.11 * phi_inv,
-                math.sin(v.co.z * 3 * phi) * 0.08 * phi_inv
-            ))
+            # Cosmic dance with orbital patterns
+            dance_x = math.sin(v.co.x * 3 * phi) * 0.15 * phi_inv + math.cos(v.co.x * phi * 6) * 0.08 * phi_inv
+            dance_y = math.cos(v.co.y * 3 * phi) * 0.15 * phi_inv + math.sin(v.co.y * phi * 6) * 0.08 * phi_inv
+            dance_z = math.sin(v.co.z * 3 * phi) * 0.12 * phi_inv + math.cos(v.co.z * phi * 6) * 0.06 * phi_inv
+            v.co += mathutils.Vector((dance_x, dance_y, dance_z))
     elif "EtherealFlow" in sname:
         for v in data:
-            v.co += mathutils.Vector((
-                math.sin(v.co.x * 4 * phi_inv) * 0.1 * phi_inv,
-                math.cos(v.co.y * 4 * phi_inv) * 0.1 * phi_inv,
-                math.sin(v.co.z * 4 * phi_inv) * 0.08 * phi_inv
-            ))
+            # Ethereal flow with fluid dynamics simulation
+            flow_x = math.sin(v.co.x * 4 * phi_inv) * 0.14 * phi_inv + math.sin(v.co.y * phi_inv * 2) * 0.06 * phi_inv
+            flow_y = math.cos(v.co.y * 4 * phi_inv) * 0.14 * phi_inv + math.cos(v.co.z * phi_inv * 2) * 0.06 * phi_inv
+            flow_z = math.sin(v.co.z * 4 * phi_inv) * 0.12 * phi_inv + math.sin(v.co.x * phi_inv * 2) * 0.06 * phi_inv
+            v.co += mathutils.Vector((flow_x, flow_y, flow_z))
     elif "CelestialRhythm" in sname:
         for v in data:
             d = v.co.length
-            v.co = v.co * (1.0 + math.sin(d * phi_inv) * 0.14 * phi_inv)
+            # Celestial rhythm with cosmic frequencies
+            rhythm1 = math.sin(d * phi_inv) * 0.18 * phi_inv
+            rhythm2 = math.cos(d * phi * 0.618) * 0.12 * phi_inv
+            v.co = v.co * (1.0 + rhythm1 + rhythm2)
     elif "UniversalHarmony" in sname:
         for v in data:
             d = v.co.length
-            v.co = v.co * (1.0 + math.sin(d * phi + d * phi_inv) * 0.18 * phi_inv)
+            # Universal harmony with complex frequency relationships
+            harmony1 = math.sin(d * phi + d * phi_inv) * 0.22 * phi_inv
+            harmony2 = math.cos(d * phi * phi_inv) * 0.15 * phi_inv
+            harmony3 = math.sin(d * phi_inv * phi_inv) * 0.1 * phi_inv
+            v.co = v.co * (1.0 + harmony1 + harmony2 + harmony3)
 
 print("✅ Abstract procedural shape keys created")
 
@@ -426,10 +443,12 @@ shape_feature_map = json.loads("""{shape_feature_json}""")
 # Create audio-reactive animation across the timeline (style-tunable)
 print("🎵 Creating audio-driven smooth morphing across abstract shapes...")
 
-# Progress through shapes over time with overlap crossfade
+# Enhanced progress through shapes with dynamic timing
 num_shapes = len(shape_names)
-segment = max({self.style_cfg['segment_min']}, int({self.total_frames} / max(1, num_shapes)))
-cross = max(int(segment * {self.style_cfg['cross_frac']}), 6)
+# Dynamic segment length based on audio intensity
+base_segment = max({self.style_cfg['segment_min']}, int({self.total_frames} / max(1, num_shapes)))
+segment = base_segment
+cross = max(int(segment * {self.style_cfg['cross_frac']}), 8)  # Longer crossfade for smoother transitions
 
 for frame in range(0, {self.total_frames} + 1):
     scene.frame_set(frame)
@@ -484,18 +503,41 @@ for frame in range(0, {self.total_frames} + 1):
 
     cur_val = feature_at(cur_feat, frame, 0.0)
     nxt_val = feature_at(nxt_feat, frame, 0.0)
+    
+    # Get beat strength for morphing modulation
+    beat = feature_at("beat_strength", frame, 0.0)
 
     # Gentle response curve for smoothness, modulated by phase_smooth
     cur_drive = (max(0.0, min(1.0, cur_val)) ** max(0.55, {self.style_cfg['drive_exp']} * phase_smooth)) * 0.95
     nxt_drive = (max(0.0, min(1.0, nxt_val)) ** max(0.55, {self.style_cfg['drive_exp']} * phase_smooth)) * 0.95
 
-    # Apply crossfade and insert keyframes sparsely for Bezier smoothing
-    obj.data.shape_keys.key_blocks[cur_name].value = cur_drive * (1.0 - w_next)
+    # Enhanced crossfade with audio-driven intensity modulation
+    # Add beat-synchronized morphing intensity
+    beat_sync = 1.0 + 0.3 * (beat ** 1.5)  # Beat-driven morphing boost
+    phase_mod = 1.0 + 0.2 * phase_intensity  # Phase-driven intensity
+    
+    # Apply enhanced crossfade with audio modulation
+    cur_final = cur_drive * (1.0 - w_next) * beat_sync * phase_mod
+    nxt_final = nxt_drive * w_next * beat_sync * phase_mod
+    
+    obj.data.shape_keys.key_blocks[cur_name].value = cur_final
     if frame % {self.style_cfg['kf_stride']} == 0:
         obj.data.shape_keys.key_blocks[cur_name].keyframe_insert(data_path="value")
-    obj.data.shape_keys.key_blocks[nxt_name].value = nxt_drive * w_next
+    obj.data.shape_keys.key_blocks[nxt_name].value = nxt_final
     if frame % {self.style_cfg['kf_stride']} == 0:
         obj.data.shape_keys.key_blocks[nxt_name].keyframe_insert(data_path="value")
+    
+    # Add subtle influence from other shapes for complexity
+    if frame % 12 == 0:  # Less frequent for performance
+        for i, sname in enumerate(shape_names):
+            if sname != cur_name and sname != nxt_name:
+                # Subtle influence from other shapes based on their audio features
+                feat_name = shape_feature_map.get(sname, "rms_energy")
+                influence_val = feature_at(feat_name, frame, 0.0)
+                # Very subtle influence (0.05 max)
+                subtle_influence = (influence_val ** 1.5) * 0.05 * phase_intensity
+                obj.data.shape_keys.key_blocks[sname].value = subtle_influence
+                obj.data.shape_keys.key_blocks[sname].keyframe_insert(data_path="value")
 
     # Material reactivity: vivid emission strength and color via HSV from audio bands
     # Hue from spectral centroid with dynamic range, saturation boosted, value enhanced
@@ -553,17 +595,24 @@ for frame in range(0, {self.total_frames} + 1):
     if frame % max(2, {self.style_cfg['kf_stride']} + 2) == 0:
         obj.keyframe_insert(data_path="scale")
 
-        # Dramatic shape transformations via modifiers (audio-driven)
+        # Enhanced dramatic shape transformations via modifiers (audio-driven)
         kick = feature_at("kick_energy", frame, 0.0)
         bass = feature_at("bass_energy", frame, 0.0)
         snare = feature_at("snare_energy", frame, 0.0)
         beat = feature_at("beat_strength", frame, 0.0)
+        vocal = feature_at("vocal_energy", frame, 0.0)
 
-        # Displace: respond strongly to kick/bass with non-linear curve
-        disp_strength = ({self.style_cfg['disp_mult_kick']} * (kick ** 1.2) + {self.style_cfg['disp_mult_bass']} * (bass ** 1.1)) * phase_intensity
-        # Add transient spike on strong beats
+        # Enhanced Displace: multi-layered response with harmonics
+        disp_base = ({self.style_cfg['disp_mult_kick']} * (kick ** 1.2) + {self.style_cfg['disp_mult_bass']} * (bass ** 1.1)) * phase_intensity
+        # Add harmonic layers for complexity
+        disp_harmonic = 0.3 * (snare ** 0.9) + 0.2 * (vocal ** 0.8)
+        # Beat-driven spikes with exponential response
         if beat > 0.65:
-            disp_strength += 0.8 * beat
+            disp_spike = 1.2 * (beat ** 1.8)  # More dramatic spikes
+            disp_strength = disp_base + disp_harmonic + disp_spike
+        else:
+            disp_strength = disp_base + disp_harmonic
+        
         disp_mod.strength = disp_strength
         if frame % 2 == 0:
             try:
@@ -571,13 +620,19 @@ for frame in range(0, {self.total_frames} + 1):
             except Exception:
                 pass
 
-        # Twist angle: simple & dramatic; combine kick/snare/bass with beat spikes
-        twist_energy = 0.55 * snare + 0.5 * kick + 0.45 * bass + 0.35 * beat
-        twist_energy = max(0.0, min(1.0, twist_energy))
+        # Enhanced Twist: multi-axis rotation with audio bands
+        twist_x = 0.4 * snare + 0.3 * kick + 0.2 * bass
+        twist_y = 0.3 * kick + 0.4 * bass + 0.2 * snare
+        twist_z = 0.5 * snare + 0.3 * kick + 0.3 * bass + 0.25 * beat
+        
+        # Beat-driven twist spikes
         if beat > 0.7:
-            twist_energy = min(1.0, twist_energy + 0.2 * beat)
-        # Sublinear power for more response at low levels, higher max angle for drama
-        twist_angle = (twist_energy ** 0.8) * (math.pi * (1.0 + {self.style_cfg['twist_mult']} * 0.7)) * phase_intensity
+            twist_spike = 0.4 * (beat ** 1.5)
+            twist_z += twist_spike
+        
+        # Apply multi-axis twist (simplified to Z-axis for stability)
+        twist_energy = max(0.0, min(1.0, twist_z))
+        twist_angle = (twist_energy ** 0.7) * (math.pi * (1.0 + {self.style_cfg['twist_mult']} * 0.8)) * phase_intensity
         twist_mod.angle = twist_angle
         if frame % 2 == 0:
             try:
@@ -585,9 +640,14 @@ for frame in range(0, {self.total_frames} + 1):
             except Exception:
                 pass
 
-        # Cast factor: overall organic roundness with RMS and highs adding shimmer
+        # Enhanced Cast: dynamic organic morphing with multiple audio inputs
         highs = feature_at("hihat_energy", frame, 0.0)
-        cast_factor = min(1.0, ({self.style_cfg['cast_base']} + {self.style_cfg['cast_mult_rms']} * (rms ** 0.8) + {self.style_cfg['cast_mult_highs']} * (highs ** 0.9)) * (0.85 + 0.3 * phase_intensity))
+        cast_base = {self.style_cfg['cast_base']} + {self.style_cfg['cast_mult_rms']} * (rms ** 0.8)
+        cast_highs = {self.style_cfg['cast_mult_highs']} * (highs ** 0.9)
+        cast_vocal = 0.15 * (vocal ** 0.7)  # Vocal influence
+        cast_beat = 0.1 * (beat ** 0.8)  # Beat influence
+        
+        cast_factor = min(1.0, (cast_base + cast_highs + cast_vocal + cast_beat) * (0.9 + 0.4 * phase_intensity))
         cast_mod.factor = cast_factor
         if frame % 4 == 0:
             try:
