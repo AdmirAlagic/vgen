@@ -51,12 +51,9 @@ def analyze_audio(audio_path: str, fps: int = 30) -> Dict:
 def create_enhanced_blender_script(features: Dict, output_path: str, quality_mode: str = 'high', style: str = 'cinematic') -> str:
     """Create Blender script with specified style (cinematic or polyfjord)."""
     
-    if style == 'polyfjord':
-        return create_polyfjord_style_script(features, output_path, quality_mode)
-    else:
-        return create_cinematic_style_script(features, output_path, quality_mode)
+    return create_blender_script(features, output_path, quality_mode)
 
-def create_polyfjord_style_script(features: Dict, output_path: str, quality_mode: str = 'high') -> str:
+def create_blender_script(features: Dict, output_path: str, quality_mode: str = 'high') -> str:
     """Create POLYFJORD-STYLE Blender script with smooth shape morphing and professional quality."""
     print("🎬 Creating POLYFJORD-STYLE professional audio visualizer script")
     
@@ -96,48 +93,6 @@ def create_polyfjord_style_script(features: Dict, output_path: str, quality_mode
     print("🚀 Features: SMOOTH Shape Morphing | PROFESSIONAL Colors | NO Position Changes")
     print("🎵 Polyfjord Features: Frequency-specific responses, Professional materials, Commercial quality")
     return saved_script_path
-
-def create_cinematic_style_script(features: Dict, output_path: str, quality_mode: str = 'high') -> str:
-    """Create CINEMATIC Blender script with dramatic shape changes and ultra-smooth animations."""
-    print("🎬 Creating CINEMATIC mutating cube Blender script with dramatic improvements")
-    
-    # Create temp directory if it doesn't exist
-    temp_dir = Path(__file__).parent / "output" / "temp"
-    temp_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Import the original animator with cinematic mode
-    sys.path.insert(0, str(Path(__file__).parent))
-    try:
-        from src.animator import MutatingCubeAnimator
-    except ImportError:
-        print("❌ Animator not found. Please check src/animator.py")
-        sys.exit(1)
-        
-    # Map quality modes to animator quality levels (cinematic mode enabled)
-    quality_mapping = {
-        'ultra_fast': 'fast',      # Fastest cinematic quality
-        'fast': 'balanced',        # Balanced cinematic quality
-        'balanced': 'high',        # High cinematic quality
-        'high': 'ultra',           # Ultra cinematic quality
-        'ultra': 'cinematic'       # Maximum cinematic quality
-    }
-    
-    quality_level = quality_mapping.get(quality_mode, 'high')
-    animator = MutatingCubeAnimator(features, quality_level)
-    
-    # Generate cinematic mutating cube script
-    script_path = temp_dir / "cinematic_mutating_cube_scene.py"
-    blend_path = temp_dir / "scene.blend"
-    
-    # Use the original animator's save_script method with cinematic mode
-    saved_script_path = animator.save_script(str(script_path), None, str(blend_path))
-    
-    print(f"✅ CINEMATIC mutating cube Blender script created: {saved_script_path}")
-    print(f"🎬 Blend file will be saved to: {blend_path}")
-    print("🚀 Features: CINEMATIC Audio Responsiveness | DRAMATIC Shape Changes | ULTRA-SMOOTH Animations")
-    print("🎵 Cinematic Features: Multi-layer deformation, Procedural geometry, Beat-synchronized transitions")
-    return saved_script_path
-
 
 def run_blender_script(script_path: str) -> bool:
     """Run the Blender script and stream Blender output for diagnostics."""
