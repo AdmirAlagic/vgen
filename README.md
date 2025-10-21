@@ -1,16 +1,16 @@
 ## Audio-Reactive Video Generator (Current Workflow)
 
-This repo generates audio-reactive visuals in Blender driven by either cinematic `src/animator.py` or Polyfjord-style `output/simple_polyfjord_visualizer.py`, orchestrated by `generate_video.py`.
+This repo generates audio-reactive visuals in Blender driven by either cinematic `src/animator.py` or Polyfjord-style `src/audio_visualizer.py`, orchestrated by `src/generate_video.py`.
 
 ### Usage
 
 ```bash
 source venv/bin/activate
-python generate_video.py <audio_file> [output_name] [quality_mode] [style]
+python src/generate_video.py <audio_file> [output_name] [quality_mode] [style]
 
 # Examples
-python generate_video.py song.mp3 my_video balanced cinematic
-python generate_video.py song.mp3 my_video ultra_fast polyfjord
+python src/generate_video.py song.mp3 my_video balanced cinematic
+python src/generate_video.py song.mp3 my_video ultra_fast polyfjord
 ```
 
 - **style**: `cinematic` (default) uses `src/animator.py`; `polyfjord` uses `output/simple_polyfjord_visualizer.py`
@@ -20,9 +20,9 @@ python generate_video.py song.mp3 my_video ultra_fast polyfjord
 GPU is enabled when available (Metal on macOS, CUDA elsewhere). If unsupported, it falls back to CPU automatically.
 
 ### Files that matter
-- `generate_video.py`: CLI, audio analysis, scene generation, rendering
+- `src/generate_video.py`: CLI, audio analysis, scene generation, rendering
 - `src/animator.py`: cinematic animator used for `style=cinematic`
-- `output/simple_polyfjord_visualizer.py`: Polyfjord-style scene for `style=polyfjord`
+- `src/audio_visualizer.py`: Polyfjord-style scene for `style=polyfjord`
 
 ### Output
 - Blend files: `output/temp/scene.blend`

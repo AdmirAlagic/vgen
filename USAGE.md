@@ -9,21 +9,21 @@ The AudioBlender Video Generator creates stunning audio-reactive 3D animations u
 ### Command Line Usage
 ```bash
 # Basic usage (auto-selects quality)
-python generate_video.py music.wav my_video
+python src/generate_video.py music.wav my_video
 
 # With specific quality preset
-python generate_video.py music.wav my_video ultra_fast
-python generate_video.py music.wav my_video balanced
-python generate_video.py music.wav my_video ultra
+python src/generate_video.py music.wav my_video ultra_fast
+python src/generate_video.py music.wav my_video balanced
+python src/generate_video.py music.wav my_video ultra
 
 # Using main entry point
-python main.py music.wav my_video
+python src/main.py music.wav my_video
 ```
 
 ### GUI Usage
 ```bash
 # Launch GUI application
-python main.py
+python src/main.py
 # or
 python src/main.py
 ```
@@ -59,22 +59,22 @@ These presets control the final video output quality:
 
 **🎬 Quick Previews & Testing**
 ```bash
-python generate_video.py music.wav preview ultra_fast
+python src/generate_video.py music.wav preview ultra_fast
 ```
 
 **⚡ Fast Iterations & Drafts**
 ```bash
-python generate_video.py music.wav draft fast
+python src/generate_video.py music.wav draft fast
 ```
 
 **🎨 Balanced Quality (Recommended)**
 ```bash
-python generate_video.py music.wav final balanced
+python src/generate_video.py music.wav final balanced
 ```
 
 **🏆 Maximum Quality (Ultra Slow)**
 ```bash
-python generate_video.py music.wav masterpiece ultra
+python src/generate_video.py music.wav masterpiece ultra
 ```
 
 ## 🔧 Advanced Usage
@@ -200,17 +200,17 @@ output/
 
 **For Fast Rendering:**
 ```bash
-python generate_video.py music.wav test ultra_fast
+python src/generate_video.py music.wav test ultra_fast
 ```
 
 **For Best Quality:**
 ```bash
-python generate_video.py music.wav final ultra
+python src/generate_video.py music.wav final ultra
 ```
 
 **For Balanced Results:**
 ```bash
-python generate_video.py music.wav output balanced
+python src/generate_video.py music.wav output balanced
 ```
 
 ## 🎬 Example Workflows
@@ -218,27 +218,27 @@ python generate_video.py music.wav output balanced
 ### Quick Preview Workflow
 ```bash
 # 1. Quick test with short audio
-python generate_video.py test_audio.wav preview ultra_fast
+python src/generate_video.py test_audio.wav preview ultra_fast
 
 # 2. Review the preview
 # 3. Generate final with higher quality
-python generate_video.py full_audio.wav final balanced
+python src/generate_video.py full_audio.wav final balanced
 ```
 
 ### High-Quality Production Workflow
 ```bash
 # 1. Test with balanced quality
-python generate_video.py music.wav test balanced
+python src/generate_video.py music.wav test balanced
 
 # 2. If satisfied, generate ultra quality
-python generate_video.py music.wav final ultra
+python src/generate_video.py music.wav final ultra
 ```
 
 ### Batch Processing
 ```bash
 # Process multiple files with same quality
 for file in *.wav; do
-    python generate_video.py "$file" "${file%.wav}" balanced
+    python src/generate_video.py "$file" "${file%.wav}" balanced
 done
 ```
 

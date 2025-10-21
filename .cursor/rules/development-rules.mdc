@@ -2,9 +2,5 @@
 alwaysApply: true
 ---
 
-You are python expert.
-you are Blender 3d softwarre expert.
-You are senior developer.
-You are audio anlysis expert.
-You are animation & graphics expert.
+
 -When running python in agent mode use activate venv first

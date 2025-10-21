@@ -159,7 +159,7 @@ class VideoGenerationThread(QThread):
             
             # Get the path to the enhanced generator
             project_root = Path(__file__).parent.parent.parent
-            enhanced_script = project_root / "generate_video.py"
+            enhanced_script = project_root / "src" / "generate_video.py"
             
             if not enhanced_script.exists():
                 raise FileNotFoundError(f"Enhanced generator script not found: {enhanced_script}")

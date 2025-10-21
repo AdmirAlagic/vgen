@@ -15,12 +15,12 @@ ADVANCED AUDIO VISUALIZER - USAGE INSTRUCTIONS
    blender --background --python /Users/admir/ai/Cube/output/test_advanced_visualizer.py
 
 2. Or run the main script directly:
-   blender --background --python /Users/admir/ai/Cube/output/advanced_audio_visualizer.py
+   blender --background --python /Users/admir/ai/Cube/src/audio_visualizer.py
 
 3. For interactive mode:
    - Open Blender 4.5
    - Go to Scripting workspace
-   - Load and run: /Users/admir/ai/Cube/output/advanced_audio_visualizer.py
+   - Load and run: /Users/admir/ai/Cube/src/audio_visualizer.py
 
 🎵 FEATURES:
 - Smooth shape morphing using geometry nodes
@@ -31,7 +31,7 @@ ADVANCED AUDIO VISUALIZER - USAGE INSTRUCTIONS
 - Dramatic but smooth visual effects
 
 📁 FILES CREATED:
-- /Users/admir/ai/Cube/output/advanced_audio_visualizer.py - Main visualization script
+- /Users/admir/ai/Cube/src/audio_visualizer.py - Main visualization script
 - /Users/admir/ai/Cube/output/test_advanced_visualizer.py - Blender test script
 - /Users/admir/ai/Cube/output/test_advanced_audio_data.json - Test audio data
 
