@@ -132,11 +132,16 @@ print(f"🎯 Quality Level: {self.quality_level.upper()}")
 print(f"🎨 Morph Style: {self.morph_style.upper()}")
 print("🚀 Features: SMOOTH morphing, NO flickering, CONTINUOUS motion, SHAPE-ONLY changes")
 
-# Create NASA space background
-print("🌌 Setting up NASA space background...")
+# Create 2D NASA space background as proper image plane
+print("🌌 Setting up 2D NASA space background...")
+print("🔍 DEBUG: Starting background setup process...")
+
 try:
     # Load the NASA space background image
     import os
+    print(f"🔍 DEBUG: Current working directory: {{os.getcwd()}}")
+    print(f"🔍 DEBUG: Script file path: {{__file__}}")
+    
     # Try multiple possible paths for the space background
     possible_paths = [
         os.path.join(os.path.dirname(__file__), '..', 'assets', 'space_background.jpg'),
@@ -145,42 +150,62 @@ try:
         os.path.abspath('assets/space_background.jpg')
     ]
     
+    print(f"🔍 DEBUG: Checking possible paths:")
+    for i, path in enumerate(possible_paths):
+        exists = os.path.exists(path)
+        print(f"🔍 DEBUG: Path {{i+1}}: {{path}} - {{'EXISTS' if exists else 'NOT FOUND'}}")
+    
     space_image_path = None
     for path in possible_paths:
         if os.path.exists(path):
             space_image_path = path
+            print(f"✅ DEBUG: Found space background at: {{path}}")
             break
     
     if not space_image_path:
         space_image_path = possible_paths[0]  # Use first path for error message
-    
-    print(f"🔍 Looking for space background at: {{space_image_path}}")
-    print(f"🔍 Current working directory: {{os.getcwd()}}")
-    print(f"🔍 Script directory: {{os.path.dirname(__file__)}}")
+        print(f"⚠️ DEBUG: No space background found, will use procedural background")
     
     if space_image_path and os.path.exists(space_image_path):
+        print(f"🔍 DEBUG: Loading space background image from: {{space_image_path}}")
         space_image = bpy.data.images.load(space_image_path)
         space_image.name = "NASA_Space_Background"
+        print(f"✅ DEBUG: Space image loaded successfully - Size: {{space_image.size[0]}}x{{space_image.size[1]}}")
         
-        # Create world shader for background
+        # Create 2D background using world shader with proper 2D projection
         world = bpy.context.scene.world
+        print(f"🔍 DEBUG: Getting world object: {{world}}")
         world.use_nodes = True
+        print(f"✅ DEBUG: Enabled world nodes")
+        
         world_nodes = world.node_tree.nodes
         world_links = world.node_tree.links
+        print(f"🔍 DEBUG: World has {{len(world_nodes)}} nodes initially")
         
         # Clear default nodes
         for node in world_nodes:
             world_nodes.remove(node)
+        print(f"✅ DEBUG: Cleared {{len(world_nodes)}} default world nodes")
         
-        # Create background nodes
+        # Create 2D background nodes
+        print("🔍 DEBUG: Creating background nodes...")
         bg_node = world_nodes.new(type='ShaderNodeBackground')
         tex_coord = world_nodes.new(type='ShaderNodeTexCoord')
         mapping = world_nodes.new(type='ShaderNodeMapping')
         image_texture = world_nodes.new(type='ShaderNodeTexImage')
         output_node = world_nodes.new(type='ShaderNodeOutputWorld')
+        print(f"✅ DEBUG: Created {{len(world_nodes)}} background nodes")
         
-        # Set up image texture
+        # Set up image texture for 2D background
+        print("🔍 DEBUG: Setting up image texture...")
         image_texture.image = space_image
+        print(f"✅ DEBUG: Image texture set to: {{image_texture.image.name}}")
+        
+        # Configure image texture for 2D background (no stretching)
+        image_texture.interpolation = 'Smart'  # Use Smart interpolation for best quality
+        image_texture.extension = 'EXTEND'     # Extend edges to avoid seams
+        image_texture.projection = 'FLAT'      # Use flat projection for 2D background
+        print(f"✅ DEBUG: Image texture configured - Interpolation: Smart, Extension: EXTEND, Projection: FLAT")
         
         # Position nodes
         tex_coord.location = (-800, 0)
@@ -188,17 +213,120 @@ try:
         image_texture.location = (-400, 0)
         bg_node.location = (-200, 0)
         output_node.location = (0, 0)
+        print(f"✅ DEBUG: Nodes positioned")
         
-        # Connect nodes
-        world_links.new(tex_coord.outputs["Generated"], mapping.inputs["Vector"])
-        world_links.new(mapping.outputs["Vector"], image_texture.inputs["Vector"])
-        world_links.new(image_texture.outputs["Color"], bg_node.inputs["Color"])
-        world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
+        # Configure mapping for proper 2D background (no stretching through scene)
+        # Use UV coordinates instead of Generated for proper 2D mapping
+        image_width = space_image.size[0]
+        image_height = space_image.size[1]
+        image_aspect = image_width / image_height
         
-        # Set background strength - higher value for better visibility
-        bg_node.inputs["Strength"].default_value = 3.0
+        # Target render aspect ratio (16:9 for HD)
+        render_aspect = 1920 / 1080
         
-        print("✅ NASA space background loaded successfully")
+        print(f"🔍 DEBUG: Image dimensions: {{image_width}}x{{image_height}}, Aspect: {{image_aspect:.2f}}")
+        print(f"🔍 DEBUG: Render aspect ratio: {{render_aspect:.2f}}")
+        
+        # Calculate proper scale to fit background without stretching
+        if image_aspect > render_aspect:
+            # Image is wider than render - scale to fit height, crop width
+            scale_x = render_aspect / image_aspect
+            scale_y = 1.0
+            print(f"🔍 DEBUG: Image wider than render - scaling to fit height")
+        else:
+            # Image is taller than render - scale to fit width, crop height
+            scale_x = 1.0
+            scale_y = image_aspect / render_aspect
+            print(f"🔍 DEBUG: Image taller than render - scaling to fit width")
+        
+        # Apply proper scaling for 2D background - use much larger scale to prevent stretching
+        # Scale up significantly to make background appear smaller and less stretched
+        uniform_scale = 2.0  # Larger scale to reduce stretching effect
+        mapping.inputs["Scale"].default_value = (uniform_scale, uniform_scale, 1.0)
+        mapping.inputs["Location"].default_value = (0.0, 0.0, 0.0)  # Center the background
+        
+        print(f"✅ DEBUG: Mapping scale set to: ({{uniform_scale:.2f}}, {{uniform_scale:.2f}}, 1.0)")
+        print(f"✅ 2D background scaling configured - Image: {{image_width}}x{{image_height}}, Uniform Scale: {{uniform_scale:.2f}}")
+        
+        # Connect nodes using Generated coordinates for reliable world background
+        print("🔍 DEBUG: Connecting nodes...")
+        try:
+            # Use Generated coordinates for world background (more reliable than UV)
+            world_links.new(tex_coord.outputs["Generated"], mapping.inputs["Vector"])
+            print(f"✅ DEBUG: Connected Generated coordinates to mapping")
+            
+            world_links.new(mapping.outputs["Vector"], image_texture.inputs["Vector"])
+            print(f"✅ DEBUG: Connected mapping to image texture")
+            
+            world_links.new(image_texture.outputs["Color"], bg_node.inputs["Color"])
+            print(f"✅ DEBUG: Connected image texture to background")
+            
+            world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
+            print(f"✅ DEBUG: Connected background to output")
+            
+            print(f"✅ DEBUG: All nodes connected successfully with Generated coordinates")
+        except Exception as link_e:
+            print(f"⚠️ DEBUG: Error connecting nodes: {{link_e}}")
+            import traceback
+            traceback.print_exc()
+        
+        # Set background strength for proper visibility
+        bg_node.inputs["Strength"].default_value = 5.0  # Higher strength for better visibility
+        print(f"✅ DEBUG: Background strength set to 5.0")
+        
+        # Verify world setup
+        print(f"🔍 DEBUG: Final world node count: {{len(world_nodes)}}")
+        print(f"🔍 DEBUG: Final world link count: {{len(world_links)}}")
+        print(f"🔍 DEBUG: World nodes: {{[node.name for node in world_nodes]}}")
+        
+        print("✅ 2D NASA space background loaded successfully")
+        
+        # Alternative: Create a background plane object as fallback
+        print("🔍 DEBUG: Creating alternative background plane object...")
+        try:
+            # Create a large plane behind the main object
+            bpy.ops.mesh.primitive_plane_add(size=50, location=(0, 0, -15))
+            bg_plane = bpy.context.active_object
+            bg_plane.name = "BackgroundPlane"
+            
+            # Create material for background plane
+            bg_mat = bpy.data.materials.new(name="BackgroundMaterial")
+            bg_plane.data.materials.append(bg_mat)
+            bg_mat.use_nodes = True
+            bg_nodes = bg_mat.node_tree.nodes
+            bg_links = bg_mat.node_tree.links
+            
+            # Clear default nodes
+            for node in bg_nodes:
+                bg_nodes.remove(node)
+            
+            # Create simple material nodes
+            output_node = bg_nodes.new(type='ShaderNodeOutputMaterial')
+            emission_node = bg_nodes.new(type='ShaderNodeEmission')
+            image_texture = bg_nodes.new(type='ShaderNodeTexImage')
+            tex_coord = bg_nodes.new(type='ShaderNodeTexCoord')
+            mapping = bg_nodes.new(type='ShaderNodeMapping')
+            
+            # Set up image texture
+            image_texture.image = space_image
+            image_texture.interpolation = 'Smart'
+            
+            # Configure mapping for proper background display
+            mapping.inputs["Scale"].default_value = (1.0, 1.0, 1.0)
+            
+            # Connect nodes
+            bg_links.new(tex_coord.outputs["UV"], mapping.inputs["Vector"])
+            bg_links.new(mapping.outputs["Vector"], image_texture.inputs["Vector"])
+            bg_links.new(image_texture.outputs["Color"], emission_node.inputs["Color"])
+            bg_links.new(emission_node.outputs["Emission"], output_node.inputs["Surface"])
+            
+            # Set emission strength
+            emission_node.inputs["Strength"].default_value = 1.0
+            
+            print("✅ DEBUG: Alternative background plane created successfully")
+            
+        except Exception as bg_plane_e:
+            print(f"⚠️ DEBUG: Could not create background plane: {{bg_plane_e}}")
     else:
         print(f"⚠️ Space background image not found at: {{space_image_path}}")
         print("🌌 Creating procedural space background instead...")
@@ -254,6 +382,9 @@ try:
         
 except Exception as e:
     print(f"⚠️ Error setting up space background: {{e}}")
+    import traceback
+    print(f"🔍 DEBUG: Full error traceback:")
+    traceback.print_exc()
     print("🌌 Using default world background")
 
 # OPTIMIZED GPU SETUP for maximum performance
@@ -1060,22 +1191,36 @@ try:
     camera = bpy.context.active_object
     camera.name = "AudioVisualizerCamera"
     
-    # Set camera rotation
+    # Set camera rotation and ensure it looks at the object
     camera.rotation_euler = (
         math.radians(camera_rotation['x']),
         math.radians(camera_rotation['y']),
         math.radians(camera_rotation['z'])
     )
     
+    # Ensure camera is looking at the bottom of the background plane (0, 0, -15)
+    camera_target = mathutils.Vector((0, 0, -15))  # Bottom of background plane
+    camera_direction = camera_target - camera.location
+    camera.rotation_euler = camera_direction.to_track_quat('-Z', 'Y').to_euler()
+    
+    print(f"✅ DEBUG: Camera positioned at: {{camera.location}}")
+    print(f"✅ DEBUG: Camera looking at bottom of background plane: {{camera_target}}")
+    print(f"✅ DEBUG: Camera rotation: {{camera.rotation_euler}}")
+    
     # Set camera properties
     camera.data.lens = camera_lens
     camera.data.sensor_width = camera_sensor_width
     camera.data.angle = math.radians(camera_fov)
     
+    # Optimize camera for background visibility
+    # Ensure camera is positioned to show background properly
+    camera.data.clip_end = 1000.0  # Extend far clip plane to ensure background is visible
+    
     # Set as active camera
     scene.camera = camera
     
     print(f"✅ Camera setup complete - Distance: {{camera_distance}}, Location: {{camera_location}}")
+    print(f"✅ Camera far clip plane set to 1000.0 for background visibility")
     
 except Exception as e:
     print(f"⚠️ Error setting up camera: {{e}}")
@@ -1088,9 +1233,37 @@ scene.cycles.max_bounces = {self.config['max_bounces']}
 scene.cycles.use_denoising = {str(self.config['use_denoising'])}
 scene.cycles.use_adaptive_sampling = True
 
+# Background-specific quality settings to prevent pixelation
+print("🔍 DEBUG: Configuring background visibility settings...")
+scene.world.use_nodes = True
+print(f"🔍 DEBUG: World nodes enabled: {{scene.world.use_nodes}}")
+
+if scene.world.node_tree:
+    print(f"🔍 DEBUG: World has node tree with {{len(scene.world.node_tree.nodes)}} nodes")
+    # Find the background node and optimize it
+    for node in scene.world.node_tree.nodes:
+        print(f"🔍 DEBUG: Found node: {{node.name}} ({{node.type}})")
+        if node.type == 'BACKGROUND':
+            # Increase background strength for better visibility
+            node.inputs["Strength"].default_value = 5.0
+            print(f"✅ DEBUG: Background node strength set to 5.0")
+        elif node.type == 'TEX_IMAGE':
+            # Ensure image texture uses highest quality settings
+            node.interpolation = 'Smart'
+            node.extension = 'EXTEND'
+            print(f"✅ DEBUG: Image texture optimized for quality")
+            # Ensure the image is not being scaled down too much
+            if hasattr(node, 'image') and node.image:
+                # Set image to use full resolution
+                node.image.use_fake_user = True  # Keep image in memory
+                print(f"✅ DEBUG: Image set to use full resolution")
+else:
+    print("⚠️ DEBUG: World has no node tree!")
+
 # CRITICAL: Ensure background is visible
 scene.render.film_transparent = False
-print("✅ Set film_transparent to False for background visibility")
+print("✅ DEBUG: Set film_transparent to False for background visibility")
+print(f"🔍 DEBUG: Film transparent setting: {{scene.render.film_transparent}}")
 
 # GPU-optimized output settings
 scene.render.image_settings.file_format = 'FFMPEG'
