@@ -1,0 +1,195 @@
+{
+  "camera": {
+    "distance": 18.0,
+    "location": {
+      "x": 10.0,
+      "y": -10.0,
+      "z": 10.0
+    },
+    "rotation": {
+      "x": 60.0,
+      "y": 0.0,
+      "z": 45.0
+    },
+    "fov": 50.0,
+    "lens": 24.0,
+    "sensor_width": 36.0
+  },
+  "lighting": {
+    "key_light": {
+      "location": {
+        "x": 5.0,
+        "y": 5.0,
+        "z": 5.0
+      },
+      "energy": 50.0,
+      "size": 2.0,
+      "color": [1.0, 0.95, 0.8]
+    },
+    "fill_light": {
+      "location": {
+        "x": -3.0,
+        "y": -2.0,
+        "z": 3.0
+      },
+      "energy": 20.0,
+      "size": 3.0,
+      "color": [0.8, 0.9, 1.0]
+    },
+    "rim_light": {
+      "location": {
+        "x": 0.0,
+        "y": -8.0,
+        "z": 2.0
+      },
+      "energy": 30.0,
+      "spot_size": 45.0,
+      "color": [0.9, 0.7, 1.0]
+    }
+  },
+  "material": {
+    "emission_strength": 3.5,
+    "emission_color": [1.0, 0.5, 0.2],
+    "color_ramp_low": [0.2, 0.1, 0.6],
+    "color_ramp_high": [0.8, 0.4, 1.0],
+    "metallic": 0.9,
+    "roughness": 0.2,
+    "ior": 1.5
+  },
+  "render": {
+    "resolution_x": 1920,
+    "resolution_y": 1080,
+    "resolution_percentage": 100,
+    "use_gpu": true,
+    "engine": "CYCLES"
+  },
+  "quality_levels": {
+    "ultra_fast": {
+      "samples": 16,
+      "max_bounces": 1,
+      "use_denoising": false
+    },
+    "lowest": {
+      "samples": 16,
+      "max_bounces": 1,
+      "use_denoising": false
+    },
+    "preview": {
+      "samples": 32,
+      "max_bounces": 3,
+      "use_denoising": true
+    },
+    "high": {
+      "samples": 256,
+      "max_bounces": 10,
+      "use_denoising": true
+    },
+    "cinematic": {
+      "samples": 1024,
+      "max_bounces": 16,
+      "use_denoising": true
+    },
+    "broadcast": {
+      "samples": 2048,
+      "max_bounces": 24,
+      "use_denoising": true
+    }
+  },
+  "morph_styles": {
+    "flow": {
+      "drive_exp": 0.7,
+      "disp_mult_kick": 3.0,
+      "disp_mult_bass": 2.0,
+      "twist_mult": 2.0,
+      "cast_base": 0.3,
+      "cast_mult_rms": 0.8,
+      "cast_mult_highs": 0.4,
+      "segment_min": 10,
+      "cross_frac": 0.5,
+      "kf_stride": 2,
+      "shape_intensity": 2.0
+    },
+    "impact": {
+      "drive_exp": 0.6,
+      "disp_mult_kick": 5.0,
+      "disp_mult_bass": 3.5,
+      "twist_mult": 3.0,
+      "cast_base": 0.4,
+      "cast_mult_rms": 1.2,
+      "cast_mult_highs": 0.5,
+      "segment_min": 6,
+      "cross_frac": 0.3,
+      "kf_stride": 1,
+      "shape_intensity": 2.5
+    },
+    "twist": {
+      "drive_exp": 0.65,
+      "disp_mult_kick": 3.0,
+      "disp_mult_bass": 2.0,
+      "twist_mult": 4.0,
+      "cast_base": 0.25,
+      "cast_mult_rms": 0.7,
+      "cast_mult_highs": 0.3,
+      "segment_min": 8,
+      "cross_frac": 0.4,
+      "kf_stride": 1,
+      "shape_intensity": 2.2
+    },
+    "ripple": {
+      "drive_exp": 0.75,
+      "disp_mult_kick": 3.5,
+      "disp_mult_bass": 2.5,
+      "twist_mult": 1.5,
+      "cast_base": 0.2,
+      "cast_mult_rms": 0.8,
+      "cast_mult_highs": 0.6,
+      "segment_min": 12,
+      "cross_frac": 0.6,
+      "kf_stride": 2,
+      "shape_intensity": 1.8
+    },
+    "breathe": {
+      "drive_exp": 0.8,
+      "disp_mult_kick": 2.0,
+      "disp_mult_bass": 1.5,
+      "twist_mult": 1.0,
+      "cast_base": 0.5,
+      "cast_mult_rms": 1.0,
+      "cast_mult_highs": 0.2,
+      "segment_min": 15,
+      "cross_frac": 0.7,
+      "kf_stride": 3,
+      "shape_intensity": 1.5
+    },
+    "spike": {
+      "drive_exp": 0.5,
+      "disp_mult_kick": 6.0,
+      "disp_mult_bass": 4.0,
+      "twist_mult": 2.5,
+      "cast_base": 0.2,
+      "cast_mult_rms": 0.5,
+      "cast_mult_highs": 0.8,
+      "segment_min": 4,
+      "cross_frac": 0.2,
+      "kf_stride": 1,
+      "shape_intensity": 3.0
+    }
+  },
+  "presets": {
+    "cinematic": {
+      "camera_distance": 15.0,
+      "quality_level": "cinematic",
+      "morph_style": "flow"
+    },
+    "close_up": {
+      "camera_distance": 8.0,
+      "quality_level": "high",
+      "morph_style": "impact"
+    },
+    "wide_shot": {
+      "camera_distance": 25.0,
+      "quality_level": "cinematic",
+      "morph_style": "breathe"
+    }
+  }
+}

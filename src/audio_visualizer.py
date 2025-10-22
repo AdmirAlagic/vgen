@@ -14,10 +14,11 @@ UPDATED: Now uses optimized smooth continuous animation system
 """
 
 from optimized_audio_visualizer import OptimizedAudioVisualizer
-from typing import Dict
+from scene_config_loader import load_scene_config, SceneConfig
+from typing import Dict, Optional, Any
 
 class AudioVisualizer:
-    def __init__(self, audio_features, quality_level='cinematic', morph_style: str = 'flow'):
+    def __init__(self, audio_features, quality_level='cinematic', morph_style: str = 'flow', config_path: Optional[str] = None):
         """Initialize the Polyfjord-style visualizer.
 
         morph_style options:
@@ -34,6 +35,15 @@ class AudioVisualizer:
         self.duration = audio_features.get('duration', 10.0)
         self.quality_level = quality_level
         self.morph_style = (morph_style or 'flow').lower()
+        
+        # Load scene configuration
+        try:
+            self.scene_config = load_scene_config(config_path)
+            print(f"✅ Scene configuration loaded - Camera distance: {self.scene_config.camera.distance}")
+        except Exception as e:
+            print(f"⚠️ Error loading scene configuration: {e}")
+            print("Using default configuration...")
+            self.scene_config = load_scene_config()
         
         # GPU-optimized quality configurations
         self.quality_configs = {
@@ -134,7 +144,7 @@ class AudioVisualizer:
         
     def create_polyfjord_style_scene(self, output_path: str, blend_path: str = None):
         """Create optimized Polyfjord-style scene with smooth continuous animation."""
-        # Use the optimized visualizer system
+        # Use the optimized visualizer system with scene configuration
         optimized_visualizer = OptimizedAudioVisualizer(self.features, self.quality_level, self.morph_style)
         return optimized_visualizer.save_script(output_path, blend_path=blend_path)
     

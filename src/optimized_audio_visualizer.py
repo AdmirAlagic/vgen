@@ -15,12 +15,13 @@ import json
 import math
 import random
 from typing import Dict, List, Tuple, Optional
+from scene_config_loader import load_scene_config
 
 
 class OptimizedAudioVisualizer:
     """Optimized audio visualizer with smooth continuous animation."""
     
-    def __init__(self, audio_features: Dict, quality_level: str = 'cinematic', morph_style: str = 'flow'):
+    def __init__(self, audio_features: Dict, quality_level: str = 'cinematic', morph_style: str = 'flow', config_path: Optional[str] = None):
         """Initialize the optimized visualizer."""
         self.features = audio_features
         self.total_frames = audio_features.get('total_frames', 300)
@@ -28,6 +29,15 @@ class OptimizedAudioVisualizer:
         self.duration = audio_features.get('duration', 10.0)
         self.quality_level = quality_level
         self.morph_style = morph_style.lower()
+        
+        # Load scene configuration
+        try:
+            self.scene_config = load_scene_config(config_path)
+            print(f"✅ Scene configuration loaded - Camera distance: {self.scene_config.camera.distance}")
+        except Exception as e:
+            print(f"⚠️ Error loading scene configuration: {e}")
+            print("Using default configuration...")
+            self.scene_config = load_scene_config()
         
         # Synthetic tempo for continuous motion during silence
         self.synthetic_tempo = 120.0
@@ -770,6 +780,50 @@ def apply_smooth_interpolation():
 apply_smooth_interpolation()
 print("✅ Smooth Bezier interpolation applied to all animations")
 
+# Setup camera using configuration
+print("📷 Setting up camera from configuration...")
+try:
+    # Clear existing cameras
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.object.select_by_type(type='CAMERA')
+    bpy.ops.object.delete(use_global=False)
+    
+    # Get camera settings from configuration
+    camera_distance = {self.scene_config.camera.distance}
+    camera_location = {self.scene_config.camera.location}
+    camera_rotation = {self.scene_config.camera.rotation}
+    camera_fov = {self.scene_config.camera.fov}
+    camera_lens = {self.scene_config.camera.lens}
+    camera_sensor_width = {self.scene_config.camera.sensor_width}
+    
+    # Add camera at configured position
+    bpy.ops.object.camera_add(
+        location=(camera_location['x'], camera_location['y'], camera_location['z'])
+    )
+    camera = bpy.context.active_object
+    camera.name = "AudioVisualizerCamera"
+    
+    # Set camera rotation
+    camera.rotation_euler = (
+        math.radians(camera_rotation['x']),
+        math.radians(camera_rotation['y']),
+        math.radians(camera_rotation['z'])
+    )
+    
+    # Set camera properties
+    camera.data.lens = camera_lens
+    camera.data.sensor_width = camera_sensor_width
+    camera.data.angle = math.radians(camera_fov)
+    
+    # Set as active camera
+    scene.camera = camera
+    
+    print(f"✅ Camera setup complete - Distance: {{camera_distance}}, Location: {{camera_location}}")
+    
+except Exception as e:
+    print(f"⚠️ Error setting up camera: {{e}}")
+    print("Using default camera...")
+
 # GPU-optimized professional render settings
 scene.render.engine = 'CYCLES'
 scene.cycles.samples = {self.config['samples']}
@@ -842,9 +896,9 @@ print("🚀 Ready for professional music video production with maximum cinematic
         return script_path
 
 
-def create_optimized_audio_visualizer(audio_features: Dict, quality_level: str = 'cinematic', morph_style: str = 'flow') -> OptimizedAudioVisualizer:
+def create_optimized_audio_visualizer(audio_features: Dict, quality_level: str = 'cinematic', morph_style: str = 'flow', config_path: Optional[str] = None) -> OptimizedAudioVisualizer:
     """Create an optimized audio visualizer instance."""
-    return OptimizedAudioVisualizer(audio_features, quality_level, morph_style)
+    return OptimizedAudioVisualizer(audio_features, quality_level, morph_style, config_path)
 
 
 if __name__ == "__main__":
