@@ -77,11 +77,11 @@ def create_blender_script(features: Dict, output_path: str, quality_mode: str = 
     
     # Map quality modes to Polyfjord quality levels
     quality_mapping = {
-        'ultra_fast': 'preview',   # Fastest quality
-        'fast': 'high',           # High quality
-        'balanced': 'cinematic',  # Cinematic quality
-        'high': 'cinematic',      # Cinematic quality
-        'ultra': 'broadcast'      # Broadcast quality
+        'ultra_fast': 'lowest',   # Lowest possible quality for maximum speed
+        'fast': 'preview',        # Preview quality
+        'balanced': 'high',       # High quality
+        'high': 'cinematic',     # Cinematic quality
+        'ultra': 'broadcast'     # Broadcast quality
     }
     
     quality_level = quality_mapping.get(quality_mode, 'cinematic')
@@ -225,13 +225,13 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
     """Try to render directly to MP4 using Blender's built-in FFmpeg support with audio."""
     print("🚀 Attempting direct MP4 rendering (most efficient)...")
     
-    # Quality-based settings with correct Blender enum values
+    # GPU-optimized quality settings with correct Blender enum values
     quality_settings = {
-        'ultra_fast': {'samples': 32, 'resolution': (720, 480), 'crf': 'LOWEST', 'preset': 'REALTIME'},
-        'fast': {'samples': 64, 'resolution': (1280, 720), 'crf': 'VERYLOW', 'preset': 'REALTIME'},
-        'balanced': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'GOOD'},
-        'high': {'samples': 256, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'},
-        'ultra': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'}
+        'ultra_fast': {'samples': 16, 'resolution': (640, 360), 'crf': 'LOWEST', 'preset': 'REALTIME'},
+        'fast': {'samples': 32, 'resolution': (1280, 720), 'crf': 'VERYLOW', 'preset': 'REALTIME'},
+        'balanced': {'samples': 256, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'GOOD'},
+        'high': {'samples': 512, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'},
+        'ultra': {'samples': 1024, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'}
     }
     
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
@@ -421,32 +421,58 @@ render.ffmpeg.ffmpeg_preset = '{settings['preset']}'  # BEST, GOOD, REALTIME
 render.ffmpeg.audio_codec = 'AAC'
 render.ffmpeg.audio_bitrate = 128
 
-# Cycles optimization
+# GPU-optimized Cycles settings
 if scene.render.engine == 'CYCLES':
     cycles = scene.cycles
     cycles.samples = {settings['samples']}
     cycles.use_denoising = True
     cycles.device = 'GPU'
+    
+    # GPU memory optimization
+    cycles.debug_use_spatial_splits = True
+    cycles.debug_use_hair_bvh = True
+    cycles.use_auto_tile = True
+    cycles.tile_size = 256  # Optimized for GPU memory
+    
     # Persist data across frames to avoid reloading kernels/denoiser each frame
     cycles.use_persistent_data = True
-    # Prefer a stable denoiser to minimize kernel reloads (OptiX not on Metal)
-    try:
-        cycles.denoiser = 'OPENIMAGEDENOISE'
-    except Exception:
-        pass
     
-    # Ultra-fast optimizations
+    # GPU-optimized denoiser selection
+    try:
+        cycles.denoiser = 'OPTIX' if cprefs.compute_device_type == 'CUDA' else 'OPENIMAGEDENOISE'
+    except Exception:
+        cycles.denoiser = 'OPENIMAGEDENOISE'
+    
+    # Quality-based GPU optimizations
     if '{quality_mode}' == 'ultra_fast':
-        cycles.max_bounces = 3  # Very low for speed
-        cycles.use_adaptive_sampling = True
-        cycles.adaptive_threshold = 0.2  # Higher threshold for faster convergence
+        cycles.max_bounces = 1  # Absolute minimum for speed
+        cycles.use_adaptive_sampling = False  # Disable for speed
+        cycles.use_denoising = False  # Disable for speed
         cycles.use_fast_gi = True  # Enable fast global illumination
         cycles.caustics_reflective = False  # Disable caustics for speed
         cycles.caustics_refractive = False
-    else:
-        cycles.max_bounces = 6  # Reduced for speed
+        cycles.use_auto_tile = True
+        cycles.tile_size = 1024  # Larger tiles for ultra-fast mode
+    elif '{quality_mode}' == 'fast':
+        cycles.max_bounces = 4
         cycles.use_adaptive_sampling = True
-        cycles.adaptive_threshold = 0.1  # Faster convergence
+        cycles.adaptive_threshold = 0.15
+        cycles.tile_size = 256
+    elif '{quality_mode}' == 'balanced':
+        cycles.max_bounces = 6
+        cycles.use_adaptive_sampling = True
+        cycles.adaptive_threshold = 0.1
+        cycles.tile_size = 256
+    elif '{quality_mode}' == 'high':
+        cycles.max_bounces = 8
+        cycles.use_adaptive_sampling = True
+        cycles.adaptive_threshold = 0.05
+        cycles.tile_size = 128  # Smaller tiles for higher quality
+    else:  # ultra
+        cycles.max_bounces = 12
+        cycles.use_adaptive_sampling = True
+        cycles.adaptive_threshold = 0.01
+        cycles.tile_size = 128
 
 # Set output path
 render.filepath = "{output_path}"
@@ -476,13 +502,13 @@ print("✅ Direct MP4 render complete!")
         print(f"🎯 Quality: {quality_mode.upper()}")
         print(f"📈 Total frames to render: {total_frames}")
         
-        # Estimate render time based on quality
+        # Estimate render time based on GPU-optimized quality
         estimated_time_per_frame = {
-            'ultra_fast': 0.5,  # seconds per frame
-            'fast': 1.0,
-            'balanced': 2.0,
-            'high': 4.0,
-            'ultra': 3.0
+            'ultra_fast': 0.1,  # seconds per frame (GPU optimized, lowest settings)
+            'fast': 0.4,
+            'balanced': 1.2,
+            'high': 2.0,
+            'ultra': 1.8
         }
         estimated_total_time = estimated_time_per_frame.get(quality_mode, 2.0) * total_frames
         print(f"⏰ Estimated render time: ~{estimated_total_time/60:.1f} minutes")
@@ -576,13 +602,13 @@ def _optimized_frame_render(blender_cmd: str, blend_path: str, output_path: str,
     """Optimized frame rendering with memory-efficient processing and audio."""
     print("🎬 Using optimized frame rendering...")
     
-    # Quality-based settings (CRF values are for external FFmpeg, not Blender)
+    # GPU-optimized quality settings (CRF values are for external FFmpeg, not Blender)
     quality_settings = {
-        'ultra_fast': {'samples': 32, 'resolution': (1280, 720), 'crf': '23', 'threads': 2},
-        'fast': {'samples': 64, 'resolution': (1280, 720), 'crf': '21', 'threads': 4},
-        'balanced': {'samples': 128, 'resolution': (1920, 1080), 'crf': '20', 'threads': 6},
-        'high': {'samples': 256, 'resolution': (1920, 1080), 'crf': '18', 'threads': 8},
-        'ultra': {'samples': 128, 'resolution': (1920, 1080), 'crf': '18', 'threads': 6}
+        'ultra_fast': {'samples': 16, 'resolution': (640, 360), 'crf': '28', 'threads': 1},
+        'fast': {'samples': 32, 'resolution': (1280, 720), 'crf': '23', 'threads': 2},
+        'balanced': {'samples': 256, 'resolution': (1920, 1080), 'crf': '20', 'threads': 6},
+        'high': {'samples': 512, 'resolution': (1920, 1080), 'crf': '18', 'threads': 8},
+        'ultra': {'samples': 1024, 'resolution': (1920, 1080), 'crf': '18', 'threads': 6}
     }
     
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
@@ -790,9 +816,9 @@ if scene.render.engine == 'CYCLES':
     
     # Ultra-fast optimizations
     if '{quality_mode}' == 'ultra_fast':
-        cycles.max_bounces = 3  # Very low for speed
-        cycles.use_adaptive_sampling = True
-        cycles.adaptive_threshold = 0.2  # Higher threshold for faster convergence
+        cycles.max_bounces = 1  # Absolute minimum for speed
+        cycles.use_adaptive_sampling = False  # Disable for speed
+        cycles.use_denoising = False  # Disable for speed
         cycles.use_fast_gi = True  # Enable fast global illumination
         cycles.caustics_reflective = False  # Disable caustics for speed
         cycles.caustics_refractive = False
@@ -1027,12 +1053,12 @@ def main():
         print("  - FREQUENCY-SPECIFIC responses")
         print("  - COMMERCIAL-GRADE materials and lighting")
         print("  - GEOMETRY NODES integration")
-        print("\nQuality modes:")
-        print("  ultra_fast - 720p, 32 samples, fastest rendering")
-        print("  fast       - 720p, 64 samples, quick rendering")
-        print("  balanced   - 1080p, 128 samples, good quality/speed (default)")
-        print("  high       - 1080p, 256 samples, high quality")
-        print("  ultra      - 1080p, 512 samples, maximum quality")
+        print("\nGPU-optimized quality modes:")
+        print("  ultra_fast - 360p, 16 samples, LOWEST settings for maximum speed")
+        print("  fast       - 720p, 32 samples, GPU-accelerated quick rendering")
+        print("  balanced   - 1080p, 256 samples, GPU-optimized quality/speed (default)")
+        print("  high       - 1080p, 512 samples, GPU-accelerated high quality")
+        print("  ultra      - 1080p, 1024 samples, GPU-optimized maximum quality")
         print("\nExamples:")
         print("  python generate_video.py music.wav my_video balanced")
         print("  python generate_video.py music.wav my_video high")
@@ -1049,14 +1075,15 @@ def main():
         print(f"Valid modes: {', '.join(valid_modes)}")
         sys.exit(1)
     
-    print("🎬 POLYFJORD-STYLE AUDIO-REACTIVE VIDEO GENERATOR")
-    print("=" * 60)
+    print("🎬 GPU-OPTIMIZED POLYFJORD-STYLE AUDIO-REACTIVE VIDEO GENERATOR")
+    print("=" * 70)
     print(f"🎵 Audio: {audio_file}")
     print(f"📹 Output: {output_name}")
     print(f"⚡ Quality: {quality_mode.upper()}")
     print("🚀 Features: SMOOTH Shape Morphing | PROFESSIONAL Colors | NO Position Changes")
     print("🎵 Polyfjord Features: Frequency-specific responses, Professional materials, Commercial quality")
-    print("=" * 60)
+    print("⚡ GPU Optimizations: Metal/CUDA acceleration, Optimized Cycles, Reduced CPU overhead")
+    print("=" * 70)
     
     try:
         # Step 1: Analyze audio with enhanced system
@@ -1092,10 +1119,10 @@ def main():
                 print(f"⚡ Using specified quality mode: {quality_mode.upper()} (duration: {duration_minutes:.1f} min)")
             
             if render_video(str(blend_path), str(video_path), quality_mode, audio_file, features['total_frames']):
-                print(f"\n🎉 SUCCESS! Polyfjord-style video created: {video_path}")
+                print(f"\n🎉 SUCCESS! GPU-optimized Polyfjord-style video created: {video_path}")
                 print("🚀 Features: SMOOTH Shape Morphing, PROFESSIONAL Colors, NO Position Changes")
                 print("🎵 Polyfjord Features: Frequency-specific responses, Professional materials, Commercial quality")
-                print(f"⚡ Performance: Direct MP4 rendering, Adaptive quality, Hardware acceleration")
+                print(f"⚡ Performance: GPU-accelerated rendering, Optimized Cycles settings, Reduced CPU overhead")
                 print("🎵 Audio: Original audio file included in video")
             else:
                 print("\n⚠️  Polyfjord-style scene created but video render failed")

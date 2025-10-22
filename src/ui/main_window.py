@@ -171,9 +171,9 @@ class VideoGenerationThread(QThread):
             # Performance mode logging
             performance_mode = self.config.get('performance_mode', 'balanced')
             if performance_mode == 'ultra_fast':
-                print("⚡ OPTIMIZED SYSTEM - ULTRA FAST MODE (720p, 32 samples)")
+                print("⚡ OPTIMIZED SYSTEM - ULTRA FAST MODE (360p, 16 samples, LOWEST settings)")
             elif performance_mode == 'fast':
-                print("⚡ OPTIMIZED SYSTEM - FAST MODE (720p, 64 samples)")
+                print("⚡ OPTIMIZED SYSTEM - FAST MODE (720p, 32 samples)")
             elif performance_mode == 'balanced':
                 print("⚡ OPTIMIZED SYSTEM - BALANCED MODE (1080p, 128 samples)")
             elif performance_mode == 'high':

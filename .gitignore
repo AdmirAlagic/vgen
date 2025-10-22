@@ -47,11 +47,6 @@ Thumbs.db
 .project
 .pydevproject
 
-# Blender files
-*.blend1
-*.blend2
-*.blend3
-
 # Audio/Video temporary files
 *.tmp
 *.temp

@@ -1,0 +1,9 @@
+---
+alwaysApply: true
+---
+
+- Animations must be smooth and high quality graphic(except in ultra_fast mode, when lowest settings are used)
+- Animation system must be GPU optimized
+- Main object that is animated by audio analysis should change shape not size, and it should change color - responsive to music
+- Animation must be highly responsive to music(audio analysis)
+- Scripts wil be rendered in Blender 4.5
