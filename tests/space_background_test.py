@@ -1,68 +1,4 @@
-#!/usr/bin/env python3
 """
-OPTIMIZED AUDIO VISUALIZER - SMOOTH CONTINUOUS ANIMATION
-========================================================
-
-Enhanced version with:
-- Smooth continuous shape morphing (no flickering)
-- No size changes (shape-only morphing)
-- Tempo-based continuous animation even during silence
-- GPU-optimized smooth interpolation
-- Professional cinematic quality
-"""
-
-import json
-import math
-import random
-from typing import Dict, List, Tuple, Optional
-
-
-class OptimizedAudioVisualizer:
-    """Optimized audio visualizer with smooth continuous animation."""
-    
-    def __init__(self, audio_features: Dict, quality_level: str = 'cinematic', morph_style: str = 'flow'):
-        """Initialize the optimized visualizer."""
-        self.features = audio_features
-        self.total_frames = audio_features.get('total_frames', 300)
-        self.fps = audio_features.get('fps', 30)
-        self.duration = audio_features.get('duration', 10.0)
-        self.quality_level = quality_level
-        self.morph_style = morph_style.lower()
-        
-        # Synthetic tempo for continuous motion during silence
-        self.synthetic_tempo = 120.0
-        self.beat_duration = 60.0 / self.synthetic_tempo
-        self.frames_per_beat = self.beat_duration * self.fps
-        
-        # Quality configurations
-        self.quality_configs = {
-            'lowest': {'samples': 16, 'max_bounces': 1, 'use_denoising': False},
-            'preview': {'samples': 32, 'max_bounces': 3, 'use_denoising': True},
-            'high': {'samples': 256, 'max_bounces': 10, 'use_denoising': True},
-            'cinematic': {'samples': 1024, 'max_bounces': 16, 'use_denoising': True},
-            'broadcast': {'samples': 2048, 'max_bounces': 24, 'use_denoising': True}
-        }
-        
-        self.config = self.quality_configs.get(quality_level, self.quality_configs['cinematic'])
-        
-        # Smooth morphing phases with different speeds for organic motion
-        self.morph_phases = [
-            {"name": "VerticalSpike", "weight": 0.3, "speed": 0.5},
-            {"name": "HorizontalWave", "weight": 0.25, "speed": 0.7},
-            {"name": "DiagonalTwist", "weight": 0.2, "speed": 0.6},
-            {"name": "RadialExplosion", "weight": 0.15, "speed": 0.4},
-            {"name": "SpiralRise", "weight": 0.1, "speed": 0.8}
-        ]
-    
-    def create_optimized_scene(self, output_path: str, blend_path: str = None) -> str:
-        """Create optimized scene with smooth continuous animation."""
-        
-        target_blend_path = blend_path if blend_path else output_path.replace('.py', '.blend')
-        
-        # Convert features to JSON for embedding
-        features_json = json.dumps(self.features)
-        
-        script_content = f'''"""
 OPTIMIZED AUDIO VISUALIZER - SMOOTH CONTINUOUS ANIMATION
 ========================================================
 
@@ -85,7 +21,7 @@ import colorsys
 print("🎬 Creating OPTIMIZED smooth continuous audio visualizer scene...")
 
 # Audio features passed from host
-features_data = json.loads("""{features_json}""")
+features_data = json.loads("""{"duration": 10.0, "total_frames": 300, "fps": 30, "kick_energy": [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5], "bass_energy": [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4], "snare_energy": [0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3], "hihat_energy": [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2], "vocal_energy": [0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3], "air_energy": [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]}""")
 
 # Clear existing scene
 bpy.ops.object.select_all(action='DESELECT')
@@ -109,14 +45,14 @@ for texture in bpy.data.textures:
 # Set scene properties
 scene = bpy.context.scene
 scene.frame_start = 0
-scene.frame_end = {self.total_frames}
+scene.frame_end = 300
 scene.frame_current = 0
-scene.render.fps = {self.fps}
+scene.render.fps = 30
 
 print("🎬 Creating OPTIMIZED smooth continuous audio visualizer scene...")
-print(f"📊 Frames: {self.total_frames}, FPS: {self.fps}, Duration: {self.duration:.2f}s")
-print(f"🎯 Quality Level: {self.quality_level.upper()}")
-print(f"🎨 Morph Style: {self.morph_style.upper()}")
+print(f"📊 Frames: 300, FPS: 30, Duration: 10.00s")
+print(f"🎯 Quality Level: CINEMATIC")
+print(f"🎨 Morph Style: FLOW")
 print("🚀 Features: SMOOTH morphing, NO flickering, CONTINUOUS motion, SHAPE-ONLY changes")
 
 # Create NASA space background
@@ -124,28 +60,8 @@ print("🌌 Setting up NASA space background...")
 try:
     # Load the NASA space background image
     import os
-    # Try multiple possible paths for the space background
-    possible_paths = [
-        os.path.join(os.path.dirname(__file__), '..', 'assets', 'space_background.jpg'),
-        os.path.join(os.getcwd(), 'assets', 'space_background.jpg'),
-        '/Users/admir/ai/Cube/assets/space_background.jpg',
-        os.path.abspath('assets/space_background.jpg')
-    ]
-    
-    space_image_path = None
-    for path in possible_paths:
-        if os.path.exists(path):
-            space_image_path = path
-            break
-    
-    if not space_image_path:
-        space_image_path = possible_paths[0]  # Use first path for error message
-    
-    print(f"🔍 Looking for space background at: {{space_image_path}}")
-    print(f"🔍 Current working directory: {{os.getcwd()}}")
-    print(f"🔍 Script directory: {{os.path.dirname(__file__)}}")
-    
-    if space_image_path and os.path.exists(space_image_path):
+    space_image_path = os.path.join(os.path.dirname(__file__), '..', 'assets', 'space_background.jpg')
+    if os.path.exists(space_image_path):
         space_image = bpy.data.images.load(space_image_path)
         space_image.name = "NASA_Space_Background"
         
@@ -182,12 +98,12 @@ try:
         world_links.new(image_texture.outputs["Color"], bg_node.inputs["Color"])
         world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
         
-        # Set background strength - higher value for better visibility
-        bg_node.inputs["Strength"].default_value = 3.0
+        # Set background strength
+        bg_node.inputs["Strength"].default_value = 1.0
         
         print("✅ NASA space background loaded successfully")
     else:
-        print(f"⚠️ Space background image not found at: {{space_image_path}}")
+        print(f"⚠️ Space background image not found at: {space_image_path}")
         print("🌌 Creating procedural space background instead...")
         
         # Create procedural space background
@@ -234,13 +150,13 @@ try:
         world_links.new(color_ramp.outputs["Color"], bg_node.inputs["Color"])
         world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
         
-        # Set background strength - higher value for better visibility
-        bg_node.inputs["Strength"].default_value = 3.0
+        # Set background strength
+        bg_node.inputs["Strength"].default_value = 1.0
         
         print("✅ Procedural space background created")
         
 except Exception as e:
-    print(f"⚠️ Error setting up space background: {{e}}")
+    print(f"⚠️ Error setting up space background: {e}")
     print("🌌 Using default world background")
 
 # OPTIMIZED GPU SETUP for maximum performance
@@ -271,7 +187,7 @@ try:
             for dev in getattr(cprefs, 'devices', []):
                 if getattr(dev, 'type', 'CPU') != 'CPU':
                     dev.use = True
-                    print(f"✅ Enabled GPU device: {{dev.name}}")
+                    print(f"✅ Enabled GPU device: {dev.name}")
         except Exception:
             pass
     
@@ -280,7 +196,7 @@ try:
     
     # GPU-optimized Cycles settings
     scene.cycles.feature_set = 'SUPPORTED'
-    scene.cycles.use_denoising = {str(self.config['use_denoising'])}
+    scene.cycles.use_denoising = True
     scene.cycles.denoiser = 'OPTIX' if cprefs.compute_device_type == 'CUDA' else 'OPENIMAGEDENOISE'
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.adaptive_threshold = 0.01
@@ -288,7 +204,7 @@ try:
     
     print("✅ GPU-optimized Cycles settings configured")
 except Exception as _gpu_e:
-    print(f"⚠️ GPU optimization failed: {{_gpu_e}}")
+    print(f"⚠️ GPU optimization failed: {_gpu_e}")
     scene.cycles.device = 'CPU'
 
 # Create professional base shape - ICO sphere for organic morphing
@@ -415,7 +331,7 @@ try:
     print("✅ Professional space lighting setup complete")
     
 except Exception as e:
-    print(f"⚠️ Error setting up lighting: {{e}}")
+    print(f"⚠️ Error setting up lighting: {e}")
 
 # Add smooth, continuous geometry modifiers
 disp_mod = obj.modifiers.new(name="SmoothDisplace", type='DISPLACE')
@@ -427,7 +343,7 @@ try:
     tex.noise_scale = 0.6
     disp_mod.texture = tex
 except Exception as e:
-    print(f"⚠️ Could not create texture for Displace: {{e}}")
+    print(f"⚠️ Could not create texture for Displace: {e}")
 
 twist_mod = obj.modifiers.new(name="SmoothTwist", type='SIMPLE_DEFORM')
 twist_mod.deform_method = 'TWIST'
@@ -558,17 +474,17 @@ print("🎵 Creating smooth continuous shape morphing without flickering...")
 # Create synthetic tempo for continuous motion during silence
 synthetic_tempo = 120.0
 beat_duration = 60.0 / synthetic_tempo
-frames_per_beat = beat_duration * {self.fps}
+frames_per_beat = beat_duration * 30
 
-print(f"🎵 Synthetic tempo: {{synthetic_tempo}} BPM for continuous motion")
+print(f"🎵 Synthetic tempo: {synthetic_tempo} BPM for continuous motion")
 
 # Define smooth morphing phases with different speeds for organic motion
 morph_phases = [
-    {{"name": "VerticalSpike", "weight": 0.3, "speed": 0.5}},
-    {{"name": "HorizontalWave", "weight": 0.25, "speed": 0.7}},
-    {{"name": "DiagonalTwist", "weight": 0.2, "speed": 0.6}},
-    {{"name": "RadialExplosion", "weight": 0.15, "speed": 0.4}},
-    {{"name": "SpiralRise", "weight": 0.1, "speed": 0.8}}
+    {"name": "VerticalSpike", "weight": 0.3, "speed": 0.5},
+    {"name": "HorizontalWave", "weight": 0.25, "speed": 0.7},
+    {"name": "DiagonalTwist", "weight": 0.2, "speed": 0.6},
+    {"name": "RadialExplosion", "weight": 0.15, "speed": 0.4},
+    {"name": "SpiralRise", "weight": 0.1, "speed": 0.8}
 ]
 
 # Create smooth, continuous morphing for each shape key
@@ -581,9 +497,9 @@ for phase in morph_phases:
     shape_key.value = 0.0
     
     # Create smooth, continuous morphing
-    for frame in range(0, {self.total_frames} + 1, 2):  # Every 2 frames for smoothness
+    for frame in range(0, 300 + 1, 2):  # Every 2 frames for smoothness
         scene.frame_set(frame)
-        t = frame / {self.fps}
+        t = frame / 30
         
         # Create multiple overlapping sine waves for organic motion
         base_wave = math.sin(2 * math.pi * t * phase["speed"] * 0.1)  # Slow base wave
@@ -613,9 +529,9 @@ def create_smooth_modifier_animation():
     """Create smooth, continuous modifier animation without flickering"""
     
     # Create smooth, continuous animation for each modifier
-    for frame in range(0, {self.total_frames} + 1, 2):  # Every 2 frames for smoothness
+    for frame in range(0, 300 + 1, 2):  # Every 2 frames for smoothness
         scene.frame_set(frame)
-        t = frame / {self.fps}
+        t = frame / 30
         
         # Smooth Displace animation - continuous organic movement
         if disp_mod:
@@ -659,9 +575,9 @@ def create_smooth_rotation_animation():
     obj.keyframe_insert(data_path="scale")
     
     # Create smooth, continuous rotation
-    for frame in range(0, {self.total_frames} + 1, 2):
+    for frame in range(0, 300 + 1, 2):
         scene.frame_set(frame)
-        t = frame / {self.fps}
+        t = frame / 30
         
         # Multi-axis rotation with different speeds for organic motion
         rot_x = math.sin(2 * math.pi * t * 0.1) * 0.2
@@ -686,9 +602,9 @@ print("🎨 Creating smooth material animation...")
 def create_smooth_material_animation():
     """Create smooth, continuous material animation"""
     
-    for frame in range(0, {self.total_frames} + 1, 2):
+    for frame in range(0, 300 + 1, 2):
         scene.frame_set(frame)
-        t = frame / {self.fps}
+        t = frame / 30
         
         # Smooth color transitions using HSV
         hue = (t * 0.1) % 1.0  # Slow hue rotation
@@ -771,14 +687,10 @@ print("✅ Smooth Bezier interpolation applied to all animations")
 
 # GPU-optimized professional render settings
 scene.render.engine = 'CYCLES'
-scene.cycles.samples = {self.config['samples']}
-scene.cycles.max_bounces = {self.config['max_bounces']}
-scene.cycles.use_denoising = {str(self.config['use_denoising'])}
+scene.cycles.samples = 1024
+scene.cycles.max_bounces = 16
+scene.cycles.use_denoising = True
 scene.cycles.use_adaptive_sampling = True
-
-# CRITICAL: Ensure background is visible
-scene.render.film_transparent = False
-print("✅ Set film_transparent to False for background visibility")
 
 # GPU-optimized output settings
 scene.render.image_settings.file_format = 'FFMPEG'
@@ -800,75 +712,19 @@ scene.cycles.tile_size = 256
 
 print("✅ Professional render settings configured")
 
-# Pack images into blend file for portability
-print("📦 Packing images into blend file...")
-try:
-    for img in bpy.data.images:
-        if img.filepath and not img.packed_file:
-            img.pack()
-            print(f"✅ Packed image: {{img.name}}")
-except Exception as e:
-    print(f"⚠️ Error packing images: {{e}}")
-
 # Save blend file
-blend_file_path = "{target_blend_path}"
+blend_file_path = "/Users/admir/ai/Cube/tests/space_background_test.blend"
 try:
     import os
     save_dir = os.path.dirname(blend_file_path)
     if save_dir and not os.path.exists(save_dir):
         os.makedirs(save_dir, exist_ok=True)
     bpy.ops.wm.save_as_mainfile(filepath=blend_file_path)
-    print(f"✅ Optimized scene saved to: {{blend_file_path}}")
+    print(f"✅ Optimized scene saved to: {blend_file_path}")
 except Exception as e:
-    print(f"⚠️ Could not save blend file: {{e}}")
-    print(f"📝 Scene script available at: {{blend_file_path}}")
+    print(f"⚠️ Could not save blend file: {e}")
+    print(f"📝 Scene script available at: {blend_file_path}")
 
 print("🎉 OPTIMIZED SMOOTH CONTINUOUS AUDIO VISUALIZER SCENE COMPLETE!")
 print("🎵 Features: SMOOTH morphing, NO flickering, CONTINUOUS motion, SHAPE-ONLY changes")
 print("🚀 Ready for professional music video production with maximum cinematic quality!")
-'''
-        
-        return script_content
-    
-    def save_script(self, script_path: str, render_settings: Dict = None, blend_path: str = None) -> str:
-        """Save the optimized scene script."""
-        script_content = self.create_optimized_scene(script_path, blend_path)
-        
-        with open(script_path, 'w') as f:
-            f.write(script_content)
-        
-        print(f"✅ Optimized scene script saved to: {script_path}")
-        return script_path
-
-
-def create_optimized_audio_visualizer(audio_features: Dict, quality_level: str = 'cinematic', morph_style: str = 'flow') -> OptimizedAudioVisualizer:
-    """Create an optimized audio visualizer instance."""
-    return OptimizedAudioVisualizer(audio_features, quality_level, morph_style)
-
-
-if __name__ == "__main__":
-    import sys
-    
-    if len(sys.argv) > 2:
-        audio_path = sys.argv[1]
-        output_path = sys.argv[2]
-        quality_level = sys.argv[3] if len(sys.argv) > 3 else 'cinematic'
-        
-        # Load audio features (would normally come from audio analysis)
-        features = {
-            'duration': 10.0,
-            'total_frames': 300,
-            'fps': 30,
-            'kick_energy': [0.5] * 300,
-            'bass_energy': [0.4] * 300,
-            'snare_energy': [0.3] * 300,
-            'hihat_energy': [0.2] * 300,
-            'vocal_energy': [0.3] * 300,
-            'air_energy': [0.1] * 300
-        }
-        
-        visualizer = create_optimized_audio_visualizer(features, quality_level)
-        script_path = visualizer.save_script(output_path)
-        print(f"✅ Optimized visualizer script created: {script_path}")
-    else:
-        print("Usage: python optimized_audio_visualizer.py <audio_file> <output_path> [quality_level]")
