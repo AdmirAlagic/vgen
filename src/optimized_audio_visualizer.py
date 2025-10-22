@@ -1247,12 +1247,12 @@ try:
             scene.frame_set(frame)
             t = frame / {self.fps}
             
-            # Calculate smooth tilting motion (more dramatic movement)
+            # Calculate very slow tilting motion (subtle movement)
             tilt_angle = math.sin(t * anim_config.tilt_speed) * (anim_config.tilt_range['max'] - anim_config.tilt_range['min']) / 2
             tilt_angle = math.radians(tilt_angle)
             
-            # Calculate smooth rotation motion (more dramatic movement)
-            rotation_angle = math.cos(t * anim_config.rotation_speed) * (anim_config.rotation_range['max'] - anim_config.rotation_range['min']) / 2
+            # Calculate very slow single-direction rotation (continuous clockwise rotation)
+            rotation_angle = t * anim_config.rotation_speed * (anim_config.rotation_range['max'] - anim_config.rotation_range['min']) / 10.0
             rotation_angle = math.radians(rotation_angle)
             
             # Keep camera looking at the object while applying smooth animation
@@ -1266,9 +1266,9 @@ try:
             camera.rotation_euler.z = base_rotation.z + rotation_angle
             
             # Insert keyframes for smooth animation
-            camera.rotation_euler.keyframe_insert(data_path="x", index=0)
-            camera.rotation_euler.keyframe_insert(data_path="y", index=1)
-            camera.rotation_euler.keyframe_insert(data_path="z", index=2)
+            camera.keyframe_insert(data_path="rotation_euler", index=0)
+            camera.keyframe_insert(data_path="rotation_euler", index=1)
+            camera.keyframe_insert(data_path="rotation_euler", index=2)
         
         # Apply smooth Bezier interpolation to camera animation
         if camera.animation_data and camera.animation_data.action:
@@ -1280,11 +1280,11 @@ try:
                     kf.handle_left[0] = kf.co[0] - 2.0
                     kf.handle_right[0] = kf.co[0] + 2.0
         
-        print(f"✅ Camera animation created - Smooth tilting with speed: {{anim_config.tilt_speed}}")
+        print(f"✅ Camera animation created - Very slow tilting with speed: {{anim_config.tilt_speed}}")
         print(f"✅ Tilt range: {{anim_config.tilt_range['min']}}° to {{anim_config.tilt_range['max']}}°")
         print(f"✅ Rotation speed: {{anim_config.rotation_speed}}")
         print(f"✅ Rotation range: {{anim_config.rotation_range['min']}}° to {{anim_config.rotation_range['max']}}°")
-        print(f"✅ Camera movement: More dramatic and visible animation")
+        print(f"✅ Camera movement: Very slow, single-direction rotation")
     else:
         print("📷 Camera animation disabled in configuration")
     
