@@ -1184,28 +1184,40 @@ try:
     camera_lens = {self.scene_config.camera.lens}
     camera_sensor_width = {self.scene_config.camera.sensor_width}
     
-    # Add camera at configured position
+    # Add camera at configured position - positioned directly above the object
+    camera_x = camera_location['x']
+    camera_y = camera_location['y'] 
+    camera_z = camera_location['z']
+    
+    # Position camera directly above the object (straight down angle)
+    # This prevents showing edges of 2D background
+    camera_x = 0.0  # Center X position
+    camera_y = 0.0  # Center Y position  
+    camera_z = max(camera_z, 15.0)  # Ensure camera is high enough above object
+    
     bpy.ops.object.camera_add(
-        location=(camera_location['x'], camera_location['y'], camera_location['z'])
+        location=(camera_x, camera_y, camera_z)
     )
     camera = bpy.context.active_object
     camera.name = "AudioVisualizerCamera"
     
-    # Set camera rotation and ensure it looks at the object
-    camera.rotation_euler = (
-        math.radians(camera_rotation['x']),
-        math.radians(camera_rotation['y']),
-        math.radians(camera_rotation['z'])
-    )
+    # Set camera to look straight down at the object (straight angle)
+    # This creates a top-down view that avoids background edge visibility
+    camera.rotation_euler = (0.0, 0.0, 0.0)  # No rotation - straight down
     
-    # Ensure camera is looking at the bottom of the background plane (0, 0, -15)
-    camera_target = mathutils.Vector((0, 0, -15))  # Bottom of background plane
+    # Ensure camera is looking directly at the main object (0, 0, 0)
+    camera_target = mathutils.Vector((0, 0, 0))  # Main object center
     camera_direction = camera_target - camera.location
     camera.rotation_euler = camera_direction.to_track_quat('-Z', 'Y').to_euler()
     
     print(f"✅ DEBUG: Camera positioned at: {{camera.location}}")
-    print(f"✅ DEBUG: Camera looking at bottom of background plane: {{camera_target}}")
+    print(f"✅ DEBUG: Camera looking at main object center: {{camera_target}}")
     print(f"✅ DEBUG: Camera rotation: {{camera.rotation_euler}}")
+    print(f"✅ DEBUG: Main object should be visible at center of frame")
+    print(f"✅ DEBUG: Camera Z position: {{camera.location.z}} (positioned above object)")
+    print(f"✅ DEBUG: Camera distance from object: {{camera.location.length:.2f}} units")
+    print(f"✅ DEBUG: Camera positioned for straight-down view to avoid background edges")
+    print(f"✅ DEBUG: Top-down angle prevents 2D background edge visibility")
     
     # Set camera properties
     camera.data.lens = camera_lens
@@ -1219,8 +1231,62 @@ try:
     # Set as active camera
     scene.camera = camera
     
-    print(f"✅ Camera setup complete - Distance: {{camera_distance}}, Location: {{camera_location}}")
+    print(f"✅ Camera setup complete - Positioned above object at straight angle")
+    print(f"✅ Camera location: ({{camera_x}}, {{camera_y}}, {{camera_z}}) - Top-down view")
     print(f"✅ Camera far clip plane set to 1000.0 for background visibility")
+    print(f"✅ Straight-down angle prevents 2D background edge visibility")
+    
+    # Add camera animation if enabled in configuration
+    if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and self.scene_config.camera.animation.enabled:
+        print("🎬 Setting up camera animation...")
+        
+        anim_config = self.scene_config.camera.animation
+        
+        # Create smooth camera tilting animation
+        for frame in range(1, {self.total_frames} + 1, 5):  # Keyframe every 5 frames for smooth animation
+            scene.frame_set(frame)
+            t = frame / {self.fps}
+            
+            # Calculate smooth tilting motion (more dramatic movement)
+            tilt_angle = math.sin(t * anim_config.tilt_speed) * (anim_config.tilt_range['max'] - anim_config.tilt_range['min']) / 2
+            tilt_angle = math.radians(tilt_angle)
+            
+            # Calculate smooth rotation motion (more dramatic movement)
+            rotation_angle = math.cos(t * anim_config.rotation_speed) * (anim_config.rotation_range['max'] - anim_config.rotation_range['min']) / 2
+            rotation_angle = math.radians(rotation_angle)
+            
+            # Keep camera looking at the object while applying smooth animation
+            camera_target = mathutils.Vector((0, 0, 0))
+            camera_direction = camera_target - camera.location
+            base_rotation = camera_direction.to_track_quat('-Z', 'Y').to_euler()
+            
+            # Apply smooth camera animation - combine base rotation with animated movement
+            camera.rotation_euler.x = base_rotation.x + tilt_angle
+            camera.rotation_euler.y = base_rotation.y
+            camera.rotation_euler.z = base_rotation.z + rotation_angle
+            
+            # Insert keyframes for smooth animation
+            camera.rotation_euler.keyframe_insert(data_path="x", index=0)
+            camera.rotation_euler.keyframe_insert(data_path="y", index=1)
+            camera.rotation_euler.keyframe_insert(data_path="z", index=2)
+        
+        # Apply smooth Bezier interpolation to camera animation
+        if camera.animation_data and camera.animation_data.action:
+            for fcurve in camera.animation_data.action.fcurves:
+                for kf in fcurve.keyframe_points:
+                    kf.interpolation = 'BEZIER'
+                    kf.handle_left_type = 'AUTO_CLAMPED'
+                    kf.handle_right_type = 'AUTO_CLAMPED'
+                    kf.handle_left[0] = kf.co[0] - 2.0
+                    kf.handle_right[0] = kf.co[0] + 2.0
+        
+        print(f"✅ Camera animation created - Smooth tilting with speed: {{anim_config.tilt_speed}}")
+        print(f"✅ Tilt range: {{anim_config.tilt_range['min']}}° to {{anim_config.tilt_range['max']}}°")
+        print(f"✅ Rotation speed: {{anim_config.rotation_speed}}")
+        print(f"✅ Rotation range: {{anim_config.rotation_range['min']}}° to {{anim_config.rotation_range['max']}}°")
+        print(f"✅ Camera movement: More dramatic and visible animation")
+    else:
+        print("📷 Camera animation disabled in configuration")
     
 except Exception as e:
     print(f"⚠️ Error setting up camera: {{e}}")

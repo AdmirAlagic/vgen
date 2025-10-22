@@ -1,19 +1,32 @@
 {
   "camera": {
-    "distance": 20.0,
+    "distance": 26.0,
     "location": {
-      "x": 10.0,
-      "y": -10.0,
-      "z": 8.0
+      "x": 0.0,
+      "y": 0.0,
+      "z": 60.0
     },
     "rotation": {
-      "x": 60.0,
+      "x": 0.0,
       "y": 0.0,
-      "z": 45.0
+      "z": 0.0
     },
-    "fov": 50.0,
-    "lens": 24.0,
-    "sensor_width": 36.0
+    "fov": 35.0,
+    "lens": 50.0,
+    "sensor_width": 36.0,
+    "animation": {
+      "enabled": true,
+      "tilt_speed": 1.5,
+      "tilt_range": {
+        "min": -25.0,
+        "max": 25.0
+      },
+      "rotation_speed": 0.8,
+      "rotation_range": {
+        "min": -30.0,
+        "max": 30.0
+      }
+    }
   },
   "lighting": {
     "key_light": {
@@ -121,7 +134,7 @@
       "segment_min": 10,
       "cross_frac": 0.5,
       "kf_stride": 2,
-      "shape_intensity": 2.0
+      "shape_intensity": 3.0
     },
     "impact": {
       "drive_exp": 0.6,
@@ -199,7 +212,7 @@
       "segment_min": 20,
       "cross_frac": 0.8,
       "kf_stride": 3,
-      "shape_intensity": 1.4
+      "shape_intensity": 4.4
     },
     "cosmic": {
       "drive_exp": 0.7,

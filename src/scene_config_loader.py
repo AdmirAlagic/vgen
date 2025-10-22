@@ -14,6 +14,15 @@ from dataclasses import dataclass
 
 
 @dataclass
+class CameraAnimationConfig:
+    """Camera animation configuration settings."""
+    enabled: bool
+    tilt_speed: float
+    tilt_range: Dict[str, float]
+    rotation_speed: float
+    rotation_range: Dict[str, float]
+
+@dataclass
 class CameraConfig:
     """Camera configuration settings."""
     distance: float
@@ -22,6 +31,7 @@ class CameraConfig:
     fov: float
     lens: float
     sensor_width: float
+    animation: Optional[CameraAnimationConfig] = None
 
 
 @dataclass
@@ -289,13 +299,27 @@ def _convert_to_scene_config(config_data: Dict[str, Any]) -> SceneConfig:
     
     # Convert camera config
     camera_data = config_data['camera']
+    
+    # Handle camera animation config if present
+    animation_config = None
+    if 'animation' in camera_data:
+        anim_data = camera_data['animation']
+        animation_config = CameraAnimationConfig(
+            enabled=anim_data['enabled'],
+            tilt_speed=anim_data['tilt_speed'],
+            tilt_range=anim_data['tilt_range'],
+            rotation_speed=anim_data['rotation_speed'],
+            rotation_range=anim_data['rotation_range']
+        )
+    
     camera = CameraConfig(
         distance=camera_data['distance'],
         location=camera_data['location'],
         rotation=camera_data['rotation'],
         fov=camera_data['fov'],
         lens=camera_data['lens'],
-        sensor_width=camera_data['sensor_width']
+        sensor_width=camera_data['sensor_width'],
+        animation=animation_config
     )
     
     # Convert lighting config

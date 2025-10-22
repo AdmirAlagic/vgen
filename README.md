@@ -1,6 +1,6 @@
 # AudioBlender Video Generator
 
-Professional audio-reactive 3D video generator that transforms music into stunning cinematic visuals using Blender. Features **smooth continuous shape morphing**, **no flickering**, **professional materials**, **space backgrounds**, **configurable camera settings**, and **GPU-optimized rendering** with Metal/CUDA acceleration.
+Professional audio-reactive 3D video generator that transforms music into stunning cinematic visuals using Blender. Features **smooth continuous shape morphing**, **no flickering**, **professional materials**, **space backgrounds**, **top-down camera positioning**, **straight-angle framing**, and **GPU-optimized rendering** with Metal/CUDA acceleration.
 
 ## 🚀 Quick Start
 
@@ -58,7 +58,8 @@ python src/generate_video.py <audio_file> [output_name] [quality_mode]
 - **🚫 No Size Changes**: Shape-only morphing (no position or scale changes)
 - **🎨 Professional Materials**: Commercial-grade lighting with emission and metallic materials
 - **🌌 Space Backgrounds**: Beautiful NASA space images with procedural star field fallback
-- **📷 Configurable Camera**: JSON-based camera distance and positioning system
+- **📷 Top-Down Camera**: Positioned directly above object at straight angle to avoid background edges
+- **🎬 Straight-Angle Framing**: Professional top-down view prevents 2D background edge visibility
 - **⚡ GPU Optimization**: Automatic Metal/CUDA acceleration with CPU fallback
 - **🎵 Enhanced Audio Analysis**: Frequency-specific responses with musical smoothing
 - **🔄 Continuous Motion**: Tempo-based animation even during silence
@@ -76,7 +77,7 @@ src/
 ├── generate_video.py          # Direct CLI interface
 ├── audio_analyzer.py          # Enhanced audio analysis with librosa
 ├── audio_visualizer.py        # Polyfjord-style scene generation
-├── optimized_audio_visualizer.py  # Smooth continuous animation system
+├── optimized_audio_visualizer.py  # Smooth continuous animation system with top-down camera
 ├── scene_config_loader.py     # JSON configuration loader
 └── ui/                        # GUI components
     ├── main_window.py         # PyQt6 main window
@@ -131,19 +132,31 @@ The visualizer includes a powerful JSON-based configuration system for customizi
 ```json
 {
   "camera": {
-    "distance": 18.0,
-    "location": {"x": 10.0, "y": -10.0, "z": 6.0},
-    "rotation": {"x": 60.0, "y": 0.0, "z": 45.0},
-    "fov": 50.0,
-    "lens": 24.0,
+    "distance": 20.0,
+    "location": {"x": 0.0, "y": 0.0, "z": 15.0},
+    "rotation": {"x": 0.0, "y": 0.0, "z": 0.0},
+    "fov": 35.0,
+    "lens": 50.0,
     "sensor_width": 36.0
   },
   "lighting": {
     "key_light": {
-      "location": {"x": 5.0, "y": 5.0, "z": 5.0},
-      "energy": 50.0,
-      "size": 2.0,
-      "color": [1.0, 0.95, 0.8]
+      "location": {"x": 8.0, "y": 6.0, "z": 8.0},
+      "energy": 75.0,
+      "size": 3.0,
+      "color": [1.0, 0.98, 0.9]
+    },
+    "fill_light": {
+      "location": {"x": -5.0, "y": -3.0, "z": 4.0},
+      "energy": 35.0,
+      "size": 4.0,
+      "color": [0.7, 0.8, 1.1]
+    },
+    "rim_light": {
+      "location": {"x": 0.0, "y": -10.0, "z": 3.0},
+      "energy": 45.0,
+      "spot_size": 60.0,
+      "color": [0.8, 0.6, 1.2]
     }
   }
 }
@@ -152,27 +165,41 @@ The visualizer includes a powerful JSON-based configuration system for customizi
 ### Camera Configuration
 
 - **`camera.distance`**: Distance from the main object (affects zoom level)
-- **`camera.location`**: 3D position coordinates
-- **`camera.rotation`**: Rotation angles in degrees
-- **`camera.fov`**: Field of view angle
-- **`camera.lens`**: Focal length
+- **`camera.location`**: 3D position coordinates - **Default: (0, 0, 15) for top-down view**
+- **`camera.rotation`**: Rotation angles in degrees - **Default: (0, 0, 0) for straight-down angle**
+- **`camera.fov`**: Field of view angle - **Default: 35° for focused framing**
+- **`camera.lens`**: Focal length - **Default: 50mm for professional framing**
 - **`camera.sensor_width`**: Sensor width
+
+### Top-Down Camera System
+
+The visualizer uses a **top-down camera positioning system** that:
+
+- **Positions camera directly above the object** at coordinates `(0, 0, 15)`
+- **Uses straight-down angle** with rotation `(0, 0, 0)` to prevent background edge visibility
+- **Provides professional framing** with 35° field of view and 50mm lens
+- **Eliminates 2D background edges** from appearing in the rendered output
+- **Creates consistent, cinematic shots** perfect for audio visualization
 
 ### Quick Camera Adjustments
 
 ```bash
-# Edit camera distance in scene_config.json
-# Change "distance": 18.0 to "distance": 25.0 for wider shots
-# Change "distance": 18.0 to "distance": 10.0 for closer shots
+# Edit camera Z position in scene_config.json for height adjustments
+# Change "z": 15.0 to "z": 20.0 for higher camera (wider view)
+# Change "z": 15.0 to "z": 10.0 for lower camera (closer view)
+# Camera X and Y remain at 0.0 for centered top-down view
 ```
 
 ### Presets
 
-The configuration includes built-in presets:
+The configuration includes built-in presets optimized for top-down camera:
 
-- **`cinematic`**: Default cinematic setup (distance: 15.0)
-- **`close_up`**: Close-up shots (distance: 8.0)
-- **`wide_shot`**: Wide establishing shots (distance: 25.0)
+- **`cinematic`**: Default cinematic setup (distance: 15.0, top-down view)
+- **`close_up`**: Close-up shots (distance: 8.0, lower camera height)
+- **`wide_shot`**: Wide establishing shots (distance: 25.0, higher camera height)
+- **`nebula_space`**: Space-themed shots (distance: 18.0, optimized for space backgrounds)
+- **`cosmic_dance`**: Dynamic shots (distance: 12.0, balanced framing)
+- **`stellar_show`**: Stellar-themed shots (distance: 20.0, wide cosmic view)
 
 ### Programmatic Configuration
 
@@ -182,11 +209,11 @@ from src.scene_config_loader import load_scene_config
 # Load configuration
 config = load_scene_config()
 
-# Update camera distance
-config.update_camera_distance(20.0)
+# Update camera height for top-down view
+config.update_camera_location(x=0.0, y=0.0, z=18.0)
 
-# Update lighting
-config.update_lighting_energy(key_energy=60.0, fill_energy=25.0)
+# Update lighting for space scenes
+config.update_lighting_energy(key_energy=75.0, fill_energy=35.0, rim_energy=45.0)
 
 # Save configuration
 from src.scene_config_loader import save_scene_config
@@ -204,16 +231,16 @@ from src.optimized_audio_visualizer import OptimizedAudioVisualizer
 analyzer = EnhancedAudioAnalyzer("music.wav")
 features = analyzer.analyze_for_mutating_cube()
 
-# Generate smooth continuous scene with custom config
+# Generate smooth continuous scene with top-down camera
 visualizer = OptimizedAudioVisualizer(features, quality_level='cinematic', morph_style='flow')
 script_path = visualizer.save_script('output/scene.py')
 ```
 
 ## 🎯 Output Files
 
-- **Video**: `output/<name>_polyfjord.mp4` - Final rendered video with smooth morphing and space background
-- **Blend File**: `output/temp/scene.blend` - Blender scene file with embedded background
-- **Script**: `output/temp/polyfjord_style_scene.py` - Generated Python script
+- **Video**: `output/<name>_polyfjord.mp4` - Final rendered video with smooth morphing, top-down camera, and space background
+- **Blend File**: `output/temp/scene.blend` - Blender scene file with embedded background and top-down camera setup
+- **Script**: `output/temp/polyfjord_style_scene.py` - Generated Python script with optimized camera positioning
 - **Analysis**: Audio analysis data embedded in script
 
 ## 🌌 Space Background System
@@ -226,12 +253,16 @@ The visualizer includes a sophisticated space background system:
 - **Procedural Fallback**: Creates beautiful star field if image not available
 - **Professional Lighting**: 3-point lighting setup optimized for space scenes
 - **Asset Packing**: Backgrounds embedded in blend files for portability
+- **Top-Down Optimization**: Backgrounds optimized for straight-down camera angle
+- **Edge-Free Rendering**: Top-down camera prevents background edge visibility
 
 ### Customization
 - Replace `assets/space_background.jpg` with your own space images
 - Background strength automatically optimized for all quality modes
 - Supports any image format that Blender can load
 - Fallback system ensures backgrounds always work
+- **Top-down camera automatically prevents background edge visibility**
+- **Straight-angle framing ensures professional, clean output**
 
 ## 🚨 Troubleshooting
 
@@ -241,14 +272,16 @@ The visualizer includes a sophisticated space background system:
 - **Memory issues**: Use `low` or `medium` presets, reduce audio duration
 - **GPU not detected**: Check Blender GPU settings, falls back to CPU automatically
 - **Background not visible**: Ensure `space_background.jpg` exists in `assets/` folder
-- **Camera distance not changing**: Check `scene_config.json` syntax, ensure proper JSON format
+- **Background edges visible**: Camera automatically positioned for top-down view to prevent this
+- **Camera positioning issues**: Check `scene_config.json` syntax, camera defaults to (0, 0, 15) for top-down view
 - **Configuration not loading**: Verify `scene_config.json` exists in project root
 
 ### Configuration Troubleshooting
 - **Invalid JSON**: Use a JSON validator to check `scene_config.json` syntax
 - **Camera not updating**: Restart the application after changing configuration
-- **Missing configuration**: The system will use default values if `scene_config.json` is missing
+- **Missing configuration**: The system will use default top-down camera values if `scene_config.json` is missing
 - **Permission errors**: Ensure the application has read/write access to `scene_config.json`
+- **Camera angle issues**: Default camera uses (0, 0, 0) rotation for straight-down view
 
 ### Performance Tips
 - Use shorter audio files for testing
@@ -262,4 +295,58 @@ The visualizer includes a sophisticated space background system:
 - **Fallback**: If space image not found, creates procedural star field background
 - **Quality**: Background strength optimized for visibility in all quality modes
 - **Packing**: Background images are embedded in blend files for portability
+- **Top-Down Optimization**: Backgrounds specifically optimized for straight-down camera angle
+- **Edge-Free Rendering**: Top-down camera positioning eliminates background edge visibility
+- **Professional Framing**: 35° FOV and 50mm lens provide optimal framing for space backgrounds
+
+## 🎬 Current Visualizer System Architecture
+
+### Optimized Audio Visualizer (`optimized_audio_visualizer.py`)
+
+The current system features a **sophisticated audio visualizer** with the following architecture:
+
+#### Core Features
+- **Smooth Continuous Morphing**: Uses Bezier interpolation to eliminate flickering
+- **Shape-Only Animation**: No size or position changes, only organic shape morphing
+- **Top-Down Camera System**: Positioned at `(0, 0, 15)` with `(0, 0, 0)` rotation for straight-down view
+- **Professional Materials**: Ultra-realistic space materials with emission, metallic, and subsurface properties
+- **Space-Themed Shapes**: 15+ morphing shapes including NebulaSwirl, CosmicPulse, StellarCore, GalacticSpiral
+- **GPU Optimization**: Automatic Metal/CUDA acceleration with CPU fallback
+
+#### Camera System
+- **Position**: `(0, 0, 15)` - Directly above the animated object
+- **Rotation**: `(0, 0, 0)` - Straight-down angle prevents background edge visibility
+- **Field of View**: 35° for focused, professional framing
+- **Lens**: 50mm for optimal depth of field
+- **Far Clip**: 1000.0 units to ensure background visibility
+
+#### Animation System
+- **Continuous Motion**: Tempo-based animation (120 BPM) even during silence
+- **Multi-Wave Morphing**: Combines base, fast, and micro waves for organic motion
+- **Deterministic Randomness**: Uses seeded random for consistent, natural variation
+- **Smooth Interpolation**: All animations use Bezier curves with auto-clamped handles
+
+#### Material System
+- **Ultra-Realistic Space Materials**: Commercial-grade materials with multiple texture layers
+- **Dynamic Color Animation**: HSV-based color transitions with smooth emission strength changes
+- **Advanced Shader Nodes**: Noise, Voronoi, Wave, and Fractal textures for complex surfaces
+- **Blender 4.5 Compatible**: Optimized for latest Blender version
+
+#### Quality Levels
+- **ultra_fast**: 32 samples, 3 bounces, denoising enabled
+- **preview**: 32 samples, 3 bounces, denoising enabled  
+- **high**: 256 samples, 10 bounces, denoising enabled
+- **cinematic**: 1024 samples, 16 bounces, denoising enabled
+- **broadcast**: 2048 samples, 24 bounces, denoising enabled
+
+#### Morph Styles
+- **flow**: Smooth, organic morphing (default)
+- **impact**: Dynamic, punchy morphing
+- **twist**: Spiral-based morphing
+- **ripple**: Wave-based morphing
+- **breathe**: Gentle, rhythmic morphing
+- **spike**: Sharp, energetic morphing
+- **nebula**: Space-themed morphing
+- **cosmic**: Cosmic-scale morphing
+- **stellar**: Star-themed morphing
 

@@ -69,11 +69,22 @@ def create_blender_script(features: Dict, output_path: str, quality_mode: str = 
     temp_dir.mkdir(parents=True, exist_ok=True)
     
     # Import the audio visualizer
+    print(f"🔍 DEBUG: Current working directory: {os.getcwd()}")
+    print(f"🔍 DEBUG: Python path: {sys.path}")
+    print(f"🔍 DEBUG: Looking for audio_visualizer in: {Path(__file__).parent}")
+    
     try:
         from audio_visualizer import AudioVisualizer
-    except ImportError:
-        print("❌ Audio visualizer not found. Please check src/audio_visualizer.py")
-        sys.exit(1)
+        print("✅ Audio visualizer imported successfully")
+    except ImportError as e:
+        print(f"❌ First import failed: {e}")
+        try:
+            from .audio_visualizer import AudioVisualizer
+            print("✅ Audio visualizer imported with relative import")
+        except ImportError as e2:
+            print(f"❌ Second import failed: {e2}")
+            print("❌ Audio visualizer not found. Please check src/audio_visualizer.py")
+            sys.exit(1)
     
     # Map quality modes to Polyfjord quality levels
     quality_mapping = {
