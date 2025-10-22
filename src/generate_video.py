@@ -353,60 +353,8 @@ render.resolution_x = {settings['resolution'][0]}
 render.resolution_y = {settings['resolution'][1]}
 render.resolution_percentage = 100
 
-# Lightweight high-quality background (procedural world gradient)
-try:
-    world = bpy.data.worlds.get("World") or bpy.data.worlds.new("World")
-    scene.world = world
-    world.use_nodes = True
-    nt = world.node_tree
-    nodes = nt.nodes
-    links = nt.links
-
-    # Clear existing nodes except output
-    for n in list(nodes):
-        if n.type != 'OUTPUT_WORLD':
-            nodes.remove(n)
-
-    output = None
-    for n in nodes:
-        if n.type == 'OUTPUT_WORLD':
-            output = n
-            break
-    if output is None:
-        output = nodes.new('ShaderNodeOutputWorld')
-        output.location = (400, 0)
-
-    bg = nodes.new('ShaderNodeBackground')
-    bg.location = (200, 0)
-
-    coord = nodes.new('ShaderNodeTexCoord')
-    coord.location = (-800, 0)
-
-    mapping = nodes.new('ShaderNodeMapping')
-    mapping.location = (-600, 0)
-    mapping.inputs['Rotation'].default_value[2] = 0.4  # slight tilt
-
-    grad = nodes.new('ShaderNodeTexGradient')
-    grad.location = (-400, 0)
-    grad.gradient_type = 'LINEAR'
-
-    ramp = nodes.new('ShaderNodeValToRGB')
-    ramp.location = (-200, 0)
-    # Elegant dark-to-color gradient
-    ramp.color_ramp.interpolation = 'EASE'
-    ramp.color_ramp.elements[0].position = 0.2
-    ramp.color_ramp.elements[0].color = (0.04, 0.04, 0.05, 1.0)
-    ramp.color_ramp.elements[1].position = 1.0
-    ramp.color_ramp.elements[1].color = (0.08, 0.12, 0.20, 1.0)
-
-    # Link nodes: TexCoord->Mapping->Gradient->ColorRamp->Background->Output
-    links.new(coord.outputs['Generated'], mapping.inputs['Vector'])
-    links.new(mapping.outputs['Vector'], grad.inputs['Vector'])
-    links.new(grad.outputs['Fac'], ramp.inputs['Fac'])
-    links.new(ramp.outputs['Color'], bg.inputs['Color'])
-    links.new(bg.outputs['Background'], output.inputs['Surface'])
-except Exception as _bg_e:
-    print("⚠️ Background setup skipped:", _bg_e)
+# Keep existing background from optimized_audio_visualizer.py
+print("🌌 Using existing space background from scene...")
 
 # Output settings for direct MP4
 render.image_settings.file_format = 'FFMPEG'

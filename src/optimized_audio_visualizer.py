@@ -36,6 +36,7 @@ class OptimizedAudioVisualizer:
         
         # Quality configurations
         self.quality_configs = {
+            'ultra_fast': {'samples': 16, 'max_bounces': 1, 'use_denoising': False},
             'lowest': {'samples': 16, 'max_bounces': 1, 'use_denoising': False},
             'preview': {'samples': 32, 'max_bounces': 3, 'use_denoising': True},
             'high': {'samples': 256, 'max_bounces': 10, 'use_denoising': True},
