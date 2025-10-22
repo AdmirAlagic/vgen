@@ -56,13 +56,15 @@ class OptimizedAudioVisualizer:
         
         self.config = self.quality_configs.get(quality_level, self.quality_configs['cinematic'])
         
-        # Smooth morphing phases with different speeds for organic motion
+        # Smooth morphing phases with space-themed shapes for organic motion
         self.morph_phases = [
-            {"name": "VerticalSpike", "weight": 0.3, "speed": 0.5},
-            {"name": "HorizontalWave", "weight": 0.25, "speed": 0.7},
-            {"name": "DiagonalTwist", "weight": 0.2, "speed": 0.6},
-            {"name": "RadialExplosion", "weight": 0.15, "speed": 0.4},
-            {"name": "SpiralRise", "weight": 0.1, "speed": 0.8}
+            {"name": "NebulaSwirl", "weight": 0.25, "speed": 0.4},
+            {"name": "CosmicPulse", "weight": 0.2, "speed": 0.6},
+            {"name": "StellarCore", "weight": 0.15, "speed": 0.3},
+            {"name": "GalacticSpiral", "weight": 0.15, "speed": 0.5},
+            {"name": "QuantumField", "weight": 0.1, "speed": 0.8},
+            {"name": "VerticalSpike", "weight": 0.1, "speed": 0.7},
+            {"name": "RadialExplosion", "weight": 0.05, "speed": 0.2}
         ]
     
     def create_optimized_scene(self, output_path: str, blend_path: str = None) -> str:
@@ -323,8 +325,8 @@ subdiv.render_levels = 3
 
 print("✅ Subdivision surface applied")
 
-# Create GPU-optimized professional material
-mat = bpy.data.materials.new(name="OptimizedMaterial")
+# Create GPU-optimized professional material with enhanced space properties
+mat = bpy.data.materials.new(name="OptimizedSpaceMaterial")
 obj.data.materials.append(mat)
 mat.use_nodes = True
 nodes = mat.node_tree.nodes
@@ -334,7 +336,7 @@ links = mat.node_tree.links
 for node in nodes:
     nodes.remove(node)
 
-# Create GPU-optimized material nodes
+# Create enhanced space material nodes
 output_node = nodes.new(type='ShaderNodeOutputMaterial')
 principled_node = nodes.new(type='ShaderNodeBsdfPrincipled')
 emission_node = nodes.new(type='ShaderNodeEmission')
@@ -344,11 +346,17 @@ color_ramp = nodes.new(type='ShaderNodeValToRGB')
 fresnel_node = nodes.new(type='ShaderNodeFresnel')
 mapping_node = nodes.new(type='ShaderNodeMapping')
 coord_node = nodes.new(type='ShaderNodeTexCoord')
+voronoi_texture = nodes.new(type='ShaderNodeTexVoronoi')
+wave_texture = nodes.new(type='ShaderNodeTexWave')
+mix_color = nodes.new(type='ShaderNodeMix')
 
-# Position nodes
-coord_node.location = (-800, 0)
-mapping_node.location = (-600, 0)
-noise_texture.location = (-400, 0)
+# Position nodes for better organization
+coord_node.location = (-1000, 0)
+mapping_node.location = (-800, 0)
+noise_texture.location = (-600, 200)
+voronoi_texture.location = (-600, 0)
+wave_texture.location = (-600, -200)
+mix_color.location = (-400, 0)
 color_ramp.location = (-200, 0)
 fresnel_node.location = (-200, 200)
 principled_node.location = (0, 0)
@@ -356,30 +364,52 @@ emission_node.location = (0, -200)
 mix_shader.location = (200, 0)
 output_node.location = (400, 0)
 
-# Set up noise texture
-noise_texture.inputs["Scale"].default_value = 5.0
-noise_texture.inputs["Detail"].default_value = 10.0
-noise_texture.inputs["Roughness"].default_value = 0.5
+# Set up noise texture for surface detail
+noise_texture.inputs["Scale"].default_value = 8.0
+noise_texture.inputs["Detail"].default_value = 15.0
+noise_texture.inputs["Roughness"].default_value = 0.6
 
-# Set up vivid color ramp
+# Set up Voronoi texture for crystalline patterns
+voronoi_texture.inputs["Scale"].default_value = 12.0
+voronoi_texture.inputs["Randomness"].default_value = 0.8
+
+# Set up wave texture for energy patterns
+wave_texture.wave_type = 'BANDS'
+wave_texture.wave_profile = 'SAW'
+wave_texture.inputs["Scale"].default_value = 6.0
+wave_texture.inputs["Distortion"].default_value = 2.0
+wave_texture.inputs["Detail"].default_value = 8.0
+
+# Mix textures for complex surface
+mix_color.blend_type = 'MULTIPLY'
+mix_color.inputs["Factor"].default_value = 0.6
+
+# Set up enhanced color ramp for space-like colors
 color_ramp.color_ramp.elements[0].position = 0.0
-color_ramp.color_ramp.elements[0].color = (0.2, 0.1, 0.6, 1.0)  # Deep purple-blue
+color_ramp.color_ramp.elements[0].color = (0.1, 0.05, 0.3, 1.0)  # Deep space purple
 color_ramp.color_ramp.elements[1].position = 1.0
-color_ramp.color_ramp.elements[1].color = (0.8, 0.4, 1.0, 1.0)  # Bright magenta-purple
+color_ramp.color_ramp.elements[1].color = (0.9, 0.6, 1.2, 1.0)  # Bright cosmic magenta
 
-# Principled BSDF settings
-principled_node.inputs["Metallic"].default_value = 0.9
-principled_node.inputs["Roughness"].default_value = 0.2
-principled_node.inputs["IOR"].default_value = 1.5
+# Enhanced Principled BSDF settings for realistic space material
+principled_node.inputs["Metallic"].default_value = 0.95
+principled_node.inputs["Roughness"].default_value = 0.15
+principled_node.inputs["IOR"].default_value = 1.8
+principled_node.inputs["Subsurface Weight"].default_value = 0.1
+principled_node.inputs["Subsurface Radius"].default_value = (0.8, 0.4, 0.6)
+principled_node.inputs["Transmission Weight"].default_value = 0.05
 
-# Enhanced emission settings
-emission_node.inputs["Strength"].default_value = 3.5
-emission_node.inputs["Color"].default_value = (1.0, 0.5, 0.2, 1.0)  # Bright orange
+# Enhanced emission settings for space glow
+emission_node.inputs["Strength"].default_value = 4.5
+emission_node.inputs["Color"].default_value = (0.8, 0.9, 1.2, 1.0)  # Cosmic blue-white
 
-# GPU-optimized links
+# Enhanced material links
 links.new(coord_node.outputs["Generated"], mapping_node.inputs["Vector"])
 links.new(mapping_node.outputs["Vector"], noise_texture.inputs["Vector"])
-links.new(noise_texture.outputs["Fac"], color_ramp.inputs["Fac"])
+links.new(mapping_node.outputs["Vector"], voronoi_texture.inputs["Vector"])
+links.new(mapping_node.outputs["Vector"], wave_texture.inputs["Vector"])
+links.new(noise_texture.outputs["Fac"], mix_color.inputs[0])
+links.new(voronoi_texture.outputs["Distance"], mix_color.inputs[1])
+links.new(mix_color.outputs["Result"], color_ramp.inputs["Fac"])
 links.new(color_ramp.outputs["Color"], principled_node.inputs["Base Color"])
 links.new(fresnel_node.outputs["Fac"], mix_shader.inputs["Fac"])
 links.new(principled_node.outputs["BSDF"], mix_shader.inputs[1])
@@ -397,31 +427,39 @@ try:
     bpy.ops.object.delete(use_global=False)
     
     # Add key light (main illumination)
-    bpy.ops.object.light_add(type='AREA', location=(5, 5, 5))
+    bpy.ops.object.light_add(type='AREA', location=(8, 6, 8))
     key_light = bpy.context.object
     key_light.name = "KeyLight"
-    key_light.data.energy = 50.0
-    key_light.data.size = 2.0
-    key_light.data.color = (1.0, 0.95, 0.8)  # Warm white
+    key_light.data.energy = 75.0
+    key_light.data.size = 3.0
+    key_light.data.color = (1.0, 0.98, 0.9)  # Warm cosmic white
     
     # Add fill light (softer illumination)
-    bpy.ops.object.light_add(type='AREA', location=(-3, -2, 3))
+    bpy.ops.object.light_add(type='AREA', location=(-5, -3, 4))
     fill_light = bpy.context.object
     fill_light.name = "FillLight"
-    fill_light.data.energy = 20.0
-    fill_light.data.size = 3.0
-    fill_light.data.color = (0.8, 0.9, 1.0)  # Cool white
+    fill_light.data.energy = 35.0
+    fill_light.data.size = 4.0
+    fill_light.data.color = (0.7, 0.8, 1.1)  # Cool cosmic blue
     
     # Add rim light (edge definition)
-    bpy.ops.object.light_add(type='SPOT', location=(0, -8, 2))
+    bpy.ops.object.light_add(type='SPOT', location=(0, -10, 3))
     rim_light = bpy.context.object
     rim_light.name = "RimLight"
-    rim_light.data.energy = 30.0
-    rim_light.data.spot_size = math.radians(45)
-    rim_light.data.color = (0.9, 0.7, 1.0)  # Purple tint
+    rim_light.data.energy = 45.0
+    rim_light.data.spot_size = math.radians(60)
+    rim_light.data.color = (0.8, 0.6, 1.2)  # Cosmic purple tint
     
     # Point rim light at the object
     rim_light.rotation_euler = (math.radians(15), 0, 0)
+    
+    # Add ambient light for space atmosphere
+    bpy.ops.object.light_add(type='AREA', location=(0, 0, 15))
+    ambient_light = bpy.context.object
+    ambient_light.name = "AmbientLight"
+    ambient_light.data.energy = 15.0
+    ambient_light.data.size = 8.0
+    ambient_light.data.color = (0.4, 0.5, 0.8)  # Deep space blue
     
     print("✅ Professional space lighting setup complete")
     
@@ -465,12 +503,13 @@ except Exception:
 
 print("✅ Smooth continuous modifiers created")
 
-# Create abstract shape keys for smooth morphing
+# Create space-themed shape keys for realistic morphing
 obj.shape_key_add(name="Basis")
 shape_names = [
     "VerticalSpike", "HorizontalWave", "DiagonalTwist",
     "RadialExplosion", "SpiralRise", "CubicDistortion",
-    "OrganicFlow", "GeometricFracture", "FluidDynamics", "CrystallineGrowth"
+    "OrganicFlow", "GeometricFracture", "FluidDynamics", "CrystallineGrowth",
+    "NebulaSwirl", "CosmicPulse", "StellarCore", "GalacticSpiral", "QuantumField"
 ]
 
 phi = 1.61803398875
@@ -551,6 +590,44 @@ for sname in shape_names:
         for v in data:
             crystal_factor = 1.0 + 1.3 * math.sin(v.co.x * 3) * math.sin(v.co.y * 3) * math.sin(v.co.z * 3)
             v.co *= crystal_factor
+    
+    elif "NebulaSwirl" in sname:
+        for v in data:
+            angle = math.atan2(v.co.y, v.co.x)
+            radius = math.sqrt(v.co.x**2 + v.co.y**2)
+            swirl_factor = 1.0 + 1.5 * math.sin(angle * 2 + radius * 1.5)
+            v.co.x = radius * math.cos(angle) * swirl_factor
+            v.co.y = radius * math.sin(angle) * swirl_factor
+            v.co.z += 0.8 * math.cos(angle * 3)
+    
+    elif "CosmicPulse" in sname:
+        for v in data:
+            center = mathutils.Vector((0, 0, 0))
+            direction = (v.co - center).normalized()
+            distance = (v.co - center).length
+            pulse_factor = 1.0 + 2.5 * math.sin(distance * 4) * math.exp(-distance * 0.3)
+            v.co = center + direction * distance * pulse_factor
+    
+    elif "StellarCore" in sname:
+        for v in data:
+            core_factor = 1.0 + 3.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.5)
+            v.co *= core_factor
+    
+    elif "GalacticSpiral" in sname:
+        for v in data:
+            angle = math.atan2(v.co.y, v.co.x)
+            radius = math.sqrt(v.co.x**2 + v.co.y**2)
+            spiral_factor = 1.0 + 1.8 * math.sin(angle * 4 + radius * 2)
+            v.co.x = radius * math.cos(angle) * spiral_factor
+            v.co.y = radius * math.sin(angle) * spiral_factor
+            v.co.z += 1.0 * math.sin(angle * 2 + radius)
+    
+    elif "QuantumField" in sname:
+        for v in data:
+            quantum_x = math.sin(v.co.x * 5) * math.cos(v.co.y * 3) * 0.8
+            quantum_y = math.cos(v.co.y * 5) * math.sin(v.co.z * 3) * 0.8
+            quantum_z = math.sin(v.co.z * 5) * math.cos(v.co.x * 3) * 0.8
+            v.co += mathutils.Vector((quantum_x, quantum_y, quantum_z))
 
 print("✅ Abstract procedural shape keys created")
 
@@ -573,13 +650,15 @@ frames_per_beat = beat_duration * {self.fps}
 
 print(f"🎵 Synthetic tempo: {{synthetic_tempo}} BPM for continuous motion")
 
-# Define smooth morphing phases with different speeds for organic motion
+# Define smooth morphing phases with space-themed shapes for organic motion
 morph_phases = [
-    {{"name": "VerticalSpike", "weight": 0.3, "speed": 0.5}},
-    {{"name": "HorizontalWave", "weight": 0.25, "speed": 0.7}},
-    {{"name": "DiagonalTwist", "weight": 0.2, "speed": 0.6}},
-    {{"name": "RadialExplosion", "weight": 0.15, "speed": 0.4}},
-    {{"name": "SpiralRise", "weight": 0.1, "speed": 0.8}}
+    {{"name": "NebulaSwirl", "weight": 0.25, "speed": 0.4}},
+    {{"name": "CosmicPulse", "weight": 0.2, "speed": 0.6}},
+    {{"name": "StellarCore", "weight": 0.15, "speed": 0.3}},
+    {{"name": "GalacticSpiral", "weight": 0.15, "speed": 0.5}},
+    {{"name": "QuantumField", "weight": 0.1, "speed": 0.8}},
+    {{"name": "VerticalSpike", "weight": 0.1, "speed": 0.7}},
+    {{"name": "RadialExplosion", "weight": 0.05, "speed": 0.2}}
 ]
 
 # Create smooth, continuous morphing for each shape key

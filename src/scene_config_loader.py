@@ -40,6 +40,7 @@ class LightingConfig:
     key_light: LightConfig
     fill_light: LightConfig
     rim_light: LightConfig
+    ambient_light: Optional[LightConfig] = None
 
 
 @dataclass
@@ -52,6 +53,10 @@ class MaterialConfig:
     metallic: float
     roughness: float
     ior: float
+    subsurface: float = 0.0
+    subsurface_color: list = None
+    transmission: float = 0.0
+    transmission_roughness: float = 0.0
 
 
 @dataclass
@@ -238,7 +243,14 @@ def save_scene_config(scene_config: SceneConfig, output_path: str = None):
                 'size': scene_config.lighting.rim_light.size,
                 'color': scene_config.lighting.rim_light.color,
                 'spot_size': scene_config.lighting.rim_light.spot_size
-            }
+            },
+            'ambient_light': {
+                'location': scene_config.lighting.ambient_light.location,
+                'energy': scene_config.lighting.ambient_light.energy,
+                'size': scene_config.lighting.ambient_light.size,
+                'color': scene_config.lighting.ambient_light.color,
+                'spot_size': scene_config.lighting.ambient_light.spot_size
+            } if scene_config.lighting.ambient_light else None
         },
         'material': {
             'emission_strength': scene_config.material.emission_strength,
@@ -247,7 +259,11 @@ def save_scene_config(scene_config: SceneConfig, output_path: str = None):
             'color_ramp_high': scene_config.material.color_ramp_high,
             'metallic': scene_config.material.metallic,
             'roughness': scene_config.material.roughness,
-            'ior': scene_config.material.ior
+            'ior': scene_config.material.ior,
+            'subsurface': scene_config.material.subsurface,
+            'subsurface_color': scene_config.material.subsurface_color,
+            'transmission': scene_config.material.transmission,
+            'transmission_roughness': scene_config.material.transmission_roughness
         },
         'render': {
             'resolution_x': scene_config.render.resolution_x,
@@ -287,7 +303,8 @@ def _convert_to_scene_config(config_data: Dict[str, Any]) -> SceneConfig:
     lighting = LightingConfig(
         key_light=LightConfig(**lighting_data['key_light']),
         fill_light=LightConfig(**lighting_data['fill_light']),
-        rim_light=LightConfig(**lighting_data['rim_light'])
+        rim_light=LightConfig(**lighting_data['rim_light']),
+        ambient_light=LightConfig(**lighting_data['ambient_light']) if 'ambient_light' in lighting_data else None
     )
     
     # Convert material config
@@ -337,35 +354,46 @@ def get_default_config() -> Dict[str, Any]:
         },
         "lighting": {
             "key_light": {
-                "location": {"x": 5.0, "y": 5.0, "z": 5.0},
-                "energy": 50.0,
-                "size": 2.0,
-                "color": [1.0, 0.95, 0.8],
+                "location": {"x": 8.0, "y": 6.0, "z": 8.0},
+                "energy": 75.0,
+                "size": 3.0,
+                "color": [1.0, 0.98, 0.9],
                 "spot_size": None
             },
             "fill_light": {
-                "location": {"x": -3.0, "y": -2.0, "z": 3.0},
-                "energy": 20.0,
-                "size": 3.0,
-                "color": [0.8, 0.9, 1.0],
+                "location": {"x": -5.0, "y": -3.0, "z": 4.0},
+                "energy": 35.0,
+                "size": 4.0,
+                "color": [0.7, 0.8, 1.1],
                 "spot_size": None
             },
             "rim_light": {
-                "location": {"x": 0.0, "y": -8.0, "z": 2.0},
-                "energy": 30.0,
-                "size": 1.5,
-                "color": [0.9, 0.7, 1.0],
-                "spot_size": 45.0
+                "location": {"x": 0.0, "y": -10.0, "z": 3.0},
+                "energy": 45.0,
+                "size": 2.0,
+                "color": [0.8, 0.6, 1.2],
+                "spot_size": 60.0
+            },
+            "ambient_light": {
+                "location": {"x": 0.0, "y": 0.0, "z": 15.0},
+                "energy": 15.0,
+                "size": 8.0,
+                "color": [0.4, 0.5, 0.8],
+                "spot_size": None
             }
         },
         "material": {
-            "emission_strength": 3.5,
-            "emission_color": [1.0, 0.5, 0.2],
-            "color_ramp_low": [0.2, 0.1, 0.6],
-            "color_ramp_high": [0.8, 0.4, 1.0],
-            "metallic": 0.9,
-            "roughness": 0.2,
-            "ior": 1.5
+            "emission_strength": 4.5,
+            "emission_color": [0.8, 0.9, 1.2],
+            "color_ramp_low": [0.1, 0.05, 0.3],
+            "color_ramp_high": [0.9, 0.6, 1.2],
+            "metallic": 0.95,
+            "roughness": 0.15,
+            "ior": 1.8,
+            "subsurface": 0.1,
+            "subsurface_color": [0.8, 0.4, 0.6],
+            "transmission": 0.05,
+            "transmission_roughness": 0.1
         },
         "render": {
             "resolution_x": 1920,

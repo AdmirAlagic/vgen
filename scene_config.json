@@ -1,10 +1,10 @@
 {
   "camera": {
-    "distance": 18.0,
+    "distance": 20.0,
     "location": {
       "x": 10.0,
       "y": -10.0,
-      "z": 10.0
+      "z": 8.0
     },
     "rotation": {
       "x": 60.0,
@@ -18,43 +18,57 @@
   "lighting": {
     "key_light": {
       "location": {
-        "x": 5.0,
-        "y": 5.0,
-        "z": 5.0
+        "x": 8.0,
+        "y": 6.0,
+        "z": 8.0
       },
-      "energy": 50.0,
-      "size": 2.0,
-      "color": [1.0, 0.95, 0.8]
+      "energy": 75.0,
+      "size": 3.0,
+      "color": [1.0, 0.98, 0.9]
     },
     "fill_light": {
       "location": {
-        "x": -3.0,
-        "y": -2.0,
-        "z": 3.0
+        "x": -5.0,
+        "y": -3.0,
+        "z": 4.0
       },
-      "energy": 20.0,
-      "size": 3.0,
-      "color": [0.8, 0.9, 1.0]
+      "energy": 35.0,
+      "size": 4.0,
+      "color": [0.7, 0.8, 1.1]
     },
     "rim_light": {
       "location": {
         "x": 0.0,
-        "y": -8.0,
-        "z": 2.0
+        "y": -10.0,
+        "z": 3.0
       },
-      "energy": 30.0,
-      "spot_size": 45.0,
-      "color": [0.9, 0.7, 1.0]
+      "energy": 45.0,
+      "spot_size": 60.0,
+      "color": [0.8, 0.6, 1.2]
+    },
+    "ambient_light": {
+      "location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 15.0
+      },
+      "energy": 15.0,
+      "size": 8.0,
+      "color": [0.4, 0.5, 0.8]
     }
   },
   "material": {
-    "emission_strength": 3.5,
-    "emission_color": [1.0, 0.5, 0.2],
-    "color_ramp_low": [0.2, 0.1, 0.6],
-    "color_ramp_high": [0.8, 0.4, 1.0],
-    "metallic": 0.9,
-    "roughness": 0.2,
-    "ior": 1.5
+    "emission_strength": 4.5,
+    "emission_color": [0.8, 0.9, 1.2],
+    "color_ramp_low": [0.1, 0.05, 0.3],
+    "color_ramp_high": [0.9, 0.6, 1.2],
+    "metallic": 0.95,
+    "roughness": 0.15,
+    "ior": 1.8,
+    "subsurface": 0.1,
+    "subsurface_color": [0.8, 0.4, 0.6],
+    "transmission": 0.05,
+    "transmission_roughness": 0.1
   },
   "render": {
     "resolution_x": 1920,
@@ -173,6 +187,45 @@
       "cross_frac": 0.2,
       "kf_stride": 1,
       "shape_intensity": 3.0
+    },
+    "nebula": {
+      "drive_exp": 0.8,
+      "disp_mult_kick": 2.5,
+      "disp_mult_bass": 2.0,
+      "twist_mult": 1.8,
+      "cast_base": 0.6,
+      "cast_mult_rms": 1.0,
+      "cast_mult_highs": 0.3,
+      "segment_min": 20,
+      "cross_frac": 0.8,
+      "kf_stride": 3,
+      "shape_intensity": 1.4
+    },
+    "cosmic": {
+      "drive_exp": 0.7,
+      "disp_mult_kick": 3.5,
+      "disp_mult_bass": 2.8,
+      "twist_mult": 2.2,
+      "cast_base": 0.4,
+      "cast_mult_rms": 0.9,
+      "cast_mult_highs": 0.5,
+      "segment_min": 12,
+      "cross_frac": 0.6,
+      "kf_stride": 2,
+      "shape_intensity": 1.8
+    },
+    "stellar": {
+      "drive_exp": 0.6,
+      "disp_mult_kick": 4.5,
+      "disp_mult_bass": 3.2,
+      "twist_mult": 2.8,
+      "cast_base": 0.3,
+      "cast_mult_rms": 0.7,
+      "cast_mult_highs": 0.6,
+      "segment_min": 8,
+      "cross_frac": 0.4,
+      "kf_stride": 1,
+      "shape_intensity": 2.2
     }
   },
   "presets": {
@@ -190,6 +243,21 @@
       "camera_distance": 25.0,
       "quality_level": "cinematic",
       "morph_style": "breathe"
+    },
+    "nebula_space": {
+      "camera_distance": 18.0,
+      "quality_level": "cinematic",
+      "morph_style": "nebula"
+    },
+    "cosmic_dance": {
+      "camera_distance": 12.0,
+      "quality_level": "broadcast",
+      "morph_style": "cosmic"
+    },
+    "stellar_show": {
+      "camera_distance": 20.0,
+      "quality_level": "cinematic",
+      "morph_style": "stellar"
     }
   }
 }

@@ -28,6 +28,9 @@ class AudioVisualizer:
         - ripple: high-frequency surface ripples
         - breathe: organic breathing and roundness
         - spike: sharp kick-driven spikes
+        - nebula: gentle cosmic swirls and nebula-like morphing
+        - cosmic: balanced cosmic dance with moderate intensity
+        - stellar: bright stellar core with dramatic energy
         """
         self.features = audio_features
         self.total_frames = audio_features.get('total_frames', 300)
@@ -136,6 +139,45 @@ class AudioVisualizer:
                 'cross_frac': 0.2,  # Short crossfades for sharp spikes
                 'kf_stride': 1,  # Every frame for sharp spikes
                 'shape_intensity': 2.8  # Very high spike intensity
+            },
+            'nebula': {
+                'drive_exp': 0.8,  # Gentle nebula response
+                'disp_mult_kick': 2.5,  # Gentle displacement
+                'disp_mult_bass': 2.0,  # Gentle bass-driven deformation
+                'twist_mult': 1.8,  # Gentle twisting
+                'cast_base': 0.6,  # Strong base casting for nebula flow
+                'cast_mult_rms': 1.0,  # Moderate RMS-driven changes
+                'cast_mult_highs': 0.3,  # Minimal high-frequency details
+                'segment_min': 20,  # Slow transitions for nebula flow
+                'cross_frac': 0.8,  # Very long crossfades for smooth nebula
+                'kf_stride': 3,  # Moderate keyframe frequency
+                'shape_intensity': 1.4  # Gentle nebula intensity
+            },
+            'cosmic': {
+                'drive_exp': 0.7,  # Balanced cosmic response
+                'disp_mult_kick': 3.5,  # Moderate displacement
+                'disp_mult_bass': 2.8,  # Moderate bass-driven deformation
+                'twist_mult': 2.2,  # Moderate twisting
+                'cast_base': 0.4,  # Moderate base casting
+                'cast_mult_rms': 0.9,  # Moderate RMS-driven changes
+                'cast_mult_highs': 0.5,  # Moderate high-frequency details
+                'segment_min': 12,  # Moderate transition speed
+                'cross_frac': 0.6,  # Moderate crossfades
+                'kf_stride': 2,  # Moderate keyframe frequency
+                'shape_intensity': 1.8  # Moderate cosmic intensity
+            },
+            'stellar': {
+                'drive_exp': 0.6,  # Responsive stellar response
+                'disp_mult_kick': 4.5,  # Strong kick-driven changes
+                'disp_mult_bass': 3.2,  # Strong bass-driven deformation
+                'twist_mult': 2.8,  # Strong twisting
+                'cast_base': 0.3,  # Moderate base casting
+                'cast_mult_rms': 0.7,  # Moderate RMS-driven changes
+                'cast_mult_highs': 0.6,  # Strong high-frequency details
+                'segment_min': 8,  # Fast transitions for stellar energy
+                'cross_frac': 0.4,  # Moderate crossfades
+                'kf_stride': 1,  # Every frame for stellar energy
+                'shape_intensity': 2.2  # High stellar intensity
             },
         }
         if self.morph_style not in self.style_configs:
