@@ -136,6 +136,6 @@ class AudioVisualizer:
         """Create optimized Polyfjord-style scene with smooth continuous animation."""
         # Use the optimized visualizer system
         optimized_visualizer = OptimizedAudioVisualizer(self.features, self.quality_level, self.morph_style)
-        return optimized_visualizer.create_optimized_scene(output_path, blend_path)
+        return optimized_visualizer.save_script(output_path, blend_path=blend_path)
     
     

@@ -9,3 +9,4 @@ alwaysApply: true
 -Make general name filenames
 -Add debug logging with best practices for easy error recognition when running scripts
 -Save errors that repeat often through chats in repeated_errors.md
+- When i ask for fix or improvement do not generate new "optimized", "enchanded" version of file but update existign files in src/structure

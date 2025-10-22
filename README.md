@@ -1,6 +1,6 @@
 # AudioBlender Video Generator
 
-Professional audio-reactive 3D video generator that transforms music into stunning cinematic visuals using Blender. Features smooth shape morphing, professional materials, and GPU-optimized rendering.
+Professional audio-reactive 3D video generator that transforms music into stunning cinematic visuals using Blender. Features **smooth continuous shape morphing**, **no flickering**, **professional materials**, and **GPU-optimized rendering** with Metal/CUDA acceleration.
 
 ## 🚀 Quick Start
 
@@ -36,13 +36,13 @@ python src/generate_video.py <audio_file> [output_name] [quality_mode]
 
 ## 📊 Quality Presets
 
-| Preset | Resolution | Samples | Speed | Use Case |
-|--------|------------|---------|-------|----------|
-| `ultra_fast` | 720p | 32 | ⚡⚡⚡⚡⚡ | Quick previews, testing |
-| `fast` | 720p | 64 | ⚡⚡⚡⚡ | Fast iterations, drafts |
-| `balanced` | 1080p | 128 | ⚡⚡⚡ | **Default** - Good quality/speed |
-| `high` | 1080p | 256 | ⚡⚡ | High quality production |
-| `ultra` | 1080p | 512 | ⚡ | Maximum quality, slowest |
+| Preset | Resolution | Samples | Bounces | Speed | Use Case |
+|--------|------------|---------|---------|-------|----------|
+| `ultra_fast` | 1080p | 16 | 1 | ⚡⚡⚡⚡⚡ | Quick previews, testing |
+| `fast` | 1080p | 32 | 3 | ⚡⚡⚡⚡ | Fast iterations, drafts |
+| `balanced` | 1080p | 256 | 10 | ⚡⚡⚡ | **Default** - Good quality/speed |
+| `high` | 1080p | 1024 | 16 | ⚡⚡ | High quality production |
+| `ultra` | 1080p | 2048 | 24 | ⚡ | Maximum quality, slowest |
 
 ## 🎵 Supported Audio Formats
 
@@ -54,12 +54,14 @@ python src/generate_video.py <audio_file> [output_name] [quality_mode]
 
 ## 🎬 Features
 
-- **Smooth Shape Morphing**: Audio-responsive geometry changes (no position jumps)
-- **Professional Materials**: Commercial-grade lighting and materials
-- **GPU Optimization**: Automatic GPU acceleration (Metal/CUDA) with CPU fallback
-- **Real-time Analysis**: Enhanced audio analysis with frequency-specific responses
-- **Multiple Interfaces**: Both GUI (PyQt6) and CLI interfaces
-- **Quality Presets**: From ultra-fast previews to ultra-high quality production
+- **🎯 Smooth Continuous Morphing**: No flickering, continuous shape changes with Bezier interpolation
+- **🚫 No Size Changes**: Shape-only morphing (no position or scale changes)
+- **🎨 Professional Materials**: Commercial-grade lighting with emission and metallic materials
+- **⚡ GPU Optimization**: Automatic Metal/CUDA acceleration with CPU fallback
+- **🎵 Enhanced Audio Analysis**: Frequency-specific responses with musical smoothing
+- **🔄 Continuous Motion**: Tempo-based animation even during silence
+- **🎭 Multiple Interfaces**: Both GUI (PyQt6) and CLI interfaces
+- **📊 Quality Presets**: From ultra-fast previews to cinematic production quality
 
 ## 📁 Project Structure
 
@@ -67,18 +69,18 @@ python src/generate_video.py <audio_file> [output_name] [quality_mode]
 src/
 ├── main.py                    # Main entry point (GUI + CLI)
 ├── generate_video.py          # Direct CLI interface
-├── audio_analyzer.py          # Enhanced audio analysis
+├── audio_analyzer.py          # Enhanced audio analysis with librosa
 ├── audio_visualizer.py        # Polyfjord-style scene generation
-├── optimized_audio_visualizer.py  # Performance optimizations
+├── optimized_audio_visualizer.py  # Smooth continuous animation system
 └── ui/                        # GUI components
     ├── main_window.py         # PyQt6 main window
     └── style.py               # UI styling
 
 output/
-├── <name>.mp4                # Final rendered video
-├── <name>.blend              # Blender scene file
+├── <name>_polyfjord.mp4      # Final rendered video
+├── scene.blend               # Blender scene file
 └── temp/                     # Temporary files
-    └── <name>_scene.py        # Generated Python script
+    └── polyfjord_style_scene.py  # Generated Python script
 ```
 
 ## 🛠️ Requirements
@@ -113,23 +115,23 @@ python src/main.py music.wav --output final_video --quality high
 ### Programmatic Usage
 ```python
 from src.audio_analyzer import EnhancedAudioAnalyzer
-from src.audio_visualizer import PolyfjordVisualizer
+from src.optimized_audio_visualizer import OptimizedAudioVisualizer
 
 # Analyze audio
 analyzer = EnhancedAudioAnalyzer("music.wav")
 features = analyzer.analyze_for_mutating_cube()
 
-# Generate scene
-visualizer = PolyfjordVisualizer(features, quality='high')
-script_path = visualizer.generate_scene()
+# Generate smooth continuous scene
+visualizer = OptimizedAudioVisualizer(features, quality_level='cinematic', morph_style='flow')
+script_path = visualizer.save_script('output/scene.py')
 ```
 
 ## 🎯 Output Files
 
-- **Video**: `output/<name>.mp4` - Final rendered video
-- **Blend File**: `output/<name>.blend` - Blender scene file
-- **Script**: `output/temp/<name>_scene.py` - Generated Python script
-- **Analysis**: `output/<name>_analysis.json` - Audio analysis data
+- **Video**: `output/<name>_polyfjord.mp4` - Final rendered video with smooth morphing
+- **Blend File**: `output/temp/scene.blend` - Blender scene file
+- **Script**: `output/temp/polyfjord_style_scene.py` - Generated Python script
+- **Analysis**: Audio analysis data embedded in script
 
 ## 🚨 Troubleshooting
 

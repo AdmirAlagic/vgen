@@ -2,7 +2,7 @@
 
 ## 🎬 Overview
 
-The AudioBlender Video Generator creates stunning audio-reactive 3D animations using Blender. This guide covers all available presets, quality levels, and usage options.
+The AudioBlender Video Generator creates stunning audio-reactive 3D animations using Blender with **smooth continuous morphing**, **no flickering**, and **GPU-optimized rendering**. This guide covers all available presets, quality levels, and usage options.
 
 ## 🚀 Quick Start
 
@@ -30,28 +30,16 @@ python src/main.py
 
 ## 📊 Available Quality Presets
 
-### Animation Quality Presets
-These presets control the complexity and smoothness of the 3D animation:
+### Optimized Animation Quality Presets
+These presets control the smooth continuous morphing and rendering quality:
 
-| Preset | Subdivision | Samples | Keyframes | Bounces | Use Case |
-|--------|-------------|---------|-----------|---------|----------|
-| `ultra_fast` | 1 | 32 | 30 | 4 | Quick previews, testing |
-| `fast` | 1 | 64 | 40 | 5 | Fast iterations, drafts |
-| `medium` | 1 | 64 | 40 | 4 | Balanced quality/speed |
-| `high` | 2 | 128 | 60 | 6 | **Default** - Good quality |
-| `ultra` | 3 | 256 | 80 | 8 | Maximum quality, slowest |
-| `low` | 0 | 32 | 20 | 3 | Lowest quality, fastest |
-
-### Rendering Quality Presets
-These presets control the final video output quality:
-
-| Preset | Resolution | Samples | CRF | FFmpeg Preset | Speed | Quality |
-|--------|------------|---------|-----|---------------|-------|---------|
-| `ultra_fast` | 720p | 32 | LOWEST | REALTIME | 3-5x faster | Good |
-| `fast` | 720p | 64 | VERYLOW | REALTIME | 2-3x faster | Good |
-| `balanced` | 1080p | 128 | LOW | GOOD | 1.5-2x faster | High |
-| `high` | 1080p | 256 | MEDIUM | GOOD | Similar speed | High |
-| `ultra` | 1080p | 512 | HIGH | BEST | Slower | Maximum |
+| Preset | Resolution | Samples | Bounces | Denoising | Speed | Use Case |
+|--------|------------|---------|---------|-----------|-------|----------|
+| `ultra_fast` | 1080p | 16 | 1 | ❌ | ⚡⚡⚡⚡⚡ | Quick previews, testing |
+| `fast` | 1080p | 32 | 3 | ✅ | ⚡⚡⚡⚡ | Fast iterations, drafts |
+| `balanced` | 1080p | 256 | 10 | ✅ | ⚡⚡⚡ | **Default** - Good quality/speed |
+| `high` | 1080p | 1024 | 16 | ✅ | ⚡⚡ | High quality production |
+| `ultra` | 1080p | 2048 | 24 | ✅ | ⚡ | Maximum quality, slowest |
 
 ## 🎯 Preset Selection Guide
 
@@ -81,65 +69,72 @@ python src/generate_video.py music.wav masterpiece ultra
 
 ### Programmatic Usage
 ```python
-from src.animator import MutatingCubeAnimator
+from src.audio_analyzer import EnhancedAudioAnalyzer
+from src.optimized_audio_visualizer import OptimizedAudioVisualizer
 
-# Create animator with specific quality
-animator = MutatingCubeAnimator(audio_features, quality_level='ultra')
+# Analyze audio
+analyzer = EnhancedAudioAnalyzer("music.wav")
+features = analyzer.analyze_for_mutating_cube()
 
-# Generate scene
-script_path = animator.save_script('output/scene.py')
+# Create visualizer with specific quality
+visualizer = OptimizedAudioVisualizer(features, quality_level='cinematic', morph_style='flow')
+
+# Generate smooth continuous scene
+script_path = visualizer.save_script('output/scene.py')
 ```
 
 ### Custom Quality Configuration
 ```python
-# Custom quality settings
+# Custom quality settings for OptimizedAudioVisualizer
 custom_config = {
-    'subdivision': 2,
-    'samples': 200,
-    'keyframe_density': 70,
-    'max_bounces': 7
+    'samples': 512,
+    'max_bounces': 12,
+    'use_denoising': True
 }
 
 # Apply custom config
-animator.config = custom_config
+visualizer.config = custom_config
 ```
 
 ## 🎨 Features by Quality Level
 
 ### Ultra Fast (`ultra_fast`)
-- ✅ Basic shape morphing
-- ✅ Simple color animations
-- ✅ Fast rendering
-- ❌ Limited detail
-- ❌ Lower resolution
+- ✅ Smooth continuous shape morphing
+- ✅ Basic color animations
+- ✅ Fast rendering (16 samples)
+- ✅ 1080p output
+- ❌ No denoising
+- ❌ Limited bounces
 
 ### Fast (`fast`)
-- ✅ Smooth shape morphing
-- ✅ Basic color animations
-- ✅ Good performance
-- ✅ 720p output
+- ✅ Smooth continuous shape morphing
+- ✅ Enhanced color animations
+- ✅ Good performance (32 samples)
+- ✅ Denoising enabled
+- ✅ 1080p output
 - ❌ Limited complexity
 
-### Balanced (`balanced`)
-- ✅ Complex shape morphing
-- ✅ Advanced color animations
-- ✅ PolyHaven integration
+### Balanced (`balanced`) - Default
+- ✅ Smooth continuous shape morphing
+- ✅ Professional color animations
+- ✅ High quality (256 samples)
+- ✅ Denoising enabled
 - ✅ 1080p output
 - ✅ Good performance
 
-### High (`high`) - Default
-- ✅ All features enabled
-- ✅ Advanced cosmic materials
-- ✅ Dynamic starfield
-- ✅ Animated nebula
-- ✅ Professional lighting
+### High (`high`) - Production Quality
+- ✅ Smooth continuous shape morphing
+- ✅ Professional materials
+- ✅ High quality (1024 samples)
+- ✅ Denoising enabled
 - ✅ 1080p output
+- ✅ Professional lighting
 
 ### Ultra (`ultra`) - Maximum Quality
+- ✅ Smooth continuous shape morphing
 - ✅ All features enabled
-- ✅ Maximum subdivision
-- ✅ Highest sample count
-- ✅ Most keyframes
+- ✅ Maximum quality (2048 samples)
+- ✅ Denoising enabled
 - ✅ Maximum bounces
 - ✅ Slowest rendering
 - ✅ Best quality
@@ -162,19 +157,18 @@ animator.config = custom_config
 ## 📁 Output Files
 
 ### Generated Files
-- **Blend File**: `output/[name].blend` - Blender scene file
-- **Video**: `output/[name].mp4` - Final rendered video
-- **Script**: `output/temp/[name]_scene.py` - Generated Python script
-- **Analysis**: `output/[name]_analysis.json` - Audio analysis data
+- **Blend File**: `output/temp/scene.blend` - Blender scene file
+- **Video**: `output/[name]_polyfjord.mp4` - Final rendered video
+- **Script**: `output/temp/polyfjord_style_scene.py` - Generated Python script
+- **Analysis**: Audio analysis data embedded in script
 
 ### File Locations
 ```
 output/
-├── [name].mp4              # Final video
-├── [name].blend            # Blender scene
-├── temp/
-│   └── [name]_scene.py     # Generated script
-└── [name]_analysis.json    # Audio analysis
+├── [name]_polyfjord.mp4    # Final video
+└── temp/
+    ├── scene.blend         # Blender scene
+    └── polyfjord_style_scene.py  # Generated script
 ```
 
 ## 🛠️ Troubleshooting
@@ -247,8 +241,10 @@ done
 | Aspect | Ultra Fast | Fast | Balanced | High | Ultra |
 |--------|------------|------|----------|------|-------|
 | **Rendering Speed** | ⚡⚡⚡⚡⚡ | ⚡⚡⚡⚡ | ⚡⚡⚡ | ⚡⚡ | ⚡ |
-| **Visual Quality** | ⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **File Size** | Small | Small | Medium | Large | Largest |
+| **Visual Quality** | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
+| **Smooth Morphing** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **GPU Acceleration** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Denoising** | ❌ | ✅ | ✅ | ✅ | ✅ |
 | **Best For** | Testing | Drafts | General | Production | Masterpiece |
 
 ## 📞 Support

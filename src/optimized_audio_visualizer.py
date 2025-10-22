@@ -62,8 +62,7 @@ class OptimizedAudioVisualizer:
         # Convert features to JSON for embedding
         features_json = json.dumps(self.features)
         
-        script_content = f'''#!/usr/bin/env python3
-"""
+        script_content = f'''"""
 OPTIMIZED AUDIO VISUALIZER - SMOOTH CONTINUOUS ANIMATION
 ========================================================
 
@@ -151,7 +150,7 @@ try:
     
     # GPU-optimized Cycles settings
     scene.cycles.feature_set = 'SUPPORTED'
-    scene.cycles.use_denoising = {str(self.config['use_denoising']).lower()}
+    scene.cycles.use_denoising = {str(self.config['use_denoising'])}
     scene.cycles.denoiser = 'OPTIX' if cprefs.compute_device_type == 'CUDA' else 'OPENIMAGEDENOISE'
     scene.cycles.use_adaptive_sampling = True
     scene.cycles.adaptive_threshold = 0.01
@@ -604,7 +603,7 @@ print("✅ Smooth Bezier interpolation applied to all animations")
 scene.render.engine = 'CYCLES'
 scene.cycles.samples = {self.config['samples']}
 scene.cycles.max_bounces = {self.config['max_bounces']}
-scene.cycles.use_denoising = {str(self.config['use_denoising']).lower()}
+scene.cycles.use_denoising = {str(self.config['use_denoising'])}
 scene.cycles.use_adaptive_sampling = True
 
 # GPU-optimized output settings
