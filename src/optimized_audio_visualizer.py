@@ -44,9 +44,9 @@ class OptimizedAudioVisualizer:
         self.beat_duration = 60.0 / self.synthetic_tempo
         self.frames_per_beat = self.beat_duration * self.fps
         
-        # Quality configurations
+        # Quality configurations with improved ultra_fast settings
         self.quality_configs = {
-            'ultra_fast': {'samples': 16, 'max_bounces': 1, 'use_denoising': False},
+            'ultra_fast': {'samples': 32, 'max_bounces': 3, 'use_denoising': True},
             'lowest': {'samples': 16, 'max_bounces': 1, 'use_denoising': False},
             'preview': {'samples': 32, 'max_bounces': 3, 'use_denoising': True},
             'high': {'samples': 256, 'max_bounces': 10, 'use_denoising': True},
@@ -325,96 +325,274 @@ subdiv.render_levels = 3
 
 print("✅ Subdivision surface applied")
 
-# Create GPU-optimized professional material with enhanced space properties
-mat = bpy.data.materials.new(name="OptimizedSpaceMaterial")
-obj.data.materials.append(mat)
-mat.use_nodes = True
-nodes = mat.node_tree.nodes
-links = mat.node_tree.links
+# Create ULTRA-REALISTIC professional material with enhanced space properties (Blender 4.5 compatible)
+print("🎨 Creating ultra-realistic material system for Blender 4.5...")
 
-# Clear default nodes
-for node in nodes:
-    nodes.remove(node)
+try:
+    mat = bpy.data.materials.new(name="UltraRealisticSpaceMaterial")
+    obj.data.materials.append(mat)
+    mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    links = mat.node_tree.links
 
-# Create enhanced space material nodes
-output_node = nodes.new(type='ShaderNodeOutputMaterial')
-principled_node = nodes.new(type='ShaderNodeBsdfPrincipled')
-emission_node = nodes.new(type='ShaderNodeEmission')
-mix_shader = nodes.new(type='ShaderNodeMixShader')
-noise_texture = nodes.new(type='ShaderNodeTexNoise')
-color_ramp = nodes.new(type='ShaderNodeValToRGB')
-fresnel_node = nodes.new(type='ShaderNodeFresnel')
-mapping_node = nodes.new(type='ShaderNodeMapping')
-coord_node = nodes.new(type='ShaderNodeTexCoord')
-voronoi_texture = nodes.new(type='ShaderNodeTexVoronoi')
-wave_texture = nodes.new(type='ShaderNodeTexWave')
-mix_color = nodes.new(type='ShaderNodeMix')
+    # Clear default nodes
+    for node in nodes:
+        nodes.remove(node)
+
+    # Create ultra-realistic space material nodes (Blender 4.5 compatible)
+    output_node = nodes.new(type='ShaderNodeOutputMaterial')
+    principled_node = nodes.new(type='ShaderNodeBsdfPrincipled')
+    emission_node = nodes.new(type='ShaderNodeEmission')
+    mix_shader = nodes.new(type='ShaderNodeMixShader')
+    noise_texture = nodes.new(type='ShaderNodeTexNoise')
+    color_ramp = nodes.new(type='ShaderNodeValToRGB')
+    fresnel_node = nodes.new(type='ShaderNodeFresnel')
+    mapping_node = nodes.new(type='ShaderNodeMapping')
+    coord_node = nodes.new(type='ShaderNodeTexCoord')
+    voronoi_texture = nodes.new(type='ShaderNodeTexVoronoi')
+    wave_texture = nodes.new(type='ShaderNodeTexWave')
+    mix_color = nodes.new(type='ShaderNodeMix')
+    # Additional nodes for ultra-realism (Blender 4.5 compatible)
+    fractal_texture = nodes.new(type='ShaderNodeTexNoise')  # Use Noise instead of Musgrave
+    bump_node = nodes.new(type='ShaderNodeBump')
+    normal_map = nodes.new(type='ShaderNodeNormalMap')
+    separate_rgb = nodes.new(type='ShaderNodeSeparateRGB')
+    mix_normal = nodes.new(type='ShaderNodeMix')
+    layer_weight = nodes.new(type='ShaderNodeLayerWeight')
+    math_node = nodes.new(type='ShaderNodeMath')
+    # Additional texture for more detail - Use ShaderNodeTexNoise for Blender 4.5 compatibility
+    try:
+        clouds_texture = nodes.new(type='ShaderNodeTexNoise')
+        clouds_texture.inputs["Scale"].default_value = 8.0
+        clouds_texture.inputs["Detail"].default_value = 15.0
+        clouds_texture.inputs["Roughness"].default_value = 0.5
+    except Exception:
+        # Fallback if ShaderNodeTexNoise is not available
+        clouds_texture = nodes.new(type='ShaderNodeTexVoronoi')
+    mix_texture = nodes.new(type='ShaderNodeMix')
+
+    print("✅ All material nodes created successfully for Blender 4.5")
+
+except Exception as e:
+    print(f"⚠️ Error creating advanced material nodes: {{e}}")
+    print("🔄 Falling back to simplified material system...")
+    
+    # Fallback: Create simpler material system
+    mat = bpy.data.materials.new(name="SimplifiedSpaceMaterial")
+    obj.data.materials.append(mat)
+    mat.use_nodes = True
+    nodes = mat.node_tree.nodes
+    links = mat.node_tree.links
+
+    # Clear default nodes
+    for node in nodes:
+        nodes.remove(node)
+
+    # Create simplified material nodes
+    output_node = nodes.new(type='ShaderNodeOutputMaterial')
+    principled_node = nodes.new(type='ShaderNodeBsdfPrincipled')
+    emission_node = nodes.new(type='ShaderNodeEmission')
+    mix_shader = nodes.new(type='ShaderNodeMixShader')
+    noise_texture = nodes.new(type='ShaderNodeTexNoise')
+    color_ramp = nodes.new(type='ShaderNodeValToRGB')
+    fresnel_node = nodes.new(type='ShaderNodeFresnel')
+    mapping_node = nodes.new(type='ShaderNodeMapping')
+    coord_node = nodes.new(type='ShaderNodeTexCoord')
+    
+    print("✅ Simplified material system created")
 
 # Position nodes for better organization
-coord_node.location = (-1000, 0)
-mapping_node.location = (-800, 0)
-noise_texture.location = (-600, 200)
-voronoi_texture.location = (-600, 0)
-wave_texture.location = (-600, -200)
-mix_color.location = (-400, 0)
-color_ramp.location = (-200, 0)
-fresnel_node.location = (-200, 200)
-principled_node.location = (0, 0)
-emission_node.location = (0, -200)
-mix_shader.location = (200, 0)
-output_node.location = (400, 0)
+try:
+    coord_node.location = (-1600, 0)
+    mapping_node.location = (-1400, 0)
+    noise_texture.location = (-1200, 300)
+    voronoi_texture.location = (-1200, 100)
+    wave_texture.location = (-1200, -100)
+    fractal_texture.location = (-1200, -300)
+    clouds_texture.location = (-1200, -500)
+    mix_texture.location = (-1000, -200)
+    mix_color.location = (-800, 0)
+    separate_rgb.location = (-600, 0)
+    color_ramp.location = (-400, 0)
+    bump_node.location = (-200, 200)
+    normal_map.location = (-200, 100)
+    mix_normal.location = (-200, 0)
+    fresnel_node.location = (-200, -200)
+    layer_weight.location = (-200, -300)
+    math_node.location = (0, -200)
+    principled_node.location = (200, 0)
+    emission_node.location = (200, -200)
+    mix_shader.location = (400, 0)
+    output_node.location = (600, 0)
+except NameError:
+    # Fallback positioning for simplified material
+    coord_node.location = (-800, 0)
+    mapping_node.location = (-600, 0)
+    noise_texture.location = (-400, 200)
+    color_ramp.location = (-200, 0)
+    fresnel_node.location = (-200, -200)
+    principled_node.location = (0, 0)
+    emission_node.location = (0, -200)
+    mix_shader.location = (200, 0)
+    output_node.location = (400, 0)
 
-# Set up noise texture for surface detail
-noise_texture.inputs["Scale"].default_value = 8.0
-noise_texture.inputs["Detail"].default_value = 15.0
-noise_texture.inputs["Roughness"].default_value = 0.6
+# Set up material properties with Blender 4.5 compatibility
+try:
+    # Set up noise texture for surface detail
+    noise_texture.inputs["Scale"].default_value = 12.0
+    noise_texture.inputs["Detail"].default_value = 20.0
+    noise_texture.inputs["Roughness"].default_value = 0.4
 
-# Set up Voronoi texture for crystalline patterns
-voronoi_texture.inputs["Scale"].default_value = 12.0
-voronoi_texture.inputs["Randomness"].default_value = 0.8
+    # Set up Voronoi texture for crystalline patterns
+    voronoi_texture.inputs["Scale"].default_value = 15.0
+    voronoi_texture.inputs["Randomness"].default_value = 0.9
 
-# Set up wave texture for energy patterns
-wave_texture.wave_type = 'BANDS'
-wave_texture.wave_profile = 'SAW'
-wave_texture.inputs["Scale"].default_value = 6.0
-wave_texture.inputs["Distortion"].default_value = 2.0
-wave_texture.inputs["Detail"].default_value = 8.0
+    # Set up wave texture for energy patterns
+    wave_texture.wave_type = 'BANDS'
+    wave_texture.wave_profile = 'SAW'
+    wave_texture.inputs["Scale"].default_value = 8.0
+    wave_texture.inputs["Distortion"].default_value = 3.0
+    wave_texture.inputs["Detail"].default_value = 12.0
 
-# Mix textures for complex surface
-mix_color.blend_type = 'MULTIPLY'
-mix_color.inputs["Factor"].default_value = 0.6
+    # Set up clouds texture for additional organic detail
+    clouds_texture.inputs["Scale"].default_value = 3.0
+    clouds_texture.inputs["Detail"].default_value = 8.0
+    clouds_texture.inputs["Distortion"].default_value = 1.0
 
-# Set up enhanced color ramp for space-like colors
-color_ramp.color_ramp.elements[0].position = 0.0
-color_ramp.color_ramp.elements[0].color = (0.1, 0.05, 0.3, 1.0)  # Deep space purple
-color_ramp.color_ramp.elements[1].position = 1.0
-color_ramp.color_ramp.elements[1].color = (0.9, 0.6, 1.2, 1.0)  # Bright cosmic magenta
+    # Set up texture mixing
+    mix_texture.blend_type = 'ADD'
+    mix_texture.inputs["Factor"].default_value = 0.4
 
-# Enhanced Principled BSDF settings for realistic space material
-principled_node.inputs["Metallic"].default_value = 0.95
-principled_node.inputs["Roughness"].default_value = 0.15
-principled_node.inputs["IOR"].default_value = 1.8
-principled_node.inputs["Subsurface Weight"].default_value = 0.1
-principled_node.inputs["Subsurface Radius"].default_value = (0.8, 0.4, 0.6)
-principled_node.inputs["Transmission Weight"].default_value = 0.05
+    # Mix textures for complex surface
+    mix_color.blend_type = 'MULTIPLY'
+    mix_color.inputs["Factor"].default_value = 0.7
+
+    print("✅ Advanced texture setup completed")
+    
+except NameError:
+    # Fallback: Simplified texture setup
+    noise_texture.inputs["Scale"].default_value = 8.0
+    noise_texture.inputs["Detail"].default_value = 15.0
+    noise_texture.inputs["Roughness"].default_value = 0.5
+    print("✅ Simplified texture setup completed")
+
+# Set up ultra-realistic color ramp for space-like colors
+# Configure color ramp for cosmic purple gradient - Add elements for Blender 4.5 compatibility
+try:
+    # Ensure we have enough elements
+    while len(color_ramp.color_ramp.elements) < 4:
+        color_ramp.color_ramp.elements.new(0.5)
+    
+    color_ramp.color_ramp.elements[0].position = 0.0
+    color_ramp.color_ramp.elements[0].color = (0.05, 0.02, 0.15, 1.0)  # Deep space purple
+    color_ramp.color_ramp.elements[1].position = 0.3
+    color_ramp.color_ramp.elements[1].color = (0.2, 0.1, 0.4, 1.0)    # Mid space purple
+    color_ramp.color_ramp.elements[2].position = 0.7
+    color_ramp.color_ramp.elements[2].color = (0.6, 0.3, 0.8, 1.0)    # Bright cosmic purple
+    color_ramp.color_ramp.elements[3].position = 1.0
+    color_ramp.color_ramp.elements[3].color = (1.0, 0.8, 1.4, 1.0)   # Brilliant cosmic magenta
+except Exception as e:
+    print(f"⚠️ Error configuring color ramp: {{e}}")
+    # Fallback to basic color ramp
+    color_ramp.color_ramp.elements[0].position = 0.0
+    color_ramp.color_ramp.elements[0].color = (0.05, 0.02, 0.15, 1.0)
+    color_ramp.color_ramp.elements[1].position = 1.0
+    color_ramp.color_ramp.elements[1].color = (1.0, 0.8, 1.4, 1.0)
+
+# Enhanced Principled BSDF settings for ultra-realistic space material
+principled_node.inputs["Metallic"].default_value = 0.98
+principled_node.inputs["Roughness"].default_value = 0.08
+principled_node.inputs["IOR"].default_value = 2.2
+principled_node.inputs["Subsurface Weight"].default_value = 0.15
+principled_node.inputs["Subsurface Radius"].default_value = (1.2, 0.6, 0.8)
+principled_node.inputs["Transmission Weight"].default_value = 0.08
+# Note: Transmission Roughness was removed in Blender 4.5
+try:
+    principled_node.inputs["Transmission Roughness"].default_value = 0.05
+except KeyError:
+    # Transmission Roughness not available in Blender 4.5
+    pass
+principled_node.inputs["Specular Tint"].default_value = (0.3, 0.3, 0.3, 1.0)
+principled_node.inputs["Anisotropic"].default_value = 0.4
+principled_node.inputs["Anisotropic Rotation"].default_value = 0.2
 
 # Enhanced emission settings for space glow
-emission_node.inputs["Strength"].default_value = 4.5
-emission_node.inputs["Color"].default_value = (0.8, 0.9, 1.2, 1.0)  # Cosmic blue-white
+emission_node.inputs["Strength"].default_value = 6.0
+emission_node.inputs["Color"].default_value = (0.9, 1.0, 1.3, 1.0)  # Enhanced cosmic blue-white
 
-# Enhanced material links
-links.new(coord_node.outputs["Generated"], mapping_node.inputs["Vector"])
-links.new(mapping_node.outputs["Vector"], noise_texture.inputs["Vector"])
-links.new(mapping_node.outputs["Vector"], voronoi_texture.inputs["Vector"])
-links.new(mapping_node.outputs["Vector"], wave_texture.inputs["Vector"])
-links.new(noise_texture.outputs["Fac"], mix_color.inputs[0])
-links.new(voronoi_texture.outputs["Distance"], mix_color.inputs[1])
-links.new(mix_color.outputs["Result"], color_ramp.inputs["Fac"])
-links.new(color_ramp.outputs["Color"], principled_node.inputs["Base Color"])
-links.new(fresnel_node.outputs["Fac"], mix_shader.inputs["Fac"])
-links.new(principled_node.outputs["BSDF"], mix_shader.inputs[1])
-links.new(emission_node.outputs["Emission"], mix_shader.inputs[2])
-links.new(mix_shader.outputs["Shader"], output_node.inputs["Surface"])
+# Set up bump mapping for surface detail
+bump_node.inputs["Strength"].default_value = 0.3
+bump_node.inputs["Distance"].default_value = 1.0
+
+# Set up normal mapping
+normal_map.inputs["Strength"].default_value = 0.5
+
+# Set up layer weight for edge effects
+layer_weight.inputs["Blend"].default_value = 0.7
+
+# Set up math node for enhanced effects
+math_node.operation = 'MULTIPLY'
+math_node.inputs[1].default_value = 1.5
+
+# Enhanced material links for ultra-realism (Blender 4.5 compatible)
+try:
+    # Advanced material linking
+    links.new(coord_node.outputs["Generated"], mapping_node.inputs["Vector"])
+    links.new(mapping_node.outputs["Vector"], noise_texture.inputs["Vector"])
+    links.new(mapping_node.outputs["Vector"], voronoi_texture.inputs["Vector"])
+    links.new(mapping_node.outputs["Vector"], wave_texture.inputs["Vector"])
+    links.new(mapping_node.outputs["Vector"], fractal_texture.inputs["Vector"])
+    links.new(mapping_node.outputs["Vector"], clouds_texture.inputs["Vector"])
+
+    # Mix textures for complex surface detail
+    links.new(noise_texture.outputs["Fac"], mix_texture.inputs[0])
+    links.new(clouds_texture.outputs["Fac"], mix_texture.inputs[1])
+    links.new(mix_texture.outputs["Result"], mix_color.inputs[0])
+    links.new(voronoi_texture.outputs["Distance"], mix_color.inputs[1])
+    links.new(mix_color.outputs["Result"], separate_rgb.inputs["Image"])
+
+    # Color processing
+    links.new(separate_rgb.outputs["R"], color_ramp.inputs["Fac"])
+    links.new(color_ramp.outputs["Color"], principled_node.inputs["Base Color"])
+
+    # Normal mapping
+    links.new(separate_rgb.outputs["G"], bump_node.inputs["Height"])
+    links.new(bump_node.outputs["Normal"], mix_normal.inputs[0])
+    links.new(normal_map.outputs["Normal"], mix_normal.inputs[1])
+    # Use correct output name for Blender 4.5 Mix node
+    try:
+        links.new(mix_normal.outputs["Vector"], principled_node.inputs["Normal"])
+    except KeyError:
+        # Try alternative output names for Blender 4.5
+        try:
+            links.new(mix_normal.outputs["Result"], principled_node.inputs["Normal"])
+        except KeyError:
+            # Fallback: connect normal map directly
+            links.new(normal_map.outputs["Normal"], principled_node.inputs["Normal"])
+
+    # Fresnel and layer weight effects
+    links.new(fresnel_node.outputs["Fac"], math_node.inputs[0])
+    links.new(math_node.outputs["Value"], mix_shader.inputs["Fac"])
+
+    # Shader mixing
+    links.new(principled_node.outputs["BSDF"], mix_shader.inputs[1])
+    links.new(emission_node.outputs["Emission"], mix_shader.inputs[2])
+    links.new(mix_shader.outputs["Shader"], output_node.inputs["Surface"])
+    
+    print("✅ Advanced material linking completed")
+    
+except NameError:
+    # Fallback: Simplified material linking
+    links.new(coord_node.outputs["Generated"], mapping_node.inputs["Vector"])
+    links.new(mapping_node.outputs["Vector"], noise_texture.inputs["Vector"])
+    links.new(noise_texture.outputs["Fac"], color_ramp.inputs["Fac"])
+    links.new(color_ramp.outputs["Color"], principled_node.inputs["Base Color"])
+    links.new(fresnel_node.outputs["Fac"], mix_shader.inputs["Fac"])
+    links.new(principled_node.outputs["BSDF"], mix_shader.inputs[1])
+    links.new(emission_node.outputs["Emission"], mix_shader.inputs[2])
+    links.new(mix_shader.outputs["Shader"], output_node.inputs["Surface"])
+    
+    print("✅ Simplified material linking completed")
 
 print("✅ Professional material system created")
 

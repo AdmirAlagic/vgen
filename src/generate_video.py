@@ -221,10 +221,10 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
     """Render directly to MP4 using Blender's built-in FFmpeg support with audio - NO PNG frames."""
     print("🚀 Rendering directly to MP4 (no temporary PNG frames)...")
     
-    # GPU-optimized quality settings with correct Blender enum values
+    # GPU-optimized quality settings with improved ultra_fast resolution
     quality_settings = {
-        'ultra_fast': {'samples': 16, 'resolution': (640, 360), 'crf': 'LOWEST', 'preset': 'REALTIME'},
-        'fast': {'samples': 32, 'resolution': (1280, 720), 'crf': 'VERYLOW', 'preset': 'REALTIME'},
+        'ultra_fast': {'samples': 32, 'resolution': (1280, 720), 'crf': 'VERYLOW', 'preset': 'REALTIME'},
+        'fast': {'samples': 64, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'GOOD'},
         'balanced': {'samples': 256, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'GOOD'},
         'high': {'samples': 512, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'},
         'ultra': {'samples': 1024, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD'}
@@ -236,13 +236,13 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
         # Create a Python script for direct MP4 rendering with audio
         audio_script_section = ""
         if audio_path and os.path.exists(audio_path):
-            audio_script_section = f'''
+            audio_script_section = '''
 # Add audio to the scene
 import bpy
 import os
 
 # Load audio file
-audio_filepath = "{audio_path}"
+audio_filepath = "{}"
 if os.path.exists(audio_filepath):
     try:
         # Add sound strip to sequencer
@@ -268,7 +268,7 @@ if os.path.exists(audio_filepath):
         print("Continuing without audio...")
 else:
     print(f"⚠️  Audio file not found: {{audio_filepath}}")
-'''
+'''.format(audio_path)
         
         render_script = f'''
 import bpy
@@ -387,11 +387,11 @@ if scene.render.engine == 'CYCLES':
     except Exception:
         cycles.denoiser = 'OPENIMAGEDENOISE'
     
-    # Quality-based GPU optimizations
+    # Quality-based GPU optimizations with improved ultra_fast settings
     if '{quality_mode}' == 'ultra_fast':
-        cycles.max_bounces = 1  # Absolute minimum for speed
-        cycles.use_adaptive_sampling = False  # Disable for speed
-        cycles.use_denoising = False  # Disable for speed
+        cycles.max_bounces = 3  # Improved from 1 for better quality
+        cycles.use_adaptive_sampling = True  # Enable for better quality
+        cycles.use_denoising = True  # Enable for better quality
         cycles.use_fast_gi = True  # Enable fast global illumination
         cycles.caustics_reflective = False  # Disable caustics for speed
         cycles.caustics_refractive = False
@@ -448,8 +448,8 @@ print("✅ Direct MP4 render complete!")
         
         # Estimate render time based on GPU-optimized quality
         estimated_time_per_frame = {
-            'ultra_fast': 0.1,  # seconds per frame (GPU optimized, lowest settings)
-            'fast': 0.4,
+            'ultra_fast': 0.2,  # seconds per frame (improved quality, still fast)
+            'fast': 0.5,
             'balanced': 1.2,
             'high': 2.0,
             'ultra': 1.8
@@ -555,8 +555,8 @@ def main():
         print("  - COMMERCIAL-GRADE materials and lighting")
         print("  - GEOMETRY NODES integration")
         print("\nGPU-optimized quality modes:")
-        print("  ultra_fast - 360p, 16 samples, LOWEST settings for maximum speed")
-        print("  fast       - 720p, 32 samples, GPU-accelerated quick rendering")
+        print("  ultra_fast - 720p, 32 samples, IMPROVED settings for better quality")
+        print("  fast       - 1080p, 64 samples, GPU-accelerated quick rendering")
         print("  balanced   - 1080p, 256 samples, GPU-optimized quality/speed (default)")
         print("  high       - 1080p, 512 samples, GPU-accelerated high quality")
         print("  ultra      - 1080p, 1024 samples, GPU-optimized maximum quality")

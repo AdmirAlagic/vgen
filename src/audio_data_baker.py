@@ -325,19 +325,19 @@ print(f"📊 Frames: {self.total_frames}, FPS: {self.fps}, Duration: {self.durat
 
 # Load baked audio data
 baked_data_path = "{baked_data_path}"
-print(f"📁 Loading baked audio data from: {{baked_data_path}}")
+print(f"📁 Loading baked audio data from: {baked_data_path}")
 
 try:
     with open(baked_data_path, 'r') as f:
         baked_data = json.load(f)
     print("✅ Baked audio data loaded successfully")
-    print(f"📊 Audio features: {{len(baked_data['audio_features'])}}")
-    print(f"📊 Shape key datasets: {{len(baked_data['shape_key_data'])}}")
-    print(f"🎯 Quality: {{baked_data['metadata']['quality_level']}}")
+    print(f"📊 Audio features: {len(baked_data['audio_features'])}")
+    print(f"📊 Shape key datasets: {len(baked_data['shape_key_data'])}")
+    print(f"🎯 Quality: {baked_data['metadata']['quality_level']}")
 except Exception as e:
-    print(f"❌ Error loading baked audio data: {{e}}")
+    print(f"❌ Error loading baked audio data: {e}")
     print("⚠️  Falling back to procedural animation")
-    baked_data = {{'audio_features': {{}}, 'shape_key_data': {{}}}}
+    baked_data = {'audio_features': {}, 'shape_key_data': {}}
 
 # Create optimized mutating shape
 golden_size = {1.236:.3f}  # Golden ratio
@@ -509,7 +509,7 @@ for shape_key_name in shape_key_names:
         var.targets[0].id = scene
         var.targets[0].data_path = 'frame_current'
         
-        print(f"✅ Optimized driver created for shape key {{shape_key_name}}")
+        print(f"✅ Optimized driver created for shape key {shape_key_name}")
 
 print("✅ OPTIMIZED drivers created with baked audio data")
 
@@ -580,7 +580,7 @@ print("🔥 DRIVER-READY MUTATING CUBE SCENE CREATED SUCCESSFULLY!")
 print(f"📊 Total frames: {self.total_frames}")
 print(f"🎬 FPS: {self.fps}")
 print(f"⏱️ Duration: {self.duration:.2f}s")
-print(f"🔑 Shape keys: {{len(shape_key_names)}}")
+print(f"🔑 Shape keys: {len(shape_key_names)}")
 print("🔥 OPTIMIZATIONS: Baked audio data, ultra-fast drivers, minimal memory usage")
 print("🎵 Audio System: Pre-processed data, real-time evaluation, maximum efficiency")
 print("⚡ Performance: Ultra-optimized for background mode and real-time playback")

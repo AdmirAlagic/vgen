@@ -79,9 +79,9 @@
   },
   "quality_levels": {
     "ultra_fast": {
-      "samples": 16,
-      "max_bounces": 1,
-      "use_denoising": false
+      "samples": 32,
+      "max_bounces": 3,
+      "use_denoising": true
     },
     "lowest": {
       "samples": 16,

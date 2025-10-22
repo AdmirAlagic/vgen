@@ -204,8 +204,8 @@ Examples:
   %(prog)s --help             # Show this help message
 
 Quality modes:
-  ultra_fast  - 360p, 16 samples, LOWEST settings for maximum speed
-  fast        - 720p, 32 samples, quick rendering  
+  ultra_fast  - 720p, 32 samples, IMPROVED settings for better quality
+  fast        - 1080p, 64 samples, quick rendering  
   balanced    - 1080p, 256 samples, good quality/speed (default)
   high        - 1080p, 512 samples, high quality
   ultra       - 1080p, 1024 samples, maximum quality

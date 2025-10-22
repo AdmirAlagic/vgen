@@ -171,7 +171,7 @@ class VideoGenerationThread(QThread):
             # Performance mode logging
             performance_mode = self.config.get('performance_mode', 'balanced')
             if performance_mode == 'ultra_fast':
-                print("⚡ OPTIMIZED SYSTEM - ULTRA FAST MODE (360p, 16 samples, LOWEST settings)")
+                print("⚡ OPTIMIZED SYSTEM - ULTRA FAST MODE (720p, 32 samples, IMPROVED settings)")
             elif performance_mode == 'fast':
                 print("⚡ OPTIMIZED SYSTEM - FAST MODE (720p, 32 samples)")
             elif performance_mode == 'balanced':
@@ -716,7 +716,7 @@ class MainWindow(QMainWindow):
         self.log_message(f"Samples: {self.samples_spin.value()}")
         self.log_message("🎬 Using Enhanced Audio-Reactive Video Generator")
         if quality_level == "ultra_fast":
-            self.log_message("🚀 ULTRA FAST MODE - Minimal CPU usage!")
+            self.log_message("🚀 ULTRA FAST MODE - Improved quality with 720p resolution!")
         elif quality_level == "balanced":
             self.log_message("⚡ BALANCED MODE - Optimized performance and quality!")
         else:

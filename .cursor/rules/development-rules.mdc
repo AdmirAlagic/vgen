@@ -12,3 +12,4 @@ alwaysApply: true
 - When i ask for fix or improvement do not generate new "optimized", "enchanded" version of file but update existign files in src/structure
 - Blender 4.5 is used for rendering, make sure to optimize script generating / scene generating for version 4.5
 - when some  feature is failing or error repeating, don't downgrade end quality, but search for better solution
+- this error repeats a lot: Fix f-string formatting in exception handlers that use {{e}} instead of {e}
