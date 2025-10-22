@@ -1,6 +1,6 @@
 # AudioBlender Video Generator
 
-Professional audio-reactive 3D video generator that transforms music into stunning cinematic visuals using Blender. Features **smooth continuous shape morphing**, **no flickering**, **professional materials**, and **GPU-optimized rendering** with Metal/CUDA acceleration.
+Professional audio-reactive 3D video generator that transforms music into stunning cinematic visuals using Blender. Features **smooth continuous shape morphing**, **no flickering**, **professional materials**, **space backgrounds**, and **GPU-optimized rendering** with Metal/CUDA acceleration.
 
 ## 🚀 Quick Start
 
@@ -38,11 +38,11 @@ python src/generate_video.py <audio_file> [output_name] [quality_mode]
 
 | Preset | Resolution | Samples | Bounces | Speed | Use Case |
 |--------|------------|---------|---------|-------|----------|
-| `ultra_fast` | 1080p | 16 | 1 | ⚡⚡⚡⚡⚡ | Quick previews, testing |
-| `fast` | 1080p | 32 | 3 | ⚡⚡⚡⚡ | Fast iterations, drafts |
-| `balanced` | 1080p | 256 | 10 | ⚡⚡⚡ | **Default** - Good quality/speed |
-| `high` | 1080p | 1024 | 16 | ⚡⚡ | High quality production |
-| `ultra` | 1080p | 2048 | 24 | ⚡ | Maximum quality, slowest |
+| `ultra_fast` | 640x360 | 16 | 1 | ⚡⚡⚡⚡⚡ | Quick previews, testing |
+| `fast` | 1280x720 | 32 | 3 | ⚡⚡⚡⚡ | Fast iterations, drafts |
+| `balanced` | 1920x1080 | 256 | 10 | ⚡⚡⚡ | **Default** - Good quality/speed |
+| `high` | 1920x1080 | 512 | 16 | ⚡⚡ | High quality production |
+| `ultra` | 1920x1080 | 1024 | 24 | ⚡ | Maximum quality, slowest |
 
 ## 🎵 Supported Audio Formats
 
@@ -57,11 +57,14 @@ python src/generate_video.py <audio_file> [output_name] [quality_mode]
 - **🎯 Smooth Continuous Morphing**: No flickering, continuous shape changes with Bezier interpolation
 - **🚫 No Size Changes**: Shape-only morphing (no position or scale changes)
 - **🎨 Professional Materials**: Commercial-grade lighting with emission and metallic materials
+- **🌌 Space Backgrounds**: Beautiful NASA space images with procedural star field fallback
 - **⚡ GPU Optimization**: Automatic Metal/CUDA acceleration with CPU fallback
 - **🎵 Enhanced Audio Analysis**: Frequency-specific responses with musical smoothing
 - **🔄 Continuous Motion**: Tempo-based animation even during silence
 - **🎭 Multiple Interfaces**: Both GUI (PyQt6) and CLI interfaces
 - **📊 Quality Presets**: From ultra-fast previews to cinematic production quality
+- **🎬 Professional Lighting**: 3-point lighting setup for cinematic quality
+- **📦 Asset Packing**: Images embedded in blend files for portability
 
 ## 📁 Project Structure
 
@@ -76,8 +79,12 @@ src/
     ├── main_window.py         # PyQt6 main window
     └── style.py               # UI styling
 
+assets/
+├── audio/                     # Audio files for testing
+└── space_background.jpg       # NASA space background image
+
 output/
-├── <name>_polyfjord.mp4      # Final rendered video
+├── <name>_polyfjord.mp4      # Final rendered video with space background
 ├── scene.blend               # Blender scene file
 └── temp/                     # Temporary files
     └── polyfjord_style_scene.py  # Generated Python script
@@ -128,10 +135,27 @@ script_path = visualizer.save_script('output/scene.py')
 
 ## 🎯 Output Files
 
-- **Video**: `output/<name>_polyfjord.mp4` - Final rendered video with smooth morphing
-- **Blend File**: `output/temp/scene.blend` - Blender scene file
+- **Video**: `output/<name>_polyfjord.mp4` - Final rendered video with smooth morphing and space background
+- **Blend File**: `output/temp/scene.blend` - Blender scene file with embedded background
 - **Script**: `output/temp/polyfjord_style_scene.py` - Generated Python script
 - **Analysis**: Audio analysis data embedded in script
+
+## 🌌 Space Background System
+
+The visualizer includes a sophisticated space background system:
+
+### Features
+- **NASA Space Images**: High-quality space backgrounds from NASA/Unsplash
+- **Automatic Loading**: Backgrounds load automatically from `assets/space_background.jpg`
+- **Procedural Fallback**: Creates beautiful star field if image not available
+- **Professional Lighting**: 3-point lighting setup optimized for space scenes
+- **Asset Packing**: Backgrounds embedded in blend files for portability
+
+### Customization
+- Replace `assets/space_background.jpg` with your own space images
+- Background strength automatically optimized for all quality modes
+- Supports any image format that Blender can load
+- Fallback system ensures backgrounds always work
 
 ## 🚨 Troubleshooting
 
@@ -140,10 +164,18 @@ script_path = visualizer.save_script('output/scene.py')
 - **Poor quality**: Use `high` or `ultra` presets
 - **Memory issues**: Use `low` or `medium` presets, reduce audio duration
 - **GPU not detected**: Check Blender GPU settings, falls back to CPU automatically
+- **Background not visible**: Ensure `space_background.jpg` exists in `assets/` folder
 
 ### Performance Tips
 - Use shorter audio files for testing
 - Close other applications during rendering
 - Ensure sufficient RAM and CPU cores
 - Check Blender GPU acceleration settings
+- Use `ultra_fast` mode for quick previews (640x360 resolution)
+
+### Background Features
+- **NASA Space Background**: Automatically loads from `assets/space_background.jpg`
+- **Fallback**: If space image not found, creates procedural star field background
+- **Quality**: Background strength optimized for visibility in all quality modes
+- **Packing**: Background images are embedded in blend files for portability
 
