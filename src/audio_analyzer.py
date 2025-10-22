@@ -208,12 +208,22 @@ class EnhancedAudioAnalyzer:
             self.features[f'{band_name}_energy'] = band_energy.tolist()
     
     def _analyze_rhythm_patterns(self):
-        """Analyze rhythm patterns for beat-driven animations."""
+        """Enhanced rhythm pattern analysis with advanced tempo detection."""
+        print("🎵 Analyzing rhythm patterns with enhanced tempo detection...")
         
-        # Tempo and beat tracking
-        tempo, beats = librosa.beat.beat_track(y=self.y, sr=self.sr)
-        self.features['tempo'] = float(tempo)
-        self.features['beat_frames'] = beats.tolist()
+        # Multiple tempo estimation methods for better accuracy
+        tempo_results = self._estimate_tempo_multiple_methods()
+        
+        # Select best tempo with confidence scoring
+        best_tempo, tempo_confidence = self._select_best_tempo(tempo_results)
+        
+        self.features['tempo'] = float(best_tempo)
+        self.features['tempo_confidence'] = float(tempo_confidence)
+        self.features['tempo_methods'] = tempo_results
+        
+        # Enhanced beat tracking with tempo-aware parameters
+        beats = self._track_beats_with_tempo(best_tempo)
+        self.features['beat_frames'] = beats.tolist() if hasattr(beats, 'tolist') else list(beats)
         
         # Convert beat times to video frames
         hop_length = 512
@@ -221,7 +231,11 @@ class EnhancedAudioAnalyzer:
         beat_video_frames = (beat_times * self.fps).astype(int).tolist()
         self.features['beat_video_frames'] = beat_video_frames
         
-        # Beat strength analysis
+        # Tempo variations over time
+        tempo_over_time = self._analyze_tempo_variations()
+        self.features['tempo_over_time'] = tempo_over_time
+        
+        # Enhanced beat strength analysis
         onset_env = librosa.onset.onset_strength(y=self.y, sr=self.sr)
         
         # Resample to video frame rate
@@ -237,6 +251,255 @@ class EnhancedAudioAnalyzer:
             onset_resampled = onset_resampled / np.max(onset_resampled)
         
         self.features['beat_strength'] = onset_resampled.tolist()
+        
+        # Additional rhythm features
+        self._analyze_additional_rhythm_features()
+        
+        print(f"✅ Tempo detected: {best_tempo:.1f} BPM (confidence: {tempo_confidence:.2f})")
+    
+    def _estimate_tempo_multiple_methods(self) -> Dict:
+        """Estimate tempo using multiple methods for better accuracy."""
+        tempo_results = {}
+        
+        try:
+            # Method 1: Standard beat tracking
+            tempo1, beats1 = librosa.beat.beat_track(y=self.y, sr=self.sr)
+            tempo_results['beat_track'] = {
+                'tempo': float(tempo1),
+                'beats': beats1.tolist() if hasattr(beats1, 'tolist') else list(beats1),
+                'confidence': self._calculate_tempo_confidence(tempo1, beats1)
+            }
+            
+            # Method 2: Onset-based tempo estimation
+            onset_env = librosa.onset.onset_strength(y=self.y, sr=self.sr)
+            tempo2 = librosa.feature.rhythm.tempo(onset_envelope=onset_env, sr=self.sr)
+            tempo_results['onset_based'] = {
+                'tempo': float(tempo2),
+                'confidence': self._calculate_onset_tempo_confidence(tempo2, onset_env)
+            }
+            
+            # Method 3: Autocorrelation-based tempo estimation
+            tempo3 = librosa.feature.rhythm.tempo(y=self.y, sr=self.sr, aggregate=np.median)
+            tempo_results['autocorrelation'] = {
+                'tempo': float(tempo3),
+                'confidence': self._calculate_autocorr_tempo_confidence(tempo3)
+            }
+            
+            # Method 4: Spectral-based tempo estimation
+            tempo4 = self._estimate_spectral_tempo()
+            tempo_results['spectral'] = {
+                'tempo': float(tempo4),
+                'confidence': self._calculate_spectral_tempo_confidence(tempo4)
+            }
+            
+        except Exception as e:
+            print(f"⚠️  Tempo estimation error: {e}")
+            # Fallback to simple estimation
+            tempo_results['fallback'] = {
+                'tempo': 78.0,
+                'confidence': 0.5
+            }
+        
+        return tempo_results
+    
+    def _select_best_tempo(self, tempo_results: Dict) -> Tuple[float, float]:
+        """Select the best tempo estimate based on confidence scores."""
+        if not tempo_results:
+            return 120.0, 0.5
+        
+        # Find method with highest confidence
+        best_method = max(tempo_results.keys(), key=lambda k: tempo_results[k]['confidence'])
+        best_tempo = tempo_results[best_method]['tempo']
+        best_confidence = tempo_results[best_method]['confidence']
+        
+        # Validate tempo range (typical music range: 60-200 BPM)
+        if best_tempo < 60 or best_tempo > 200:
+            # Try to find a reasonable tempo
+            for method, result in tempo_results.items():
+                if 60 <= result['tempo'] <= 200:
+                    return result['tempo'], result['confidence']
+            
+            # If no reasonable tempo found, use median of all estimates
+            all_tempos = [r['tempo'] for r in tempo_results.values()]
+            median_tempo = np.median(all_tempos)
+            return float(median_tempo), 0.3
+        
+        return best_tempo, best_confidence
+    
+    def _track_beats_with_tempo(self, tempo: float) -> np.ndarray:
+        """Track beats using tempo-aware parameters."""
+        try:
+            # Use tempo to optimize beat tracking parameters
+            if tempo < 80:
+                # Slow tempo: more sensitive detection
+                beats = librosa.beat.beat_track(
+                    y=self.y, sr=self.sr, 
+                    tightness=0.8,
+                    trim=False
+                )[1]
+            elif tempo > 140:
+                # Fast tempo: less sensitive detection
+                beats = librosa.beat.beat_track(
+                    y=self.y, sr=self.sr, 
+                    tightness=1.2,
+                    trim=False
+                )[1]
+            else:
+                # Medium tempo: balanced detection
+                beats = librosa.beat.beat_track(
+                    y=self.y, sr=self.sr, 
+                    tightness=1.0,
+                    trim=False
+                )[1]
+            
+            return beats
+            
+        except Exception as e:
+            print(f"⚠️  Beat tracking error: {e}")
+            # Fallback to simple beat tracking
+            return librosa.beat.beat_track(y=self.y, sr=self.sr)[1]
+    
+    def _analyze_tempo_variations(self) -> List[float]:
+        """Analyze tempo variations over time."""
+        try:
+            # Analyze tempo in segments
+            segment_length = 10.0  # 10 second segments
+            segments = int(self.duration / segment_length)
+            tempo_variations = []
+            
+            for i in range(segments):
+                start_time = i * segment_length
+                end_time = min((i + 1) * segment_length, self.duration)
+                
+                # Extract segment
+                start_sample = int(start_time * self.sr)
+                end_sample = int(end_time * self.sr)
+                segment = self.y[start_sample:end_sample]
+                
+                if len(segment) > 0:
+                    # Estimate tempo for this segment
+                    segment_tempo = librosa.feature.rhythm.tempo(y=segment, sr=self.sr)
+                    tempo_variations.append(float(segment_tempo))
+                else:
+                    tempo_variations.append(self.features['tempo'])
+            
+            # Resample to frame rate
+            if len(tempo_variations) > 1:
+                time_points = np.linspace(0, self.duration, len(tempo_variations))
+                target_times = np.linspace(0, self.duration, self.total_frames)
+                tempo_resampled = np.interp(target_times, time_points, tempo_variations)
+                return tempo_resampled.tolist()
+            else:
+                return [self.features['tempo']] * self.total_frames
+                
+        except Exception as e:
+            print(f"⚠️  Tempo variation analysis error: {e}")
+            return [self.features['tempo']] * self.total_frames
+    
+    def _analyze_additional_rhythm_features(self):
+        """Analyze additional rhythm features for enhanced animation control."""
+        try:
+            # Rhythm regularity (how consistent the rhythm is)
+            beats = self.features['beat_frames']
+            if len(beats) > 2:
+                beat_intervals = np.diff(beats)
+                rhythm_regularity = 1.0 - (np.std(beat_intervals) / np.mean(beat_intervals))
+                self.features['rhythm_regularity'] = float(max(0, min(1, rhythm_regularity)))
+            else:
+                self.features['rhythm_regularity'] = 0.5
+            
+            # Beat density (beats per second)
+            beat_density = len(beats) / self.duration
+            self.features['beat_density'] = float(beat_density)
+            
+            # Rhythm complexity (variation in beat strength)
+            onset_env = librosa.onset.onset_strength(y=self.y, sr=self.sr)
+            rhythm_complexity = np.std(onset_env) / np.mean(onset_env)
+            self.features['rhythm_complexity'] = float(min(1, rhythm_complexity))
+            
+        except Exception as e:
+            print(f"⚠️  Additional rhythm features error: {e}")
+            self.features['rhythm_regularity'] = 0.5
+            self.features['beat_density'] = 2.0
+            self.features['rhythm_complexity'] = 0.5
+    
+    def _estimate_spectral_tempo(self) -> float:
+        """Estimate tempo using spectral analysis."""
+        try:
+            # Use spectral features for tempo estimation
+            onset_env = librosa.onset.onset_strength(y=self.y, sr=self.sr)
+            tempo = librosa.feature.rhythm.tempo(onset_envelope=onset_env, sr=self.sr, aggregate=np.median)
+            return float(tempo)
+        except:
+            return 120.0
+    
+    def _calculate_tempo_confidence(self, tempo: float, beats: np.ndarray) -> float:
+        """Calculate confidence score for beat tracking tempo."""
+        try:
+            if len(beats) < 2:
+                return 0.3
+            
+            # Calculate beat interval consistency
+            beat_intervals = np.diff(beats)
+            if len(beat_intervals) == 0:
+                return 0.3
+            
+            # Consistency score based on interval variance
+            interval_mean = np.mean(beat_intervals)
+            interval_std = np.std(beat_intervals)
+            consistency = 1.0 - (interval_std / interval_mean) if interval_mean > 0 else 0.3
+            
+            # Tempo reasonableness score
+            tempo_score = 1.0 if 60 <= tempo <= 200 else 0.5
+            
+            # Beat density score
+            expected_beats = self.duration * tempo / 60.0
+            actual_beats = len(beats)
+            density_score = 1.0 - abs(expected_beats - actual_beats) / max(expected_beats, actual_beats)
+            
+            # Combined confidence
+            confidence = (consistency * 0.4 + tempo_score * 0.3 + density_score * 0.3)
+            return float(max(0.1, min(1.0, confidence)))
+            
+        except:
+            return 0.3
+    
+    def _calculate_onset_tempo_confidence(self, tempo: float, onset_env: np.ndarray) -> float:
+        """Calculate confidence for onset-based tempo estimation."""
+        try:
+            # Analyze onset strength consistency
+            onset_std = np.std(onset_env)
+            onset_mean = np.mean(onset_env)
+            strength_consistency = 1.0 - (onset_std / onset_mean) if onset_mean > 0 else 0.3
+            
+            # Tempo reasonableness
+            tempo_score = 1.0 if 60 <= tempo <= 200 else 0.5
+            
+            return float(max(0.1, min(1.0, (strength_consistency * 0.6 + tempo_score * 0.4))))
+        except:
+            return 0.3
+    
+    def _calculate_autocorr_tempo_confidence(self, tempo: float) -> float:
+        """Calculate confidence for autocorrelation-based tempo estimation."""
+        try:
+            # Tempo reasonableness score
+            tempo_score = 1.0 if 60 <= tempo <= 200 else 0.5
+            
+            # Additional validation could be added here
+            return float(max(0.1, min(1.0, tempo_score)))
+        except:
+            return 0.3
+    
+    def _calculate_spectral_tempo_confidence(self, tempo: float) -> float:
+        """Calculate confidence for spectral-based tempo estimation."""
+        try:
+            # Tempo reasonableness score
+            tempo_score = 1.0 if 60 <= tempo <= 200 else 0.5
+            
+            # Additional spectral validation could be added here
+            return float(max(0.1, min(1.0, tempo_score)))
+        except:
+            return 0.3
     
     def _analyze_spectral_features(self):
         """Analyze spectral features for complex animations."""
@@ -300,6 +563,17 @@ class EnhancedAudioAnalyzer:
         # Generate synthetic features with enhanced frequency bands
         self.features.update({
             'tempo': 120.0,
+            'tempo_confidence': 0.8,
+            'tempo_methods': {
+                'beat_track': {'tempo': 120.0, 'confidence': 0.8},
+                'onset_based': {'tempo': 118.0, 'confidence': 0.7},
+                'autocorrelation': {'tempo': 122.0, 'confidence': 0.6},
+                'spectral': {'tempo': 120.0, 'confidence': 0.5}
+            },
+            'tempo_over_time': [120.0 + 5.0 * math.sin(i * 0.01) for i in range(self.total_frames)],
+            'rhythm_regularity': 0.8,
+            'beat_density': 2.0,
+            'rhythm_complexity': 0.6,
             # Original frequency bands
             'kick_energy': [float(0.5 + 0.3 * math.sin(i * 0.1)) for i in range(self.total_frames)],
             'bass_energy': [float(0.4 + 0.2 * math.sin(i * 0.15)) for i in range(self.total_frames)],
@@ -489,6 +763,8 @@ class EnhancedAudioAnalyzer:
                 sensitivity = mapping['sensitivity']
                 
                 # Ensure combined_value is real and positive for power operation
+                if isinstance(combined_value, complex):
+                    combined_value = abs(combined_value)
                 combined_value = abs(float(combined_value))
                 
                 # Scale to range with enhanced sensitivity curve
@@ -527,6 +803,14 @@ class EnhancedAudioAnalyzer:
             for feature in ['spectral_centroid', 'spectral_rolloff', 'spectral_contrast', 
                            'rms_energy', 'spectral_flux', 'beat_strength', 'onset_strength']:
                 frame_info[feature] = self.features[feature][frame]
+            
+            # Add tempo features
+            frame_info['tempo'] = self.features['tempo']
+            frame_info['tempo_confidence'] = self.features['tempo_confidence']
+            frame_info['tempo_over_time'] = self.features['tempo_over_time'][frame]
+            frame_info['rhythm_regularity'] = self.features['rhythm_regularity']
+            frame_info['beat_density'] = self.features['beat_density']
+            frame_info['rhythm_complexity'] = self.features['rhythm_complexity']
             
             # Add shape key values
             for shape_key_name in self.shape_key_data.keys():
@@ -715,11 +999,37 @@ class EnhancedAudioAnalyzer:
                 # Check if it's a numpy array
                 if hasattr(value, 'tolist'):
                     save_data[key] = value.tolist()
+                elif isinstance(value, np.ndarray):
+                    save_data[key] = value.tolist()
+                elif isinstance(value, dict):
+                    # Handle nested dictionaries (like tempo_methods)
+                    nested_dict = {}
+                    for nested_key, nested_value in value.items():
+                        if isinstance(nested_value, dict):
+                            nested_nested_dict = {}
+                            for nn_key, nn_value in nested_value.items():
+                                if isinstance(nn_value, np.ndarray):
+                                    nested_nested_dict[nn_key] = nn_value.tolist()
+                                else:
+                                    nested_nested_dict[nn_key] = nn_value
+                            nested_dict[nested_key] = nested_nested_dict
+                        elif isinstance(nested_value, np.ndarray):
+                            nested_dict[nested_key] = nested_value.tolist()
+                        else:
+                            nested_dict[nested_key] = nested_value
+                    save_data[key] = nested_dict
                 else:
                     save_data[key] = value
-            except:
+            except Exception as e:
                 # Fallback for any serialization issues
-                save_data[key] = value
+                print(f"⚠️  Serialization warning for {key}: {e}")
+                try:
+                    # Try to convert to string as last resort
+                    save_data[key] = str(value)
+                except:
+                    # Skip problematic values
+                    print(f"⚠️  Skipping {key} due to serialization issues")
+                    continue
         
         with open(output_path, 'w') as f:
             json.dump(save_data, f, indent=2)
