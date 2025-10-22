@@ -1062,12 +1062,28 @@ def create_smooth_rotation_animation():
         scene.frame_set(frame)
         t = frame / {self.fps}
         
-        # Multi-axis rotation with different speeds for organic motion
-        rot_x = math.sin(2 * math.pi * t * 0.1) * 0.2
-        rot_y = math.sin(2 * math.pi * t * 0.15) * 0.3
-        rot_z = math.sin(2 * math.pi * t * 0.25) * 0.4
+        # Continuous slow rotation on multiple axes for smooth organic motion
+        # Use time-based continuous rotation instead of oscillating motion
+        # Continuous rotation configuration (embedded from scene config)
+        rotation_enabled = {self.scene_config.main_object.rotation.enabled if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'rotation') else True}
+        rotation_continuous = {self.scene_config.main_object.rotation.continuous if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'rotation') else True}
+        rotation_speed_x = {self.scene_config.main_object.rotation.speed_x if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'rotation') else 0.02}
+        rotation_speed_y = {self.scene_config.main_object.rotation.speed_y if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'rotation') else 0.03}
+        rotation_speed_z = {self.scene_config.main_object.rotation.speed_z if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'rotation') else 0.025}
         
-        # Apply rotation
+        # Calculate rotation based on configuration
+        if rotation_enabled and rotation_continuous:
+            # Continuous rotation based on time using configured speeds
+            rot_x = t * rotation_speed_x
+            rot_y = t * rotation_speed_y  
+            rot_z = t * rotation_speed_z
+        else:
+            # Fallback to oscillating motion if continuous is disabled
+            rot_x = math.sin(2 * math.pi * t * 0.1) * 0.2
+            rot_y = math.sin(2 * math.pi * t * 0.15) * 0.3
+            rot_z = math.sin(2 * math.pi * t * 0.25) * 0.4
+        
+        # Apply continuous rotation
         obj.rotation_euler = (rot_x, rot_y, rot_z)
         obj.keyframe_insert(data_path="rotation_euler")
         
@@ -1247,28 +1263,34 @@ try:
             scene.frame_set(frame)
             t = frame / {self.fps}
             
-            # Calculate very slow tilting motion (subtle movement)
+            # Calculate slow tilting motion
             tilt_angle = math.sin(t * anim_config.tilt_speed) * (anim_config.tilt_range['max'] - anim_config.tilt_range['min']) / 2
             tilt_angle = math.radians(tilt_angle)
             
-            # Calculate very slow single-direction rotation (continuous clockwise rotation)
-            rotation_angle = t * anim_config.rotation_speed * (anim_config.rotation_range['max'] - anim_config.rotation_range['min']) / 10.0
+            # Calculate slow rotation motion
+            rotation_angle = math.cos(t * anim_config.rotation_speed * 0.7) * (anim_config.rotation_range['max'] - anim_config.rotation_range['min']) / 2
             rotation_angle = math.radians(rotation_angle)
             
-            # Keep camera looking at the object while applying smooth animation
+            # Apply smooth camera tilting (X-axis rotation for tilting)
+            camera.rotation_euler.x = tilt_angle
+            
+            # Apply smooth camera rotation (Z-axis rotation for slow rotation)
+            camera.rotation_euler.z = rotation_angle
+            
+            # Keep camera looking at the object while tilting
             camera_target = mathutils.Vector((0, 0, 0))
             camera_direction = camera_target - camera.location
             base_rotation = camera_direction.to_track_quat('-Z', 'Y').to_euler()
             
-            # Apply smooth camera animation - combine base rotation with animated movement
+            # Combine base rotation with animation
             camera.rotation_euler.x = base_rotation.x + tilt_angle
             camera.rotation_euler.y = base_rotation.y
             camera.rotation_euler.z = base_rotation.z + rotation_angle
             
             # Insert keyframes for smooth animation
-            camera.keyframe_insert(data_path="rotation_euler", index=0)
-            camera.keyframe_insert(data_path="rotation_euler", index=1)
-            camera.keyframe_insert(data_path="rotation_euler", index=2)
+            camera.rotation_euler.keyframe_insert(data_path="x", index=0)
+            camera.rotation_euler.keyframe_insert(data_path="y", index=1)
+            camera.rotation_euler.keyframe_insert(data_path="z", index=2)
         
         # Apply smooth Bezier interpolation to camera animation
         if camera.animation_data and camera.animation_data.action:
@@ -1280,11 +1302,10 @@ try:
                     kf.handle_left[0] = kf.co[0] - 2.0
                     kf.handle_right[0] = kf.co[0] + 2.0
         
-        print(f"✅ Camera animation created - Very slow tilting with speed: {{anim_config.tilt_speed}}")
+        print(f"✅ Camera animation created - Slow tilting with speed: {{anim_config.tilt_speed}}")
         print(f"✅ Tilt range: {{anim_config.tilt_range['min']}}° to {{anim_config.tilt_range['max']}}°")
         print(f"✅ Rotation speed: {{anim_config.rotation_speed}}")
         print(f"✅ Rotation range: {{anim_config.rotation_range['min']}}° to {{anim_config.rotation_range['max']}}°")
-        print(f"✅ Camera movement: Very slow, single-direction rotation")
     else:
         print("📷 Camera animation disabled in configuration")
     

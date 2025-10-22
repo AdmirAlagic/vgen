@@ -112,6 +112,22 @@ class PresetConfig:
 
 
 @dataclass
+class MainObjectRotationConfig:
+    """Main object rotation configuration settings."""
+    enabled: bool
+    speed_x: float
+    speed_y: float
+    speed_z: float
+    continuous: bool
+
+
+@dataclass
+class MainObjectConfig:
+    """Main object configuration settings."""
+    rotation: MainObjectRotationConfig
+
+
+@dataclass
 class SceneConfig:
     """Complete scene configuration."""
     camera: CameraConfig
@@ -121,6 +137,7 @@ class SceneConfig:
     quality_levels: Dict[str, QualityConfig]
     morph_styles: Dict[str, MorphStyleConfig]
     presets: Dict[str, PresetConfig]
+    main_object: Optional[MainObjectConfig] = None
 
     def get_quality_settings(self, quality_level: str) -> QualityConfig:
         """Get quality settings for a specific quality level."""
@@ -354,6 +371,14 @@ def _convert_to_scene_config(config_data: Dict[str, Any]) -> SceneConfig:
     for preset_name, preset_data in config_data['presets'].items():
         presets[preset_name] = PresetConfig(**preset_data)
     
+    # Convert main_object configuration if present
+    main_object = None
+    if 'main_object' in config_data:
+        main_object_data = config_data['main_object']
+        rotation_data = main_object_data['rotation']
+        rotation = MainObjectRotationConfig(**rotation_data)
+        main_object = MainObjectConfig(rotation=rotation)
+    
     return SceneConfig(
         camera=camera,
         lighting=lighting,
@@ -361,7 +386,8 @@ def _convert_to_scene_config(config_data: Dict[str, Any]) -> SceneConfig:
         render=render,
         quality_levels=quality_levels,
         morph_styles=morph_styles,
-        presets=presets
+        presets=presets,
+        main_object=main_object
     )
 
 
