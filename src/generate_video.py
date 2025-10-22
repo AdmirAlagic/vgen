@@ -208,13 +208,9 @@ def render_video(blend_path: str, output_path: str, quality_mode: str = 'balance
         if not output_path.endswith('.mp4'):
             output_path = output_path.rsplit('.', 1)[0] + '.mp4'
         
-        # OPTIMIZATION 1: Try direct MP4 rendering first (most efficient)
-        if _try_direct_mp4_render(blender_cmd, blend_path, output_path, quality_mode, audio_path, total_frames):
-            return True
-        
-        # OPTIMIZATION 2: Fallback to optimized frame rendering
-        print("🔄 Falling back to optimized frame rendering...")
-        return _optimized_frame_render(blender_cmd, blend_path, output_path, quality_mode, audio_path, total_frames)
+        # DIRECT MP4 RENDERING ONLY - No PNG frames fallback
+        print("🚀 Rendering directly to MP4 (no temporary frames)...")
+        return _try_direct_mp4_render(blender_cmd, blend_path, output_path, quality_mode, audio_path, total_frames)
             
     except Exception as e:
         print(f"❌ Error rendering video: {e}")
@@ -222,8 +218,8 @@ def render_video(blend_path: str, output_path: str, quality_mode: str = 'balance
 
 
 def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, quality_mode: str, audio_path: str = None, total_frames: int = 300) -> bool:
-    """Try to render directly to MP4 using Blender's built-in FFmpeg support with audio."""
-    print("🚀 Attempting direct MP4 rendering (most efficient)...")
+    """Render directly to MP4 using Blender's built-in FFmpeg support with audio - NO PNG frames."""
+    print("🚀 Rendering directly to MP4 (no temporary PNG frames)...")
     
     # GPU-optimized quality settings with correct Blender enum values
     quality_settings = {

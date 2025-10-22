@@ -4,7 +4,7 @@ alwaysApply: true
 
 
 -When running python in agent mode use activate venv first
--When running tests, save files in tests folder and remove them after running
+-When making python test scripts, save it files in tests folder and remove them after running
 -When writing documentation, save it in docs folder
 -Make general name filenames
 -Add debug logging with best practices for easy error recognition when running scripts

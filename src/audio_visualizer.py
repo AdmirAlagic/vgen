@@ -9,7 +9,12 @@ Based on Polyfjord's "Making an Audio Visualizer in Blender 4.5" tutorial
 - Reduced CPU overhead with efficient animation systems
 - Professional color transitions with optimized materials
 - Commercial-quality rendering with maximum GPU utilization
+
+UPDATED: Now uses optimized smooth continuous animation system
 """
+
+from optimized_audio_visualizer import OptimizedAudioVisualizer
+from typing import Dict
 
 class AudioVisualizer:
     def __init__(self, audio_features, quality_level='cinematic', morph_style: str = 'flow'):
@@ -128,6 +133,17 @@ class AudioVisualizer:
         self.style_cfg = self.style_configs[self.morph_style]
         
     def create_polyfjord_style_scene(self, output_path: str, blend_path: str = None):
+        """Create optimized Polyfjord-style scene with smooth continuous animation."""
+        # Use the optimized visualizer system
+        optimized_visualizer = OptimizedAudioVisualizer(self.features, self.quality_level, self.morph_style)
+        return optimized_visualizer.create_optimized_scene(output_path, blend_path)
+    
+    def save_script(self, script_path: str, render_settings: Dict = None, blend_path: str = None) -> str:
+        """Save the optimized scene script."""
+        optimized_visualizer = OptimizedAudioVisualizer(self.features, self.quality_level, self.morph_style)
+        return optimized_visualizer.save_script(script_path, render_settings, blend_path)
+    
+    def create_polyfjord_style_scene_legacy(self, output_path: str, blend_path: str = None):
         """Create Polyfjord-style professional audio-reactive scene."""
         
         # Create the working script
