@@ -71,12 +71,8 @@ try:
     
     # Load Earth model from earth.blend file
     print("🌍 Loading Earth model from earth.blend...")
-    # Use absolute path construction - go up from current working directory to project root
-    current_dir = os.getcwd()
-    project_root = os.path.dirname(os.path.dirname(current_dir)) if 'output' in current_dir else current_dir
-    earth_blend_path = os.path.join(project_root, 'assets', '3d', 'earth.blend')
-    print(f"🔍 DEBUG: Current directory: {current_dir}")
-    print(f"🔍 DEBUG: Project root: {project_root}")
+    # Use absolute path - Blender runs from root directory, so we need absolute path
+    earth_blend_path = "/Users/admir/ai/Cube/assets/3d/earth.blend"
     print(f"🔍 DEBUG: Earth blend path: {earth_blend_path}")
     
     if os.path.exists(earth_blend_path):
@@ -85,62 +81,91 @@ try:
         # Append the Earth objects from the blend file using append operator
         print("📥 Appending Earth objects from blend file...")
         
-        # Try to append ONLY the main Earth object
-        earth_sphere = None
-        try:
-            bpy.ops.wm.append(
-                filepath=earth_blend_path + "/Object/",
-                directory=earth_blend_path + "/Object/",
-                filename='earth'
-            )
-            print(f"✅ Successfully appended 'earth' object")
-            
-            # Find the imported Earth object
-            for obj in bpy.context.scene.objects:
-                if obj.type == 'MESH' and obj.name.lower() == 'earth':
-                    earth_sphere = obj
-                    print(f"🎯 Found Earth object: {earth_sphere.name} ({len(earth_sphere.data.vertices)} vertices)")
-                    break
-            
-            # Remove any other Earth-related objects that might have been imported
-            objects_to_remove = []
-            for obj in bpy.context.scene.objects:
-                if obj.type == 'MESH' and obj != earth_sphere:
-                    obj_name_lower = obj.name.lower()
-                    if any(keyword in obj_name_lower for keyword in ['earth', 'planet', 'globe', 'world', 'clouds', 'atmo', 'sun']):
-                        objects_to_remove.append(obj)
-                        print(f"🗑️ Marking for removal: {obj.name}")
-            
-            # Remove the unwanted objects
-            for obj in objects_to_remove:
-                bpy.data.objects.remove(obj, do_unlink=True)
-                print(f"✅ Removed unwanted object: {obj.name}")
+        # Try to append all Earth-related objects (earth, atmo, Sun) - skip clouds as requested
+        earth_objects = []
+        earth_object_names = ['earth', 'atmo', 'Sun']
+        
+        for obj_name in earth_object_names:
+            try:
+                bpy.ops.wm.append(
+                    filepath=earth_blend_path + "/Object/",
+                    directory=earth_blend_path + "/Object/",
+                    filename=obj_name
+                )
+                print(f"✅ Successfully appended '{obj_name}' object")
                 
-        except Exception as e:
-            print(f"⚠️ Could not append 'earth' object: {e}")
-            earth_sphere = None
+                # Find the imported object (handle both MESH and LIGHT types)
+                for obj in bpy.context.scene.objects:
+                    if obj.name.lower() == obj_name:
+                        earth_objects.append(obj)
+                        if obj.type == 'MESH':
+                            print(f"🎯 Found {obj_name} mesh: {obj.name} ({len(obj.data.vertices)} vertices)")
+                        elif obj.type == 'LIGHT':
+                            print(f"🎯 Found {obj_name} light: {obj.name} (energy: {obj.data.energy})")
+                        break
+                        
+            except Exception as e:
+                print(f"⚠️ Could not append '{obj_name}' object: {e}")
+        
+        # Get the main earth object for further processing
+        earth_sphere = None
+        for obj in earth_objects:
+            if obj.name.lower() == 'earth':
+                earth_sphere = obj
+                break
         
         if earth_sphere:
             print(f"✅ Found imported Earth object: {earth_sphere.name}")
             print(f"📊 Earth object details:")
-            print(f"   - Vertices: {len(earth_sphere.data.vertices)}")
-            print(f"   - Faces: {len(earth_sphere.data.polygons)}")
-            print(f"   - Materials: {len(earth_sphere.data.materials)}")
+            if earth_sphere.type == 'MESH':
+                print(f"   - Type: MESH")
+                print(f"   - Vertices: {len(earth_sphere.data.vertices)}")
+                print(f"   - Faces: {len(earth_sphere.data.polygons)}")
+                print(f"   - Materials: {len(earth_sphere.data.materials)}")
+            elif earth_sphere.type == 'LIGHT':
+                print(f"   - Type: LIGHT")
+                print(f"   - Energy: {earth_sphere.data.energy}")
+                print(f"   - Type: {earth_sphere.data.type}")
             
-            # Position the Earth object for our scene
-            earth_sphere.location = (0, 0, -50)  # Behind main object
-            earth_sphere.scale = (25, 25, 25)    # Scale to appropriate size
+            print(f"📊 All imported objects:")
+            for obj in earth_objects:
+                if obj.type == 'MESH':
+                    print(f"   - {obj.name}: MESH ({len(obj.data.vertices)} vertices)")
+                elif obj.type == 'LIGHT':
+                    print(f"   - {obj.name}: LIGHT (energy: {obj.data.energy})")
+            
+            # Position all Earth objects for our scene
+            for obj in earth_objects:
+                if obj.type == 'MESH':
+                    obj.location = (0, 0, -50)  # Behind main object
+                    obj.scale = (20, 20, 20)  # Scale up for visibility
+                    print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale}")
+                elif obj.type == 'LIGHT':
+                    # Keep Sun lights at their original positions for proper lighting
+                    print(f"📍 Kept {obj.name} light at original position {obj.location}")
+            
+            # Rename the main earth object to avoid conflicts
             earth_sphere.name = "ImportedEarth"
+            print(f"🏷️ Renamed main Earth object to: {earth_sphere.name}")
             
-            print("✅ Imported Earth object positioned and scaled")
-            print(f"🌍 Earth position: {earth_sphere.location}")
-            print(f"🌍 Earth scale: {earth_sphere.scale}")
-            print(f"🌍 Earth bounding box: {earth_sphere.bound_box}")
+            print("✅ Imported Earth objects positioned and scaled")
+            if earth_sphere.type == 'MESH':
+                print(f"🌍 Earth position: {earth_sphere.location}")
+                print(f"🌍 Earth scale: {earth_sphere.scale}")
+                print(f"🌍 Earth bounding box: {earth_sphere.bound_box}")
+            else:
+                print(f"🌍 Earth light position: {earth_sphere.location}")
+                print(f"🌍 Earth light energy: {earth_sphere.data.energy}")
             
-            # Ensure Earth is visible in render
-            earth_sphere.hide_render = False
-            earth_sphere.hide_viewport = False
-            print("✅ Earth visibility enabled for render")
+            # Ensure all Earth objects are visible in render
+            for obj in earth_objects:
+                if obj.type == 'MESH':
+                    obj.hide_render = False
+                    obj.hide_viewport = False
+                elif obj.type == 'LIGHT':
+                    obj.hide_render = False
+                    obj.hide_viewport = False
+            print("✅ Earth objects visibility enabled for render")
         else:
             print("⚠️ No Earth object found in imported data")
             earth_sphere = None
@@ -149,12 +174,12 @@ try:
         print("🌍 No Earth object will be created - using only earth.blend file")
         earth_sphere = None
     
-    # Check if Earth already has materials from import
-    if earth_sphere and earth_sphere.data.materials and earth_sphere.data.materials[0]:
+    # Check if Earth already has materials from import (only for mesh objects)
+    if earth_sphere and earth_sphere.type == 'MESH' and earth_sphere.data.materials and earth_sphere.data.materials[0]:
         print("✅ Earth object already has materials from import")
         earth_mat = earth_sphere.data.materials[0]
         print(f"🎨 Using existing material: {earth_mat.name}")
-    elif earth_sphere:
+    elif earth_sphere and earth_sphere.type == 'MESH':
         # Create professional Earth material
         print("🎨 Creating professional Earth material...")
         earth_mat = bpy.data.materials.new(name="ProfessionalEarthMaterial")
@@ -292,7 +317,7 @@ try:
         # Create smooth rotation animation for Earth
         print("🔄 Creating smooth Earth rotation animation...")
         
-        # Create realistic Earth rotation
+        # Create realistic Earth rotation (only for mesh objects)
         for frame in range(0, {total_frames} + 1, 5):  # Keyframe every 5 frames
             scene.frame_set(frame)
             t = frame / {fps}
@@ -302,12 +327,14 @@ try:
             rotation_angle = t * rotation_speed
             
             # Rotate around Z-axis (vertical axis) - Earth's rotation
-            earth_sphere.rotation_euler = (0, 0, rotation_angle)
-            earth_sphere.keyframe_insert(data_path="rotation_euler")
+            # Only apply rotation to mesh objects, not lights
+            if earth_sphere.type == 'MESH':
+                earth_sphere.rotation_euler = (0, 0, rotation_angle)
+                earth_sphere.keyframe_insert(data_path="rotation_euler")
             
         
-        # Apply smooth Bezier interpolation
-        if earth_sphere.animation_data and earth_sphere.animation_data.action:
+        # Apply smooth Bezier interpolation (only for mesh objects)
+        if earth_sphere.type == 'MESH' and earth_sphere.animation_data and earth_sphere.animation_data.action:
             for fcurve in earth_sphere.animation_data.action.fcurves:
                 for kf in fcurve.keyframe_points:
                     kf.interpolation = 'BEZIER'
@@ -335,7 +362,7 @@ try:
         bpy.ops.object.light_add(type='AREA', location=(30, -20, -40))
         earth_rim_light = bpy.context.active_object
         earth_rim_light.name = "EarthRimLight"
-        earth_rim_light.data.energy = 100.0  # Increased energy
+        earth_rim_light.data.energy = 150.0  # Increased energy
         earth_rim_light.data.size = 8.0  # Larger light source
         earth_rim_light.data.color = (0.9, 0.95, 1.0)  # Cool white
         
