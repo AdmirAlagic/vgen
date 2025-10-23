@@ -101,10 +101,12 @@
   },
   "quality_levels": {
     "ultra_fast": {
-      "samples": 64,
-      "max_bounces": 4,
+      "samples": 4,
+      "max_bounces": 1,
       "use_denoising": true,
-      "use_adaptive_sampling": true
+      "use_adaptive_sampling": true,
+      "tile_size": 4096,
+      "use_persistent_data": true
     },
     "lowest": {
       "samples": 32,

@@ -44,11 +44,11 @@ class QualityConfigs:
     """Centralized quality configurations."""
     
     ULTRA_FAST = QualityConfig(
-        samples=64,
-        max_bounces=4,
-        use_denoising=True,
+        samples=4,  # ULTRA-AGGRESSIVE reduction for maximum speed
+        max_bounces=1,  # Minimal bounces for speed
+        use_denoising=True,  # Critical for low samples
         use_adaptive_sampling=True,
-        tile_size=1024,
+        tile_size=4096,  # Maximum tiles for GPU efficiency
         use_persistent_data=True
     )
     

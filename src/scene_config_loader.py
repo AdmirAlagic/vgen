@@ -86,6 +86,8 @@ class QualityConfig:
     max_bounces: int
     use_denoising: bool
     use_adaptive_sampling: bool = True
+    tile_size: int = 256
+    use_persistent_data: bool = True
 
 
 @dataclass
