@@ -214,16 +214,16 @@ try:
         ocean_ramp = nodes.new(type='ShaderNodeValToRGB')
         ocean_ramp.location = (-400, 200)
         ocean_ramp.color_ramp.elements[0].position = 0.0
-        ocean_ramp.color_ramp.elements[0].color = (0.0, 0.1, 0.3, 1.0)  # Deep ocean blue
+        ocean_ramp.color_ramp.elements[0].color = (0.1, 0.2, 0.5, 1.0)  # Brighter deep ocean blue
         ocean_ramp.color_ramp.elements[1].position = 1.0
-        ocean_ramp.color_ramp.elements[1].color = (0.2, 0.4, 0.8, 1.0)  # Shallow ocean blue
+        ocean_ramp.color_ramp.elements[1].color = (0.4, 0.6, 1.0, 1.0)  # Brighter shallow ocean blue
         
         land_ramp = nodes.new(type='ShaderNodeValToRGB')
         land_ramp.location = (-400, 0)
         land_ramp.color_ramp.elements[0].position = 0.0
-        land_ramp.color_ramp.elements[0].color = (0.1, 0.3, 0.1, 1.0)  # Forest green
+        land_ramp.color_ramp.elements[0].color = (0.2, 0.5, 0.2, 1.0)  # Brighter forest green
         land_ramp.color_ramp.elements[1].position = 1.0
-        land_ramp.color_ramp.elements[1].color = (0.4, 0.3, 0.2, 1.0)  # Desert brown
+        land_ramp.color_ramp.elements[1].color = (0.6, 0.5, 0.3, 1.0)  # Brighter desert brown
         
         cloud_ramp = nodes.new(type='ShaderNodeValToRGB')
         cloud_ramp.location = (-400, -200)
@@ -274,10 +274,14 @@ try:
         
         print("✅ Realistic Earth textures created")
         
-        # Configure Earth material properties (Blender 4.5 compatible)
+        # Configure Earth material properties (Blender 4.5 compatible) - Enhanced for visibility
         principled_node.inputs["Metallic"].default_value = 0.0
-        principled_node.inputs["Roughness"].default_value = 0.9  # Earth is not very reflective
+        principled_node.inputs["Roughness"].default_value = 0.7  # Slightly more reflective for visibility
         principled_node.inputs["IOR"].default_value = 1.33  # Similar to water
+        
+        # Add emission for better visibility
+        principled_node.inputs["Emission"].default_value = (0.05, 0.1, 0.15, 1.0)  # Subtle blue emission
+        principled_node.inputs["Emission Strength"].default_value = 0.3  # Gentle emission strength
         
         # Connect final material
         links.new(principled_node.outputs["BSDF"], output_node.inputs["Surface"])
@@ -316,24 +320,46 @@ try:
         # Add professional lighting for Earth
         print("💡 Setting up professional Earth lighting...")
         
-        # Add rim light for Earth
+        # Add main key light for Earth (brighter and larger)
+        bpy.ops.object.light_add(type='AREA', location=(40, -30, -30))
+        earth_key_light = bpy.context.active_object
+        earth_key_light.name = "EarthKeyLight"
+        earth_key_light.data.energy = 150.0  # Increased energy
+        earth_key_light.data.size = 15.0  # Larger light source
+        earth_key_light.data.color = (1.0, 1.0, 0.95)  # Warm white
+        
+        # Point key light at Earth
+        earth_key_light.rotation_euler = (math.radians(20), math.radians(30), 0)
+        
+        # Add rim light for Earth (enhanced)
         bpy.ops.object.light_add(type='AREA', location=(30, -20, -40))
         earth_rim_light = bpy.context.active_object
         earth_rim_light.name = "EarthRimLight"
-        earth_rim_light.data.energy = 50.0
-        earth_rim_light.data.size = 5.0
-        earth_rim_light.data.color = (0.8, 0.9, 1.0)  # Cool white
+        earth_rim_light.data.energy = 100.0  # Increased energy
+        earth_rim_light.data.size = 8.0  # Larger light source
+        earth_rim_light.data.color = (0.9, 0.95, 1.0)  # Cool white
         
         # Point rim light at Earth
         earth_rim_light.rotation_euler = (math.radians(30), math.radians(45), 0)
         
-        # Add fill light for Earth
+        # Add fill light for Earth (enhanced)
         bpy.ops.object.light_add(type='AREA', location=(-25, 15, -35))
         earth_fill_light = bpy.context.active_object
         earth_fill_light.name = "EarthFillLight"
-        earth_fill_light.data.energy = 25.0
-        earth_fill_light.data.size = 8.0
-        earth_fill_light.data.color = (0.6, 0.7, 0.9)  # Cool blue
+        earth_fill_light.data.energy = 75.0  # Increased energy
+        earth_fill_light.data.size = 12.0  # Larger light source
+        earth_fill_light.data.color = (0.8, 0.9, 1.0)  # Cool blue
+        
+        # Add back light for Earth (new)
+        bpy.ops.object.light_add(type='AREA', location=(-40, -30, -30))
+        earth_back_light = bpy.context.active_object
+        earth_back_light.name = "EarthBackLight"
+        earth_back_light.data.energy = 80.0
+        earth_back_light.data.size = 10.0
+        earth_back_light.data.color = (0.7, 0.8, 1.0)  # Cool blue
+        
+        # Point back light at Earth
+        earth_back_light.rotation_euler = (math.radians(-20), math.radians(-30), 0)
         
         print("✅ Professional Earth lighting setup complete")
     
