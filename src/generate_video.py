@@ -271,12 +271,12 @@ if os.path.exists(audio_filepath):
         sound_strip.volume = 1.0
         # Note: pitch property doesn't exist on SoundStrip in Blender
         
-        print(f"✅ Audio loaded: {{audio_filepath}}")
+        print(f"✅ Audio loaded: {audio_path}")
     except Exception as e:
         print(f"⚠️  Error loading audio: {{e}}")
         print("Continuing without audio...")
 else:
-    print(f"⚠️  Audio file not found: {{audio_filepath}}")
+    print(f"⚠️  Audio file not found: {audio_path}")
 '''
         
         render_script = f'''

@@ -1,0 +1,103 @@
+# F-String Syntax Rules
+
+## CRITICAL: F-String Syntax Prevention
+
+When writing Python code with f-strings, ALWAYS follow these rules:
+
+### ✅ CORRECT F-String Syntax:
+```python
+print(f"Error: {error}")
+print(f"Value: {value:.2f}")
+print(f"Count: {len(items)}")
+```
+
+### ❌ WRONG F-String Syntax (DO NOT USE):
+```python
+print(f"Error: {{error}}")  # Double braces - SYNTAX ERROR
+print(f"Value: {{value:.2f}}")  # Double braces - SYNTAX ERROR
+print(f"Count: {{len(items)}}")  # Double braces - SYNTAX ERROR
+```
+
+### Key Rules:
+1. **Single braces `{variable}`** for f-string interpolation
+2. **Double braces `{{text}}`** ONLY for literal braces in output
+3. **Never use double braces around variables** in f-strings
+4. **Always test f-string syntax** before committing
+
+### Common Error Patterns to Avoid:
+- `f"Error: {{e}}"` → Use `f"Error: {e}"`
+- `f"Debug: {{variable}}"` → Use `f"Debug: {variable}"`
+- `f"Count: {{len(items)}}"` → Use `f"Count: {len(items)}"`
+
+### Exception Handling Pattern:
+```python
+try:
+    # code
+except Exception as e:
+    print(f"Error: {e}")  # CORRECT
+    # NOT: print(f"Error: {{e}}")  # WRONG
+```
+
+### Debug Logging Pattern:
+```python
+print(f"Debug: {variable}")  # CORRECT
+print(f"Debug: {len(items)} items")  # CORRECT
+# NOT: print(f"Debug: {{variable}}")  # WRONG
+```
+
+## TEMPLATE F-STRING ISSUES (Advanced)
+
+### ⚠️ CRITICAL: Template F-String Scope Conflicts
+
+When creating templates with f-strings that contain other f-strings, **escape the inner braces** with double braces `{{variable}}` to prevent scope conflicts.
+
+### ✅ CORRECT Template Pattern:
+```python
+# Template generation
+template_content = f'''
+print(f"Error: {{e}}")  # Double braces for inner f-string
+print(f"Link: {{link.name}}")  # Double braces for inner f-string
+'''
+
+# When executed, becomes:
+# print(f"Error: {e}")  # Single braces for actual execution
+# print(f"Link: {link.name}")  # Single braces for actual execution
+```
+
+### ❌ WRONG Template Pattern:
+```python
+# Template generation
+template_content = f'''
+print(f"Error: {e}")  # Single braces - WRONG! Causes NameError
+print(f"Link: {link.name}")  # Single braces - WRONG! Causes NameError
+'''
+
+# When executed, tries to evaluate {e} and {link.name} in wrong scope
+# Results in: NameError: name 'e' is not defined
+```
+
+### Template Design Best Practices:
+1. **Scope Awareness**: Always consider which scope variables will be evaluated in
+2. **Double Braces**: Use `{{variable}}` for inner f-string variables
+3. **Single Braces**: Use `{variable}` for outer f-string variables
+4. **Pre-calculation**: Pre-calculate complex expressions before template generation
+5. **Testing**: Test template generation with simple values
+
+### Real-World Example:
+**Before Fix** (Caused NameError):
+```python
+audio_script_section = f'''
+print(f"✅ Audio loaded: {audio_filepath}")  # WRONG: audio_filepath not in scope
+print(f"⚠️ Error: {e}")  # WRONG: e not in scope
+'''
+```
+
+**After Fix** (Works correctly):
+```python
+audio_script_section = f'''
+print(f"✅ Audio loaded: {audio_path}")  # CORRECT: audio_path is in scope
+print(f"⚠️ Error: {{e}}")  # CORRECT: {{e}} becomes {e} when executed
+'''
+```
+
+This rule prevents the recurring f-string syntax errors that cause Blender script failures.

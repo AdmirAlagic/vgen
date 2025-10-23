@@ -13,3 +13,5 @@ alwaysApply: true
 - Blender 4.5 is used for rendering, make sure to optimize script generating / scene generating for version 4.5
 - when some  feature is failing or error repeating, don't downgrade end quality, but search for better solution
 - prevent this error when writing pythong scripts: "I can see the issue! There are multiple f-string formatting errors in the exception handlers. The error ❌ Error: {e} indicates that the f-string is using {{e}} instead of {e}. " - optimize for blender 4.5
+- CRITICAL: Always use single braces {variable} in f-strings, NEVER double braces {{variable}} - this causes SyntaxError in Blender scripts
+- When writing f-strings: f"Error: {e}" is CORRECT, f"Error: {{e}}" is WRONG and causes syntax errors
