@@ -83,7 +83,7 @@ try:
         
         # Try to append all Earth-related objects (earth, atmo, Sun) - skip clouds as requested
         earth_objects = []
-        earth_object_names = ['earth', 'atmo', 'Sun']
+        earth_object_names = ['earth', 'atmo', 'Sun','clouds']
         
         for obj_name in earth_object_names:
             try:
@@ -138,8 +138,13 @@ try:
             for obj in earth_objects:
                 if obj.type == 'MESH':
                     obj.location = (0, 0, -50)  # Behind main object
-                    obj.scale = (20, 20, 20)  # Scale up for visibility
-                    print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale}")
+                    # Scale atmosphere object smaller than other Earth objects
+                    if obj.name.lower() == 'atmo':
+                        obj.scale = (5, 5, 5)  # Smaller scale for atmosphere
+                        print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale} (atmosphere)")
+                    else:
+                        obj.scale = (20, 20, 20)  # Scale up for visibility
+                        print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale}")
                 elif obj.type == 'LIGHT':
                     # Configure Sun light properly for visibility
                     if obj.name.lower() == 'sun':
@@ -370,7 +375,7 @@ try:
             # Rotate around Z-axis (vertical axis) - Earth's rotation
             # Only apply rotation to mesh objects, not lights
             if earth_sphere.type == 'MESH':
-                earth_sphere.rotation_euler = (0, 0, rotation_angle)
+                earth_sphere.rotation_euler = (rotation_angle, 0, 0)
                 earth_sphere.keyframe_insert(data_path="rotation_euler")
             
         
