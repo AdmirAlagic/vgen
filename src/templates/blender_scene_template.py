@@ -56,255 +56,430 @@ print(f"🎯 Quality Level: {quality_level}")
 print(f"🎨 Morph Style: {morph_style}")
 print("🚀 Features: SMOOTH morphing, NO flickering, CONTINUOUS motion, SHAPE-ONLY changes")
 
-# Create 2D NASA space background as proper image plane
-print("🌌 Setting up 2D NASA space background...")
-print("🔍 DEBUG: Starting background setup process...")
+# Create professional 3D rotating Earth background using imported model
+print("🌍 Setting up professional 3D rotating Earth background...")
+print("🔍 DEBUG: Starting 3D Earth setup process...")
 
 try:
-    # Load the NASA space background image
-    print(f"🔍 DEBUG: Current working directory: {os.getcwd()}")
-    print(f"🔍 DEBUG: Script file path: {__file__}")
+    # Clear existing background objects
+    bpy.ops.object.select_all(action='DESELECT')
+    for obj in bpy.context.scene.objects:
+        if obj.name in ['BackgroundPlane', 'EarthSphere', 'EarthAtmosphere', 'ImportedEarth', 'EarthBackup']:
+            obj.select_set(True)
+    bpy.ops.object.delete(use_global=False)
+    print("✅ DEBUG: Cleared existing background objects")
     
-    # Try multiple possible paths for the space background
-    possible_paths = [
-        os.path.join(os.path.dirname(__file__), '..', 'assets', 'space_background.jpg'),
-        os.path.join(os.getcwd(), 'assets', 'space_background.jpg'),
-        '/Users/admir/ai/Cube/assets/space_background.jpg',
-        os.path.abspath('assets/space_background.jpg')
-    ]
+    # Load Earth model from earth.blend file
+    print("🌍 Loading Earth model from earth.blend...")
+    earth_blend_path = os.path.join(os.path.dirname(__file__), '..', 'assets', '3d', 'earth.blend')
     
-    print(f"🔍 DEBUG: Checking possible paths:")
-    for i, path in enumerate(possible_paths):
-        exists = os.path.exists(path)
-        print(f"🔍 DEBUG: Path {i+1}: {path} - {'EXISTS' if exists else 'NOT FOUND'}")
-    
-    space_image_path = None
-    for path in possible_paths:
-        if os.path.exists(path):
-            space_image_path = path
-            print(f"✅ DEBUG: Found space background at: {path}")
-            break
-    
-    if not space_image_path:
-        space_image_path = possible_paths[0]  # Use first path for error message
-        print(f"⚠️ DEBUG: No space background found, will use procedural background")
-    
-    if space_image_path and os.path.exists(space_image_path):
-        print(f"🔍 DEBUG: Loading space background image from: {space_image_path}")
-        space_image = bpy.data.images.load(space_image_path)
-        space_image.name = "NASA_Space_Background"
-        print(f"✅ DEBUG: Space image loaded successfully - Size: {space_image.size[0]}x{space_image.size[1]}")
+    if os.path.exists(earth_blend_path):
+        print(f"📁 Loading Earth blend file from: {earth_blend_path}")
         
-        # Create 2D background using world shader with proper 2D projection
-        world = bpy.context.scene.world
-        print(f"🔍 DEBUG: Getting world object: {world}")
-        world.use_nodes = True
-        print(f"✅ DEBUG: Enabled world nodes")
+        # Append the Earth objects from the blend file using append operator
+        print("📥 Appending Earth objects from blend file...")
         
-        world_nodes = world.node_tree.nodes
-        world_links = world.node_tree.links
-        print(f"🔍 DEBUG: World has {len(world_nodes)} nodes initially")
+        # Try to append Earth-related objects
+        earth_objects_imported = []
+        for obj_name in ['earth', 'clouds', 'atmo', 'Sun']:
+            try:
+                bpy.ops.wm.append(
+                    filepath=earth_blend_path + "/Object/",
+                    directory=earth_blend_path + "/Object/",
+                    filename=obj_name
+                )
+                earth_objects_imported.append(obj_name)
+                print(f"✅ Successfully appended '{obj_name}' object")
+            except Exception as e:
+                print(f"⚠️ Could not append '{obj_name}' object: {e}")
         
-        # Clear default nodes
-        for node in world_nodes:
-            world_nodes.remove(node)
-        print(f"✅ DEBUG: Cleared {len(world_nodes)} default world nodes")
+        print(f"📥 Imported {len(earth_objects_imported)} objects: {earth_objects_imported}")
         
-        # Create 2D background nodes
-        print("🔍 DEBUG: Creating background nodes...")
-        bg_node = world_nodes.new(type='ShaderNodeBackground')
-        tex_coord = world_nodes.new(type='ShaderNodeTexCoord')
-        mapping = world_nodes.new(type='ShaderNodeMapping')
-        image_texture = world_nodes.new(type='ShaderNodeTexImage')
-        output_node = world_nodes.new(type='ShaderNodeOutputWorld')
-        print(f"✅ DEBUG: Created {len(world_nodes)} background nodes")
+        # Find and use the main Earth object
+        earth_sphere = None
+        earth_candidates = []
         
-        # Set up image texture for 2D background
-        print("🔍 DEBUG: Setting up image texture...")
-        image_texture.image = space_image
-        print(f"✅ DEBUG: Image texture set to: {image_texture.image.name}")
+        # Look for Earth-related objects (including numbered versions like earth.006)
+        for obj in bpy.context.scene.objects:
+            if obj.type == 'MESH':
+                obj_name_lower = obj.name.lower()
+                if any(keyword in obj_name_lower for keyword in ['earth', 'planet', 'globe', 'world']):
+                    earth_candidates.append(obj)
+                    print(f"🌍 Found Earth candidate: {obj.name} ({len(obj.data.vertices)} vertices)")
         
-        # Configure image texture for 2D background (no stretching)
-        image_texture.interpolation = 'Smart'  # Use Smart interpolation for best quality
-        image_texture.extension = 'EXTEND'     # Extend edges to avoid seams
-        image_texture.projection = 'FLAT'      # Use flat projection for 2D background
-        print(f"✅ DEBUG: Image texture configured - Interpolation: Smart, Extension: EXTEND, Projection: FLAT")
-        
-        # Position nodes
-        tex_coord.location = (-800, 0)
-        mapping.location = (-600, 0)
-        image_texture.location = (-400, 0)
-        bg_node.location = (-200, 0)
-        output_node.location = (0, 0)
-        print(f"✅ DEBUG: Nodes positioned")
-        
-        # Configure mapping for proper 2D background (no stretching through scene)
-        # Use UV coordinates instead of Generated for proper 2D mapping
-        image_width = space_image.size[0]
-        image_height = space_image.size[1]
-        image_aspect = image_width / image_height
-        
-        # Target render aspect ratio (16:9 for HD)
-        render_aspect = 1920 / 1080
-        
-        print(f"🔍 DEBUG: Image dimensions: {image_width}x{image_height}, Aspect: {image_aspect:.2f}")
-        print(f"🔍 DEBUG: Render aspect ratio: {render_aspect:.2f}")
-        
-        # Calculate proper scale to fit background without stretching
-        if image_aspect > render_aspect:
-            # Image is wider than render - scale to fit height, crop width
-            scale_x = render_aspect / image_aspect
-            scale_y = 1.0
-            print(f"🔍 DEBUG: Image wider than render - scaling to fit height")
+        if earth_candidates:
+            # Use the largest mesh object as Earth
+            earth_sphere = max(earth_candidates, key=lambda x: len(x.data.vertices))
+            print(f"🎯 Selected Earth object: {earth_sphere.name} ({len(earth_sphere.data.vertices)} vertices)")
         else:
-            # Image is taller than render - scale to fit width, crop height
-            scale_x = 1.0
-            scale_y = image_aspect / render_aspect
-            print(f"🔍 DEBUG: Image taller than render - scaling to fit width")
+            # Look for any mesh object (fallback)
+            mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH']
+            print(f"🔍 Found {len(mesh_objects)} mesh objects in scene")
+            for obj in mesh_objects:
+                print(f"   - {obj.name} ({len(obj.data.vertices)} vertices)")
+            
+            if mesh_objects:
+                earth_sphere = max(mesh_objects, key=lambda x: len(x.data.vertices))
+                print(f"🎯 Using largest mesh object as Earth: {earth_sphere.name}")
         
-        # Apply proper scaling for 2D background - use much larger scale to prevent stretching
-        # Scale up significantly to make background appear smaller and less stretched
-        uniform_scale = 2.0  # Larger scale to reduce stretching effect
-        mapping.inputs["Scale"].default_value = (uniform_scale, uniform_scale, 1.0)
-        mapping.inputs["Location"].default_value = (0.0, 0.0, 0.0)  # Center the background
-        
-        print(f"✅ DEBUG: Mapping scale set to: ({uniform_scale:.2f}, {uniform_scale:.2f}, 1.0)")
-        print(f"✅ 2D background scaling configured - Image: {image_width}x{image_height}, Uniform Scale: {uniform_scale:.2f}")
-        
-        # Connect nodes using Generated coordinates for reliable world background
-        print("🔍 DEBUG: Connecting nodes...")
-        try:
-            # Use Generated coordinates for world background (more reliable than UV)
-            world_links.new(tex_coord.outputs["Generated"], mapping.inputs["Vector"])
-            print(f"✅ DEBUG: Connected Generated coordinates to mapping")
+        if earth_sphere:
+            print(f"✅ Found imported Earth object: {earth_sphere.name}")
+            print(f"📊 Earth object details:")
+            print(f"   - Vertices: {len(earth_sphere.data.vertices)}")
+            print(f"   - Faces: {len(earth_sphere.data.polygons)}")
+            print(f"   - Materials: {len(earth_sphere.data.materials)}")
             
-            world_links.new(mapping.outputs["Vector"], image_texture.inputs["Vector"])
-            print(f"✅ DEBUG: Connected mapping to image texture")
+            # Position the Earth object for our scene
+            earth_sphere.location = (0, 0, -50)  # Behind main object
+            earth_sphere.scale = (25, 25, 25)    # Scale to appropriate size
+            earth_sphere.name = "ImportedEarth"
             
-            world_links.new(image_texture.outputs["Color"], bg_node.inputs["Color"])
-            print(f"✅ DEBUG: Connected image texture to background")
+            print("✅ Imported Earth object positioned and scaled")
+            print(f"🌍 Earth position: {earth_sphere.location}")
+            print(f"🌍 Earth scale: {earth_sphere.scale}")
+            print(f"🌍 Earth bounding box: {earth_sphere.bound_box}")
             
-            world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
-            print(f"✅ DEBUG: Connected background to output")
+            # Ensure Earth is visible in render
+            earth_sphere.hide_render = False
+            earth_sphere.hide_viewport = False
+            print("✅ Earth visibility enabled for render")
+        else:
+            print("⚠️ EarthSphere object not found, creating procedural Earth...")
+            # Fallback to procedural Earth
+            bpy.ops.mesh.primitive_ico_sphere_add(
+                subdivisions=4,
+                radius=25.0,
+                location=(0, 0, -50)
+            )
+            earth_sphere = bpy.context.active_object
+            earth_sphere.name = "EarthSphere"
             
-            print(f"✅ DEBUG: All nodes connected successfully with Generated coordinates")
-        except Exception as link_e:
-            print(f"⚠️ DEBUG: Error connecting nodes: {link_e}")
-            import traceback
-            traceback.print_exc()
-        
-        # Set background strength for proper visibility
-        bg_node.inputs["Strength"].default_value = 5.0  # Higher strength for better visibility
-        print(f"✅ DEBUG: Background strength set to 5.0")
-        
-        # Verify world setup
-        print(f"🔍 DEBUG: Final world node count: {len(world_nodes)}")
-        print(f"🔍 DEBUG: Final world link count: {len(world_links)}")
-        print(f"🔍 DEBUG: World nodes: {[node.name for node in world_nodes]}")
-        
-        print("✅ 2D NASA space background loaded successfully")
-        
-        # Alternative: Create a background plane object as fallback
-        print("🔍 DEBUG: Creating alternative background plane object...")
-        try:
-            # Create a large plane behind the main object
-            bpy.ops.mesh.primitive_plane_add(size=50, location=(0, 0, -15))
-            bg_plane = bpy.context.active_object
-            bg_plane.name = "BackgroundPlane"
+            # Apply subdivision surface for ultra-smooth Earth
+            subdiv_mod = earth_sphere.modifiers.new(name="EarthSubdivision", type='SUBSURF')
+            subdiv_mod.levels = 2
+            subdiv_mod.render_levels = 3
             
-            # Create material for background plane
-            bg_mat = bpy.data.materials.new(name="BackgroundMaterial")
-            bg_plane.data.materials.append(bg_mat)
-            bg_mat.use_nodes = True
-            bg_nodes = bg_mat.node_tree.nodes
-            bg_links = bg_mat.node_tree.links
-            
-            # Clear default nodes
-            for node in bg_nodes:
-                bg_nodes.remove(node)
-            
-            # Create simple material nodes
-            output_node = bg_nodes.new(type='ShaderNodeOutputMaterial')
-            emission_node = bg_nodes.new(type='ShaderNodeEmission')
-            image_texture = bg_nodes.new(type='ShaderNodeTexImage')
-            tex_coord = bg_nodes.new(type='ShaderNodeTexCoord')
-            mapping = bg_nodes.new(type='ShaderNodeMapping')
-            
-            # Set up image texture
-            image_texture.image = space_image
-            image_texture.interpolation = 'Smart'
-            
-            # Configure mapping for proper background display
-            mapping.inputs["Scale"].default_value = (1.0, 1.0, 1.0)
-            
-            # Connect nodes
-            bg_links.new(tex_coord.outputs["UV"], mapping.inputs["Vector"])
-            bg_links.new(mapping.outputs["Vector"], image_texture.inputs["Vector"])
-            bg_links.new(image_texture.outputs["Color"], emission_node.inputs["Color"])
-            bg_links.new(emission_node.outputs["Emission"], output_node.inputs["Surface"])
-            
-            # Set emission strength
-            emission_node.inputs["Strength"].default_value = 1.0
-            
-            print("✅ DEBUG: Alternative background plane created successfully")
-            
-        except Exception as bg_plane_e:
-            print(f"⚠️ DEBUG: Could not create background plane: {bg_plane_e}")
+            print("✅ Procedural Earth sphere created as fallback")
     else:
-        print(f"⚠️ Space background image not found at: {space_image_path}")
-        print("🌌 Creating procedural space background instead...")
+        print(f"⚠️ Earth blend file not found at: {earth_blend_path}")
+        print("🌍 Creating procedural Earth sphere...")
         
-        # Create procedural space background
-        world = bpy.context.scene.world
-        world.use_nodes = True
-        world_nodes = world.node_tree.nodes
-        world_links = world.node_tree.links
+        # Fallback to procedural Earth
+        bpy.ops.mesh.primitive_ico_sphere_add(
+            subdivisions=4,
+            radius=25.0,
+            location=(0, 0, -50)
+        )
+        earth_sphere = bpy.context.active_object
+        earth_sphere.name = "EarthSphere"
         
+        # Apply subdivision surface for ultra-smooth Earth
+        subdiv_mod = earth_sphere.modifiers.new(name="EarthSubdivision", type='SUBSURF')
+        subdiv_mod.levels = 2
+        subdiv_mod.render_levels = 3
+        
+        print("✅ Procedural Earth sphere created as fallback")
+    
+    # Check if Earth already has materials from import
+    if earth_sphere.data.materials and earth_sphere.data.materials[0]:
+        print("✅ Earth object already has materials from import")
+        earth_mat = earth_sphere.data.materials[0]
+        print(f"🎨 Using existing material: {earth_mat.name}")
+    else:
+        # Create professional Earth material
+        print("🎨 Creating professional Earth material...")
+        earth_mat = bpy.data.materials.new(name="ProfessionalEarthMaterial")
+        earth_sphere.data.materials.append(earth_mat)
+        earth_mat.use_nodes = True
+        nodes = earth_mat.node_tree.nodes
+        links = earth_mat.node_tree.links
+
         # Clear default nodes
-        for node in world_nodes:
-            world_nodes.remove(node)
+        for node in nodes:
+            nodes.remove(node)
         
-        # Create procedural space nodes
-        bg_node = world_nodes.new(type='ShaderNodeBackground')
-        tex_coord = world_nodes.new(type='ShaderNodeTexCoord')
-        mapping = world_nodes.new(type='ShaderNodeMapping')
-        noise_texture = world_nodes.new(type='ShaderNodeTexNoise')
-        color_ramp = world_nodes.new(type='ShaderNodeValToRGB')
-        output_node = world_nodes.new(type='ShaderNodeOutputWorld')
-        
+        # Create material nodes
+        output_node = nodes.new(type='ShaderNodeOutputMaterial')
+        principled_node = nodes.new(type='ShaderNodeBsdfPrincipled')
+        tex_coord = nodes.new(type='ShaderNodeTexCoord')
+        mapping = nodes.new(type='ShaderNodeMapping')
+    
         # Position nodes
         tex_coord.location = (-800, 0)
         mapping.location = (-600, 0)
-        noise_texture.location = (-400, 0)
-        color_ramp.location = (-200, 0)
-        bg_node.location = (0, 0)
-        output_node.location = (200, 0)
+        principled_node.location = (-200, 0)
+        output_node.location = (0, 0)
         
-        # Configure noise texture for stars
-        noise_texture.inputs["Scale"].default_value = 50.0
-        noise_texture.inputs["Detail"].default_value = 15.0
-        noise_texture.inputs["Roughness"].default_value = 0.7
-        
-        # Configure color ramp for star field
-        color_ramp.color_ramp.elements[0].position = 0.0
-        color_ramp.color_ramp.elements[0].color = (0.0, 0.0, 0.1, 1.0)  # Deep space blue
-        color_ramp.color_ramp.elements[1].position = 1.0
-        color_ramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)  # Bright stars
+        # Configure mapping for proper Earth texture projection
+        mapping.inputs["Scale"].default_value = (1.0, 1.0, 1.0)
+        mapping.inputs["Location"].default_value = (0.0, 0.0, 0.0)
         
         # Connect nodes
-        world_links.new(tex_coord.outputs["Generated"], mapping.inputs["Vector"])
-        world_links.new(mapping.outputs["Vector"], noise_texture.inputs["Vector"])
-        world_links.new(noise_texture.outputs["Fac"], color_ramp.inputs["Fac"])
-        world_links.new(color_ramp.outputs["Color"], bg_node.inputs["Color"])
-        world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
+        links.new(tex_coord.outputs["Generated"], mapping.inputs["Vector"])
+    
+        # Create realistic Earth using procedural textures
+        print("🌊 Creating ocean and land textures...")
         
-        # Set background strength - higher value for better visibility
-        bg_node.inputs["Strength"].default_value = 3.0
+        # Ocean texture (blue)
+        ocean_noise = nodes.new(type='ShaderNodeTexNoise')
+        ocean_noise.location = (-600, 200)
+        ocean_noise.inputs["Scale"].default_value = 15.0
+        ocean_noise.inputs["Detail"].default_value = 10.0
+        ocean_noise.inputs["Roughness"].default_value = 0.3
         
-        print("✅ Procedural space background created")
+        # Land texture (green/brown)
+        land_noise = nodes.new(type='ShaderNodeTexNoise')
+        land_noise.location = (-600, 0)
+        land_noise.inputs["Scale"].default_value = 8.0
+        land_noise.inputs["Detail"].default_value = 15.0
+        land_noise.inputs["Roughness"].default_value = 0.5
         
+        # Cloud texture (white)
+        cloud_noise = nodes.new(type='ShaderNodeTexNoise')
+        cloud_noise.location = (-600, -200)
+        cloud_noise.inputs["Scale"].default_value = 12.0
+        cloud_noise.inputs["Detail"].default_value = 8.0
+        cloud_noise.inputs["Roughness"].default_value = 0.4
+    
+        # Color ramps for realistic colors
+        ocean_ramp = nodes.new(type='ShaderNodeValToRGB')
+        ocean_ramp.location = (-400, 200)
+        ocean_ramp.color_ramp.elements[0].position = 0.0
+        ocean_ramp.color_ramp.elements[0].color = (0.0, 0.1, 0.3, 1.0)  # Deep ocean blue
+        ocean_ramp.color_ramp.elements[1].position = 1.0
+        ocean_ramp.color_ramp.elements[1].color = (0.2, 0.4, 0.8, 1.0)  # Shallow ocean blue
+        
+        land_ramp = nodes.new(type='ShaderNodeValToRGB')
+        land_ramp.location = (-400, 0)
+        land_ramp.color_ramp.elements[0].position = 0.0
+        land_ramp.color_ramp.elements[0].color = (0.1, 0.3, 0.1, 1.0)  # Forest green
+        land_ramp.color_ramp.elements[1].position = 1.0
+        land_ramp.color_ramp.elements[1].color = (0.4, 0.3, 0.2, 1.0)  # Desert brown
+        
+        cloud_ramp = nodes.new(type='ShaderNodeValToRGB')
+        cloud_ramp.location = (-400, -200)
+        cloud_ramp.color_ramp.elements[0].position = 0.0
+        cloud_ramp.color_ramp.elements[0].color = (0.0, 0.0, 0.0, 0.0)  # Transparent
+        cloud_ramp.color_ramp.elements[1].position = 1.0
+        cloud_ramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)  # White clouds
+    
+        # Mix nodes to combine textures (Blender 4.5 compatible)
+        ocean_land_mix = nodes.new(type='ShaderNodeMix')
+        ocean_land_mix.location = (-200, 100)
+        ocean_land_mix.blend_type = 'MIX'
+        ocean_land_mix.inputs["Factor"].default_value = 0.7  # 70% ocean, 30% land
+        
+        cloud_mix = nodes.new(type='ShaderNodeMix')
+        cloud_mix.location = (-200, -100)
+        cloud_mix.blend_type = 'MIX'
+        cloud_mix.inputs["Factor"].default_value = 0.3  # 30% cloud coverage
+        
+        final_mix = nodes.new(type='ShaderNodeMix')
+        final_mix.location = (0, 0)
+        final_mix.blend_type = 'MIX'
+        final_mix.inputs["Factor"].default_value = 0.8  # Mix clouds with surface
+    
+        # Connect ocean and land textures
+        links.new(mapping.outputs["Vector"], ocean_noise.inputs["Vector"])
+        links.new(mapping.outputs["Vector"], land_noise.inputs["Vector"])
+        links.new(mapping.outputs["Vector"], cloud_noise.inputs["Vector"])
+        
+        links.new(ocean_noise.outputs["Fac"], ocean_ramp.inputs["Fac"])
+        links.new(land_noise.outputs["Fac"], land_ramp.inputs["Fac"])
+        links.new(cloud_noise.outputs["Fac"], cloud_ramp.inputs["Fac"])
+        
+        # Mix ocean and land
+        links.new(ocean_ramp.outputs["Color"], ocean_land_mix.inputs[1])
+        links.new(land_ramp.outputs["Color"], ocean_land_mix.inputs[2])
+        
+        # Mix clouds
+        links.new(ocean_land_mix.outputs["Result"], cloud_mix.inputs[1])
+        links.new(cloud_ramp.outputs["Color"], cloud_mix.inputs[2])
+        
+        # Final mix
+        links.new(cloud_mix.outputs["Result"], final_mix.inputs[1])
+        links.new(ocean_land_mix.outputs["Result"], final_mix.inputs[2])
+        
+        # Connect to principled BSDF
+        links.new(final_mix.outputs["Result"], principled_node.inputs["Base Color"])
+        
+        print("✅ Realistic Earth textures created")
+        
+        # Configure Earth material properties (Blender 4.5 compatible)
+        principled_node.inputs["Metallic"].default_value = 0.0
+        principled_node.inputs["Roughness"].default_value = 0.9  # Earth is not very reflective
+        principled_node.inputs["IOR"].default_value = 1.33  # Similar to water
+        
+        # Connect final material
+        links.new(principled_node.outputs["BSDF"], output_node.inputs["Surface"])
+        
+        print("✅ Professional Earth material created")
+    
+    # Create Earth atmosphere (optional glow effect)
+    print("🌫️ Creating Earth atmosphere...")
+    bpy.ops.mesh.primitive_ico_sphere_add(
+        subdivisions=3,
+        radius=26.0,  # Slightly larger than Earth
+        location=(0, 0, -50)
+    )
+    
+    atmosphere = bpy.context.active_object
+    atmosphere.name = "EarthAtmosphere"
+    
+    # Create atmosphere material
+    atmosphere_mat = bpy.data.materials.new(name="EarthAtmosphereMaterial")
+    atmosphere.data.materials.append(atmosphere_mat)
+    atmosphere_mat.use_nodes = True
+    atmosphere_nodes = atmosphere_mat.node_tree.nodes
+    atmosphere_links = atmosphere_mat.node_tree.links
+    
+    # Clear default nodes
+    for node in atmosphere_nodes:
+        atmosphere_nodes.remove(node)
+    
+    # Create atmosphere nodes
+    atmosphere_output = atmosphere_nodes.new(type='ShaderNodeOutputMaterial')
+    atmosphere_emission = atmosphere_nodes.new(type='ShaderNodeEmission')
+    atmosphere_transparent = atmosphere_nodes.new(type='ShaderNodeBsdfTransparent')
+    atmosphere_mix = atmosphere_nodes.new(type='ShaderNodeMixShader')
+    atmosphere_fresnel = atmosphere_nodes.new(type='ShaderNodeFresnel')
+    
+    # Position nodes
+    atmosphere_fresnel.location = (-400, 0)
+    atmosphere_transparent.location = (-200, 100)
+    atmosphere_emission.location = (-200, -100)
+    atmosphere_mix.location = (0, 0)
+    atmosphere_output.location = (200, 0)
+    
+    # Configure atmosphere
+    atmosphere_emission.inputs["Color"].default_value = (0.3, 0.6, 1.0, 1.0)  # Blue atmosphere
+    atmosphere_emission.inputs["Strength"].default_value = 2.0
+    
+    # Connect atmosphere nodes
+    atmosphere_links.new(atmosphere_fresnel.outputs["Fac"], atmosphere_mix.inputs["Fac"])
+    atmosphere_links.new(atmosphere_transparent.outputs["BSDF"], atmosphere_mix.inputs[1])
+    atmosphere_links.new(atmosphere_emission.outputs["Emission"], atmosphere_mix.inputs[2])
+    atmosphere_links.new(atmosphere_mix.outputs["Shader"], atmosphere_output.inputs["Surface"])
+    
+    # Make atmosphere slightly transparent
+    atmosphere_mat.blend_method = 'BLEND'
+    
+    print("✅ Earth atmosphere created")
+    
+    # Create smooth rotation animation for Earth
+    print("🔄 Creating smooth Earth rotation animation...")
+    
+    # Create realistic Earth rotation
+    for frame in range(0, {total_frames} + 1, 5):  # Keyframe every 5 frames
+        scene.frame_set(frame)
+        t = frame / {fps}
+        
+        # Realistic Earth rotation (one full rotation every 60 seconds for visibility)
+        rotation_speed = 0.1  # radians per second
+        rotation_angle = t * rotation_speed
+        
+        # Rotate around Z-axis (vertical axis) - Earth's rotation
+        earth_sphere.rotation_euler = (0, 0, rotation_angle)
+        earth_sphere.keyframe_insert(data_path="rotation_euler")
+        
+        # Atmosphere rotates slightly slower for depth effect
+        atmosphere.rotation_euler = (0, 0, rotation_angle * 0.8)
+        atmosphere.keyframe_insert(data_path="rotation_euler")
+    
+    # Apply smooth Bezier interpolation
+    if earth_sphere.animation_data and earth_sphere.animation_data.action:
+        for fcurve in earth_sphere.animation_data.action.fcurves:
+            for kf in fcurve.keyframe_points:
+                kf.interpolation = 'BEZIER'
+                kf.handle_left_type = 'AUTO_CLAMPED'
+                kf.handle_right_type = 'AUTO_CLAMPED'
+    
+    if atmosphere.animation_data and atmosphere.animation_data.action:
+        for fcurve in atmosphere.animation_data.action.fcurves:
+            for kf in fcurve.keyframe_points:
+                kf.interpolation = 'BEZIER'
+                kf.handle_left_type = 'AUTO_CLAMPED'
+                kf.handle_right_type = 'AUTO_CLAMPED'
+    
+    print("✅ Smooth Earth rotation animation created")
+    
+    # Add professional lighting for Earth
+    print("💡 Setting up professional Earth lighting...")
+    
+    # Add rim light for Earth
+    bpy.ops.object.light_add(type='AREA', location=(30, -20, -40))
+    earth_rim_light = bpy.context.active_object
+    earth_rim_light.name = "EarthRimLight"
+    earth_rim_light.data.energy = 50.0
+    earth_rim_light.data.size = 5.0
+    earth_rim_light.data.color = (0.8, 0.9, 1.0)  # Cool white
+    
+    # Point rim light at Earth
+    earth_rim_light.rotation_euler = (math.radians(30), math.radians(45), 0)
+    
+    # Add fill light for Earth
+    bpy.ops.object.light_add(type='AREA', location=(-25, 15, -35))
+    earth_fill_light = bpy.context.active_object
+    earth_fill_light.name = "EarthFillLight"
+    earth_fill_light.data.energy = 25.0
+    earth_fill_light.data.size = 8.0
+    earth_fill_light.data.color = (0.6, 0.7, 0.9)  # Cool blue
+    
+    print("✅ Professional Earth lighting setup complete")
+    
+    # Create deep space background using world shader
+    print("🌌 Creating deep space background...")
+    world = bpy.context.scene.world
+    world.use_nodes = True
+    world_nodes = world.node_tree.nodes
+    world_links = world.node_tree.links
+    
+    # Clear default nodes
+    for node in world_nodes:
+        world_nodes.remove(node)
+    
+    # Create deep space background nodes
+    bg_node = world_nodes.new(type='ShaderNodeBackground')
+    tex_coord = world_nodes.new(type='ShaderNodeTexCoord')
+    mapping = world_nodes.new(type='ShaderNodeMapping')
+    noise_texture = world_nodes.new(type='ShaderNodeTexNoise')
+    color_ramp = world_nodes.new(type='ShaderNodeValToRGB')
+    output_node = world_nodes.new(type='ShaderNodeOutputWorld')
+    
+    # Position nodes
+    tex_coord.location = (-800, 0)
+    mapping.location = (-600, 0)
+    noise_texture.location = (-400, 0)
+    color_ramp.location = (-200, 0)
+    bg_node.location = (0, 0)
+    output_node.location = (200, 0)
+    
+    # Configure noise texture for stars
+    noise_texture.inputs["Scale"].default_value = 50.0
+    noise_texture.inputs["Detail"].default_value = 15.0
+    noise_texture.inputs["Roughness"].default_value = 0.7
+    
+    # Configure color ramp for star field
+    color_ramp.color_ramp.elements[0].position = 0.0
+    color_ramp.color_ramp.elements[0].color = (0.0, 0.0, 0.1, 1.0)  # Deep space blue
+    color_ramp.color_ramp.elements[1].position = 1.0
+    color_ramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)  # Bright stars
+    
+    # Connect nodes
+    world_links.new(tex_coord.outputs["Generated"], mapping.inputs["Vector"])
+    world_links.new(mapping.outputs["Vector"], noise_texture.inputs["Vector"])
+    world_links.new(noise_texture.outputs["Fac"], color_ramp.inputs["Fac"])
+    world_links.new(color_ramp.outputs["Color"], bg_node.inputs["Color"])
+    world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
+    
+    # Set background strength - higher value for better visibility
+    bg_node.inputs["Strength"].default_value = 3.0
+    
+    print("✅ Deep space background created")
+    print("✅ Professional 3D rotating Earth background complete!")
+    
 except Exception as e:
-    print(f"⚠️ Error setting up space background: {e}")
+    print(f"⚠️ Error setting up 3D Earth background: {e}")
     import traceback
     print(f"🔍 DEBUG: Full error traceback:")
     traceback.print_exc()
@@ -1227,11 +1402,11 @@ try:
     camera_y = camera_location['y'] 
     camera_z = camera_location['z']
     
-    # Position camera directly above the object (straight down angle)
-    # This prevents showing edges of 2D background
+    # Position camera to show both main object and Earth background
+    # Adjust camera position to include Earth in background
     camera_x = 0.0  # Center X position
     camera_y = 0.0  # Center Y position  
-    camera_z = max(camera_z, 15.0)  # Ensure camera is high enough above object
+    camera_z = max(camera_z, 30.0)  # Position to see both main object and Earth
     
     bpy.ops.object.camera_add(
         location=(camera_x, camera_y, camera_z)
@@ -1239,23 +1414,36 @@ try:
     camera = bpy.context.active_object
     camera.name = "AudioVisualizerCamera"
     
-    # Set camera to look straight down at the object (straight angle)
-    # This creates a top-down view that avoids background edge visibility
-    camera.rotation_euler = (0.0, 0.0, 0.0)  # No rotation - straight down
-    
-    # Ensure camera is looking directly at the main object (0, 0, 0)
+    # Set camera to look at main object with angle to show Earth background
+    # This creates a view that shows both the main object and Earth
     camera_target = mathutils.Vector((0, 0, 0))  # Main object center
     camera_direction = camera_target - camera.location
     camera.rotation_euler = camera_direction.to_track_quat('-Z', 'Y').to_euler()
+    
+    # Adjust camera angle to show Earth background (Earth is at Z=-50)
+    # Camera at Z=30, Earth at Z=-50, so we need to look down
+    camera.rotation_euler = (math.radians(20), 0, 0)  # Downward angle to see Earth
     
     print(f"✅ DEBUG: Camera positioned at: {camera.location}")
     print(f"✅ DEBUG: Camera looking at main object center: {camera_target}")
     print(f"✅ DEBUG: Camera rotation: {camera.rotation_euler}")
     print(f"✅ DEBUG: Main object should be visible at center of frame")
-    print(f"✅ DEBUG: Camera Z position: {camera.location.z} (positioned above object)")
+    print(f"✅ DEBUG: Camera Z position: {camera.location.z} (positioned to see Earth)")
     print(f"✅ DEBUG: Camera distance from object: {camera.location.length:.2f} units")
-    print(f"✅ DEBUG: Camera positioned for straight-down view to avoid background edges")
-    print(f"✅ DEBUG: Top-down angle prevents 2D background edge visibility")
+    print(f"✅ DEBUG: Camera positioned to show both main object and Earth background")
+    print(f"✅ DEBUG: Earth should be visible in background at Z=-50")
+    
+    # Check if Earth is in camera's field of view
+    earth_objects = [obj for obj in bpy.context.scene.objects if obj.name == "ImportedEarth"]
+    if earth_objects:
+        earth = earth_objects[0]
+        earth_distance = (earth.location - camera.location).length
+        print(f"✅ DEBUG: Earth distance from camera: {earth_distance:.2f} units")
+        print(f"✅ DEBUG: Earth position: {earth.location}")
+        print(f"✅ DEBUG: Earth scale: {earth.scale}")
+        print(f"✅ DEBUG: Earth visible in render: {not earth.hide_render}")
+    else:
+        print("⚠️ DEBUG: No Earth object found in scene")
     
     # Set camera properties
     camera.data.lens = camera_lens
@@ -1265,6 +1453,10 @@ try:
     # Optimize camera for background visibility
     # Ensure camera is positioned to show background properly
     camera.data.clip_end = 1000.0  # Extend far clip plane to ensure background is visible
+    camera.data.clip_start = 0.1   # Set near clip plane
+    
+    print(f"✅ Camera far clip plane: {camera.data.clip_end}")
+    print(f"✅ Camera near clip plane: {camera.data.clip_start}")
     
     # Set as active camera
     scene.camera = camera

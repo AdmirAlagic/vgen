@@ -254,8 +254,10 @@ import os
 audio_filepath = "{audio_path}"
 if os.path.exists(audio_filepath):
     try:
-        # Add sound strip to sequencer
+        # Get scene reference
         scene = bpy.context.scene
+        
+        # Add sound strip to sequencer
         if not scene.sequence_editor:
             scene.sequence_editor_create()
         
@@ -283,6 +285,10 @@ else:
 import bpy
 import os
 
+# Get scene and render objects at the top level
+scene = bpy.context.scene
+render = scene.render
+
 {audio_script_section}
 
 # Validate and fix shader node trees before rendering
@@ -290,7 +296,8 @@ print("🔧 Validating shader node trees...")
 try:
     for material in bpy.data.materials:
         if material.use_nodes and material.node_tree:
-            # Check for invalid socket connections
+            # Collect invalid links to remove
+            links_to_remove = []
             for link in material.node_tree.links:
                 try:
                     # Test if the connection is valid by checking socket compatibility
@@ -299,26 +306,33 @@ try:
                         from_type = link.from_socket.type
                         to_type = link.to_socket.type
                         
-                        # Remove incompatible connections
+                        # Mark incompatible connections for removal
                         if from_type == 'RGBA' and to_type == 'VECTOR':
                             print(f"⚠️  Removing invalid connection: {{link.from_socket.name}} -> {{link.to_socket.name}}")
-                            material.node_tree.links.remove(link)
+                            links_to_remove.append(link)
                         elif from_type == 'RGBA' and to_type == 'NORMAL':
                             print(f"⚠️  Removing invalid connection: {{link.from_socket.name}} -> {{link.to_socket.name}}")
-                            material.node_tree.links.remove(link)
+                            links_to_remove.append(link)
                         elif from_type == 'RGBA' and to_type == 'FLOAT':
                             print(f"⚠️  Removing invalid connection: {{link.from_socket.name}} -> {{link.to_socket.name}}")
-                            material.node_tree.links.remove(link)
+                            links_to_remove.append(link)
                 except Exception as e:
                     print(f"⚠️  Error checking link: {{e}}")
+                    pass
+            
+            # Remove invalid links
+            for link in links_to_remove:
+                try:
+                    material.node_tree.links.remove(link)
+                except Exception as e:
+                    print(f"⚠️  Error removing link: {{e}}")
                     pass
     print("✅ Shader validation complete")
 except Exception as e:
     print(f"⚠️  Shader validation error: {{e}}")
 
 # Set optimized render settings for direct MP4 output
-scene = bpy.context.scene
-render = scene.render
+# scene and render are already defined at the top level
 
 # Prefer GPU for Cycles (Metal on macOS) without breaking functionality
 try:
@@ -427,10 +441,91 @@ if scene.render.engine == 'CYCLES':
 # Set output path
 render.filepath = "{output_path}"
 
+# Validate scene before rendering
+print("🔍 Validating scene before render...")
+try:
+    # Check if camera exists
+    if not scene.camera:
+        print("❌ Error: No camera found in scene")
+        raise Exception("No camera found in scene")
+    else:
+        print(f"✅ Camera found: {{scene.camera.name}}")
+    
+    # Check if there are any objects in the scene
+    if len(scene.objects) == 0:
+        print("❌ Error: No objects found in scene")
+        raise Exception("No objects found in scene")
+    else:
+        print(f"✅ Scene has {{len(scene.objects)}} objects")
+    
+    # Check if output path is set
+    if not render.filepath:
+        print("❌ Error: No output filepath set")
+        raise Exception("No output filepath set")
+    else:
+        print(f"✅ Output path set: {{render.filepath}}")
+    
+    # Check render engine
+    if render.engine != 'CYCLES':
+        print(f"⚠️ Warning: Render engine is {{render.engine}}, expected CYCLES")
+    
+    # Check GPU settings if using Cycles
+    if render.engine == 'CYCLES':
+        cycles = scene.cycles
+        print(f"✅ Cycles device: {{cycles.device}}")
+        print(f"✅ Cycles samples: {{cycles.samples}}")
+        print(f"✅ Cycles denoiser: {{cycles.denoiser}}")
+        
+        # Check if GPU is available
+        prefs = bpy.context.preferences
+        cprefs = prefs.addons.get('cycles')
+        if cprefs:
+            compute_device_type = cprefs.preferences.compute_device_type
+            print(f"✅ Compute device type: {{compute_device_type}}")
+            
+            # Check if GPU devices are available
+            devices = cprefs.preferences.devices
+            gpu_devices = [d for d in devices if d.type == 'CUDA' or d.type == 'OPENCL' or d.type == 'METAL']
+            if gpu_devices:
+                print(f"✅ Found {{len(gpu_devices)}} GPU devices")
+                for device in gpu_devices:
+                    print(f"   - {{device.name}} ({{device.type}}) - {{'Enabled' if device.use else 'Disabled'}}")
+            else:
+                print("⚠️ No GPU devices found, using CPU")
+        else:
+            print("⚠️ Cycles addon not found")
+    
+    print("✅ Scene validation complete")
+    
+except Exception as e:
+    print(f"❌ Scene validation failed: {{e}}")
+    import traceback
+    traceback.print_exc()
+    raise
+
 # Render animation
 print("🎬 Starting direct MP4 render with audio...")
-bpy.ops.render.render(animation=True)
-print("✅ Direct MP4 render complete!")
+try:
+    bpy.ops.render.render(animation=True)
+    print("✅ Direct MP4 render complete!")
+except Exception as e:
+    print(f"❌ GPU render failed: {{e}}")
+    
+    # Try fallback to CPU rendering
+    print("🔄 Attempting fallback to CPU rendering...")
+    try:
+        if render.engine == 'CYCLES':
+            cycles = bpy.context.scene.cycles
+            cycles.device = 'CPU'
+            print("✅ Switched to CPU rendering")
+        
+        bpy.ops.render.render(animation=True)
+        print("✅ CPU render complete!")
+    except Exception as cpu_error:
+        print(f"❌ CPU render also failed: {{cpu_error}}")
+        import traceback
+        traceback.print_exc()
+        raise
 '''
         
         # Write temporary script
