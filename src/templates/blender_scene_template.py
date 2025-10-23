@@ -1056,7 +1056,7 @@ try:
             v.co.y *= 0.9
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
     
     elif "HorizontalWave" in sname:
         # Store original positions for size normalization
@@ -1070,7 +1070,7 @@ try:
             v.co.z *= 0.9  # Less aggressive compression
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
     
     elif "DiagonalTwist" in sname:
         for v in data:
@@ -1091,7 +1091,7 @@ try:
             v.co = center + direction * distance * explosion_factor
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
     
     elif "SpiralRise" in sname:
         # Store original positions for size normalization
@@ -1106,7 +1106,7 @@ try:
             v.co.z += 0.3 * math.sin(angle * 2)  # Reduced amplitude
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
     
     elif "CubicDistortion" in sname:
         for v in data:
@@ -1126,7 +1126,7 @@ try:
             v.co += mathutils.Vector((flow_x, flow_y, flow_z))
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
     
     elif "GeometricFracture" in sname:
         for v in data:
@@ -1158,7 +1158,7 @@ try:
             v.co.z += 0.5 * math.cos(angle * 3)  # Reduced amplitude
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
     
     elif "CosmicPulse" in sname:
         # Store original positions for size normalization
@@ -1172,7 +1172,7 @@ try:
             v.co = center + direction * distance * pulse_factor
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
     
     elif "StellarCore" in sname:
         # Store original positions for size normalization
@@ -1183,7 +1183,7 @@ try:
             v.co *= core_factor
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
     
     elif "GalacticSpiral" in sname:
         # Store original positions for size normalization
@@ -1198,7 +1198,7 @@ try:
             v.co.z += 0.6 * math.sin(angle * 2 + radius)  # Reduced amplitude
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
     
     elif "QuantumField" in sname:
         # Store original positions for size normalization
@@ -1211,7 +1211,7 @@ try:
             v.co += mathutils.Vector((quantum_x, quantum_y, quantum_z))
         
         # Normalize size to maintain consistent object scale
-        normalize_shape_size(data, original_positions)
+        #normalize_shape_size(data, original_positions)(data, original_positions)
 
     print("✅ Abstract procedural shape keys created")
     

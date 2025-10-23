@@ -232,11 +232,11 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
     
     # Standard quality settings for balanced rendering
     quality_settings = {
-        'ultra_fast': {'samples': 32, 'resolution': (640, 360), 'crf': 'LOW', 'preset': 'GOOD', 'max_bounces': 4, 'tile_size': 512},
+        'ultra_fast': {'samples': 32, 'resolution': (640, 360), 'crf': 'LOW', 'preset': 'REALTIME', 'max_bounces': 4, 'tile_size': 512},
         'fast': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'GOOD', 'max_bounces': 8, 'tile_size': 512}, 
         'balanced': {'samples': 256, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 12, 'tile_size': 256},
-        'high': {'samples': 512, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'HIGH', 'max_bounces': 16, 'tile_size': 256},
-        'ultra': {'samples': 1024, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'HIGH', 'max_bounces': 24, 'tile_size': 256}
+        'high': {'samples': 512, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'GOOD', 'max_bounces': 16, 'tile_size': 256},
+        'ultra': {'samples': 1024, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'BEST', 'max_bounces': 24, 'tile_size': 256}
     }
     
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
