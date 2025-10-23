@@ -141,8 +141,21 @@ try:
                     obj.scale = (20, 20, 20)  # Scale up for visibility
                     print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale}")
                 elif obj.type == 'LIGHT':
-                    # Keep Sun lights at their original positions for proper lighting
-                    print(f"📍 Kept {obj.name} light at original position {obj.location}")
+                    # Configure Sun light properly for visibility
+                    if obj.name.lower() == 'sun':
+                        print(f"☀️ Configuring Sun light for proper visibility...")
+                        # Ensure Sun light is SUN type for proper directional lighting
+                        obj.data.type = 'SUN'
+                        # Set appropriate energy for Sun light
+                        obj.data.energy = 3.0  # Strong directional light
+                        # Set Sun color (warm white with slight yellow tint)
+                        obj.data.color = (1.0, 0.95, 0.8)
+                        # Set Sun angle for realistic lighting
+                        obj.data.angle = math.radians(32)  # Sun's angular diameter
+                        print(f"☀️ Sun light configured - Type: SUN, Energy: {obj.data.energy}, Angle: {math.degrees(obj.data.angle):.1f}°")
+                    else:
+                        # Keep other lights at their original positions
+                        print(f"📍 Kept {obj.name} light at original position {obj.location}")
             
             # Rename the main earth object to avoid conflicts
             earth_sphere.name = "ImportedEarth"
@@ -169,10 +182,38 @@ try:
         else:
             print("⚠️ No Earth object found in imported data")
             earth_sphere = None
+        
+        # Ensure Sun light exists - create if not imported
+        sun_light_exists = False
+        for obj in earth_objects:
+            if obj.name.lower() == 'sun' and obj.type == 'LIGHT':
+                sun_light_exists = True
+                break
+        
+        if not sun_light_exists:
+            print("☀️ Creating Sun light (not found in earth.blend)...")
+            bpy.ops.object.light_add(type='SUN', location=(0, 0, 0))
+            sun_light = bpy.context.active_object
+            sun_light.name = "Sun"
+            sun_light.data.energy = 3.0
+            sun_light.data.color = (1.0, 0.95, 0.8)
+            sun_light.data.angle = math.radians(32)
+            print(f"☀️ Created Sun light - Type: SUN, Energy: {sun_light.data.energy}, Angle: {math.degrees(sun_light.data.angle):.1f}°")
+            earth_objects.append(sun_light)
     else:
         print(f"⚠️ Earth blend file not found at: {earth_blend_path}")
         print("🌍 No Earth object will be created - using only earth.blend file")
         earth_sphere = None
+        
+        # Create Sun light even if earth.blend is not found
+        print("☀️ Creating Sun light (earth.blend not found)...")
+        bpy.ops.object.light_add(type='SUN', location=(0, 0, 0))
+        sun_light = bpy.context.active_object
+        sun_light.name = "Sun"
+        sun_light.data.energy = 3.0
+        sun_light.data.color = (1.0, 0.95, 0.8)
+        sun_light.data.angle = math.radians(32)
+        print(f"☀️ Created Sun light - Type: SUN, Energy: {sun_light.data.energy}, Angle: {math.degrees(sun_light.data.angle):.1f}°")
     
     # Check if Earth already has materials from import (only for mesh objects)
     if earth_sphere and earth_sphere.type == 'MESH' and earth_sphere.data.materials and earth_sphere.data.materials[0]:
@@ -475,18 +516,34 @@ except Exception as _gpu_e:
     scene.cycles.device = 'CPU'
 
 # Create professional base shape - ICO sphere for organic morphing
-bpy.ops.mesh.primitive_ico_sphere_add(
-    subdivisions=3, 
-    radius=2.0, 
-    enter_editmode=False, 
-    align='WORLD', 
-    location=(0, 0, 0)
-)
-
-obj = bpy.context.object
-obj.name = "OptimizedAudioShape"
-
-print("✅ Professional base shape created")
+print("🎯 Creating main audio visualizer object...")
+try:
+    bpy.ops.mesh.primitive_ico_sphere_add(
+        subdivisions=3, 
+        radius=2.0, 
+        enter_editmode=False, 
+        align='WORLD', 
+        location=(0, 0, 0)
+    )
+    
+    obj = bpy.context.object
+    if obj is None:
+        raise Exception("Failed to create main object - context.object is None")
+    
+    obj.name = "OptimizedAudioShape"
+    print(f"✅ Professional base shape created: {obj.name}")
+    
+except Exception as e:
+    print(f"❌ CRITICAL ERROR: Failed to create main audio visualizer object: {e}")
+    print("🔄 Attempting to recover by creating a simple cube...")
+    try:
+        bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0))
+        obj = bpy.context.object
+        obj.name = "OptimizedAudioShape"
+        print(f"✅ Recovery successful: Created cube as {obj.name}")
+    except Exception as recovery_e:
+        print(f"❌ Recovery failed: {recovery_e}")
+        raise Exception("Cannot create main object for audio visualizer")
 
 # Apply subdivision surface modifier for smoothness
 subdiv = obj.modifiers.new(name="Subdivision", type='SUBSURF')
@@ -792,10 +849,22 @@ print("✅ Professional material system created")
 # Add professional lighting for space scene
 print("💡 Setting up professional space lighting...")
 try:
-    # Clear existing lights
+    # Clear existing lights BUT preserve Sun light and main object
     bpy.ops.object.select_all(action='DESELECT')
     bpy.ops.object.select_by_type(type='LIGHT')
+    
+    # Deselect Sun light and main object to preserve them
+    for selected_obj in bpy.context.selected_objects:
+        if selected_obj.name.lower() == 'sun':
+            selected_obj.select_set(False)
+            print(f"☀️ Preserving Sun light: {selected_obj.name}")
+        elif selected_obj.name == "OptimizedAudioShape":
+            selected_obj.select_set(False)
+            print(f"🎯 Preserving main object: {selected_obj.name}")
+    
+    # Delete only non-preserved lights
     bpy.ops.object.delete(use_global=False)
+    print("✅ Cleared existing lights (Sun light and main object preserved)")
     
     # Add key light (main illumination)
     bpy.ops.object.light_add(type='AREA', location=(8, 6, 8))
@@ -834,48 +903,142 @@ try:
     
     print("✅ Professional space lighting setup complete")
     
+    # Ensure main object still exists and re-acquire if needed
+    print("🎯 Verifying main object integrity...")
+    main_obj = bpy.context.scene.objects.get("OptimizedAudioShape")
+    if main_obj is None:
+        print("⚠️ Main object not found - attempting to re-acquire...")
+        # Try to find any mesh object that might be our main object
+        for scene_obj in bpy.context.scene.objects:
+            if scene_obj.type == 'MESH' and scene_obj.name != "ImportedEarth":
+                main_obj = scene_obj
+                main_obj.name = "OptimizedAudioShape"
+                print(f"✅ Re-acquired main object: {main_obj.name}")
+                break
+        
+        if main_obj is None:
+            print("❌ CRITICAL: Cannot find main object - creating emergency object...")
+            bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0))
+            main_obj = bpy.context.active_object
+            main_obj.name = "OptimizedAudioShape"
+            print(f"✅ Emergency main object created: {main_obj.name}")
+    
+    # Update the global obj reference
+    obj = main_obj
+    print(f"✅ Main object verified: {obj.name}")
+    
+    # Ensure Sun light is properly configured and visible
+    print("☀️ Final Sun light configuration...")
+    sun_lights = [obj for obj in bpy.context.scene.objects if obj.name.lower() == 'sun' and obj.type == 'LIGHT']
+    if sun_lights:
+        sun_light = sun_lights[0]
+        # Ensure Sun light properties are correct
+        sun_light.data.type = 'SUN'
+        sun_light.data.energy = 3.0
+        sun_light.data.color = (1.0, 0.95, 0.8)
+        sun_light.data.angle = math.radians(32)
+        sun_light.hide_render = False
+        sun_light.hide_viewport = False
+        print(f"☀️ Sun light final configuration:")
+        print(f"   - Name: {sun_light.name}")
+        print(f"   - Type: {sun_light.data.type}")
+        print(f"   - Energy: {sun_light.data.energy}")
+        print(f"   - Color: {sun_light.data.color}")
+        print(f"   - Angle: {math.degrees(sun_light.data.angle):.1f}°")
+        print(f"   - Hide render: {sun_light.hide_render}")
+        print(f"   - Hide viewport: {sun_light.hide_viewport}")
+    else:
+        print("⚠️ No Sun light found in scene!")
+    
+    
 except Exception as e:
     print(f"⚠️ Error setting up lighting: {e}")
 
 # Add smooth, continuous geometry modifiers
-disp_mod = obj.modifiers.new(name="SmoothDisplace", type='DISPLACE')
-disp_mod.mid_level = 0.0
-disp_mod.strength = 0.0
-disp_mod.direction = 'NORMAL'
+print("🔧 Creating smooth continuous geometry modifiers...")
 try:
-    tex = bpy.data.textures.new(name="SmoothDisplaceTex", type='CLOUDS')
-    tex.noise_scale = 0.6
-    disp_mod.texture = tex
+    # Ensure obj is still valid and re-acquire if needed
+    if obj is None:
+        print("⚠️ Main object is None - attempting to re-acquire...")
+        main_obj = bpy.context.scene.objects.get("OptimizedAudioShape")
+        if main_obj is not None:
+            obj = main_obj
+            print(f"✅ Re-acquired main object: {obj.name}")
+        else:
+            raise Exception("Main object is None and cannot be re-acquired")
+    
+    if obj is None:
+        raise Exception("Main object is None - cannot create modifiers")
+    
+    disp_mod = obj.modifiers.new(name="SmoothDisplace", type='DISPLACE')
+    disp_mod.mid_level = 0.0
+    disp_mod.strength = 0.0
+    disp_mod.direction = 'NORMAL'
+    try:
+        tex = bpy.data.textures.new(name="SmoothDisplaceTex", type='CLOUDS')
+        tex.noise_scale = 0.6
+        disp_mod.texture = tex
+    except Exception as e:
+        print(f"⚠️ Could not create texture for Displace: {e}")
+
+    twist_mod = obj.modifiers.new(name="SmoothTwist", type='SIMPLE_DEFORM')
+    twist_mod.deform_method = 'TWIST'
+    twist_mod.angle = 0.0
+    try:
+        twist_mod.deform_axis = 'Z'
+    except Exception:
+        pass
+
+    cast_mod = obj.modifiers.new(name="SmoothCast", type='CAST')
+    cast_mod.factor = 0.0
+    cast_mod.cast_type = 'SPHERE'
+
+    ripple_mod = obj.modifiers.new(name="SmoothRipple", type='DISPLACE')
+    ripple_mod.direction = 'Z'
+    ripple_mod.mid_level = 0.0
+    try:
+        tex2 = bpy.data.textures.new(name="SmoothRippleTex", type='CLOUDS')
+        tex2.noise_scale = 0.25
+        tex2.noise_depth = 2
+        ripple_mod.texture = tex2
+    except Exception:
+        pass
+
+    print("✅ Smooth continuous modifiers created")
+    
 except Exception as e:
-    print(f"⚠️ Could not create texture for Displace: {e}")
-
-twist_mod = obj.modifiers.new(name="SmoothTwist", type='SIMPLE_DEFORM')
-twist_mod.deform_method = 'TWIST'
-twist_mod.angle = 0.0
-try:
-    twist_mod.deform_axis = 'Z'
-except Exception:
-    pass
-
-cast_mod = obj.modifiers.new(name="SmoothCast", type='CAST')
-cast_mod.factor = 0.0
-cast_mod.cast_type = 'SPHERE'
-
-ripple_mod = obj.modifiers.new(name="SmoothRipple", type='DISPLACE')
-ripple_mod.direction = 'Z'
-ripple_mod.mid_level = 0.0
-try:
-    tex2 = bpy.data.textures.new(name="SmoothRippleTex", type='CLOUDS')
-    tex2.noise_scale = 0.25
-    tex2.noise_depth = 2
-    ripple_mod.texture = tex2
-except Exception:
-    pass
-
-print("✅ Smooth continuous modifiers created")
+    print(f"❌ CRITICAL ERROR: Failed to create modifiers: {e}")
+    print("🔄 Modifiers will be skipped - scene may not animate properly")
+    # Set dummy variables to prevent further errors
+    disp_mod = None
+    twist_mod = None
+    cast_mod = None
+    ripple_mod = None
 
 # Create optimized high-quality shape keys for realistic morphing
-obj.shape_key_add(name="Basis")
+print("🎭 Creating shape keys for audio morphing...")
+try:
+    # Ensure obj is still valid and re-acquire if needed
+    if obj is None:
+        print("⚠️ Main object is None - attempting to re-acquire...")
+        main_obj = bpy.context.scene.objects.get("OptimizedAudioShape")
+        if main_obj is not None:
+            obj = main_obj
+            print(f"✅ Re-acquired main object: {obj.name}")
+        else:
+            raise Exception("Main object is None and cannot be re-acquired")
+    
+    if obj is None:
+        raise Exception("Main object is None - cannot create shape keys")
+    
+    obj.shape_key_add(name="Basis")
+    print("✅ Basis shape key created")
+    
+except Exception as e:
+    print(f"❌ CRITICAL ERROR: Failed to create shape keys: {e}")
+    print("🔄 Shape keys will be skipped - morphing will not work")
+    # Continue without shape keys
+
 # Optimized shape key selection - fewer keys but higher quality morphing
 shape_names = [
     "VerticalSpike",      # Kick drum response - most important
@@ -890,10 +1053,25 @@ shape_names = [
 phi = 1.61803398875
 phi_inv = 1.0 / phi
 
-for sname in shape_names:
-    sk = obj.shape_key_add(name=sname)
-    sk.value = 0.0
-    data = sk.data
+print("🎭 Creating individual shape keys...")
+try:
+    # Ensure obj is still valid and re-acquire if needed
+    if obj is None:
+        print("⚠️ Main object is None - attempting to re-acquire...")
+        main_obj = bpy.context.scene.objects.get("OptimizedAudioShape")
+        if main_obj is not None:
+            obj = main_obj
+            print(f"✅ Re-acquired main object: {obj.name}")
+        else:
+            raise Exception("Main object is None and cannot be re-acquired")
+    
+    if obj is None:
+        raise Exception("Main object is None - cannot create shape keys")
+    
+    for sname in shape_names:
+        sk = obj.shape_key_add(name=sname)
+        sk.value = 0.0
+        data = sk.data
     
     # OPTIMIZED HIGH-QUALITY SHAPE MORPHING - NO SIZE CHANGES, ONLY SHAPE CHANGES
     if "VerticalSpike" in sname:
@@ -1065,7 +1243,13 @@ for sname in shape_names:
         # Normalize size to maintain consistent object scale
         normalize_shape_size(data, original_positions)
 
-print("✅ Abstract procedural shape keys created")
+    print("✅ Abstract procedural shape keys created")
+    
+except Exception as e:
+    print(f"❌ CRITICAL ERROR: Failed to create shape keys: {e}")
+    print("🔄 Shape key creation will be skipped")
+    import traceback
+    traceback.print_exc()
 
 # Helper: safely sample a feature array at current frame
 def feature_at(name: str, idx: int, default: float = 0.0) -> float:
