@@ -64,14 +64,20 @@ try:
     # Clear existing background objects
     bpy.ops.object.select_all(action='DESELECT')
     for obj in bpy.context.scene.objects:
-        if obj.name in ['BackgroundPlane', 'EarthSphere', 'EarthAtmosphere', 'ImportedEarth', 'EarthBackup']:
+        if obj.name in ['BackgroundPlane', 'ImportedEarth']:
             obj.select_set(True)
     bpy.ops.object.delete(use_global=False)
     print("✅ DEBUG: Cleared existing background objects")
     
     # Load Earth model from earth.blend file
     print("🌍 Loading Earth model from earth.blend...")
-    earth_blend_path = os.path.join(os.path.dirname(__file__), '..', 'assets', '3d', 'earth.blend')
+    # Use absolute path construction - go up from current working directory to project root
+    current_dir = os.getcwd()
+    project_root = os.path.dirname(os.path.dirname(current_dir)) if 'output' in current_dir else current_dir
+    earth_blend_path = os.path.join(project_root, 'assets', '3d', 'earth.blend')
+    print(f"🔍 DEBUG: Current directory: {current_dir}")
+    print(f"🔍 DEBUG: Project root: {project_root}")
+    print(f"🔍 DEBUG: Earth blend path: {earth_blend_path}")
     
     if os.path.exists(earth_blend_path):
         print(f"📁 Loading Earth blend file from: {earth_blend_path}")
@@ -79,48 +85,40 @@ try:
         # Append the Earth objects from the blend file using append operator
         print("📥 Appending Earth objects from blend file...")
         
-        # Try to append Earth-related objects
-        earth_objects_imported = []
-        for obj_name in ['earth', 'clouds', 'atmo', 'Sun']:
-            try:
-                bpy.ops.wm.append(
-                    filepath=earth_blend_path + "/Object/",
-                    directory=earth_blend_path + "/Object/",
-                    filename=obj_name
-                )
-                earth_objects_imported.append(obj_name)
-                print(f"✅ Successfully appended '{obj_name}' object")
-            except Exception as e:
-                print(f"⚠️ Could not append '{obj_name}' object: {e}")
-        
-        print(f"📥 Imported {len(earth_objects_imported)} objects: {earth_objects_imported}")
-        
-        # Find and use the main Earth object
+        # Try to append ONLY the main Earth object
         earth_sphere = None
-        earth_candidates = []
-        
-        # Look for Earth-related objects (including numbered versions like earth.006)
-        for obj in bpy.context.scene.objects:
-            if obj.type == 'MESH':
-                obj_name_lower = obj.name.lower()
-                if any(keyword in obj_name_lower for keyword in ['earth', 'planet', 'globe', 'world']):
-                    earth_candidates.append(obj)
-                    print(f"🌍 Found Earth candidate: {obj.name} ({len(obj.data.vertices)} vertices)")
-        
-        if earth_candidates:
-            # Use the largest mesh object as Earth
-            earth_sphere = max(earth_candidates, key=lambda x: len(x.data.vertices))
-            print(f"🎯 Selected Earth object: {earth_sphere.name} ({len(earth_sphere.data.vertices)} vertices)")
-        else:
-            # Look for any mesh object (fallback)
-            mesh_objects = [obj for obj in bpy.context.scene.objects if obj.type == 'MESH']
-            print(f"🔍 Found {len(mesh_objects)} mesh objects in scene")
-            for obj in mesh_objects:
-                print(f"   - {obj.name} ({len(obj.data.vertices)} vertices)")
+        try:
+            bpy.ops.wm.append(
+                filepath=earth_blend_path + "/Object/",
+                directory=earth_blend_path + "/Object/",
+                filename='earth'
+            )
+            print(f"✅ Successfully appended 'earth' object")
             
-            if mesh_objects:
-                earth_sphere = max(mesh_objects, key=lambda x: len(x.data.vertices))
-                print(f"🎯 Using largest mesh object as Earth: {earth_sphere.name}")
+            # Find the imported Earth object
+            for obj in bpy.context.scene.objects:
+                if obj.type == 'MESH' and obj.name.lower() == 'earth':
+                    earth_sphere = obj
+                    print(f"🎯 Found Earth object: {earth_sphere.name} ({len(earth_sphere.data.vertices)} vertices)")
+                    break
+            
+            # Remove any other Earth-related objects that might have been imported
+            objects_to_remove = []
+            for obj in bpy.context.scene.objects:
+                if obj.type == 'MESH' and obj != earth_sphere:
+                    obj_name_lower = obj.name.lower()
+                    if any(keyword in obj_name_lower for keyword in ['earth', 'planet', 'globe', 'world', 'clouds', 'atmo', 'sun']):
+                        objects_to_remove.append(obj)
+                        print(f"🗑️ Marking for removal: {obj.name}")
+            
+            # Remove the unwanted objects
+            for obj in objects_to_remove:
+                bpy.data.objects.remove(obj, do_unlink=True)
+                print(f"✅ Removed unwanted object: {obj.name}")
+                
+        except Exception as e:
+            print(f"⚠️ Could not append 'earth' object: {e}")
+            earth_sphere = None
         
         if earth_sphere:
             print(f"✅ Found imported Earth object: {earth_sphere.name}")
@@ -144,48 +142,19 @@ try:
             earth_sphere.hide_viewport = False
             print("✅ Earth visibility enabled for render")
         else:
-            print("⚠️ EarthSphere object not found, creating procedural Earth...")
-            # Fallback to procedural Earth
-            bpy.ops.mesh.primitive_ico_sphere_add(
-                subdivisions=4,
-                radius=25.0,
-                location=(0, 0, -50)
-            )
-            earth_sphere = bpy.context.active_object
-            earth_sphere.name = "EarthSphere"
-            
-            # Apply subdivision surface for ultra-smooth Earth
-            subdiv_mod = earth_sphere.modifiers.new(name="EarthSubdivision", type='SUBSURF')
-            subdiv_mod.levels = 2
-            subdiv_mod.render_levels = 3
-            
-            print("✅ Procedural Earth sphere created as fallback")
+            print("⚠️ No Earth object found in imported data")
+            earth_sphere = None
     else:
         print(f"⚠️ Earth blend file not found at: {earth_blend_path}")
-        print("🌍 Creating procedural Earth sphere...")
-        
-        # Fallback to procedural Earth
-        bpy.ops.mesh.primitive_ico_sphere_add(
-            subdivisions=4,
-            radius=25.0,
-            location=(0, 0, -50)
-        )
-        earth_sphere = bpy.context.active_object
-        earth_sphere.name = "EarthSphere"
-        
-        # Apply subdivision surface for ultra-smooth Earth
-        subdiv_mod = earth_sphere.modifiers.new(name="EarthSubdivision", type='SUBSURF')
-        subdiv_mod.levels = 2
-        subdiv_mod.render_levels = 3
-        
-        print("✅ Procedural Earth sphere created as fallback")
+        print("🌍 No Earth object will be created - using only earth.blend file")
+        earth_sphere = None
     
     # Check if Earth already has materials from import
-    if earth_sphere.data.materials and earth_sphere.data.materials[0]:
+    if earth_sphere and earth_sphere.data.materials and earth_sphere.data.materials[0]:
         print("✅ Earth object already has materials from import")
         earth_mat = earth_sphere.data.materials[0]
         print(f"🎨 Using existing material: {earth_mat.name}")
-    else:
+    elif earth_sphere:
         # Create professional Earth material
         print("🎨 Creating professional Earth material...")
         earth_mat = bpy.data.materials.new(name="ProfessionalEarthMaterial")
@@ -315,120 +284,61 @@ try:
         
         print("✅ Professional Earth material created")
     
-    # Create Earth atmosphere (optional glow effect)
-    print("🌫️ Creating Earth atmosphere...")
-    bpy.ops.mesh.primitive_ico_sphere_add(
-        subdivisions=3,
-        radius=26.0,  # Slightly larger than Earth
-        location=(0, 0, -50)
-    )
     
-    atmosphere = bpy.context.active_object
-    atmosphere.name = "EarthAtmosphere"
-    
-    # Create atmosphere material
-    atmosphere_mat = bpy.data.materials.new(name="EarthAtmosphereMaterial")
-    atmosphere.data.materials.append(atmosphere_mat)
-    atmosphere_mat.use_nodes = True
-    atmosphere_nodes = atmosphere_mat.node_tree.nodes
-    atmosphere_links = atmosphere_mat.node_tree.links
-    
-    # Clear default nodes
-    for node in atmosphere_nodes:
-        atmosphere_nodes.remove(node)
-    
-    # Create atmosphere nodes
-    atmosphere_output = atmosphere_nodes.new(type='ShaderNodeOutputMaterial')
-    atmosphere_emission = atmosphere_nodes.new(type='ShaderNodeEmission')
-    atmosphere_transparent = atmosphere_nodes.new(type='ShaderNodeBsdfTransparent')
-    atmosphere_mix = atmosphere_nodes.new(type='ShaderNodeMixShader')
-    atmosphere_fresnel = atmosphere_nodes.new(type='ShaderNodeFresnel')
-    
-    # Position nodes
-    atmosphere_fresnel.location = (-400, 0)
-    atmosphere_transparent.location = (-200, 100)
-    atmosphere_emission.location = (-200, -100)
-    atmosphere_mix.location = (0, 0)
-    atmosphere_output.location = (200, 0)
-    
-    # Configure atmosphere
-    atmosphere_emission.inputs["Color"].default_value = (0.3, 0.6, 1.0, 1.0)  # Blue atmosphere
-    atmosphere_emission.inputs["Strength"].default_value = 2.0
-    
-    # Connect atmosphere nodes
-    atmosphere_links.new(atmosphere_fresnel.outputs["Fac"], atmosphere_mix.inputs["Fac"])
-    atmosphere_links.new(atmosphere_transparent.outputs["BSDF"], atmosphere_mix.inputs[1])
-    atmosphere_links.new(atmosphere_emission.outputs["Emission"], atmosphere_mix.inputs[2])
-    atmosphere_links.new(atmosphere_mix.outputs["Shader"], atmosphere_output.inputs["Surface"])
-    
-    # Make atmosphere slightly transparent
-    atmosphere_mat.blend_method = 'BLEND'
-    
-    print("✅ Earth atmosphere created")
-    
-    # Create smooth rotation animation for Earth
-    print("🔄 Creating smooth Earth rotation animation...")
-    
-    # Create realistic Earth rotation
-    for frame in range(0, {total_frames} + 1, 5):  # Keyframe every 5 frames
-        scene.frame_set(frame)
-        t = frame / {fps}
+        # Create smooth rotation animation for Earth
+        print("🔄 Creating smooth Earth rotation animation...")
         
-        # Realistic Earth rotation (one full rotation every 60 seconds for visibility)
-        rotation_speed = 0.1  # radians per second
-        rotation_angle = t * rotation_speed
+        # Create realistic Earth rotation
+        for frame in range(0, {total_frames} + 1, 5):  # Keyframe every 5 frames
+            scene.frame_set(frame)
+            t = frame / {fps}
+            
+            # Realistic Earth rotation (one full rotation every 60 seconds for visibility)
+            rotation_speed = 0.1  # radians per second
+            rotation_angle = t * rotation_speed
+            
+            # Rotate around Z-axis (vertical axis) - Earth's rotation
+            earth_sphere.rotation_euler = (0, 0, rotation_angle)
+            earth_sphere.keyframe_insert(data_path="rotation_euler")
+            
         
-        # Rotate around Z-axis (vertical axis) - Earth's rotation
-        earth_sphere.rotation_euler = (0, 0, rotation_angle)
-        earth_sphere.keyframe_insert(data_path="rotation_euler")
+        # Apply smooth Bezier interpolation
+        if earth_sphere.animation_data and earth_sphere.animation_data.action:
+            for fcurve in earth_sphere.animation_data.action.fcurves:
+                for kf in fcurve.keyframe_points:
+                    kf.interpolation = 'BEZIER'
+                    kf.handle_left_type = 'AUTO_CLAMPED'
+                    kf.handle_right_type = 'AUTO_CLAMPED'
         
-        # Atmosphere rotates slightly slower for depth effect
-        atmosphere.rotation_euler = (0, 0, rotation_angle * 0.8)
-        atmosphere.keyframe_insert(data_path="rotation_euler")
+        
+        print("✅ Smooth Earth rotation animation created")
     
-    # Apply smooth Bezier interpolation
-    if earth_sphere.animation_data and earth_sphere.animation_data.action:
-        for fcurve in earth_sphere.animation_data.action.fcurves:
-            for kf in fcurve.keyframe_points:
-                kf.interpolation = 'BEZIER'
-                kf.handle_left_type = 'AUTO_CLAMPED'
-                kf.handle_right_type = 'AUTO_CLAMPED'
+        # Add professional lighting for Earth
+        print("💡 Setting up professional Earth lighting...")
+        
+        # Add rim light for Earth
+        bpy.ops.object.light_add(type='AREA', location=(30, -20, -40))
+        earth_rim_light = bpy.context.active_object
+        earth_rim_light.name = "EarthRimLight"
+        earth_rim_light.data.energy = 50.0
+        earth_rim_light.data.size = 5.0
+        earth_rim_light.data.color = (0.8, 0.9, 1.0)  # Cool white
+        
+        # Point rim light at Earth
+        earth_rim_light.rotation_euler = (math.radians(30), math.radians(45), 0)
+        
+        # Add fill light for Earth
+        bpy.ops.object.light_add(type='AREA', location=(-25, 15, -35))
+        earth_fill_light = bpy.context.active_object
+        earth_fill_light.name = "EarthFillLight"
+        earth_fill_light.data.energy = 25.0
+        earth_fill_light.data.size = 8.0
+        earth_fill_light.data.color = (0.6, 0.7, 0.9)  # Cool blue
+        
+        print("✅ Professional Earth lighting setup complete")
     
-    if atmosphere.animation_data and atmosphere.animation_data.action:
-        for fcurve in atmosphere.animation_data.action.fcurves:
-            for kf in fcurve.keyframe_points:
-                kf.interpolation = 'BEZIER'
-                kf.handle_left_type = 'AUTO_CLAMPED'
-                kf.handle_right_type = 'AUTO_CLAMPED'
-    
-    print("✅ Smooth Earth rotation animation created")
-    
-    # Add professional lighting for Earth
-    print("💡 Setting up professional Earth lighting...")
-    
-    # Add rim light for Earth
-    bpy.ops.object.light_add(type='AREA', location=(30, -20, -40))
-    earth_rim_light = bpy.context.active_object
-    earth_rim_light.name = "EarthRimLight"
-    earth_rim_light.data.energy = 50.0
-    earth_rim_light.data.size = 5.0
-    earth_rim_light.data.color = (0.8, 0.9, 1.0)  # Cool white
-    
-    # Point rim light at Earth
-    earth_rim_light.rotation_euler = (math.radians(30), math.radians(45), 0)
-    
-    # Add fill light for Earth
-    bpy.ops.object.light_add(type='AREA', location=(-25, 15, -35))
-    earth_fill_light = bpy.context.active_object
-    earth_fill_light.name = "EarthFillLight"
-    earth_fill_light.data.energy = 25.0
-    earth_fill_light.data.size = 8.0
-    earth_fill_light.data.color = (0.6, 0.7, 0.9)  # Cool blue
-    
-    print("✅ Professional Earth lighting setup complete")
-    
-    # Create deep space background using world shader
-    print("🌌 Creating deep space background...")
+    # Create pure black background using world shader
+    print("🌌 Creating pure black background...")
     world = bpy.context.scene.world
     world.use_nodes = True
     world_nodes = world.node_tree.nodes
@@ -438,44 +348,22 @@ try:
     for node in world_nodes:
         world_nodes.remove(node)
     
-    # Create deep space background nodes
+    # Create simple black background nodes
     bg_node = world_nodes.new(type='ShaderNodeBackground')
-    tex_coord = world_nodes.new(type='ShaderNodeTexCoord')
-    mapping = world_nodes.new(type='ShaderNodeMapping')
-    noise_texture = world_nodes.new(type='ShaderNodeTexNoise')
-    color_ramp = world_nodes.new(type='ShaderNodeValToRGB')
     output_node = world_nodes.new(type='ShaderNodeOutputWorld')
     
     # Position nodes
-    tex_coord.location = (-800, 0)
-    mapping.location = (-600, 0)
-    noise_texture.location = (-400, 0)
-    color_ramp.location = (-200, 0)
     bg_node.location = (0, 0)
     output_node.location = (200, 0)
     
-    # Configure noise texture for stars
-    noise_texture.inputs["Scale"].default_value = 50.0
-    noise_texture.inputs["Detail"].default_value = 15.0
-    noise_texture.inputs["Roughness"].default_value = 0.7
-    
-    # Configure color ramp for star field
-    color_ramp.color_ramp.elements[0].position = 0.0
-    color_ramp.color_ramp.elements[0].color = (0.0, 0.0, 0.1, 1.0)  # Deep space blue
-    color_ramp.color_ramp.elements[1].position = 1.0
-    color_ramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)  # Bright stars
+    # Set pure black color
+    bg_node.inputs["Color"].default_value = (0.0, 0.0, 0.0, 1.0)  # Pure black
+    bg_node.inputs["Strength"].default_value = 1.0
     
     # Connect nodes
-    world_links.new(tex_coord.outputs["Generated"], mapping.inputs["Vector"])
-    world_links.new(mapping.outputs["Vector"], noise_texture.inputs["Vector"])
-    world_links.new(noise_texture.outputs["Fac"], color_ramp.inputs["Fac"])
-    world_links.new(color_ramp.outputs["Color"], bg_node.inputs["Color"])
     world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
     
-    # Set background strength - higher value for better visibility
-    bg_node.inputs["Strength"].default_value = 3.0
-    
-    print("✅ Deep space background created")
+    print("✅ Pure black background created")
     print("✅ Professional 3D rotating Earth background complete!")
     
 except Exception as e:
@@ -1478,39 +1366,37 @@ try:
         rotation_speed = {rotation_speed}
         rotation_range = {rotation_range}
         
-        # Create smooth camera tilting animation
+        # Create smooth camera orbital rotation around the main object
         for frame in range(1, {total_frames} + 1, 5):  # Keyframe every 5 frames for smooth animation
             scene.frame_set(frame)
             t = frame / {fps}
             
-            # Calculate slow tilting motion
-            tilt_angle = math.sin(t * {tilt_speed}) * ({tilt_range_max} - {tilt_range_min}) / 2
-            tilt_angle = math.radians(tilt_angle)
+            # Define orbital parameters
+            orbital_radius = camera_distance  # Distance from center
+            orbital_height = camera_z  # Height above the object
+            orbital_speed = 0.1  # Slow rotation speed (radians per second)
             
-            # Calculate slow rotation motion
-            rotation_angle = math.cos(t * {rotation_speed} * 0.7) * ({rotation_range_max} - {rotation_range_min}) / 2
-            rotation_angle = math.radians(rotation_angle)
+            # Calculate orbital position
+            orbital_angle = t * orbital_speed
             
-            # Apply smooth camera tilting (X-axis rotation for tilting)
-            camera.rotation_euler.x = tilt_angle
+            # Calculate camera position in orbit
+            camera_x = orbital_radius * math.cos(orbital_angle)
+            camera_y = orbital_radius * math.sin(orbital_angle)
+            camera_z = orbital_height
             
-            # Apply smooth camera rotation (Z-axis rotation for slow rotation)
-            camera.rotation_euler.z = rotation_angle
+            # Set camera location
+            camera.location = (camera_x, camera_y, camera_z)
             
-            # Keep camera looking at the object while tilting
+            # Make camera look at the center object (0, 0, 0)
             camera_target = mathutils.Vector((0, 0, 0))
             camera_direction = camera_target - camera.location
-            base_rotation = camera_direction.to_track_quat('-Z', 'Y').to_euler()
-            
-            # Combine base rotation with animation
-            camera.rotation_euler.x = base_rotation.x + tilt_angle
-            camera.rotation_euler.y = base_rotation.y
-            camera.rotation_euler.z = base_rotation.z + rotation_angle
+            camera.rotation_euler = camera_direction.to_track_quat('-Z', 'Y').to_euler()
             
             # Insert keyframes for smooth animation
-            camera.rotation_euler.keyframe_insert(data_path="x", index=0)
-            camera.rotation_euler.keyframe_insert(data_path="y", index=1)
-            camera.rotation_euler.keyframe_insert(data_path="z", index=2)
+            camera.keyframe_insert(data_path="location")
+            camera.keyframe_insert(data_path="rotation_euler", index=0)
+            camera.keyframe_insert(data_path="rotation_euler", index=1)
+            camera.keyframe_insert(data_path="rotation_euler", index=2)
         
         # Apply smooth Bezier interpolation to camera animation
         if camera.animation_data and camera.animation_data.action:
@@ -1522,10 +1408,10 @@ try:
                     kf.handle_left[0] = kf.co[0] - 2.0
                     kf.handle_right[0] = kf.co[0] + 2.0
         
-        print(f"✅ Camera animation created - Slow tilting with speed: {tilt_speed}")
-        print(f"✅ Tilt range: {tilt_range_min}° to {tilt_range_max}°")
-        print(f"✅ Rotation speed: {rotation_speed}")
-        print(f"✅ Rotation range: {rotation_range_min}° to {rotation_range_max}°")
+        print(f"✅ Camera orbital animation created - Slow rotation around main object")
+        print(f"✅ Orbital radius: {orbital_radius}")
+        print(f"✅ Orbital height: {orbital_height}")
+        print(f"✅ Orbital speed: {orbital_speed} radians/second")
     else:
         print("📷 Camera animation disabled in configuration")
     
@@ -1540,30 +1426,21 @@ scene.cycles.max_bounces = {max_bounces}
 scene.cycles.use_denoising = {use_denoising}
 scene.cycles.use_adaptive_sampling = True
 
-# Background-specific quality settings to prevent pixelation
-print("🔍 DEBUG: Configuring background visibility settings...")
+# Background-specific quality settings for pure black background
+print("🔍 DEBUG: Configuring pure black background settings...")
 scene.world.use_nodes = True
 print(f"🔍 DEBUG: World nodes enabled: {scene.world.use_nodes}")
 
 if scene.world.node_tree:
     print(f"🔍 DEBUG: World has node tree with {len(scene.world.node_tree.nodes)} nodes")
-    # Find the background node and optimize it
+    # Find the background node and ensure it's pure black
     for node in scene.world.node_tree.nodes:
         print(f"🔍 DEBUG: Found node: {node.name} ({node.type})")
         if node.type == 'BACKGROUND':
-            # Increase background strength for better visibility
-            node.inputs["Strength"].default_value = 5.0
-            print(f"✅ DEBUG: Background node strength set to 5.0")
-        elif node.type == 'TEX_IMAGE':
-            # Ensure image texture uses highest quality settings
-            node.interpolation = 'Smart'
-            node.extension = 'EXTEND'
-            print(f"✅ DEBUG: Image texture optimized for quality")
-            # Ensure the image is not being scaled down too much
-            if hasattr(node, 'image') and node.image:
-                # Set image to use full resolution
-                node.image.use_fake_user = True  # Keep image in memory
-                print(f"✅ DEBUG: Image set to use full resolution")
+            # Ensure pure black background
+            node.inputs["Color"].default_value = (0.0, 0.0, 0.0, 1.0)
+            node.inputs["Strength"].default_value = 1.0
+            print(f"✅ DEBUG: Background node set to pure black")
 else:
     print("⚠️ DEBUG: World has no node tree!")
 
