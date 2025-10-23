@@ -85,6 +85,7 @@ class QualityConfig:
     samples: int
     max_bounces: int
     use_denoising: bool
+    use_adaptive_sampling: bool = True
 
 
 @dataclass
@@ -453,12 +454,12 @@ def get_default_config() -> Dict[str, Any]:
             "engine": "CYCLES"
         },
         "quality_levels": {
-            "ultra_fast": {"samples": 16, "max_bounces": 1, "use_denoising": False},
-            "lowest": {"samples": 16, "max_bounces": 1, "use_denoising": False},
-            "preview": {"samples": 32, "max_bounces": 3, "use_denoising": True},
-            "high": {"samples": 256, "max_bounces": 10, "use_denoising": True},
-            "cinematic": {"samples": 1024, "max_bounces": 16, "use_denoising": True},
-            "broadcast": {"samples": 2048, "max_bounces": 24, "use_denoising": True}
+            "ultra_fast": {"samples": 64, "max_bounces": 4, "use_denoising": True, "use_adaptive_sampling": True},
+            "lowest": {"samples": 32, "max_bounces": 2, "use_denoising": True, "use_adaptive_sampling": True},
+            "preview": {"samples": 64, "max_bounces": 4, "use_denoising": True, "use_adaptive_sampling": True},
+            "high": {"samples": 256, "max_bounces": 8, "use_denoising": True, "use_adaptive_sampling": True},
+            "cinematic": {"samples": 1024, "max_bounces": 12, "use_denoising": True, "use_adaptive_sampling": True},
+            "broadcast": {"samples": 2048, "max_bounces": 16, "use_denoising": True, "use_adaptive_sampling": True}
         },
         "morph_styles": {
             "flow": {

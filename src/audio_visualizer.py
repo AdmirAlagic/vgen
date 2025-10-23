@@ -13,8 +13,12 @@ Based on Polyfjord's "Making an Audio Visualizer in Blender 4.5" tutorial
 UPDATED: Now uses optimized smooth continuous animation system
 """
 
-from optimized_audio_visualizer import OptimizedAudioVisualizer
-from scene_config_loader import load_scene_config, SceneConfig
+try:
+    from .optimized_audio_visualizer import OptimizedAudioVisualizer
+    from .scene_config_loader import load_scene_config, SceneConfig
+except ImportError:
+    from optimized_audio_visualizer import OptimizedAudioVisualizer
+    from scene_config_loader import load_scene_config, SceneConfig
 from typing import Dict, Optional, Any
 
 class AudioVisualizer:
@@ -50,11 +54,11 @@ class AudioVisualizer:
         
         # GPU-optimized quality configurations
         self.quality_configs = {
-            'lowest': {'samples': 16, 'max_bounces': 1, 'use_denoising': False, 'adaptive_sampling': False},
-            'preview': {'samples': 32, 'max_bounces': 3, 'use_denoising': True, 'adaptive_sampling': True},
-            'high': {'samples': 256, 'max_bounces': 10, 'use_denoising': True, 'adaptive_sampling': True},
-            'cinematic': {'samples': 1024, 'max_bounces': 16, 'use_denoising': True, 'adaptive_sampling': True},
-            'broadcast': {'samples': 2048, 'max_bounces': 24, 'use_denoising': True, 'adaptive_sampling': True}
+            'lowest': {'samples': 32, 'max_bounces': 2, 'use_denoising': True, 'use_adaptive_sampling': True},
+            'preview': {'samples': 64, 'max_bounces': 4, 'use_denoising': True, 'use_adaptive_sampling': True},
+            'high': {'samples': 256, 'max_bounces': 8, 'use_denoising': True, 'use_adaptive_sampling': True},
+            'cinematic': {'samples': 1024, 'max_bounces': 12, 'use_denoising': True, 'use_adaptive_sampling': True},
+            'broadcast': {'samples': 2048, 'max_bounces': 16, 'use_denoising': True, 'use_adaptive_sampling': True}
         }
         
         self.config = self.quality_configs.get(quality_level, self.quality_configs['cinematic'])

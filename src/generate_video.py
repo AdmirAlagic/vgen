@@ -77,7 +77,7 @@ def create_blender_script(features: Dict, output_path: str, quality_mode: str = 
         from audio_visualizer import AudioVisualizer
         print("✅ Audio visualizer imported successfully")
     except ImportError as e:
-        print(f"❌ First import failed: {e}")
+        print(f"❌ First import failed: {{e}}")
         try:
             from .audio_visualizer import AudioVisualizer
             print("✅ Audio visualizer imported with relative import")
@@ -180,7 +180,7 @@ def run_blender_script(script_path: str) -> bool:
         print("❌ Enhanced Blender script timed out (10 minutes)")
         return False
     except Exception as e:
-        print(f"❌ Error running enhanced Blender script: {e}")
+        print(f"❌ Error running enhanced Blender script: {{e}}")
         return False
 
 def render_video(blend_path: str, output_path: str, quality_mode: str = 'balanced', audio_path: str = None, total_frames: int = 300) -> bool:
@@ -224,7 +224,7 @@ def render_video(blend_path: str, output_path: str, quality_mode: str = 'balance
         return _try_direct_mp4_render(blender_cmd, blend_path, output_path, quality_mode, audio_path, total_frames)
             
     except Exception as e:
-        print(f"❌ Error rendering video: {e}")
+        print(f"❌ Error rendering video: {{e}}")
         return False
 
 
@@ -550,6 +550,8 @@ print("✅ Direct MP4 render complete!")
             
     except Exception as e:
         print(f"❌ Direct MP4 rendering error: {e}")
+        print(f"❌ Error type: {type(e)}")
+        print(f"❌ Error details: {str(e)}")
         print("💡 The system is configured to render directly to MP4 without temporary PNG frames")
         return False
 
@@ -644,7 +646,7 @@ def main():
             sys.exit(1)
             
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"❌ Error: {{e}}")
         sys.exit(1)
 
 if __name__ == "__main__":

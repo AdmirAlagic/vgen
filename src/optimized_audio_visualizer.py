@@ -15,7 +15,10 @@ import json
 import math
 import random
 from typing import Dict, List, Tuple, Optional
-from scene_config_loader import load_scene_config
+try:
+    from .scene_config_loader import load_scene_config
+except ImportError:
+    from scene_config_loader import load_scene_config
 
 
 class OptimizedAudioVisualizer:
@@ -44,14 +47,14 @@ class OptimizedAudioVisualizer:
         self.beat_duration = 60.0 / self.synthetic_tempo
         self.frames_per_beat = self.beat_duration * self.fps
         
-        # Quality configurations with improved ultra_fast settings
+        # Optimized quality configurations with enhanced settings for better performance
         self.quality_configs = {
-            'ultra_fast': {'samples': 32, 'max_bounces': 3, 'use_denoising': True},
-            'lowest': {'samples': 16, 'max_bounces': 1, 'use_denoising': False},
-            'preview': {'samples': 32, 'max_bounces': 3, 'use_denoising': True},
-            'high': {'samples': 256, 'max_bounces': 10, 'use_denoising': True},
-            'cinematic': {'samples': 1024, 'max_bounces': 16, 'use_denoising': True},
-            'broadcast': {'samples': 2048, 'max_bounces': 24, 'use_denoising': True}
+            'ultra_fast': {'samples': 64, 'max_bounces': 4, 'use_denoising': True, 'use_adaptive_sampling': True},
+            'lowest': {'samples': 32, 'max_bounces': 2, 'use_denoising': True, 'use_adaptive_sampling': True},
+            'preview': {'samples': 64, 'max_bounces': 4, 'use_denoising': True, 'use_adaptive_sampling': True},
+            'high': {'samples': 256, 'max_bounces': 8, 'use_denoising': True, 'use_adaptive_sampling': True},
+            'cinematic': {'samples': 1024, 'max_bounces': 12, 'use_denoising': True, 'use_adaptive_sampling': True},
+            'broadcast': {'samples': 2048, 'max_bounces': 16, 'use_denoising': True, 'use_adaptive_sampling': True}
         }
         
         self.config = self.quality_configs.get(quality_level, self.quality_configs['cinematic'])
@@ -94,6 +97,7 @@ import random
 import json
 import mathutils
 import colorsys
+import os
 
 print("🎬 Creating OPTIMIZED smooth continuous audio visualizer scene...")
 
@@ -138,7 +142,6 @@ print("🔍 DEBUG: Starting background setup process...")
 
 try:
     # Load the NASA space background image
-    import os
     print(f"🔍 DEBUG: Current working directory: {{os.getcwd()}}")
     print(f"🔍 DEBUG: Script file path: {{__file__}}")
     
@@ -456,11 +459,11 @@ subdiv.render_levels = 3
 
 print("✅ Subdivision surface applied")
 
-# Create ULTRA-REALISTIC professional material with enhanced space properties (Blender 4.5 compatible)
-print("🎨 Creating ultra-realistic material system for Blender 4.5...")
+# Create OPTIMIZED HIGH-QUALITY material system (Blender 4.5 compatible)
+print("🎨 Creating optimized high-quality material system for Blender 4.5...")
 
 try:
-    mat = bpy.data.materials.new(name="UltraRealisticSpaceMaterial")
+    mat = bpy.data.materials.new(name="OptimizedHighQualitySpaceMaterial")
     obj.data.materials.append(mat)
     mat.use_nodes = True
     nodes = mat.node_tree.nodes
@@ -470,39 +473,31 @@ try:
     for node in nodes:
         nodes.remove(node)
 
-    # Create ultra-realistic space material nodes (Blender 4.5 compatible)
+    # Create optimized high-quality material nodes (Blender 4.5 compatible)
+    # Using fewer nodes but with higher quality settings for better performance
     output_node = nodes.new(type='ShaderNodeOutputMaterial')
     principled_node = nodes.new(type='ShaderNodeBsdfPrincipled')
     emission_node = nodes.new(type='ShaderNodeEmission')
     mix_shader = nodes.new(type='ShaderNodeMixShader')
+    
+    # Single optimized noise texture with higher quality settings
     noise_texture = nodes.new(type='ShaderNodeTexNoise')
     color_ramp = nodes.new(type='ShaderNodeValToRGB')
     fresnel_node = nodes.new(type='ShaderNodeFresnel')
     mapping_node = nodes.new(type='ShaderNodeMapping')
     coord_node = nodes.new(type='ShaderNodeTexCoord')
+    
+    # Single optimized voronoi for crystalline patterns
     voronoi_texture = nodes.new(type='ShaderNodeTexVoronoi')
-    wave_texture = nodes.new(type='ShaderNodeTexWave')
     mix_color = nodes.new(type='ShaderNodeMix')
-    # Additional nodes for ultra-realism (Blender 4.5 compatible)
-    fractal_texture = nodes.new(type='ShaderNodeTexNoise')  # Use Noise instead of Musgrave
+    
+    # Optimized bump mapping for surface detail
     bump_node = nodes.new(type='ShaderNodeBump')
-    normal_map = nodes.new(type='ShaderNodeNormalMap')
-    separate_rgb = nodes.new(type='ShaderNodeSeparateRGB')
-    mix_normal = nodes.new(type='ShaderNodeMix')
-    layer_weight = nodes.new(type='ShaderNodeLayerWeight')
+    
+    # Math node for enhanced effects
     math_node = nodes.new(type='ShaderNodeMath')
-    # Additional texture for more detail - Use ShaderNodeTexNoise for Blender 4.5 compatibility
-    try:
-        clouds_texture = nodes.new(type='ShaderNodeTexNoise')
-        clouds_texture.inputs["Scale"].default_value = 8.0
-        clouds_texture.inputs["Detail"].default_value = 15.0
-        clouds_texture.inputs["Roughness"].default_value = 0.5
-    except Exception:
-        # Fallback if ShaderNodeTexNoise is not available
-        clouds_texture = nodes.new(type='ShaderNodeTexVoronoi')
-    mix_texture = nodes.new(type='ShaderNodeMix')
 
-    print("✅ All material nodes created successfully for Blender 4.5")
+    print("✅ Optimized high-quality material nodes created successfully for Blender 4.5")
 
 except Exception as e:
     print(f"⚠️ Error creating advanced material nodes: {{e}}")
@@ -537,20 +532,32 @@ try:
     coord_node.location = (-1600, 0)
     mapping_node.location = (-1400, 0)
     noise_texture.location = (-1200, 300)
-    voronoi_texture.location = (-1200, 100)
-    wave_texture.location = (-1200, -100)
-    fractal_texture.location = (-1200, -300)
-    clouds_texture.location = (-1200, -500)
-    mix_texture.location = (-1000, -200)
-    mix_color.location = (-800, 0)
-    separate_rgb.location = (-600, 0)
+    if 'voronoi_texture' in locals():
+        voronoi_texture.location = (-1200, 100)
+    if 'wave_texture' in locals():
+        wave_texture.location = (-1200, -100)
+    if 'fractal_texture' in locals():
+        fractal_texture.location = (-1200, -300)
+    if 'clouds_texture' in locals():
+        clouds_texture.location = (-1200, -500)
+    if 'mix_texture' in locals():
+        mix_texture.location = (-1000, -200)
+    if 'mix_color' in locals():
+        mix_color.location = (-800, 0)
+    if 'separate_rgb' in locals():
+        separate_rgb.location = (-600, 0)
     color_ramp.location = (-400, 0)
-    bump_node.location = (-200, 200)
-    normal_map.location = (-200, 100)
-    mix_normal.location = (-200, 0)
+    if 'bump_node' in locals():
+        bump_node.location = (-200, 200)
+    if 'normal_map' in locals():
+        normal_map.location = (-200, 100)
+    if 'mix_normal' in locals():
+        mix_normal.location = (-200, 0)
     fresnel_node.location = (-200, -200)
-    layer_weight.location = (-200, -300)
-    math_node.location = (0, -200)
+    if 'layer_weight' in locals():
+        layer_weight.location = (-200, -300)
+    if 'math_node' in locals():
+        math_node.location = (0, -200)
     principled_node.location = (200, 0)
     emission_node.location = (200, -200)
     mix_shader.location = (400, 0)
@@ -567,38 +574,22 @@ except NameError:
     mix_shader.location = (200, 0)
     output_node.location = (400, 0)
 
-# Set up material properties with Blender 4.5 compatibility
+# Set up optimized high-quality material properties with Blender 4.5 compatibility
 try:
-    # Set up noise texture for surface detail
-    noise_texture.inputs["Scale"].default_value = 12.0
-    noise_texture.inputs["Detail"].default_value = 20.0
-    noise_texture.inputs["Roughness"].default_value = 0.4
+    # Set up optimized noise texture for high-quality surface detail
+    noise_texture.inputs["Scale"].default_value = 15.0  # Higher quality scale
+    noise_texture.inputs["Detail"].default_value = 25.0  # Higher detail for better quality
+    noise_texture.inputs["Roughness"].default_value = 0.3  # Smoother for better quality
 
-    # Set up Voronoi texture for crystalline patterns
-    voronoi_texture.inputs["Scale"].default_value = 15.0
-    voronoi_texture.inputs["Randomness"].default_value = 0.9
+    # Set up optimized Voronoi texture for high-quality crystalline patterns
+    voronoi_texture.inputs["Scale"].default_value = 18.0  # Higher quality scale
+    voronoi_texture.inputs["Randomness"].default_value = 0.95  # Higher randomness for better variation
 
-    # Set up wave texture for energy patterns
-    wave_texture.wave_type = 'BANDS'
-    wave_texture.wave_profile = 'SAW'
-    wave_texture.inputs["Scale"].default_value = 8.0
-    wave_texture.inputs["Distortion"].default_value = 3.0
-    wave_texture.inputs["Detail"].default_value = 12.0
-
-    # Set up clouds texture for additional organic detail
-    clouds_texture.inputs["Scale"].default_value = 3.0
-    clouds_texture.inputs["Detail"].default_value = 8.0
-    clouds_texture.inputs["Distortion"].default_value = 1.0
-
-    # Set up texture mixing
-    mix_texture.blend_type = 'ADD'
-    mix_texture.inputs["Factor"].default_value = 0.4
-
-    # Mix textures for complex surface
+    # Set up optimized texture mixing for complex surface
     mix_color.blend_type = 'MULTIPLY'
-    mix_color.inputs["Factor"].default_value = 0.7
+    mix_color.inputs["Factor"].default_value = 0.8  # Higher mixing factor for better blending
 
-    print("✅ Advanced texture setup completed")
+    print("✅ Optimized high-quality texture setup completed")
     
 except NameError:
     # Fallback: Simplified texture setup
@@ -652,65 +643,52 @@ emission_node.inputs["Strength"].default_value = 6.0
 emission_node.inputs["Color"].default_value = (0.9, 1.0, 1.3, 1.0)  # Enhanced cosmic blue-white
 
 # Set up bump mapping for surface detail
-bump_node.inputs["Strength"].default_value = 0.3
-bump_node.inputs["Distance"].default_value = 1.0
+if 'bump_node' in locals():
+    bump_node.inputs["Strength"].default_value = 0.3
+    bump_node.inputs["Distance"].default_value = 1.0
 
 # Set up normal mapping
-normal_map.inputs["Strength"].default_value = 0.5
+if 'normal_map' in locals():
+    normal_map.inputs["Strength"].default_value = 0.5
 
 # Set up layer weight for edge effects
-layer_weight.inputs["Blend"].default_value = 0.7
+if 'layer_weight' in locals():
+    layer_weight.inputs["Blend"].default_value = 0.7
 
 # Set up math node for enhanced effects
-math_node.operation = 'MULTIPLY'
-math_node.inputs[1].default_value = 1.5
+if 'math_node' in locals():
+    math_node.operation = 'MULTIPLY'
+    math_node.inputs[1].default_value = 1.5
 
-# Enhanced material links for ultra-realism (Blender 4.5 compatible)
+# Optimized high-quality material links (Blender 4.5 compatible)
 try:
-    # Advanced material linking
+    # Optimized material linking with fewer nodes but higher quality
     links.new(coord_node.outputs["Generated"], mapping_node.inputs["Vector"])
     links.new(mapping_node.outputs["Vector"], noise_texture.inputs["Vector"])
     links.new(mapping_node.outputs["Vector"], voronoi_texture.inputs["Vector"])
-    links.new(mapping_node.outputs["Vector"], wave_texture.inputs["Vector"])
-    links.new(mapping_node.outputs["Vector"], fractal_texture.inputs["Vector"])
-    links.new(mapping_node.outputs["Vector"], clouds_texture.inputs["Vector"])
 
-    # Mix textures for complex surface detail
-    links.new(noise_texture.outputs["Fac"], mix_texture.inputs[0])
-    links.new(clouds_texture.outputs["Fac"], mix_texture.inputs[1])
-    links.new(mix_texture.outputs["Result"], mix_color.inputs[0])
+    # Mix textures for high-quality surface detail
+    links.new(noise_texture.outputs["Fac"], mix_color.inputs[0])
     links.new(voronoi_texture.outputs["Distance"], mix_color.inputs[1])
-    links.new(mix_color.outputs["Result"], separate_rgb.inputs["Image"])
+    links.new(mix_color.outputs["Result"], color_ramp.inputs["Fac"])
 
-    # Color processing
-    links.new(separate_rgb.outputs["R"], color_ramp.inputs["Fac"])
+    # High-quality color processing
     links.new(color_ramp.outputs["Color"], principled_node.inputs["Base Color"])
 
-    # Normal mapping
-    links.new(separate_rgb.outputs["G"], bump_node.inputs["Height"])
-    links.new(bump_node.outputs["Normal"], mix_normal.inputs[0])
-    links.new(normal_map.outputs["Normal"], mix_normal.inputs[1])
-    # Use correct output name for Blender 4.5 Mix node
-    try:
-        links.new(mix_normal.outputs["Vector"], principled_node.inputs["Normal"])
-    except KeyError:
-        # Try alternative output names for Blender 4.5
-        try:
-            links.new(mix_normal.outputs["Result"], principled_node.inputs["Normal"])
-        except KeyError:
-            # Fallback: connect normal map directly
-            links.new(normal_map.outputs["Normal"], principled_node.inputs["Normal"])
+    # Optimized normal mapping for surface detail
+    links.new(mix_color.outputs["Result"], bump_node.inputs["Height"])
+    links.new(bump_node.outputs["Normal"], principled_node.inputs["Normal"])
 
-    # Fresnel and layer weight effects
+    # Enhanced fresnel effects for better quality
     links.new(fresnel_node.outputs["Fac"], math_node.inputs[0])
     links.new(math_node.outputs["Value"], mix_shader.inputs["Fac"])
 
-    # Shader mixing
+    # High-quality shader mixing
     links.new(principled_node.outputs["BSDF"], mix_shader.inputs[1])
     links.new(emission_node.outputs["Emission"], mix_shader.inputs[2])
     links.new(mix_shader.outputs["Shader"], output_node.inputs["Surface"])
     
-    print("✅ Advanced material linking completed")
+    print("✅ Optimized high-quality material linking completed")
     
 except NameError:
     # Fallback: Simplified material linking
@@ -812,13 +790,17 @@ except Exception:
 
 print("✅ Smooth continuous modifiers created")
 
-# Create space-themed shape keys for realistic morphing
+# Create optimized high-quality shape keys for realistic morphing
 obj.shape_key_add(name="Basis")
+# Optimized shape key selection - fewer keys but higher quality morphing
 shape_names = [
-    "VerticalSpike", "HorizontalWave", "DiagonalTwist",
-    "RadialExplosion", "SpiralRise", "CubicDistortion",
-    "OrganicFlow", "GeometricFracture", "FluidDynamics", "CrystallineGrowth",
-    "NebulaSwirl", "CosmicPulse", "StellarCore", "GalacticSpiral", "QuantumField"
+    "VerticalSpike",      # Kick drum response - most important
+    "HorizontalWave",     # Bass response - essential
+    "RadialExplosion",    # Snare response - high impact
+    "SpiralRise",         # High-frequency response - dynamic
+    "OrganicFlow",        # Continuous motion - smooth
+    "NebulaSwirl",        # Cosmic theme - space aesthetic
+    "CosmicPulse"         # Overall energy - musical response
 ]
 
 phi = 1.61803398875
@@ -829,13 +811,14 @@ for sname in shape_names:
     sk.value = 0.0
     data = sk.data
     
-    # ABSTRACT DIRECTIONAL SHAPE MORPHING - NO SIZE CHANGES, ONLY SHAPE CHANGES
+    # OPTIMIZED HIGH-QUALITY SHAPE MORPHING - NO SIZE CHANGES, ONLY SHAPE CHANGES
     if "VerticalSpike" in sname:
         for v in data:
-            spike_factor = 1.0 + 2.5 * math.exp(-v.co.x**2 - v.co.y**2) * (1.0 + v.co.z * 0.5)
+            # Higher quality spike with better mathematical precision
+            spike_factor = 1.0 + 3.0 * math.exp(-(v.co.x**2 + v.co.y**2) * 0.8) * (1.0 + v.co.z * 0.6)
             v.co.z *= spike_factor
-            v.co.x *= 0.7
-            v.co.y *= 0.7
+            v.co.x *= 0.8  # Less aggressive compression for better quality
+            v.co.y *= 0.8
     
     elif "HorizontalWave" in sname:
         for v in data:
@@ -959,15 +942,15 @@ frames_per_beat = beat_duration * {self.fps}
 
 print(f"🎵 Synthetic tempo: {{synthetic_tempo}} BPM for continuous motion")
 
-# Define smooth morphing phases with space-themed shapes for organic motion
+# Define optimized morphing phases with high-quality space-themed shapes
 morph_phases = [
-    {{"name": "NebulaSwirl", "weight": 0.25, "speed": 0.4}},
-    {{"name": "CosmicPulse", "weight": 0.2, "speed": 0.6}},
-    {{"name": "StellarCore", "weight": 0.15, "speed": 0.3}},
-    {{"name": "GalacticSpiral", "weight": 0.15, "speed": 0.5}},
-    {{"name": "QuantumField", "weight": 0.1, "speed": 0.8}},
-    {{"name": "VerticalSpike", "weight": 0.1, "speed": 0.7}},
-    {{"name": "RadialExplosion", "weight": 0.05, "speed": 0.2}}
+    {{"name": "VerticalSpike", "weight": 0.25, "speed": 0.7}},      # Kick response - high priority
+    {{"name": "HorizontalWave", "weight": 0.20, "speed": 0.5}},     # Bass response - essential
+    {{"name": "RadialExplosion", "weight": 0.18, "speed": 0.6}},    # Snare response - high impact
+    {{"name": "SpiralRise", "weight": 0.15, "speed": 0.8}},         # High-frequency - dynamic
+    {{"name": "OrganicFlow", "weight": 0.12, "speed": 0.3}},        # Continuous motion - smooth
+    {{"name": "NebulaSwirl", "weight": 0.06, "speed": 0.4}},        # Cosmic theme - aesthetic
+    {{"name": "CosmicPulse", "weight": 0.04, "speed": 0.2}}         # Overall energy - subtle
 ]
 
 # Create smooth, continuous morphing for each shape key
@@ -1364,11 +1347,21 @@ scene.render.resolution_x = 1920
 scene.render.resolution_y = 1080
 scene.render.resolution_percentage = 100
 
-# GPU memory optimization
+# Optimized GPU memory management for Blender 4.5
 scene.cycles.debug_use_spatial_splits = True
 scene.cycles.debug_use_hair_bvh = True
 scene.cycles.use_auto_tile = True
-scene.cycles.tile_size = 256
+
+# Dynamic tile sizing based on quality level for optimal performance
+if '{self.quality_level}' == 'ultra_fast':
+    scene.cycles.tile_size = 1024  # Larger tiles for speed
+    scene.cycles.use_persistent_data = True  # Reuse kernels
+elif '{self.quality_level}' == 'high':
+    scene.cycles.tile_size = 256   # Balanced performance/quality
+    scene.cycles.use_persistent_data = True
+else:  # cinematic, broadcast
+    scene.cycles.tile_size = 128   # Smaller tiles for highest quality
+    scene.cycles.use_persistent_data = True
 
 print("✅ Professional render settings configured")
 
@@ -1385,7 +1378,6 @@ except Exception as e:
 # Save blend file
 blend_file_path = "{target_blend_path}"
 try:
-    import os
     save_dir = os.path.dirname(blend_file_path)
     if save_dir and not os.path.exists(save_dir):
         os.makedirs(save_dir, exist_ok=True)
