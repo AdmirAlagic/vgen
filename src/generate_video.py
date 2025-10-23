@@ -61,60 +61,58 @@ def create_enhanced_blender_script(features: Dict, output_path: str, quality_mod
     return create_blender_script(features, output_path, quality_mode)
 
 def create_blender_script(features: Dict, output_path: str, quality_mode: str = 'high') -> str:
-    """Create POLYFJORD-STYLE Blender script with smooth shape morphing and professional quality."""
-    print("🎬 Creating POLYFJORD-STYLE professional audio visualizer script")
+    """Create ENHANCED DRAMATIC Blender script with ultra-responsive shape morphing and professional quality."""
+    print("🎬 Creating ENHANCED DRAMATIC professional audio visualizer script")
     
     # Create temp directory if it doesn't exist
     temp_dir = Path(__file__).parent.parent / "output" / "temp"
     temp_dir.mkdir(parents=True, exist_ok=True)
     
-    # Import the audio visualizer
+    # Import the ENHANCED optimized audio visualizer
     print(f"🔍 DEBUG: Current working directory: {os.getcwd()}")
     print(f"🔍 DEBUG: Python path: {sys.path}")
-    print(f"🔍 DEBUG: Looking for audio_visualizer in: {Path(__file__).parent}")
+    print(f"🔍 DEBUG: Looking for optimized_audio_visualizer in: {Path(__file__).parent}")
     
     try:
-        from audio_visualizer import AudioVisualizer
-        print("✅ Audio visualizer imported successfully")
+        from optimized_audio_visualizer import OptimizedAudioVisualizer
+        print("✅ ENHANCED optimized audio visualizer imported successfully")
     except ImportError as e:
-        print(f"❌ First import failed: {{e}}")
+        print(f"❌ First import failed: {e}")
         try:
-            from .audio_visualizer import AudioVisualizer
-            print("✅ Audio visualizer imported with relative import")
+            from .optimized_audio_visualizer import OptimizedAudioVisualizer
+            print("✅ ENHANCED optimized audio visualizer imported with relative import")
         except ImportError as e2:
             print(f"❌ Second import failed: {e2}")
-            print("❌ Audio visualizer not found. Please check src/audio_visualizer.py")
+            print("❌ ENHANCED optimized audio visualizer not found. Please check src/optimized_audio_visualizer.py")
             sys.exit(1)
     
-    # Map quality modes to Polyfjord quality levels
+    # Map quality modes to enhanced quality levels
     quality_mapping = {
-        'ultra_fast': 'lowest',   # Lowest possible quality for maximum speed
-        'fast': 'preview',        # Preview quality
-        'balanced': 'high',       # High quality
-        'high': 'cinematic',     # Cinematic quality
-        'ultra': 'broadcast'     # Broadcast quality
+        'ultra_fast': 'ultra_fast',   # Ultra fast with enhanced settings
+        'fast': 'preview',            # Preview quality
+        'balanced': 'high',           # High quality
+        'high': 'cinematic',         # Cinematic quality
+        'ultra': 'broadcast'         # Broadcast quality
     }
     
     quality_level = quality_mapping.get(quality_mode, 'cinematic')
-    # Allow morph style via quality_mode suffix: e.g., 'balanced:impact' or 'high:flow'
-    morph_style = 'flow'
-    if isinstance(quality_mode, str) and ':' in quality_mode:
-        parts = quality_mode.split(':', 1)
-        quality_mode = parts[0]
-        morph_style = parts[1]
-    visualizer = AudioVisualizer(features, quality_level, morph_style)
+    # Enhanced morph style for dramatic responsiveness
+    morph_style = 'dramatic'  # Use dramatic morphing for better music response
     
-    # Generate Polyfjord-style script
-    script_path = temp_dir / "polyfjord_style_scene.py"
+    # Create enhanced visualizer with dramatic settings
+    visualizer = OptimizedAudioVisualizer(features, quality_level, morph_style)
+    
+    # Generate enhanced script
+    script_path = temp_dir / "enhanced_dramatic_scene.py"
     blend_path = temp_dir / "scene.blend"
     
-    # Create the scene script
-    saved_script_path = visualizer.create_polyfjord_style_scene(str(script_path), str(blend_path))
+    # Create the enhanced scene script
+    saved_script_path = visualizer.save_script(str(script_path), blend_path=str(blend_path))
     
-    print(f"✅ POLYFJORD-STYLE professional audio visualizer script created: {saved_script_path}")
+    print(f"✅ ENHANCED DRAMATIC professional audio visualizer script created: {saved_script_path}")
     print(f"🎬 Blend file will be saved to: {blend_path}")
-    print("🚀 Features: SMOOTH Shape Morphing | PROFESSIONAL Colors | NO Position Changes")
-    print("🎵 Polyfjord Features: Frequency-specific responses, Professional materials, Commercial quality")
+    print("🚀 Features: DRAMATIC Shape Morphing | ULTRA-RESPONSIVE Music | ENHANCED Animations")
+    print("🎵 Enhanced Features: Dramatic audio responsiveness, Ultra-responsive shape changes, Smooth animations")
     return saved_script_path
 
 def run_blender_script(script_path: str) -> bool:
@@ -180,7 +178,7 @@ def run_blender_script(script_path: str) -> bool:
         print("❌ Enhanced Blender script timed out (10 minutes)")
         return False
     except Exception as e:
-        print(f"❌ Error running enhanced Blender script: {{e}}")
+        print(f"❌ Error running enhanced Blender script: {e}")
         return False
 
 def render_video(blend_path: str, output_path: str, quality_mode: str = 'balanced', audio_path: str = None, total_frames: int = 300) -> bool:
@@ -224,7 +222,7 @@ def render_video(blend_path: str, output_path: str, quality_mode: str = 'balance
         return _try_direct_mp4_render(blender_cmd, blend_path, output_path, quality_mode, audio_path, total_frames)
             
     except Exception as e:
-        print(f"❌ Error rendering video: {{e}}")
+        print(f"❌ Error rendering video: {e}")
         return False
 
 
@@ -247,13 +245,13 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
         # Create a Python script for direct MP4 rendering with audio
         audio_script_section = ""
         if audio_path and os.path.exists(audio_path):
-            audio_script_section = '''
+            audio_script_section = f'''
 # Add audio to the scene
 import bpy
 import os
 
 # Load audio file
-audio_filepath = "{}"
+audio_filepath = "{audio_path}"
 if os.path.exists(audio_filepath):
     try:
         # Add sound strip to sequencer
@@ -279,7 +277,7 @@ if os.path.exists(audio_filepath):
         print("Continuing without audio...")
 else:
     print(f"⚠️  Audio file not found: {{audio_filepath}}")
-'''.format(audio_path)
+'''
         
         render_script = f'''
 import bpy
@@ -313,10 +311,7 @@ try:
                             material.node_tree.links.remove(link)
                 except Exception as e:
                     print(f"⚠️  Error checking link: {{e}}")
-                    try:
-                        material.node_tree.links.remove(link)
-                    except:
-                        pass
+                    pass
     print("✅ Shader validation complete")
 except Exception as e:
     print(f"⚠️  Shader validation error: {{e}}")
@@ -561,12 +556,12 @@ def main():
     """Main function."""
     if len(sys.argv) < 2:
         print("Usage: python generate_video.py <audio_file> [output_name] [quality_mode]")
-        print("\n🎨 POLYFJORD-STYLE AUDIO VISUALIZER:")
-        print("  - SMOOTH shape morphing (NO position changes)")
-        print("  - PROFESSIONAL color transitions")
-        print("  - FREQUENCY-SPECIFIC responses")
+        print("\n🎨 ENHANCED DRAMATIC AUDIO VISUALIZER:")
+        print("  - DRAMATIC shape morphing with ultra-responsive music tracking")
+        print("  - ULTRA-RESPONSIVE audio analysis with enhanced frequency bands")
+        print("  - SMOOTH animations with dramatic interpolation")
+        print("  - ENHANCED transient detection for better music responsiveness")
         print("  - COMMERCIAL-GRADE materials and lighting")
-        print("  - GEOMETRY NODES integration")
         print("\nGPU-optimized quality modes:")
         print("  ultra_fast - 720p, 32 samples, IMPROVED settings for better quality")
         print("  fast       - 1080p, 64 samples, GPU-accelerated quick rendering")
@@ -589,13 +584,13 @@ def main():
         print(f"Valid modes: {', '.join(valid_modes)}")
         sys.exit(1)
     
-    print("🎬 GPU-OPTIMIZED POLYFJORD-STYLE AUDIO-REACTIVE VIDEO GENERATOR")
+    print("🎬 ENHANCED DRAMATIC AUDIO-REACTIVE VIDEO GENERATOR")
     print("=" * 70)
     print(f"🎵 Audio: {audio_file}")
     print(f"📹 Output: {output_name}")
     print(f"⚡ Quality: {quality_mode.upper()}")
-    print("🚀 Features: SMOOTH Shape Morphing | PROFESSIONAL Colors | NO Position Changes")
-    print("🎵 Polyfjord Features: Frequency-specific responses, Professional materials, Commercial quality")
+    print("🚀 Features: DRAMATIC Shape Morphing | ULTRA-RESPONSIVE Music | ENHANCED Animations")
+    print("🎵 Enhanced Features: Dramatic audio responsiveness, Ultra-responsive shape changes, Smooth animations")
     print("⚡ GPU Optimizations: Metal/CUDA acceleration, Optimized Cycles, Reduced CPU overhead")
     print("=" * 70)
     
@@ -633,20 +628,20 @@ def main():
                 print(f"⚡ Using specified quality mode: {quality_mode.upper()} (duration: {duration_minutes:.1f} min)")
             
             if render_video(str(blend_path), str(video_path), quality_mode, audio_file, features['total_frames']):
-                print(f"\n🎉 SUCCESS! GPU-optimized Polyfjord-style video created: {video_path}")
-                print("🚀 Features: SMOOTH Shape Morphing, PROFESSIONAL Colors, NO Position Changes")
-                print("🎵 Polyfjord Features: Frequency-specific responses, Professional materials, Commercial quality")
+                print(f"\n🎉 SUCCESS! ENHANCED DRAMATIC video created: {video_path}")
+                print("🚀 Features: DRAMATIC Shape Morphing, ULTRA-RESPONSIVE Music, ENHANCED Animations")
+                print("🎵 Enhanced Features: Dramatic audio responsiveness, Ultra-responsive shape changes, Smooth animations")
                 print(f"⚡ Performance: GPU-accelerated rendering, Optimized Cycles settings, Reduced CPU overhead")
                 print("🎵 Audio: Original audio file included in video")
             else:
-                print("\n⚠️  Polyfjord-style scene created but video render failed")
+                print("\n⚠️  Enhanced dramatic scene created but video render failed")
                 print(f"📁 Blend file available: {blend_path}")
         else:
             print("❌ Polyfjord-style blend file not found")
             sys.exit(1)
             
     except Exception as e:
-        print(f"❌ Error: {{e}}")
+        print(f"❌ Error: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

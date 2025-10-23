@@ -183,27 +183,36 @@ class EnhancedAudioAnalyzer:
             # Extract energy for this band with enhanced weighting
             band_energy = np.sum(magnitude[freq_mask, :], axis=0)
             
-            # Apply frequency-dependent weighting for better music response
+            # Apply frequency-dependent weighting for better music response with DRAMATIC amplification
             if band_name in ['kick', 'sub_bass']:
-                # Boost low frequencies for better kick response
-                band_energy *= 1.5
+                # Boost low frequencies for better kick response with DRAMATIC amplification
+                band_energy *= 3.0  # Increased from 1.5 for more dramatic response
             elif band_name in ['vocal', 'high_mid']:
-                # Boost vocal frequencies for better vocal tracking
-                band_energy *= 1.3
+                # Boost vocal frequencies for better vocal tracking with DRAMATIC amplification
+                band_energy *= 2.5  # Increased from 1.3 for more dramatic response
             elif band_name in ['hihat', 'presence', 'brilliance']:
-                # Boost high frequencies for better detail response
-                band_energy *= 1.2
+                # Boost high frequencies for better detail response with DRAMATIC amplification
+                band_energy *= 2.2  # Increased from 1.2 for more dramatic response
+            elif band_name in ['snare', 'mid']:
+                # Boost mid frequencies for snare response with DRAMATIC amplification
+                band_energy *= 2.8  # New dramatic amplification for snare
+            elif band_name in ['bass', 'mid_bass']:
+                # Boost bass frequencies with DRAMATIC amplification
+                band_energy *= 2.6  # New dramatic amplification for bass
             
-            # Normalize to 0-1 range with dynamic range compression
+            # Apply DRAMATIC dynamic range compression for more responsive animation
             if np.max(band_energy) > 0:
-                # Apply gentle compression for more consistent response
-                band_energy = np.power(band_energy / np.max(band_energy), 0.8)
+                # Apply more aggressive compression for more dramatic response
+                band_energy = np.power(band_energy / np.max(band_energy), 0.6)  # Changed from 0.8 to 0.6
             
-            # Apply enhanced smoothing for more organic motion
-            band_energy = self._smooth_signal(band_energy, window_size=5)
+            # Apply ENHANCED smoothing for more organic motion with better responsiveness
+            band_energy = self._smooth_signal(band_energy, window_size=3)  # Reduced from 5 for more responsiveness
             
-            # Apply additional musical responsiveness smoothing
+            # Apply additional musical responsiveness smoothing with DRAMATIC enhancements
             band_energy = self._apply_musical_smoothing(band_energy, band_name)
+            
+            # Apply DRAMATIC transient enhancement for better music responsiveness
+            band_energy = self._apply_transient_enhancement(band_energy, band_name)
             
             self.features[f'{band_name}_energy'] = band_energy.tolist()
     
@@ -606,97 +615,70 @@ class EnhancedAudioAnalyzer:
     def _generate_shape_key_mappings(self):
         """Generate specific mappings for each shape key with enhanced audio responsiveness."""
         
-        # Enhanced shape key mappings with more sophisticated audio analysis
+        # ENHANCED DRAMATIC shape key mappings with ULTRA-RESPONSIVE audio analysis
         shape_key_mappings = {
-            'GoldenSpiral': {
+            'VerticalSpike': {
                 'primary': 'kick_energy',
                 'secondary': 'sub_bass_energy',
                 'tertiary': 'bass_energy',
                 'modifier': 'beat_strength',
-                'range': (-2.0, 2.0),
-                'sensitivity': 1.6,
+                'range': (-4.0, 4.0),  # Increased range for more dramatic changes
+                'sensitivity': 0.8,    # Lower sensitivity for more dramatic response
                 'response_type': 'punchy'
             },
-            'FibonacciWave': {
+            'HorizontalWave': {
                 'primary': 'snare_energy',
                 'secondary': 'mid_energy',
                 'tertiary': 'spectral_contrast',
                 'modifier': 'onset_strength',
-                'range': (-2.0, 2.0),
-                'sensitivity': 1.3,
+                'range': (-4.0, 4.0),  # Increased range for more dramatic changes
+                'sensitivity': 0.7,    # Lower sensitivity for more dramatic response
                 'response_type': 'rhythmic'
             },
-            'DivineProportion': {
+            'RadialExplosion': {
                 'primary': 'vocal_energy',
                 'secondary': 'high_mid_energy',
                 'tertiary': 'spectral_centroid',
                 'modifier': 'spectral_flux',
-                'range': (-2.0, 2.0),
-                'sensitivity': 1.1,
-                'response_type': 'flowing'
+                'range': (-5.0, 5.0),  # Even larger range for explosion effect
+                'sensitivity': 0.6,    # Very low sensitivity for dramatic explosions
+                'response_type': 'dynamic'
             },
-            'GoldenBreath': {
+            'SpiralRise': {
                 'primary': 'bass_energy',
                 'secondary': 'mid_bass_energy',
                 'tertiary': 'kick_energy',
                 'modifier': 'beat_strength',
-                'range': (-2.0, 2.0),
-                'sensitivity': 1.4,
+                'range': (-3.5, 3.5),  # Increased range for spiral effects
+                'sensitivity': 0.9,    # Lower sensitivity for more dramatic spirals
                 'response_type': 'pulsing'
             },
-            'HarmonicPulse': {
+            'OrganicFlow': {
                 'primary': 'hihat_energy',
                 'secondary': 'presence_energy',
                 'tertiary': 'air_energy',
                 'modifier': 'spectral_rolloff',
-                'range': (-2.0, 2.0),
-                'sensitivity': 0.9,
+                'range': (-3.0, 3.0),  # Increased range for organic movement
+                'sensitivity': 0.8,    # Lower sensitivity for more dramatic flow
                 'response_type': 'sparkly'
             },
-            'SacredGeometry': {
+            'NebulaSwirl': {
                 'primary': 'snare_energy',
                 'secondary': 'low_mid_energy',
                 'tertiary': 'spectral_contrast',
                 'modifier': 'onset_strength',
-                'range': (-2.0, 2.0),
-                'sensitivity': 1.2,
+                'range': (-4.5, 4.5),  # Large range for nebula effects
+                'sensitivity': 0.7,    # Lower sensitivity for dramatic swirls
                 'response_type': 'crisp'
             },
-            'CosmicDance': {
+            'CosmicPulse': {
                 'primary': 'rms_energy',
                 'secondary': 'mid_energy',
                 'tertiary': 'spectral_flux',
                 'modifier': 'beat_strength',
-                'range': (-2.0, 2.0),
-                'sensitivity': 1.5,
+                'range': (-5.0, 5.0),  # Maximum range for cosmic effects
+                'sensitivity': 0.5,    # Very low sensitivity for dramatic cosmic pulses
                 'response_type': 'dynamic'
-            },
-            'EtherealFlow': {
-                'primary': 'vocal_energy',
-                'secondary': 'high_mid_energy',
-                'tertiary': 'spectral_centroid',
-                'modifier': 'spectral_rolloff',
-                'range': (-2.0, 2.0),
-                'sensitivity': 1.0,
-                'response_type': 'organic'
-            },
-            'CelestialRhythm': {
-                'primary': 'bass_energy',
-                'secondary': 'mid_bass_energy',
-                'tertiary': 'kick_energy',
-                'modifier': 'beat_strength',
-                'range': (-2.0, 2.0),
-                'sensitivity': 1.3,
-                'response_type': 'deep'
-            },
-            'UniversalHarmony': {
-                'primary': 'hihat_energy',
-                'secondary': 'brilliance_energy',
-                'tertiary': 'air_energy',
-                'modifier': 'spectral_flux',
-                'range': (-2.0, 2.0),
-                'sensitivity': 0.8,
-                'response_type': 'ethereal'
             }
         }
         
@@ -916,62 +898,147 @@ class EnhancedAudioAnalyzer:
         
         return envelope_smoothed
     
+    def _apply_transient_enhancement(self, signal: np.ndarray, band_name: str) -> np.ndarray:
+        """Apply dramatic transient enhancement for better music responsiveness."""
+        if len(signal) < 3:
+            return signal
+        
+        enhanced_signal = signal.copy()
+        
+        # Different transient enhancement strategies based on frequency band
+        if band_name in ['kick', 'sub_bass']:
+            # Low frequencies: Dramatic kick enhancement
+            for i in range(1, len(enhanced_signal) - 1):
+                # Detect transients (sudden increases)
+                if enhanced_signal[i] > enhanced_signal[i-1] * 1.2:
+                    # Apply dramatic boost to transients
+                    enhancement_factor = 2.0
+                    enhanced_signal[i] *= enhancement_factor
+                    # Apply slight decay to following frames for smoother transition
+                    if i + 1 < len(enhanced_signal):
+                        enhanced_signal[i + 1] *= 1.5
+        
+        elif band_name in ['snare', 'mid']:
+            # Mid frequencies: Sharp snare enhancement
+            for i in range(1, len(enhanced_signal) - 1):
+                if enhanced_signal[i] > enhanced_signal[i-1] * 1.15:
+                    enhancement_factor = 1.8
+                    enhanced_signal[i] *= enhancement_factor
+                    if i + 1 < len(enhanced_signal):
+                        enhanced_signal[i + 1] *= 1.3
+        
+        elif band_name in ['hihat', 'presence', 'brilliance']:
+            # High frequencies: Crisp detail enhancement
+            for i in range(1, len(enhanced_signal) - 1):
+                if enhanced_signal[i] > enhanced_signal[i-1] * 1.1:
+                    enhancement_factor = 1.6
+                    enhanced_signal[i] *= enhancement_factor
+                    if i + 1 < len(enhanced_signal):
+                        enhanced_signal[i + 1] *= 1.2
+        
+        elif band_name in ['vocal', 'high_mid']:
+            # Vocal frequencies: Dynamic vocal enhancement
+            for i in range(1, len(enhanced_signal) - 1):
+                if enhanced_signal[i] > enhanced_signal[i-1] * 1.12:
+                    enhancement_factor = 1.7
+                    enhanced_signal[i] *= enhancement_factor
+                    if i + 1 < len(enhanced_signal):
+                        enhanced_signal[i + 1] *= 1.25
+        
+        else:
+            # Default enhancement for other bands
+            for i in range(1, len(enhanced_signal) - 1):
+                if enhanced_signal[i] > enhanced_signal[i-1] * 1.1:
+                    enhancement_factor = 1.5
+                    enhanced_signal[i] *= enhancement_factor
+                    if i + 1 < len(enhanced_signal):
+                        enhanced_signal[i + 1] *= 1.2
+        
+        # Ensure values stay within reasonable bounds
+        enhanced_signal = np.clip(enhanced_signal, 0.0, 1.0)
+        
+        return enhanced_signal
+    
     def _apply_response_type_processing(self, value: float, response_type: str) -> float:
-        """Apply response type specific processing for enhanced musical responsiveness."""
+        """Apply DRAMATIC response type specific processing for enhanced musical responsiveness."""
         
         if response_type == 'punchy':
-            # Apply transient enhancement for punchy response
-            if value > 0.5:
-                # Boost high values for more dramatic response
-                value = value ** 0.7
+            # Apply DRAMATIC transient enhancement for punchy response
+            if value > 0.3:  # Lowered threshold for more responsive punch
+                # Apply DRAMATIC boost to high values
+                value = value ** 0.5  # More dramatic curve
+                value *= 1.5  # Additional amplification
             else:
-                # Smooth low values
-                value = value ** 1.2
+                # Smooth low values but still responsive
+                value = value ** 1.0
                 
         elif response_type == 'flowing':
-            # Apply smooth curve for flowing response
-            value = value ** 0.9
+            # Apply smooth curve for flowing response with enhanced responsiveness
+            value = value ** 0.7  # More dramatic curve
+            value *= 1.3  # Additional amplification
             
         elif response_type == 'sparkly':
-            # Apply high-frequency emphasis for sparkly response
-            value = value ** 0.8
+            # Apply DRAMATIC high-frequency emphasis for sparkly response
+            value = value ** 0.6  # More dramatic curve
+            value *= 1.4  # Additional amplification
             
         elif response_type == 'dynamic':
-            # Apply full-range response for dynamic response
-            value = value ** 0.85
+            # Apply DRAMATIC full-range response for dynamic response
+            value = value ** 0.6  # More dramatic curve
+            value *= 1.6  # Maximum amplification
             
         elif response_type == 'rhythmic':
-            # Apply rhythmic emphasis
-            value = value ** 0.9
+            # Apply DRAMATIC rhythmic emphasis
+            value = value ** 0.7  # More dramatic curve
+            value *= 1.4  # Additional amplification
             
         elif response_type == 'organic':
-            # Apply natural curve for organic response
-            value = value ** 1.0
+            # Apply enhanced natural curve for organic response
+            value = value ** 0.8  # More dramatic curve
+            value *= 1.2  # Additional amplification
             
         elif response_type == 'ethereal':
-            # Apply gentle curve for ethereal response
-            value = value ** 1.1
+            # Apply enhanced gentle curve for ethereal response
+            value = value ** 0.9  # More dramatic curve
+            value *= 1.3  # Additional amplification
+            
+        elif response_type == 'crisp':
+            # Apply DRAMATIC crisp response
+            value = value ** 0.5  # Very dramatic curve
+            value *= 1.7  # High amplification
+            
+        elif response_type == 'pulsing':
+            # Apply DRAMATIC pulsing response
+            value = value ** 0.6  # More dramatic curve
+            value *= 1.5  # Additional amplification
             
         else:
-            # Default processing
-            value = value ** 0.95
+            # Default DRAMATIC processing
+            value = value ** 0.7  # More dramatic curve
+            value *= 1.3  # Additional amplification
         
         return value
     
     def _generate_continuous_organic_variation(self, frame: int) -> float:
-        """Generate continuous organic variation for natural abstract motion."""
-        # Multiple sine waves for complex continuous organic motion
-        organic_wave1 = 0.08 * math.sin(frame * 0.03)  # Slow wave
-        organic_wave2 = 0.05 * math.sin(frame * 0.07)  # Medium wave
-        organic_wave3 = 0.03 * math.sin(frame * 0.12)  # Fast wave
-        organic_wave4 = 0.02 * math.sin(frame * 0.18)  # Very fast wave
+        """Generate DRAMATIC continuous organic variation for enhanced abstract motion."""
+        # Multiple sine waves for complex continuous organic motion with DRAMATIC amplification
+        organic_wave1 = 0.15 * math.sin(frame * 0.03)  # Slow wave - increased amplitude
+        organic_wave2 = 0.12 * math.sin(frame * 0.07)  # Medium wave - increased amplitude
+        organic_wave3 = 0.08 * math.sin(frame * 0.12)  # Fast wave - increased amplitude
+        organic_wave4 = 0.05 * math.sin(frame * 0.18)  # Very fast wave - increased amplitude
+        organic_wave5 = 0.03 * math.sin(frame * 0.25)  # Ultra-fast wave - new for more complexity
+        organic_wave6 = 0.02 * math.sin(frame * 0.35)  # Super-fast wave - new for more complexity
         
-        # Combine waves for continuous organic motion
-        organic_variation = organic_wave1 + organic_wave2 + organic_wave3 + organic_wave4
+        # Combine waves for continuous organic motion with enhanced variation
+        organic_variation = organic_wave1 + organic_wave2 + organic_wave3 + organic_wave4 + organic_wave5 + organic_wave6
         
-        # Add subtle random variation for natural feel
-        if random.random() < 0.02:  # Very subtle random variations
-            organic_variation += random.uniform(-0.02, 0.02)
+        # Add DRAMATIC random variation for more dynamic feel
+        if random.random() < 0.05:  # Increased probability for more variation
+            organic_variation += random.uniform(-0.08, 0.08)  # Increased range for more dramatic variation
+        
+        # Add occasional dramatic spikes for more dynamic motion
+        if random.random() < 0.01:  # Occasional dramatic spikes
+            organic_variation += random.uniform(-0.15, 0.15)  # Large dramatic spikes
         
         return organic_variation
     

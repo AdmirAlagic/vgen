@@ -459,6 +459,54 @@ subdiv.render_levels = 3
 
 print("✅ Subdivision surface applied")
 
+# Helper function to normalize shape size to prevent size changes
+def normalize_shape_size(data, original_positions):
+    """Normalize shape size to maintain consistent object scale"""
+    if not original_positions:
+        return
+    
+    # Calculate original bounding box
+    original_min = mathutils.Vector((float('inf'), float('inf'), float('inf')))
+    original_max = mathutils.Vector((float('-inf'), float('-inf'), float('-inf')))
+    
+    for pos in original_positions:
+        original_min.x = min(original_min.x, pos.x)
+        original_min.y = min(original_min.y, pos.y)
+        original_min.z = min(original_min.z, pos.z)
+        original_max.x = max(original_max.x, pos.x)
+        original_max.y = max(original_max.y, pos.y)
+        original_max.z = max(original_max.z, pos.z)
+    
+    original_size = original_max - original_min
+    original_center = (original_max + original_min) * 0.5
+    
+    # Calculate current bounding box
+    current_min = mathutils.Vector((float('inf'), float('inf'), float('inf')))
+    current_max = mathutils.Vector((float('-inf'), float('-inf'), float('-inf')))
+    
+    for v in data:
+        current_min.x = min(current_min.x, v.co.x)
+        current_min.y = min(current_min.y, v.co.y)
+        current_min.z = min(current_min.z, v.co.z)
+        current_max.x = max(current_max.x, v.co.x)
+        current_max.y = max(current_max.y, v.co.y)
+        current_max.z = max(current_max.z, v.co.z)
+    
+    current_size = current_max - current_min
+    current_center = (current_max + current_min) * 0.5
+    
+    # Calculate scale factors to maintain original size
+    scale_factors = mathutils.Vector((
+        original_size.x / current_size.x if current_size.x > 0 else 1.0,
+        original_size.y / current_size.y if current_size.y > 0 else 1.0,
+        original_size.z / current_size.z if current_size.z > 0 else 1.0
+    ))
+    
+    # Apply normalization to maintain size
+    for v in data:
+        # Move to origin, scale, then move back to original center
+        v.co = original_center + (v.co - current_center) * scale_factors
+
 # Create OPTIMIZED HIGH-QUALITY material system (Blender 4.5 compatible)
 print("🎨 Creating optimized high-quality material system for Blender 4.5...")
 
@@ -813,20 +861,32 @@ for sname in shape_names:
     
     # OPTIMIZED HIGH-QUALITY SHAPE MORPHING - NO SIZE CHANGES, ONLY SHAPE CHANGES
     if "VerticalSpike" in sname:
-        for v in data:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
             # Higher quality spike with better mathematical precision
-            spike_factor = 1.0 + 3.0 * math.exp(-(v.co.x**2 + v.co.y**2) * 0.8) * (1.0 + v.co.z * 0.6)
+            spike_factor = 1.0 + 2.0 * math.exp(-(v.co.x**2 + v.co.y**2) * 0.8) * (1.0 + v.co.z * 0.4)
             v.co.z *= spike_factor
-            v.co.x *= 0.8  # Less aggressive compression for better quality
-            v.co.y *= 0.8
+            v.co.x *= 0.9  # Less aggressive compression to prevent size changes
+            v.co.y *= 0.9
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
     
     elif "HorizontalWave" in sname:
-        for v in data:
-            wave_x = math.sin(v.co.x * 3.0) * 0.8
-            wave_y = math.cos(v.co.y * 2.5) * 0.6
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            wave_x = math.sin(v.co.x * 3.0) * 0.5  # Reduced amplitude to prevent size changes
+            wave_y = math.cos(v.co.y * 2.5) * 0.4  # Reduced amplitude to prevent size changes
             v.co.x += wave_x
             v.co.y += wave_y
-            v.co.z *= 0.8
+            v.co.z *= 0.9  # Less aggressive compression
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
     
     elif "DiagonalTwist" in sname:
         for v in data:
@@ -836,21 +896,33 @@ for sname in shape_names:
             v.co.z *= twist_factor * 0.6
     
     elif "RadialExplosion" in sname:
-        for v in data:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
             center = mathutils.Vector((0, 0, 0))
             direction = (v.co - center).normalized()
             distance = (v.co - center).length
-            explosion_factor = 1.0 + 2.0 * math.exp(-distance * 0.5)
+            explosion_factor = 1.0 + 1.5 * math.exp(-distance * 0.5)  # Reduced factor to prevent size changes
             v.co = center + direction * distance * explosion_factor
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
     
     elif "SpiralRise" in sname:
-        for v in data:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
             angle = math.atan2(v.co.y, v.co.x)
             radius = math.sqrt(v.co.x**2 + v.co.y**2)
-            spiral_factor = 1.0 + 1.2 * math.sin(angle * 3 + v.co.z * 2)
+            spiral_factor = 1.0 + 0.8 * math.sin(angle * 3 + v.co.z * 2)  # Reduced factor to prevent size changes
             v.co.x = radius * math.cos(angle) * spiral_factor
             v.co.y = radius * math.sin(angle) * spiral_factor
-            v.co.z += 0.5 * math.sin(angle * 2)
+            v.co.z += 0.3 * math.sin(angle * 2)  # Reduced amplitude
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
     
     elif "CubicDistortion" in sname:
         for v in data:
@@ -860,11 +932,17 @@ for sname in shape_names:
             v.co.z *= cube_factor * 0.8
     
     elif "OrganicFlow" in sname:
-        for v in data:
-            flow_x = math.sin(v.co.x * 2) * math.cos(v.co.y * 1.5) * 0.6
-            flow_y = math.cos(v.co.y * 2) * math.sin(v.co.z * 1.5) * 0.6
-            flow_z = math.sin(v.co.z * 2) * math.cos(v.co.x * 1.5) * 0.6
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            flow_x = math.sin(v.co.x * 2) * math.cos(v.co.y * 1.5) * 0.3  # Reduced amplitude
+            flow_y = math.cos(v.co.y * 2) * math.sin(v.co.z * 1.5) * 0.3  # Reduced amplitude
+            flow_z = math.sin(v.co.z * 2) * math.cos(v.co.x * 1.5) * 0.3  # Reduced amplitude
             v.co += mathutils.Vector((flow_x, flow_y, flow_z))
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
     
     elif "GeometricFracture" in sname:
         for v in data:
@@ -884,42 +962,72 @@ for sname in shape_names:
             v.co *= crystal_factor
     
     elif "NebulaSwirl" in sname:
-        for v in data:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
             angle = math.atan2(v.co.y, v.co.x)
             radius = math.sqrt(v.co.x**2 + v.co.y**2)
-            swirl_factor = 1.0 + 1.5 * math.sin(angle * 2 + radius * 1.5)
+            swirl_factor = 1.0 + 1.0 * math.sin(angle * 2 + radius * 1.5)  # Reduced factor
             v.co.x = radius * math.cos(angle) * swirl_factor
             v.co.y = radius * math.sin(angle) * swirl_factor
-            v.co.z += 0.8 * math.cos(angle * 3)
+            v.co.z += 0.5 * math.cos(angle * 3)  # Reduced amplitude
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
     
     elif "CosmicPulse" in sname:
-        for v in data:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
             center = mathutils.Vector((0, 0, 0))
             direction = (v.co - center).normalized()
             distance = (v.co - center).length
-            pulse_factor = 1.0 + 2.5 * math.sin(distance * 4) * math.exp(-distance * 0.3)
+            pulse_factor = 1.0 + 1.5 * math.sin(distance * 4) * math.exp(-distance * 0.3)  # Reduced factor
             v.co = center + direction * distance * pulse_factor
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
     
     elif "StellarCore" in sname:
-        for v in data:
-            core_factor = 1.0 + 3.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.5)
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            core_factor = 1.0 + 2.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.5)  # Reduced factor
             v.co *= core_factor
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
     
     elif "GalacticSpiral" in sname:
-        for v in data:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
             angle = math.atan2(v.co.y, v.co.x)
             radius = math.sqrt(v.co.x**2 + v.co.y**2)
-            spiral_factor = 1.0 + 1.8 * math.sin(angle * 4 + radius * 2)
+            spiral_factor = 1.0 + 1.2 * math.sin(angle * 4 + radius * 2)  # Reduced factor
             v.co.x = radius * math.cos(angle) * spiral_factor
             v.co.y = radius * math.sin(angle) * spiral_factor
-            v.co.z += 1.0 * math.sin(angle * 2 + radius)
+            v.co.z += 0.6 * math.sin(angle * 2 + radius)  # Reduced amplitude
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
     
     elif "QuantumField" in sname:
-        for v in data:
-            quantum_x = math.sin(v.co.x * 5) * math.cos(v.co.y * 3) * 0.8
-            quantum_y = math.cos(v.co.y * 5) * math.sin(v.co.z * 3) * 0.8
-            quantum_z = math.sin(v.co.z * 5) * math.cos(v.co.x * 3) * 0.8
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            quantum_x = math.sin(v.co.x * 5) * math.cos(v.co.y * 3) * 0.4  # Reduced amplitude
+            quantum_y = math.cos(v.co.y * 5) * math.sin(v.co.z * 3) * 0.4  # Reduced amplitude
+            quantum_z = math.sin(v.co.z * 5) * math.cos(v.co.x * 3) * 0.4  # Reduced amplitude
             v.co += mathutils.Vector((quantum_x, quantum_y, quantum_z))
+        
+        # Normalize size to maintain consistent object scale
+        normalize_shape_size(data, original_positions)
 
 print("✅ Abstract procedural shape keys created")
 
@@ -953,7 +1061,7 @@ morph_phases = [
     {{"name": "CosmicPulse", "weight": 0.04, "speed": 0.2}}         # Overall energy - subtle
 ]
 
-# Create smooth, continuous morphing for each shape key
+# Create smooth, continuous morphing for each shape key with enhanced interpolation
 for phase in morph_phases:
     shape_key = obj.data.shape_keys.key_blocks.get(phase["name"])
     if not shape_key:
@@ -962,25 +1070,35 @@ for phase in morph_phases:
     # Clear existing keyframes
     shape_key.value = 0.0
     
-    # Create smooth, continuous morphing
-    for frame in range(0, {self.total_frames} + 1, 2):  # Every 2 frames for smoothness
+    # Create smooth, continuous morphing with enhanced interpolation
+    for frame in range(0, {self.total_frames} + 1, 1):  # Every frame for maximum smoothness
         scene.frame_set(frame)
         t = frame / {self.fps}
         
-        # Create multiple overlapping sine waves for organic motion
+        # Create multiple overlapping sine waves for organic motion with smoother transitions
         base_wave = math.sin(2 * math.pi * t * phase["speed"] * 0.1)  # Slow base wave
-        fast_wave = math.sin(2 * math.pi * t * phase["speed"] * 0.3) * 0.3  # Medium wave
-        micro_wave = math.sin(2 * math.pi * t * phase["speed"] * 0.8) * 0.1  # Fast micro-movements
+        fast_wave = math.sin(2 * math.pi * t * phase["speed"] * 0.3) * 0.2  # Medium wave (reduced amplitude)
+        micro_wave = math.sin(2 * math.pi * t * phase["speed"] * 0.8) * 0.05  # Fast micro-movements (reduced amplitude)
         
-        # Combine waves for organic motion
-        combined_value = (base_wave + fast_wave + micro_wave) * phase["weight"]
+        # Add additional smooth waves for better interpolation
+        smooth_wave = math.sin(2 * math.pi * t * phase["speed"] * 0.05) * 0.1  # Very slow wave for stability
         
-        # Add subtle random variation for natural feel
+        # Combine waves for organic motion with smoother transitions
+        combined_value = (base_wave + fast_wave + micro_wave + smooth_wave) * phase["weight"]
+        
+        # Add subtle random variation for natural feel (reduced for smoother transitions)
         random.seed(int(t * 100))  # Deterministic randomness
-        organic_variation = random.uniform(-0.05, 0.05)
+        organic_variation = random.uniform(-0.02, 0.02)  # Reduced variation for smoother transitions
         
-        # Final value with organic variation
+        # Apply smooth interpolation curve to prevent sudden jumps
+        # Use smoothstep function for better interpolation
+        def smoothstep(edge0, edge1, x):
+            t_val = max(0.0, min(1.0, (x - edge0) / (edge1 - edge0)))
+            return t_val * t_val * (3.0 - 2.0 * t_val)
+        
+        # Apply smooth interpolation to the final value
         final_value = max(0.0, min(1.0, combined_value + organic_variation))
+        final_value = smoothstep(0.0, 1.0, final_value)  # Apply smooth interpolation
         
         # Apply keyframe
         shape_key.value = final_value
@@ -994,36 +1112,37 @@ print("🔧 Creating smooth continuous modifier animation...")
 def create_smooth_modifier_animation():
     """Create smooth, continuous modifier animation without flickering"""
     
-    # Create smooth, continuous animation for each modifier
-    for frame in range(0, {self.total_frames} + 1, 2):  # Every 2 frames for smoothness
+    # Create smooth, continuous animation for each modifier with enhanced interpolation
+    for frame in range(0, {self.total_frames} + 1, 1):  # Every frame for maximum smoothness
         scene.frame_set(frame)
         t = frame / {self.fps}
         
-        # Smooth Displace animation - continuous organic movement
+        # Smooth Displace animation - continuous organic movement with reduced amplitude
         if disp_mod:
-            base_displace = math.sin(2 * math.pi * t * 0.2) * 0.5  # Slow wave
-            fast_displace = math.sin(2 * math.pi * t * 0.8) * 0.2   # Fast wave
-            micro_displace = math.sin(2 * math.pi * t * 2.0) * 0.1 # Micro movements
+            base_displace = math.sin(2 * math.pi * t * 0.2) * 0.3  # Reduced amplitude
+            fast_displace = math.sin(2 * math.pi * t * 0.8) * 0.1   # Reduced amplitude
+            micro_displace = math.sin(2 * math.pi * t * 2.0) * 0.05 # Reduced amplitude
+            smooth_displace = math.sin(2 * math.pi * t * 0.05) * 0.1  # Very slow wave for stability
             
-            displace_strength = base_displace + fast_displace + micro_displace
+            displace_strength = base_displace + fast_displace + micro_displace + smooth_displace
             disp_mod.strength = max(0.0, displace_strength)
             disp_mod.keyframe_insert(data_path="strength")
         
-        # Smooth Twist animation - continuous rotation
+        # Smooth Twist animation - continuous rotation with reduced amplitude
         if twist_mod:
-            twist_angle = math.sin(2 * math.pi * t * 0.3) * math.pi * 0.5  # Gentle twist
+            twist_angle = math.sin(2 * math.pi * t * 0.3) * math.pi * 0.3  # Reduced amplitude
             twist_mod.angle = twist_angle
             twist_mod.keyframe_insert(data_path="angle")
         
-        # Smooth Cast animation - continuous organic morphing
+        # Smooth Cast animation - continuous organic morphing with reduced variation
         if cast_mod:
-            cast_factor = 0.3 + math.sin(2 * math.pi * t * 0.15) * 0.2  # Gentle casting
+            cast_factor = 0.3 + math.sin(2 * math.pi * t * 0.15) * 0.1  # Reduced variation
             cast_mod.factor = max(0.0, min(1.0, cast_factor))
             cast_mod.keyframe_insert(data_path="factor")
         
-        # Smooth Ripple animation - continuous surface detail
+        # Smooth Ripple animation - continuous surface detail with reduced amplitude
         if ripple_mod:
-            ripple_strength = math.sin(2 * math.pi * t * 0.6) * 0.3  # Gentle ripples
+            ripple_strength = math.sin(2 * math.pi * t * 0.6) * 0.2  # Reduced amplitude
             ripple_mod.strength = max(0.0, ripple_strength)
             ripple_mod.keyframe_insert(data_path="strength")
 
@@ -1040,8 +1159,8 @@ def create_smooth_rotation_animation():
     obj.scale = (1.0, 1.0, 1.0)
     obj.keyframe_insert(data_path="scale")
     
-    # Create smooth, continuous rotation
-    for frame in range(0, {self.total_frames} + 1, 2):
+    # Create smooth, continuous rotation with enhanced interpolation
+    for frame in range(0, {self.total_frames} + 1, 1):  # Every frame for maximum smoothness
         scene.frame_set(frame)
         t = frame / {self.fps}
         
@@ -1054,17 +1173,17 @@ def create_smooth_rotation_animation():
         rotation_speed_y = {self.scene_config.main_object.rotation.speed_y if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'rotation') else 0.03}
         rotation_speed_z = {self.scene_config.main_object.rotation.speed_z if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'rotation') else 0.025}
         
-        # Calculate rotation based on configuration
+        # Calculate rotation based on configuration with reduced speeds for smoother motion
         if rotation_enabled and rotation_continuous:
-            # Continuous rotation based on time using configured speeds
-            rot_x = t * rotation_speed_x
-            rot_y = t * rotation_speed_y  
-            rot_z = t * rotation_speed_z
+            # Continuous rotation based on time using configured speeds (reduced for smoother motion)
+            rot_x = t * rotation_speed_x * 0.5  # Reduced speed for smoother motion
+            rot_y = t * rotation_speed_y * 0.5  # Reduced speed for smoother motion
+            rot_z = t * rotation_speed_z * 0.5  # Reduced speed for smoother motion
         else:
-            # Fallback to oscillating motion if continuous is disabled
-            rot_x = math.sin(2 * math.pi * t * 0.1) * 0.2
-            rot_y = math.sin(2 * math.pi * t * 0.15) * 0.3
-            rot_z = math.sin(2 * math.pi * t * 0.25) * 0.4
+            # Fallback to oscillating motion if continuous is disabled (reduced amplitude)
+            rot_x = math.sin(2 * math.pi * t * 0.1) * 0.1  # Reduced amplitude
+            rot_y = math.sin(2 * math.pi * t * 0.15) * 0.15  # Reduced amplitude
+            rot_z = math.sin(2 * math.pi * t * 0.25) * 0.2  # Reduced amplitude
         
         # Apply continuous rotation
         obj.rotation_euler = (rot_x, rot_y, rot_z)
@@ -1176,12 +1295,12 @@ try:
     bpy.ops.object.delete(use_global=False)
     
     # Get camera settings from configuration
-    camera_distance = {self.scene_config.camera.distance}
-    camera_location = {self.scene_config.camera.location}
-    camera_rotation = {self.scene_config.camera.rotation}
-    camera_fov = {self.scene_config.camera.fov}
-    camera_lens = {self.scene_config.camera.lens}
-    camera_sensor_width = {self.scene_config.camera.sensor_width}
+    camera_distance = {getattr(self.scene_config.camera, 'distance', 26.0)}
+    camera_location = {getattr(self.scene_config.camera, 'location', {'x': 0.0, 'y': 0.0, 'z': 60.0})}
+    camera_rotation = {getattr(self.scene_config.camera, 'rotation', {'x': 0.0, 'y': 0.0, 'z': 0.0})}
+    camera_fov = {getattr(self.scene_config.camera, 'fov', 35.0)}
+    camera_lens = {getattr(self.scene_config.camera, 'lens', 50.0)}
+    camera_sensor_width = {getattr(self.scene_config.camera, 'sensor_width', 36.0)}
     
     # Add camera at configured position - positioned directly above the object
     camera_x = camera_location['x']
@@ -1236,10 +1355,22 @@ try:
     print(f"✅ Straight-down angle prevents 2D background edge visibility")
     
     # Add camera animation if enabled in configuration
-    if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and self.scene_config.camera.animation.enabled:
+    camera_animation_enabled = False
+    if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation:
+        camera_animation_enabled = self.scene_config.camera.animation.enabled
+    
+    if camera_animation_enabled:
         print("🎬 Setting up camera animation...")
         
-        anim_config = self.scene_config.camera.animation
+        # Get animation parameters with fallback values
+        tilt_speed = self.scene_config.camera.animation.tilt_speed if self.scene_config.camera.animation else 1.3
+        tilt_range = self.scene_config.camera.animation.tilt_range if self.scene_config.camera.animation else {{'min': -15.0, 'max': 15.0}}
+        rotation_speed = self.scene_config.camera.animation.rotation_speed if self.scene_config.camera.animation else 3.02
+        rotation_range = self.scene_config.camera.animation.rotation_range if self.scene_config.camera.animation else {{'min': -10.0, 'max': 10.0}}
+        
+        # Convert dictionaries to strings for f-string embedding
+        tilt_range_str = f"{{'min': {self.scene_config.camera.animation.tilt_range['min'] if self.scene_config.camera.animation else -15.0}, 'max': {self.scene_config.camera.animation.tilt_range['max'] if self.scene_config.camera.animation else 15.0}}}"
+        rotation_range_str = f"{{'min': {self.scene_config.camera.animation.rotation_range['min'] if self.scene_config.camera.animation else -10.0}, 'max': {self.scene_config.camera.animation.rotation_range['max'] if self.scene_config.camera.animation else 10.0}}}"
         
         # Create smooth camera tilting animation
         for frame in range(1, {self.total_frames} + 1, 5):  # Keyframe every 5 frames for smooth animation
@@ -1247,11 +1378,11 @@ try:
             t = frame / {self.fps}
             
             # Calculate slow tilting motion
-            tilt_angle = math.sin(t * anim_config.tilt_speed) * (anim_config.tilt_range['max'] - anim_config.tilt_range['min']) / 2
+            tilt_angle = math.sin(t * {getattr(self.scene_config.camera.animation, 'tilt_speed', 1.3) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation else 1.3}) * ({getattr(self.scene_config.camera.animation.tilt_range, 'max', 15.0) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and hasattr(self.scene_config.camera.animation, 'tilt_range') else 15.0} - {getattr(self.scene_config.camera.animation.tilt_range, 'min', -15.0) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and hasattr(self.scene_config.camera.animation, 'tilt_range') else -15.0}) / 2
             tilt_angle = math.radians(tilt_angle)
             
             # Calculate slow rotation motion
-            rotation_angle = math.cos(t * anim_config.rotation_speed * 0.7) * (anim_config.rotation_range['max'] - anim_config.rotation_range['min']) / 2
+            rotation_angle = math.cos(t * {getattr(self.scene_config.camera.animation, 'rotation_speed', 3.02) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation else 3.02} * 0.7) * ({getattr(self.scene_config.camera.animation.rotation_range, 'max', 10.0) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and hasattr(self.scene_config.camera.animation, 'rotation_range') else 10.0} - {getattr(self.scene_config.camera.animation.rotation_range, 'min', -10.0) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and hasattr(self.scene_config.camera.animation, 'rotation_range') else -10.0}) / 2
             rotation_angle = math.radians(rotation_angle)
             
             # Apply smooth camera tilting (X-axis rotation for tilting)
@@ -1285,10 +1416,10 @@ try:
                     kf.handle_left[0] = kf.co[0] - 2.0
                     kf.handle_right[0] = kf.co[0] + 2.0
         
-        print(f"✅ Camera animation created - Slow tilting with speed: {{anim_config.tilt_speed}}")
-        print(f"✅ Tilt range: {{anim_config.tilt_range['min']}}° to {{anim_config.tilt_range['max']}}°")
-        print(f"✅ Rotation speed: {{anim_config.rotation_speed}}")
-        print(f"✅ Rotation range: {{anim_config.rotation_range['min']}}° to {{anim_config.rotation_range['max']}}°")
+        print(f"✅ Camera animation created - Slow tilting with speed: {getattr(self.scene_config.camera.animation, 'tilt_speed', 1.3) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation else 1.3}")
+        print(f"✅ Tilt range: {getattr(self.scene_config.camera.animation.tilt_range, 'min', -15.0) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and hasattr(self.scene_config.camera.animation, 'tilt_range') else -15.0}° to {getattr(self.scene_config.camera.animation.tilt_range, 'max', 15.0) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and hasattr(self.scene_config.camera.animation, 'tilt_range') else 15.0}°")
+        print(f"✅ Rotation speed: {getattr(self.scene_config.camera.animation, 'rotation_speed', 3.02) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation else 3.02}")
+        print(f"✅ Rotation range: {getattr(self.scene_config.camera.animation.rotation_range, 'min', -10.0) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and hasattr(self.scene_config.camera.animation, 'rotation_range') else -10.0}° to {getattr(self.scene_config.camera.animation.rotation_range, 'max', 10.0) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and hasattr(self.scene_config.camera.animation, 'rotation_range') else 10.0}°")
     else:
         print("📷 Camera animation disabled in configuration")
     

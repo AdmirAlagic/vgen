@@ -276,12 +276,14 @@ def main() -> int:
         # Determine mode based on arguments
         if args.gui or not args.audio_file:
             # GUI mode
-            print("🎬 AudioBlender Video Generator")
+            print("🎬 AudioBlender Enhanced Video Generator")
             print("=" * 50)
             print("Starting GUI application...")
             print("Features:")
             print("  • Professional PyQt6 interface")
-            print("  • Real-time progress tracking")
+            print("  • DRAMATIC shape morphing with ultra-responsive music tracking")
+            print("  • ULTRA-RESPONSIVE audio analysis with enhanced frequency bands")
+            print("  • SMOOTH animations with dramatic interpolation")
             print("  • Multiple quality presets")
             print("  • Blend file generation")
             print("  • File management")
@@ -290,12 +292,13 @@ def main() -> int:
             return app.run_gui()
         else:
             # CLI mode
-            print("🎬 AudioBlender Video Generator CLI")
+            print("🎬 AudioBlender Enhanced Video Generator CLI")
             print("=" * 50)
             print(f"Audio file: {args.audio_file}")
             print(f"Quality mode: {args.quality}")
             if args.output:
                 print(f"Output name: {args.output}")
+            print("🚀 Features: DRAMATIC Shape Morphing | ULTRA-RESPONSIVE Music | ENHANCED Animations")
             print("=" * 50)
             
             return app.run_cli(

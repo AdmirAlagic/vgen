@@ -491,7 +491,7 @@ print("✅ Shape keys created with golden ratio deformation patterns")
 print("🔥 Setting up OPTIMIZED drivers with baked audio data...")
 
 for shape_key_name in shape_key_names:
-    if shape_key_name in cube.data.shape_keys.key_blocks and shape_key_name in baked_data.get('shape_key_data', {{}}):
+    if shape_key_name in cube.data.shape_keys.key_blocks and shape_key_name in baked_data.get('shape_key_data', {}):
         shape_key = cube.data.shape_keys.key_blocks[shape_key_name]
         
         # Create driver for shape key value

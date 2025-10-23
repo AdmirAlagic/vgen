@@ -44,27 +44,25 @@ class BlendGenerationThread(QThread):
             sys.path.insert(0, str(project_root / "src"))
             
             from audio_analyzer import EnhancedAudioAnalyzer
-            from animator import create_mutating_cube_animation
+            from optimized_audio_visualizer import OptimizedAudioVisualizer
             
-            # Analyze audio
-            self.progress.emit(10, "Analyzing audio with enhanced system...")
+            # Analyze audio with enhanced system
+            self.progress.emit(10, "Analyzing audio with enhanced dramatic system...")
             analyzer = EnhancedAudioAnalyzer(self.config['audio_path'])
             features = analyzer.analyze_for_mutating_cube()
             
-            self.progress.emit(30, f"Audio analysis complete: {features['duration']:.2f}s, {features['total_frames']} frames")
+            self.progress.emit(30, f"Enhanced audio analysis complete: {features['duration']:.2f}s, {features['total_frames']} frames")
             
-            # Generate blend file
-            self.progress.emit(50, f"Generating {self.config['quality_level']} quality blend file...")
+            # Generate blend file with enhanced visualizer
+            self.progress.emit(50, f"Generating {self.config['quality_level']} quality blend file with enhanced system...")
             
             # Create blend file path
             blend_path = f"{self.config['output_path']}.blend"
             
-            # Generate Python script with blend file path
-            from animator import MutatingCubeAnimator
-            animator = MutatingCubeAnimator(features, self.config['quality_level'])
-            script_path = animator.save_script(
+            # Generate Python script with enhanced visualizer
+            visualizer = OptimizedAudioVisualizer(features, self.config['quality_level'], 'dramatic')
+            script_path = visualizer.save_script(
                 script_path=f"{self.config['output_path']}.py",
-                render_settings=None,
                 blend_path=blend_path
             )
             
