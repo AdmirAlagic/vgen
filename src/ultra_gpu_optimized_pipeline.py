@@ -44,44 +44,122 @@ def generate_dynamic_filename(base_name: str, extension: str, include_timestamp:
 
 @dataclass
 class UltraGPUConfig:
-    """Ultra-optimized GPU configuration for maximum performance."""
+    """Ultra-optimized GPU configuration for maximum performance with enhanced realism."""
     
-    # Ultra-low samples with advanced denoising
-    samples: int = 4  # Dramatically reduced from 16
-    max_bounces: int = 1  # Minimal bounces
+    # Enhanced samples for better realism while maintaining speed
+    samples: int = 8  # Increased from 4 for better quality
+    max_bounces: int = 3  # Increased from 1 for better light interaction
     use_denoising: bool = True
     denoiser: str = "OPTIX"  # Best GPU denoiser
     
-    # Massive tile sizes for maximum GPU utilization
-    tile_size: int = 8192  # 8x larger than current max
-    use_auto_tile: bool = False  # Disable auto-tiling for manual control
+    # Optimized tile sizes for better GPU utilization
+    tile_size: int = 4096  # Balanced for quality and performance
+    use_auto_tile: bool = True  # Enable auto-tiling for better optimization
     
     # GPU memory optimizations
     use_persistent_data: bool = True
     debug_use_spatial_splits: bool = True
     debug_use_hair_bvh: bool = True
     
-    # Advanced GPU features
+    # Enhanced GPU features for better realism
     use_adaptive_sampling: bool = True
-    adaptive_threshold: float = 0.5  # Much higher for faster convergence
-    adaptive_min_samples: int = 1  # Minimal samples
+    adaptive_threshold: float = 0.15  # Lower threshold for better quality
+    adaptive_min_samples: int = 2  # Minimum samples for better quality
     
-    # Disable expensive features
+    # Enhanced features for realism
     use_fast_gi: bool = True
-    caustics_reflective: bool = False
-    caustics_refractive: bool = False
+    caustics_reflective: bool = True  # Enable reflective caustics for realism
+    caustics_refractive: bool = False  # Keep refractive caustics disabled for speed
     
     # GPU-specific optimizations
     feature_set: str = 'SUPPORTED'
-    use_transparent: bool = False  # Disable if not needed
+    use_transparent: bool = True  # Enable transparency for better materials
+    
+    # Enhanced material settings for realism
+    material_quality: str = 'enhanced'  # Enhanced material processing
+    texture_quality: int = 2048  # Higher texture resolution
+    normal_mapping: bool = True  # Enable normal mapping for surface detail
+    
+    # Enhanced lighting for realism
+    light_bounces: int = 2  # Better light interaction
+    shadow_quality: str = 'high'  # High-quality shadows
+    ambient_occlusion: bool = True  # Enable ambient occlusion
 
 
 class UltraGPUOptimizedPipeline:
     """Ultra GPU-optimized rendering pipeline with minimal CPU usage."""
     
-    def __init__(self):
-        self.config = UltraGPUConfig()
+    def __init__(self, quality_mode: str = 'ultra_fast'):
+        self.quality_mode = quality_mode
+        self.config = self._get_config_for_quality(quality_mode)
         self.system = platform.system().lower()
+    
+    def _get_config_for_quality(self, quality_mode: str) -> UltraGPUConfig:
+        """Get configuration based on quality mode."""
+        config = UltraGPUConfig()
+        
+        if quality_mode == 'ultra_fast':
+            # Lowest settings for ultra_fast
+            config.samples = 4
+            config.max_bounces = 1
+            config.tile_size = 8192  # Maximum GPU utilization
+            config.adaptive_threshold = 0.2  # Higher threshold for faster convergence
+            config.adaptive_min_samples = 1
+            config.caustics_reflective = False
+            config.caustics_refractive = False
+            config.use_transparent = False
+            config.texture_quality = 1024
+            config.light_bounces = 1
+        elif quality_mode == 'ultra':
+            # Highest settings for ultra quality
+            config.samples = 64
+            config.max_bounces = 8
+            config.tile_size = 1024  # Smaller tiles for better quality
+            config.adaptive_threshold = 0.05  # Lower threshold for better quality
+            config.adaptive_min_samples = 4
+            config.caustics_reflective = True
+            config.caustics_refractive = True
+            config.use_transparent = True
+            config.texture_quality = 4096
+            config.light_bounces = 4
+        elif quality_mode == 'high':
+            # High quality settings
+            config.samples = 32
+            config.max_bounces = 6
+            config.tile_size = 2048
+            config.adaptive_threshold = 0.08
+            config.adaptive_min_samples = 3
+            config.caustics_reflective = True
+            config.caustics_refractive = False
+            config.use_transparent = True
+            config.texture_quality = 2048
+            config.light_bounces = 3
+        elif quality_mode == 'balanced':
+            # Balanced settings
+            config.samples = 16
+            config.max_bounces = 4
+            config.tile_size = 4096
+            config.adaptive_threshold = 0.1
+            config.adaptive_min_samples = 2
+            config.caustics_reflective = False
+            config.caustics_refractive = False
+            config.use_transparent = True
+            config.texture_quality = 2048
+            config.light_bounces = 2
+        elif quality_mode == 'fast':
+            # Fast settings
+            config.samples = 8
+            config.max_bounces = 2
+            config.tile_size = 4096
+            config.adaptive_threshold = 0.15
+            config.adaptive_min_samples = 1
+            config.caustics_reflective = False
+            config.caustics_refractive = False
+            config.use_transparent = False
+            config.texture_quality = 1024
+            config.light_bounces = 1
+        
+        return config
         
     def create_ultra_gpu_blender_script(self, 
                                       features: Dict,
@@ -119,11 +197,11 @@ if os.path.exists(audio_filepath):
         # Set audio properties
         sound_strip.volume = 1.0
         
-        print(f"✅ Audio loaded: {audio_path}")
+        print(f"✅ Audio loaded: {{audio_path}}")
     except Exception as e:
         print(f"⚠️ Could not load audio: {{e}}")
 else:
-    print(f"⚠️ Audio file not found: {audio_path}")
+    print(f"⚠️ Audio file not found: {{audio_path}}")
 '''
         
         script = f'''
@@ -273,90 +351,118 @@ else:  # Windows
 render.ffmpeg.audio_codec = 'AAC'
 render.ffmpeg.audio_bitrate = 128
 
-# ULTRA TEXTURE OPTIMIZATION - GPU-friendly
-print("🖼️ Applying ULTRA GPU-friendly texture optimization...")
+# ENHANCED TEXTURE OPTIMIZATION - Balanced quality and performance
+print("🖼️ Applying ENHANCED texture optimization for realism...")
 
-# Optimize textures for GPU processing
+# Optimize textures for balanced quality and GPU processing
 for img in bpy.data.images:
     if img.size[0] > 4096 or img.size[1] > 4096:
-        # Scale down large textures for GPU efficiency
+        # Scale down very large textures but preserve quality
         original_size = str(img.size[0]) + "x" + str(img.size[1])
         img.scale(4096, 4096)
-        print("🚀 Scaled texture " + img.name + " from " + original_size + " to 4096x4096 for GPU efficiency")
+        print("🚀 Scaled texture " + img.name + " from " + original_size + " to 4096x4096 for balanced quality/performance")
+    elif img.size[0] < 512 or img.size[1] < 512:
+        # Scale up very small textures for better quality
+        original_size = str(img.size[0]) + "x" + str(img.size[1])
+        img.scale(1024, 1024)
+        print("🚀 Enhanced texture " + img.name + " from " + original_size + " to 1024x1024 for better quality")
 
-print("✅ ULTRA GPU-friendly texture optimization complete")
+print("✅ ENHANCED texture optimization complete")
 
-# Optimize materials for GPU processing
+# Enhanced material optimization for better realism
 for material in bpy.data.materials:
     if material.use_nodes and material.node_tree:
         nodes = material.node_tree.nodes
         
-        # Ultra-aggressive material optimization
+        # Enhanced material optimization for better quality
         for node in nodes:
             if node.type == 'TEX_NOISE':
-                # Minimal detail for GPU efficiency
+                # Balanced detail for quality and performance
                 if 'Detail' in node.inputs:
-                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 5.0)
+                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 12.0)  # Increased from 5.0
                 if 'Roughness' in node.inputs:
-                    node.inputs['Roughness'].default_value = max(node.inputs['Roughness'].default_value, 0.8)
+                    node.inputs['Roughness'].default_value = max(node.inputs['Roughness'].default_value, 0.4)  # Reduced from 0.8
                 if 'Scale' in node.inputs:
-                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 8.0)
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 15.0)  # Increased from 8.0
             
             elif node.type == 'TEX_VORONOI':
-                # Minimal complexity for GPU
+                # Enhanced complexity for better quality
                 if 'Randomness' in node.inputs:
-                    node.inputs['Randomness'].default_value = min(node.inputs['Randomness'].default_value, 0.6)
+                    node.inputs['Randomness'].default_value = min(node.inputs['Randomness'].default_value, 0.8)  # Increased from 0.6
                 if 'Scale' in node.inputs:
-                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 8.0)
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 12.0)  # Increased from 8.0
+            
+            elif node.type == 'TEX_WAVE':
+                # Enhanced wave textures for better quality
+                if 'Scale' in node.inputs:
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 10.0)
+                if 'Detail' in node.inputs:
+                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 8.0)
+            
+            elif node.type == 'TEX_MUSGRAVE':
+                # Enhanced musgrave textures for better quality
+                if 'Scale' in node.inputs:
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 12.0)
+                if 'Detail' in node.inputs:
+                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 10.0)
 
-print("✅ ULTRA GPU-friendly material optimization complete")
+print("✅ ENHANCED material optimization complete")
 
-# ULTRA GEOMETRY OPTIMIZATION - GPU-friendly
+# ULTRA GEOMETRY OPTIMIZATION - GPU-friendly (PRESERVING SMOOTH SURFACES)
 print("🔧 Applying ULTRA GPU-friendly geometry optimization...")
 
-# Ultra-aggressive geometry optimization
+# Ultra-aggressive geometry optimization while preserving smooth surfaces
 for obj in bpy.context.scene.objects:
     if obj.type == 'MESH':
-        # Remove ALL subdivision modifiers for maximum GPU efficiency
-        modifiers_to_remove = []
+        # ENHANCED: Preserve subdivision modifiers for smooth surfaces with better quality
+        # Instead of removing them, optimize their levels for balanced quality and performance
         for modifier in obj.modifiers:
             if modifier.type == 'SUBSURF':
-                modifiers_to_remove.append(modifier)
-                print(f"🚀 Removing subdivision modifier from {{obj.name}} for GPU efficiency")
+                # Optimize subdivision levels for better quality while maintaining performance
+                original_levels = modifier.levels
+                original_render_levels = modifier.render_levels
+                
+                # Enhanced levels for better quality
+                modifier.levels = min(modifier.levels, 2)  # Max 2 levels for viewport (increased from 1)
+                modifier.render_levels = min(modifier.render_levels, 3)  # Max 3 levels for render (increased from 2)
+                
+                print("🚀 Enhanced subdivision modifier for " + obj.name + ": " + str(original_levels) + "->" + str(modifier.levels) + " levels, " + str(original_render_levels) + "->" + str(modifier.render_levels) + " render levels")
         
-        # Remove modifiers
-        for modifier in modifiers_to_remove:
-            obj.modifiers.remove(modifier)
-        
-        # Reduce other modifiers aggressively
+        # Enhanced modifier optimization for better quality
         for modifier in obj.modifiers:
             if modifier.type == 'DISPLACE':
-                modifier.strength = modifier.strength * 0.3  # 70% reduction
+                modifier.strength = modifier.strength * 0.6  # Reduced from 70% reduction to 40% reduction
             elif modifier.type == 'SIMPLE_DEFORM':
-                modifier.angle = modifier.angle * 0.5  # 50% reduction
+                modifier.angle = modifier.angle * 0.7  # Reduced from 50% reduction to 30% reduction
             elif modifier.type == 'CAST':
-                modifier.factor = modifier.factor * 0.6  # 40% reduction
+                modifier.factor = modifier.factor * 0.8  # Reduced from 40% reduction to 20% reduction
 
-print("✅ ULTRA GPU-friendly geometry optimization complete")
+print("✅ ULTRA GPU-friendly geometry optimization complete (smooth surfaces preserved)")
 
-# ULTRA LIGHTING OPTIMIZATION - GPU-friendly
-print("💡 Applying ULTRA GPU-friendly lighting optimization...")
+# ENHANCED LIGHTING OPTIMIZATION - Balanced quality and performance
+print("💡 Applying ENHANCED lighting optimization for realism...")
 
-# Ultra-aggressive lighting optimization
+# Enhanced lighting optimization for better quality
 light_count = 0
 for obj in bpy.context.scene.objects:
     if obj.type == 'LIGHT':
         light_count += 1
-        # Keep only first 2 lights, disable the rest
-        if light_count > 2:
+        # Keep first 4 lights for better lighting quality (increased from 2)
+        if light_count > 4:
             obj.hide_render = True
-            print(f"🚀 Disabled light {{obj.name}} for GPU efficiency")
+            print(f"🚀 Disabled light {{obj.name}} for balanced performance")
         else:
-            # Aggressive reduction for remaining lights
-            obj.data.energy = obj.data.energy * 0.5  # 50% reduction
-            print(f"🚀 Reduced light energy for {{obj.name}} to {{obj.data.energy:.1f}}")
+            # Moderate reduction for remaining lights to maintain quality
+            obj.data.energy = obj.data.energy * 0.8  # Reduced from 50% reduction to 20% reduction
+            print(f"🚀 Enhanced light energy for {{obj.name}} to {{obj.data.energy:.1f}}")
+            
+            # Enhance light properties for better quality
+            if hasattr(obj.data, 'size'):
+                obj.data.size = max(obj.data.size, 0.5)  # Ensure minimum light size for quality
+            if hasattr(obj.data, 'spot_size'):
+                obj.data.spot_size = max(obj.data.spot_size, 0.1)  # Ensure minimum spot size
 
-print("✅ ULTRA GPU-friendly lighting optimization complete")
+print("✅ ENHANCED lighting optimization complete")
 
 # Set output path
 render.filepath = "{output_path}"
@@ -566,9 +672,9 @@ print("🚀 GPU utilization: MAXIMUM")
             return False
 
 
-def create_ultra_gpu_pipeline() -> UltraGPUOptimizedPipeline:
+def create_ultra_gpu_pipeline(quality_mode: str = 'ultra_fast') -> UltraGPUOptimizedPipeline:
     """Create and return an ultra GPU-optimized pipeline."""
-    return UltraGPUOptimizedPipeline()
+    return UltraGPUOptimizedPipeline(quality_mode)
 
 
 if __name__ == "__main__":

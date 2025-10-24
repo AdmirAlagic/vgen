@@ -227,20 +227,25 @@ for material in bpy.data.materials:
 
 print("✅ Materials optimized for speed")
 
-# OPTIMIZE GEOMETRY FOR SPEED
+# OPTIMIZE GEOMETRY FOR SPEED (PRESERVING SMOOTH SURFACES)
 print("🔧 Optimizing geometry for ultra-fast rendering...")
 
-# Reduce subdivision levels for faster rendering
+# Reduce subdivision levels for faster rendering while preserving smooth surfaces
 for obj in bpy.context.scene.objects:
     if obj.type == 'MESH':
         for modifier in obj.modifiers:
             if modifier.type == 'SUBSURF':
-                # Reduce subdivision levels for speed
-                modifier.levels = min(modifier.levels, 1)  # Max 1 level
-                modifier.render_levels = min(modifier.render_levels, 2)  # Max 2 render levels
-                print(f"✅ Reduced subdivision levels for {{obj.name}}")
+                # Reduce subdivision levels for speed but maintain smoothness
+                original_levels = modifier.levels
+                original_render_levels = modifier.render_levels
+                
+                # Reduce levels for speed but keep smooth surfaces
+                modifier.levels = min(modifier.levels, 1)  # Max 1 level for viewport
+                modifier.render_levels = min(modifier.render_levels, 2)  # Max 2 render levels for smooth surfaces
+                
+                print("✅ Optimized subdivision levels for " + obj.name + ": " + str(original_levels) + "->" + str(modifier.levels) + " levels, " + str(original_render_levels) + "->" + str(modifier.render_levels) + " render levels (smooth surfaces preserved)")
 
-print("✅ Geometry optimized for speed")
+print("✅ Geometry optimized for speed (smooth surfaces preserved)")
 
 # OPTIMIZE LIGHTING FOR SPEED
 print("💡 Optimizing lighting for ultra-fast rendering...")

@@ -101,17 +101,17 @@
   },
   "quality_levels": {
     "ultra_fast": {
-      "samples": 2,
-      "max_bounces": 1,
+      "samples": 8,
+      "max_bounces": 3,
       "use_denoising": true,
       "use_adaptive_sampling": true,
-      "adaptive_threshold": 0.5,
-      "adaptive_min_samples": 1,
-      "tile_size": 8192,
+      "adaptive_threshold": 0.15,
+      "adaptive_min_samples": 2,
+      "tile_size": 4096,
       "use_persistent_data": true,
       "denoiser": "OPTIX",
       "use_fast_gi": true,
-      "caustics_reflective": false,
+      "caustics_reflective": true,
       "caustics_refractive": false
     },
     "lowest": {

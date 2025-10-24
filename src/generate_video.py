@@ -255,14 +255,15 @@ def render_video_gpu_accelerated(blend_path: str, output_path: str, quality_mode
 
 
 def render_video_ultra_gpu_optimized(blend_path: str, output_path: str, audio_path: str = None, 
-                                   total_frames: int = 300) -> bool:
+                                   total_frames: int = 300, quality_mode: str = 'ultra_fast') -> bool:
     """Ultra GPU-optimized rendering with 70-80% CPU reduction while maintaining quality."""
     print(f"🚀 ULTRA GPU-OPTIMIZED rendering: {output_path}")
     print(f"⚡ Target: 70-80% CPU reduction with maintained quality")
+    print(f"🎯 Quality mode: {quality_mode.upper()}")
     
     try:
-        # Create ultra GPU-optimized pipeline
-        pipeline = create_ultra_gpu_pipeline()
+        # Create ultra GPU-optimized pipeline with quality mode
+        pipeline = create_ultra_gpu_pipeline(quality_mode)
         
         # Ultra GPU-optimized features
         features = {
@@ -278,8 +279,8 @@ def render_video_ultra_gpu_optimized(blend_path: str, output_path: str, audio_pa
         
     except Exception as e:
         print(f"❌ Ultra GPU-optimized rendering failed: {e}")
-        print("🔄 Falling back to standard ultra_fast rendering...")
-        return render_video_ultra_fast(blend_path, output_path, audio_path, total_frames)
+        print("🔄 Falling back to optimized ultra_fast rendering...")
+        return render_video(blend_path, output_path, 'ultra_fast', audio_path, total_frames)
 
 def render_video_ultra_fast(blend_path: str, output_path: str, audio_path: str = None, 
                            total_frames: int = 300) -> bool:
@@ -304,7 +305,7 @@ def render_video_ultra_fast(blend_path: str, output_path: str, audio_path: str =
         
     except Exception as e:
         print(f"❌ Ultra-fast rendering failed: {e}")
-        print("🔄 Falling back to standard ultra_fast rendering...")
+        print("🔄 Falling back to optimized ultra_fast rendering...")
         return render_video(blend_path, output_path, 'ultra_fast', audio_path, total_frames)
 
 
@@ -391,13 +392,13 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
     """Render directly to MP4 using ULTRA-FAST optimized pipeline - NO PNG frames."""
     print("🚀 Rendering with ULTRA-FAST optimized pipeline (no temporary PNG frames)...")
     
-    # ULTRA-OPTIMIZED quality settings for maximum speed with maintained quality
+    # ENHANCED quality settings for better realism while maintaining performance
     quality_settings = {
-        'ultra_fast': {'samples': 2, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 1, 'tile_size': 8192, 'adaptive_threshold': 0.5},
-        'fast': {'samples': 4, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 2, 'tile_size': 8192, 'adaptive_threshold': 0.3}, 
-        'balanced': {'samples': 8, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 3, 'tile_size': 4096, 'adaptive_threshold': 0.2},
-        'high': {'samples': 16, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 4, 'tile_size': 2048, 'adaptive_threshold': 0.15},
-        'ultra': {'samples': 32, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 6, 'tile_size': 1024, 'adaptive_threshold': 0.1}
+        'ultra_fast': {'samples': 8, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 3, 'tile_size': 4096, 'adaptive_threshold': 0.15},
+        'fast': {'samples': 12, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 4, 'tile_size': 4096, 'adaptive_threshold': 0.12}, 
+        'balanced': {'samples': 16, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 5, 'tile_size': 4096, 'adaptive_threshold': 0.1},
+        'high': {'samples': 24, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 6, 'tile_size': 2048, 'adaptive_threshold': 0.08},
+        'ultra': {'samples': 32, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 8, 'tile_size': 1024, 'adaptive_threshold': 0.05}
     }
     
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
@@ -562,16 +563,16 @@ for material in bpy.data.materials:
         nodes = material.node_tree.nodes
         links = material.node_tree.links
         
-        # Optimize noise textures for better quality
+        # Enhanced noise textures for better quality
         for node in nodes:
             if node.type == 'TEX_NOISE':
-                # Balanced reduction for quality/speed
+                # Enhanced settings for better quality
                 if 'Detail' in node.inputs:
-                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 8.0)  # Reasonable detail
+                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 15.0)  # Increased detail
                 if 'Roughness' in node.inputs:
-                    node.inputs['Roughness'].default_value = min(node.inputs['Roughness'].default_value, 0.6)  # Better smoothness
+                    node.inputs['Roughness'].default_value = min(node.inputs['Roughness'].default_value, 0.3)  # Better smoothness
                 if 'Scale' in node.inputs:
-                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 10.0)  # Better scale
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 20.0)  # Better scale
         
         # Optimize voronoi textures for better quality
         for node in nodes:
@@ -583,21 +584,25 @@ for material in bpy.data.materials:
 
 print("✅ Balanced material optimization complete")
 
-# BALANCED GEOMETRY OPTIMIZATION
+# BALANCED GEOMETRY OPTIMIZATION (PRESERVING SMOOTH SURFACES)
 print("🔧 Applying balanced geometry optimization...")
 
-# Optimize geometry for better quality/speed balance
+# Optimize geometry for better quality/speed balance while preserving smooth surfaces
 for obj in bpy.context.scene.objects:
     if obj.type == 'MESH':
-        # Reduce subdivision modifiers for speed but keep some quality
-        modifiers_to_remove = []
+        # CRITICAL FIX: Preserve subdivision modifiers for smooth surfaces
+        # Instead of removing them, optimize their levels for balanced performance
         for modifier in obj.modifiers:
             if modifier.type == 'SUBSURF':
-                # Only remove high-level subdivisions, keep low-level ones
-                if modifier.levels > 1:
-                    modifiers_to_remove.append(modifier)
-                    print(f"🚀 Reducing subdivision modifier from {{obj.name}} (level {{modifier.levels}} -> 1)")
-                    modifier.levels = 1
+                # Optimize subdivision levels for balanced performance but maintain smoothness
+                original_levels = modifier.levels
+                original_render_levels = modifier.render_levels
+                
+                # Reduce levels for speed but keep smooth surfaces
+                modifier.levels = min(modifier.levels, 1)  # Max 1 level for viewport
+                modifier.render_levels = min(modifier.render_levels, 2)  # Max 2 render levels for smooth surfaces
+                
+                print("🚀 Optimized subdivision modifier for " + obj.name + ": " + str(original_levels) + "->" + str(modifier.levels) + " levels, " + str(original_render_levels) + "->" + str(modifier.render_levels) + " render levels (smooth surfaces preserved)")
         
         # Reduce other modifiers moderately
         for modifier in obj.modifiers:
@@ -608,24 +613,24 @@ for obj in bpy.context.scene.objects:
             elif modifier.type == 'CAST':
                 modifier.factor = modifier.factor * 0.8  # Reduce casting
 
-print("✅ Balanced geometry optimization complete")
+print("✅ Balanced geometry optimization complete (smooth surfaces preserved)")
 
 # BALANCED LIGHTING OPTIMIZATION
 print("💡 Applying balanced lighting optimization...")
 
-# Optimize lighting for better quality/speed balance
+# Enhanced lighting for better quality/speed balance
 light_count = 0
 for obj in bpy.context.scene.objects:
     if obj.type == 'LIGHT':
         light_count += 1
-        # Keep first 3 lights, disable the rest
-        if light_count > 3:
+        # Keep first 5 lights for better lighting quality (increased from 3)
+        if light_count > 5:
             obj.hide_render = True
-            print(f"🚀 Disabled light {{obj.name}} for speed")
+            print(f"🚀 Disabled light {{obj.name}} for balanced performance")
         else:
-            # Moderate reduction for remaining lights
-            obj.data.energy = obj.data.energy * 0.7  # 30% reduction
-            print(f"🚀 Reduced light energy for {{obj.name}} to {{obj.data.energy:.1f}}")
+            # Minimal reduction for remaining lights to maintain quality
+            obj.data.energy = obj.data.energy * 0.9  # Reduced from 30% reduction to 10% reduction
+            print(f"🚀 Enhanced light energy for {{obj.name}} to {{obj.data.energy:.1f}}")
 
 print("✅ Balanced lighting optimization complete")
 
@@ -921,7 +926,7 @@ def main():
             
             # Use ULTRA GPU-optimized rendering for ALL presets for maximum CPU reduction
             # All presets now use the ultra GPU-optimized pipeline with 70-80% CPU reduction
-            success = render_video_ultra_gpu_optimized(str(blend_path), str(video_path), audio_file, features['total_frames'])
+            success = render_video_ultra_gpu_optimized(str(blend_path), str(video_path), audio_file, features['total_frames'], quality_mode)
             
             if success:
                 print(f"\n🎉 SUCCESS! ULTRA GPU-optimized video created: {video_path}")
