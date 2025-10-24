@@ -23,11 +23,35 @@ import json
 import subprocess
 import time
 import platform
+import uuid
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Tuple
 
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent))
+
+def generate_dynamic_filename(base_name: str, extension: str, include_timestamp: bool = True) -> str:
+    """Generate a dynamic filename with timestamp and unique identifier to prevent conflicts."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    unique_id = str(uuid.uuid4())[:8]  # First 8 characters of UUID
+    
+    if include_timestamp:
+        return f"{base_name}_{timestamp}_{unique_id}.{extension}"
+    else:
+        return f"{base_name}_{unique_id}.{extension}"
+
+def generate_dynamic_paths(output_name: str, temp_dir: Path) -> Dict[str, Path]:
+    """Generate dynamic paths for all temporary files to prevent conflicts."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    unique_id = str(uuid.uuid4())[:8]
+    
+    return {
+        'script': temp_dir / f"enhanced_dramatic_scene_{timestamp}_{unique_id}.py",
+        'blend': temp_dir / f"scene_{timestamp}_{unique_id}.blend",
+        'render_script': temp_dir / f"temp_direct_render_{timestamp}_{unique_id}.py",
+        'video': Path(__file__).parent.parent / "output" / f"{output_name}_{timestamp}_{unique_id}_polyfjord.mp4"
+    }
 
 try:
     from audio_analyzer import EnhancedAudioAnalyzer
@@ -59,12 +83,12 @@ def analyze_audio(audio_path: str, fps: int = 30) -> Dict:
     
     return features
 
-def create_enhanced_blender_script(features: Dict, output_path: str, quality_mode: str = 'high', style: str = 'polyfjord') -> str:
+def create_enhanced_blender_script(features: Dict, output_path: str, quality_mode: str = 'high', style: str = 'polyfjord') -> Tuple[str, Dict[str, Path]]:
     """Create Blender script with Polyfjord style only."""
     
     return create_blender_script(features, output_path, quality_mode)
 
-def create_blender_script(features: Dict, output_path: str, quality_mode: str = 'high') -> str:
+def create_blender_script(features: Dict, output_path: str, quality_mode: str = 'high') -> Tuple[str, Dict[str, Path]]:
     """Create ENHANCED DRAMATIC Blender script with ultra-responsive shape morphing and professional quality."""
     print("🎬 Creating ENHANCED DRAMATIC professional audio visualizer script")
     
@@ -72,7 +96,10 @@ def create_blender_script(features: Dict, output_path: str, quality_mode: str = 
     temp_dir = Path(__file__).parent.parent / "output" / "temp"
     temp_dir.mkdir(parents=True, exist_ok=True)
     
-    # Import the ENHANCED optimized audio visualizer
+    # Generate dynamic paths to prevent conflicts
+    output_name = Path(output_path).stem
+    dynamic_paths = generate_dynamic_paths(output_name, temp_dir)
+    
     print(f"🔍 DEBUG: Current working directory: {os.getcwd()}")
     print(f"🔍 DEBUG: Python path: {sys.path}")
     print(f"🔍 DEBUG: Looking for optimized_audio_visualizer in: {Path(__file__).parent}")
@@ -106,9 +133,9 @@ def create_blender_script(features: Dict, output_path: str, quality_mode: str = 
     # Create enhanced visualizer with dramatic settings
     visualizer = OptimizedAudioVisualizer(features, quality_level, morph_style)
     
-    # Generate enhanced script
-    script_path = temp_dir / "enhanced_dramatic_scene.py"
-    blend_path = temp_dir / "scene.blend"
+    # Use dynamic paths instead of static names
+    script_path = dynamic_paths['script']
+    blend_path = dynamic_paths['blend']
     
     # Create the enhanced scene script
     saved_script_path = visualizer.save_script(str(script_path), blend_path=str(blend_path))
@@ -117,7 +144,7 @@ def create_blender_script(features: Dict, output_path: str, quality_mode: str = 
     print(f"🎬 Blend file will be saved to: {blend_path}")
     print("🚀 Features: DRAMATIC Shape Morphing | ULTRA-RESPONSIVE Music | ENHANCED Animations")
     print("🎵 Enhanced Features: Dramatic audio responsiveness, Ultra-responsive shape changes, Smooth animations")
-    return saved_script_path
+    return saved_script_path, dynamic_paths
 
 def run_blender_script(script_path: str) -> bool:
     """Run the Blender script and stream Blender output for diagnostics."""
@@ -693,7 +720,7 @@ except Exception as e:
 '''
         
         # Write temporary script
-        script_path = Path(output_path).parent / "temp_direct_render.py"
+        script_path = Path(output_path).parent / generate_dynamic_filename("temp_direct_render", "py")
         with open(script_path, 'w') as f:
             f.write(render_script)
         
@@ -865,7 +892,7 @@ def main():
         features = analyze_audio(audio_file)
         
         # Step 2: Create Polyfjord-style Blender script
-        script_path = create_enhanced_blender_script(features, output_name, quality_mode)
+        script_path, dynamic_paths = create_enhanced_blender_script(features, output_name, quality_mode)
         
         # Step 3: Run Polyfjord-style Blender script
         if not run_blender_script(script_path):
@@ -873,9 +900,8 @@ def main():
             sys.exit(1)
         
         # Step 4: Render video
-        temp_dir = Path(__file__).parent.parent / "output" / "temp"
-        blend_path = temp_dir / "scene.blend"
-        video_path = Path(__file__).parent.parent / "output" / f"{output_name}_polyfjord.mp4"
+        blend_path = dynamic_paths['blend']
+        video_path = dynamic_paths['video']
         
         if blend_path.exists():
             # Use user-specified quality mode or auto-select based on duration

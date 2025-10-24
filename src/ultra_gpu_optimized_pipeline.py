@@ -20,6 +20,8 @@ import platform
 import time
 import json
 import os
+import uuid
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
@@ -28,6 +30,16 @@ import logging
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def generate_dynamic_filename(base_name: str, extension: str, include_timestamp: bool = True) -> str:
+    """Generate a dynamic filename with timestamp and unique identifier to prevent conflicts."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    unique_id = str(uuid.uuid4())[:8]  # First 8 characters of UUID
+    
+    if include_timestamp:
+        return f"{base_name}_{timestamp}_{unique_id}.{extension}"
+    else:
+        return f"{base_name}_{unique_id}.{extension}"
 
 
 @dataclass
@@ -79,10 +91,15 @@ class UltraGPUOptimizedPipeline:
         
         # Audio script section
         audio_script_section = ""
-        if audio_path:
+        if audio_path and os.path.exists(audio_path):
             audio_script_section = f'''
 # Add audio to scene
-if "{audio_path}":
+import bpy
+import os
+
+# Load audio file
+audio_filepath = "{audio_path}"
+if os.path.exists(audio_filepath):
     try:
         # Get scene reference
         scene = bpy.context.scene
@@ -94,7 +111,7 @@ if "{audio_path}":
         # Add audio strip
         sound_strip = scene.sequence_editor.sequences.new_sound(
             name="Audio",
-            filepath="{audio_path}",
+            filepath=audio_filepath,
             channel=1,
             frame_start=0
         )
@@ -105,6 +122,8 @@ if "{audio_path}":
         print(f"✅ Audio loaded: {audio_path}")
     except Exception as e:
         print(f"⚠️ Could not load audio: {{e}}")
+else:
+    print(f"⚠️ Audio file not found: {audio_path}")
 '''
         
         script = f'''
@@ -419,7 +438,7 @@ print("🚀 GPU utilization: MAXIMUM")
         )
         
         # Write script to temporary file
-        script_path = output_dir / "temp_ultra_gpu_render.py"
+        script_path = output_dir / generate_dynamic_filename("temp_ultra_gpu_render", "py")
         with open(script_path, 'w') as f:
             f.write(script_content)
         
