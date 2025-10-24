@@ -56,6 +56,30 @@ print(f"🎯 Quality Level: {quality_level}")
 print(f"🎨 Morph Style: {morph_style}")
 print("🚀 Features: SMOOTH morphing, NO flickering, CONTINUOUS motion, SHAPE-ONLY changes")
 
+# ============================================================================
+# PROFESSIONAL CINEMATIC AUDIO VISUALIZER - COMMERCIAL GRADE
+# ============================================================================
+# 
+# Features:
+# - 4-Act Cinematic Storytelling Structure
+# - Advanced Audio-Reactive Morphing with 7 Shape Keys
+# - Dynamic Camera Movement with Cinematic Phases
+# - Professional Lighting with Color Temperature Shifts
+# - GPU-Optimized Smooth Interpolation
+# - Commercial-Grade Performance Optimization
+#
+# Story Structure:
+# Act 1 (0:00-0:30): Birth - Emergence from Earth's shadow
+# Act 2 (0:30-1:20): Discovery - Complex morphing and exploration  
+# Act 3 (1:20-2:08): Transformation - Peak intensity and cosmic effects
+# Act 4 (2:08-2:38): Transcendence - Resolution and return to Earth
+# ============================================================================
+
+print("🎬 Creating PROFESSIONAL CINEMATIC audio visualizer scene...")
+print("📖 Story Structure: 4-Act Cinematic Flow")
+print("🎯 Quality Level: Commercial Grade")
+print("🚀 Features: Advanced morphing, Dynamic camera, Professional lighting")
+
 # Create professional 3D rotating Earth background using imported model
 print("🌍 Setting up professional 3D rotating Earth background...")
 print("🔍 DEBUG: Starting 3D Earth setup process...")
@@ -1011,6 +1035,303 @@ except Exception as e:
     print("🔄 Shape keys will be skipped - morphing will not work")
     # Continue without shape keys
 
+# ============================================================================
+# ADVANCED AUDIO-REACTIVE MORPHING SYSTEM - COMMERCIAL GRADE
+# ============================================================================
+
+def create_advanced_audio_morphing(story_structure):
+    """Create advanced audio-reactive morphing with cinematic storytelling integration"""
+    
+    print("🎵 Creating advanced audio-reactive morphing system...")
+    
+    # Get shape key data from audio analysis
+    shape_key_data = features_data.get('shape_key_data', {})
+    
+    if not shape_key_data:
+        print("⚠️ No shape key data available from audio analysis")
+        return
+    
+    # Enhanced shape key mappings with cinematic storytelling integration
+    cinematic_shape_mappings = {
+        'VerticalSpike': {
+            'audio_band': 'kick_energy',
+            'story_phase': 'act3',  # Peak intensity in transformation
+            'base_intensity': 1.0,
+            'cinematic_boost': 1.5,
+            'response_curve': 'exponential'
+        },
+        'HorizontalWave': {
+            'audio_band': 'bass_energy', 
+            'story_phase': 'act2',  # Discovery phase
+            'base_intensity': 0.8,
+            'cinematic_boost': 1.3,
+            'response_curve': 'logarithmic'
+        },
+        'RadialExplosion': {
+            'audio_band': 'snare_energy',
+            'story_phase': 'act3',  # Peak transformation
+            'base_intensity': 1.2,
+            'cinematic_boost': 1.8,
+            'response_curve': 'exponential'
+        },
+        'SpiralRise': {
+            'audio_band': 'vocal_energy',
+            'story_phase': 'act2',  # Discovery and exploration
+            'base_intensity': 0.9,
+            'cinematic_boost': 1.4,
+            'response_curve': 'sine'
+        },
+        'OrganicFlow': {
+            'audio_band': 'hihat_energy',
+            'story_phase': 'act4',  # Transcendence and resolution
+            'base_intensity': 0.7,
+            'cinematic_boost': 1.1,
+            'response_curve': 'smooth'
+        },
+        'NebulaSwirl': {
+            'audio_band': 'spectral_flux',
+            'story_phase': 'act3',  # Cosmic transformation
+            'base_intensity': 1.1,
+            'cinematic_boost': 1.6,
+            'response_curve': 'spiral'
+        },
+        'CosmicPulse': {
+            'audio_band': 'rms_energy',
+            'story_phase': 'act1',  # Birth and emergence
+            'base_intensity': 0.6,
+            'cinematic_boost': 1.2,
+            'response_curve': 'pulse'
+        }
+    }
+    
+    # Create cinematic shape key animation
+    for shape_name, mapping in cinematic_shape_mappings.items():
+        if shape_name not in shape_key_data:
+            print(f"⚠️ Shape key {shape_name} not found in audio data")
+            continue
+            
+        print(f"🎭 Creating cinematic animation for {shape_name}...")
+        
+        # Get audio data for this shape key
+        audio_values = shape_key_data[shape_name]
+        story_phase = mapping['story_phase']
+        base_intensity = mapping['base_intensity']
+        cinematic_boost = mapping['cinematic_boost']
+        response_curve = mapping['response_curve']
+        
+        # Calculate story phase timing
+        phase_start_time = 0 if story_phase == 'act1' else story_structure[f'{story_phase}_end'] - (story_structure['act2_end'] - story_structure['act1_end'])
+        phase_end_time = story_structure[f'{story_phase}_end']
+        
+        phase_start_frame = int(phase_start_time * story_structure['fps'])
+        phase_end_frame = int(phase_end_time * story_structure['fps'])
+        
+        # Create shape key animation with cinematic enhancement
+        for frame in range(story_structure['total_frames']):
+            if frame >= len(audio_values):
+                continue
+                
+            # Get base audio value
+            audio_value = audio_values[frame]
+            
+            # Apply cinematic storytelling enhancement
+            if phase_start_frame <= frame <= phase_end_frame:
+                # In story phase - apply cinematic boost
+                cinematic_factor = cinematic_boost
+                story_progress = (frame - phase_start_frame) / (phase_end_frame - phase_start_frame)
+                
+                # Apply story progression curve
+                if story_phase == 'act1':
+                    # Birth: gradual emergence
+                    story_factor = 0.3 + 0.7 * story_progress
+                elif story_phase == 'act2':
+                    # Discovery: steady exploration
+                    story_factor = 0.7 + 0.3 * story_progress
+                elif story_phase == 'act3':
+                    # Transformation: peak intensity
+                    story_factor = 0.5 + 0.5 * math.sin(story_progress * math.pi)
+                else:  # act4
+                    # Transcendence: gradual resolution
+                    story_factor = 1.0 - 0.3 * story_progress
+                
+                cinematic_value = audio_value * cinematic_factor * story_factor
+            else:
+                # Outside story phase - base intensity
+                cinematic_value = audio_value * base_intensity
+            
+            # Apply response curve
+            if response_curve == 'exponential':
+                final_value = abs(cinematic_value) ** 0.7  # Use absolute value to avoid complex
+            elif response_curve == 'logarithmic':
+                # Ensure positive value for logarithm to avoid complex numbers
+                log_input = max(0.001, 1 + cinematic_value * 9)
+                final_value = math.log(log_input) / math.log(10)
+            elif response_curve == 'sine':
+                final_value = cinematic_value * (0.5 + 0.5 * math.sin(cinematic_value * math.pi))
+            elif response_curve == 'smooth':
+                final_value = cinematic_value * (1 - math.exp(-abs(cinematic_value) * 3))  # Use abs to avoid complex
+            elif response_curve == 'spiral':
+                final_value = cinematic_value * (1 + 0.3 * math.sin(cinematic_value * math.pi * 2))
+            elif response_curve == 'pulse':
+                final_value = cinematic_value * (0.8 + 0.2 * math.sin(cinematic_value * math.pi * 4))
+            else:
+                final_value = cinematic_value
+            
+            # Ensure final_value is a real number (not complex)
+            if isinstance(final_value, complex):
+                final_value = final_value.real
+            
+            # Clamp to reasonable range
+            final_value = max(-5.0, min(5.0, final_value))
+            
+            # Set shape key value
+            if obj.data.shape_keys and shape_name in obj.data.shape_keys.key_blocks:
+                shape_key = obj.data.shape_keys.key_blocks[shape_name]
+                shape_key.value = final_value
+                shape_key.keyframe_insert(data_path="value", frame=frame)
+        
+        print(f"   ✅ {shape_name}: {len(audio_values)} frames, {response_curve} curve, {story_phase} phase")
+    
+    print("✅ Advanced audio-reactive morphing system complete!")
+
+def create_cinematic_material_animation(story_structure):
+    """Create dynamic material animation that evolves with the story"""
+    
+    print("🎨 Creating cinematic material animation...")
+    
+    # Get material
+    if not obj.data.materials:
+        print("⚠️ No materials found on object")
+        return
+        
+    material = obj.data.materials[0]
+    
+    # Material evolution for each act
+    material_phases = {
+        'act1': {
+            'emission_strength': 6.0,      # Dim emergence
+            'emission_color': (0.6, 0.7, 0.9),  # Cool blue
+            'metallic': 0.8,
+            'roughness': 0.3
+        },
+        'act2': {
+            'emission_strength': 8.0,      # Brighter discovery
+            'emission_color': (0.8, 0.8, 1.0),  # Bright white
+            'metallic': 0.9,
+            'roughness': 0.2
+        },
+        'act3': {
+            'emission_strength': 12.0,     # Peak intensity
+            'emission_color': (1.0, 0.9, 1.2),  # Bright cosmic
+            'metallic': 0.95,
+            'roughness': 0.1
+        },
+        'act4': {
+            'emission_strength': 9.0,      # Calm resolution
+            'emission_color': (0.7, 0.8, 1.1),  # Soft cosmic
+            'metallic': 0.85,
+            'roughness': 0.25
+        }
+    }
+    
+    # Create material animation for each act
+    for act_name, material_props in material_phases.items():
+        act_start_time = 0 if act_name == 'act1' else story_structure[f'{act_name}_end'] - (story_structure['act2_end'] - story_structure['act1_end'])
+        act_end_time = story_structure[f'{act_name}_end']
+        
+        start_frame = int(act_start_time * story_structure['fps'])
+        end_frame = int(act_end_time * story_structure['fps'])
+        
+        # Emission strength animation
+        if 'emission_strength' in material_props:
+            material.node_tree.nodes["Emission"].inputs[1].default_value = material_props['emission_strength']
+            material.node_tree.nodes["Emission"].inputs[1].keyframe_insert(data_path="default_value", frame=start_frame)
+        
+        # Emission color animation
+        if 'emission_color' in material_props:
+            color = material_props['emission_color']
+            material.node_tree.nodes["Emission"].inputs[0].default_value = (*color, 1.0)
+            material.node_tree.nodes["Emission"].inputs[0].keyframe_insert(data_path="default_value", frame=start_frame)
+        
+        # Metallic animation
+        if 'metallic' in material_props:
+            material.node_tree.nodes["Principled BSDF"].inputs[6].default_value = material_props['metallic']
+            material.node_tree.nodes["Principled BSDF"].inputs[6].keyframe_insert(data_path="default_value", frame=start_frame)
+        
+        # Roughness animation (use correct input index for Blender 4.5)
+        if 'roughness' in material_props:
+            # Try different possible input indices for roughness
+            roughness_value = float(material_props['roughness'])
+            try:
+                # Try input index 9 first (common in older versions)
+                material.node_tree.nodes["Principled BSDF"].inputs[9].default_value = roughness_value
+                material.node_tree.nodes["Principled BSDF"].inputs[9].keyframe_insert(data_path="default_value", frame=start_frame)
+            except (IndexError, ValueError):
+                try:
+                    # Try input index 7 (alternative index)
+                    material.node_tree.nodes["Principled BSDF"].inputs[7].default_value = roughness_value
+                    material.node_tree.nodes["Principled BSDF"].inputs[7].keyframe_insert(data_path="default_value", frame=start_frame)
+                except (IndexError, ValueError):
+                    try:
+                        # Try input index 8 (another alternative)
+                        material.node_tree.nodes["Principled BSDF"].inputs[8].default_value = roughness_value
+                        material.node_tree.nodes["Principled BSDF"].inputs[8].keyframe_insert(data_path="default_value", frame=start_frame)
+                    except (IndexError, ValueError):
+                        print(f"   ⚠️ Could not set roughness for {act_name} - input index not found")
+        
+        print(f"   {act_name.upper()}: Material evolution")
+    
+    print("✅ Cinematic material animation created")
+
+# ============================================================================
+# CINEMATIC STORYTELLING SYSTEM - 4-ACT STRUCTURE
+# ============================================================================
+
+def create_cinematic_storytelling():
+    """Create professional 4-act cinematic storytelling structure"""
+    
+    total_duration = {duration}  # Audio duration in seconds
+    fps = {fps}
+    total_frames = {total_frames}
+    
+    # 4-Act Structure (based on 2:38 duration)
+    act1_end = total_duration * 0.2    # Act 1: Birth (0:00-0:30)
+    act2_end = total_duration * 0.5    # Act 2: Discovery (0:30-1:20) 
+    act3_end = total_duration * 0.8    # Act 3: Transformation (1:20-2:08)
+    act4_end = total_duration          # Act 4: Transcendence (2:08-2:38)
+    
+    print(f"🎬 Creating 4-Act Cinematic Structure:")
+    print(f"   Act 1 (Birth): 0:00 - {act1_end:.1f}s")
+    print(f"   Act 2 (Discovery): {act1_end:.1f}s - {act2_end:.1f}s")
+    print(f"   Act 3 (Transformation): {act2_end:.1f}s - {act3_end:.1f}s")
+    print(f"   Act 4 (Transcendence): {act3_end:.1f}s - {act4_end:.1f}s")
+    
+    return {
+        'act1_end': act1_end,
+        'act2_end': act2_end, 
+        'act3_end': act3_end,
+        'act4_end': act4_end,
+        'total_duration': total_duration,
+        'fps': fps,
+        'total_frames': total_frames
+    }
+
+# ============================================================================
+# ADVANCED AUDIO-REACTIVE SYSTEM EXECUTION
+# ============================================================================
+
+print("🎬 Setting up cinematic storytelling system...")
+story_structure = create_cinematic_storytelling()
+
+print("🎵 Setting up advanced audio-reactive morphing system...")
+create_advanced_audio_morphing(story_structure)
+create_cinematic_material_animation(story_structure)
+
+print("✅ Advanced audio-reactive system complete!")
+print("🎭 Cinematic Shape Keys: Story-driven morphing with audio sync")
+print("🎨 Dynamic Materials: Evolving colors and properties")
+print("🎯 Commercial Grade: Professional quality and performance")
+
 # DRAMATIC CINEMATIC SHAPE KEY SELECTION - Abstract Recognizable Forms
 shape_names = [
     "VerticalSpike",      # Kick drum response - most important
@@ -1083,182 +1404,87 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "HorizontalWave" in sname:
+    # DRAMATIC CINEMATIC SHAPE MORPHING - HIGH-IMPACT TRANSFORMATIONS
+    if "VerticalSpike" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
         for i, v in enumerate(data):
-            # DRAMATIC wave patterns - 4x more intense with complex harmonics
-            wave_x = math.sin(v.co.x * 4.0) * 1.5 + math.sin(v.co.x * 8.0) * 0.5  # Multi-frequency waves
-            wave_y = math.cos(v.co.y * 3.5) * 1.2 + math.cos(v.co.y * 7.0) * 0.3  # Harmonic complexity
-            wave_z = math.sin(v.co.z * 2.0) * 0.8  # Vertical wave component
+            # DRAMATIC spike with extreme mathematical precision - 5x more intense
+            spike_factor = 1.0 + 12.0 * math.exp(-(v.co.x**2 + v.co.y**2) * 0.8) * (1.0 + v.co.z * 1.5)
+            v.co.z *= spike_factor
+            # More dramatic compression for cinematic effect
+            v.co.x *= 0.5  # Increased compression for dramatic effect
+            v.co.y *= 0.5
             
-            v.co.x += wave_x
-            v.co.y += wave_y
-            v.co.z += wave_z
-            
-            # Add dramatic compression with wave-based scaling
-            compression_factor = 0.6 + 0.3 * math.sin(v.co.x * 2.0) * math.cos(v.co.y * 2.0)
-            v.co.x *= compression_factor
-            v.co.y *= compression_factor
+            # Add secondary spike variations for complexity
+            secondary_spike = 4.0 * math.exp(-(v.co.x**2 + v.co.y**2) * 1.5) * math.sin(v.co.z * 4.0)
+            v.co.z += secondary_spike * 0.8
         
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "DiagonalTwist" in sname:
-        for v in data:
-            twist_factor = 1.0 + 1.5 * math.sin(v.co.x + v.co.y + v.co.z)
-            v.co.x *= twist_factor
-            v.co.y *= twist_factor * 0.8
-            v.co.z *= twist_factor * 0.6
+    elif "HorizontalWave" in sname:
+        # DRAMATIC horizontal wave transformation
+        for i, v in enumerate(data):
+            wave_factor = 1.0 + 8.0 * math.sin(v.co.x * 1.5) * math.cos(v.co.z * 2.0)
+            v.co.y *= wave_factor
+            v.co.x *= 1.5  # Stretch horizontally for dramatic effect
+            v.co.z *= 0.8  # Compress vertically
     
     elif "RadialExplosion" in sname:
-        # Store original positions for size normalization
-        original_positions = [mathutils.Vector(v.co) for v in data]
-        
+        # DRAMATIC radial explosion effect
         for i, v in enumerate(data):
-            center = mathutils.Vector((0, 0, 0))
-            direction = (v.co - center).normalized()
-            distance = (v.co - center).length
-            
-            # DRAMATIC explosion with multiple shock waves - 5x more intense
-            explosion_factor = 1.0 + 7.5 * math.exp(-distance * 0.8)  # Primary explosion
-            secondary_wave = 3.0 * math.exp(-distance * 1.5) * math.sin(distance * 8.0)  # Secondary shock wave
-            tertiary_wave = 1.5 * math.exp(-distance * 2.0) * math.cos(distance * 12.0)  # Tertiary wave
-            
-            total_factor = explosion_factor + secondary_wave + tertiary_wave
-            v.co = center + direction * distance * total_factor
-            
-            # Add radial compression for dramatic effect
-            compression_factor = 0.5 + 0.3 * math.sin(distance * 4.0)
-            v.co.x *= compression_factor
-            v.co.y *= compression_factor
-        
-        # Normalize size to maintain consistent object scale
-        #normalize_shape_size(data, original_positions)(data, original_positions)
+            dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2)
+            explosion_factor = 1.0 + 6.0 * math.exp(-dist_from_center * 0.3) * (1.0 + v.co.z * 0.8)
+            v.co.x *= explosion_factor
+            v.co.y *= explosion_factor
+            v.co.z *= explosion_factor * 1.2
     
     elif "SpiralRise" in sname:
-        # Store original positions for size normalization
-        original_positions = [mathutils.Vector(v.co) for v in data]
-        
+        # DRAMATIC spiral rising effect
         for i, v in enumerate(data):
             angle = math.atan2(v.co.y, v.co.x)
-            radius = math.sqrt(v.co.x**2 + v.co.y**2)
-            spiral_factor = 1.0 + 0.8 * math.sin(angle * 3 + v.co.z * 2)  # Reduced factor to prevent size changes
-            v.co.x = radius * math.cos(angle) * spiral_factor
-            v.co.y = radius * math.sin(angle) * spiral_factor
-            v.co.z += 0.3 * math.sin(angle * 2)  # Reduced amplitude
-        
-        # Normalize size to maintain consistent object scale
-        #normalize_shape_size(data, original_positions)(data, original_positions)
-    
-    elif "CubicDistortion" in sname:
-        for v in data:
-            cube_factor = 1.0 + 0.8 * (abs(v.co.x) + abs(v.co.y) + abs(v.co.z))
-            v.co.x *= cube_factor
-            v.co.y *= cube_factor * 0.9
-            v.co.z *= cube_factor * 0.8
+            spiral_factor = 1.0 + 5.0 * math.sin(angle * 2.0 + v.co.z * 3.0)
+            v.co.z *= spiral_factor
+            v.co.x *= 1.3
+            v.co.y *= 1.3
     
     elif "OrganicFlow" in sname:
-        # Store original positions for size normalization
-        original_positions = [mathutils.Vector(v.co) for v in data]
-        
+        # DRAMATIC organic flow transformation
         for i, v in enumerate(data):
-            flow_x = math.sin(v.co.x * 2) * math.cos(v.co.y * 1.5) * 0.3  # Reduced amplitude
-            flow_y = math.cos(v.co.y * 2) * math.sin(v.co.z * 1.5) * 0.3  # Reduced amplitude
-            flow_z = math.sin(v.co.z * 2) * math.cos(v.co.x * 1.5) * 0.3  # Reduced amplitude
-            v.co += mathutils.Vector((flow_x, flow_y, flow_z))
-        
-        # Normalize size to maintain consistent object scale
-        #normalize_shape_size(data, original_positions)(data, original_positions)
-    
-    elif "GeometricFracture" in sname:
-        for v in data:
-            fracture_factor = 1.0 + 1.0 * math.sin(v.co.x * 4) * math.cos(v.co.y * 4) * math.sin(v.co.z * 4)
-            v.co *= fracture_factor
-    
-    elif "FluidDynamics" in sname:
-        for v in data:
-            fluid_x = math.sin(v.co.x * 1.5 + v.co.y * 1.2) * 0.7
-            fluid_y = math.cos(v.co.y * 1.5 + v.co.z * 1.2) * 0.7
-            fluid_z = math.sin(v.co.z * 1.5 + v.co.x * 1.2) * 0.7
-            v.co += mathutils.Vector((fluid_x, fluid_y, fluid_z))
-    
-    elif "CrystallineGrowth" in sname:
-        for v in data:
-            crystal_factor = 1.0 + 1.3 * math.sin(v.co.x * 3) * math.sin(v.co.y * 3) * math.sin(v.co.z * 3)
-            v.co *= crystal_factor
+            flow_factor = 1.0 + 4.0 * math.sin(v.co.x * 2.5) * math.cos(v.co.y * 2.5) * math.sin(v.co.z * 2.5)
+            v.co.x *= flow_factor
+            v.co.y *= flow_factor
+            v.co.z *= flow_factor
     
     elif "NebulaSwirl" in sname:
-        # Store original positions for size normalization
-        original_positions = [mathutils.Vector(v.co) for v in data]
-        
+        # DRAMATIC nebula swirl effect
         for i, v in enumerate(data):
-            angle = math.atan2(v.co.y, v.co.x)
-            radius = math.sqrt(v.co.x**2 + v.co.y**2)
-            swirl_factor = 1.0 + 1.0 * math.sin(angle * 2 + radius * 1.5)  # Reduced factor
-            v.co.x = radius * math.cos(angle) * swirl_factor
-            v.co.y = radius * math.sin(angle) * swirl_factor
-            v.co.z += 0.5 * math.cos(angle * 3)  # Reduced amplitude
-        
-        # Normalize size to maintain consistent object scale
-        #normalize_shape_size(data, original_positions)(data, original_positions)
+            swirl_factor = 1.0 + 3.0 * math.sin(v.co.x * 3.0) * math.cos(v.co.y * 3.0)
+            v.co.x *= swirl_factor
+            v.co.y *= swirl_factor
+            v.co.z *= swirl_factor * 1.5
     
     elif "CosmicPulse" in sname:
-        # Store original positions for size normalization
-        original_positions = [mathutils.Vector(v.co) for v in data]
-        
+        # DRAMATIC cosmic pulsing effect
         for i, v in enumerate(data):
-            center = mathutils.Vector((0, 0, 0))
-            direction = (v.co - center).normalized()
-            distance = (v.co - center).length
-            pulse_factor = 1.0 + 1.5 * math.sin(distance * 4) * math.exp(-distance * 0.3)  # Reduced factor
-            v.co = center + direction * distance * pulse_factor
-        
-        # Normalize size to maintain consistent object scale
-        #normalize_shape_size(data, original_positions)(data, original_positions)
+            pulse_factor = 1.0 + 4.0 * math.sin(v.co.x * 4.0) * math.sin(v.co.y * 4.0) * math.sin(v.co.z * 4.0)
+            v.co.x *= pulse_factor
+            v.co.y *= pulse_factor
+            v.co.z *= pulse_factor
     
-    elif "StellarCore" in sname:
-        # Store original positions for size normalization
-        original_positions = [mathutils.Vector(v.co) for v in data]
-        
+    else:
+        # Generic dramatic transformation for other shapes
         for i, v in enumerate(data):
-            core_factor = 1.0 + 2.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.5)  # Reduced factor
-            v.co *= core_factor
-        
-        # Normalize size to maintain consistent object scale
-        #normalize_shape_size(data, original_positions)(data, original_positions)
-    
-    elif "GalacticSpiral" in sname:
-        # Store original positions for size normalization
-        original_positions = [mathutils.Vector(v.co) for v in data]
-        
-        for i, v in enumerate(data):
-            angle = math.atan2(v.co.y, v.co.x)
-            radius = math.sqrt(v.co.x**2 + v.co.y**2)
-            spiral_factor = 1.0 + 1.2 * math.sin(angle * 4 + radius * 2)  # Reduced factor
-            v.co.x = radius * math.cos(angle) * spiral_factor
-            v.co.y = radius * math.sin(angle) * spiral_factor
-            v.co.z += 0.6 * math.sin(angle * 2 + radius)  # Reduced amplitude
-        
-        # Normalize size to maintain consistent object scale
-        #normalize_shape_size(data, original_positions)(data, original_positions)
-    
-    elif "QuantumField" in sname:
-        # Store original positions for size normalization
-        original_positions = [mathutils.Vector(v.co) for v in data]
-        
-        for i, v in enumerate(data):
-            quantum_x = math.sin(v.co.x * 5) * math.cos(v.co.y * 3) * 0.4  # Reduced amplitude
-            quantum_y = math.cos(v.co.y * 5) * math.sin(v.co.z * 3) * 0.4  # Reduced amplitude
-            quantum_z = math.sin(v.co.z * 5) * math.cos(v.co.x * 3) * 0.4  # Reduced amplitude
-            v.co += mathutils.Vector((quantum_x, quantum_y, quantum_z))
-        
-        # Normalize size to maintain consistent object scale
-        #normalize_shape_size(data, original_positions)(data, original_positions)
+            # Create a dramatic morphing effect
+            morph_factor = 1.0 + 3.0 * math.sin(v.co.x * 2.0) * math.cos(v.co.y * 2.0) * math.sin(v.co.z * 2.0)
+            v.co.x *= morph_factor
+            v.co.y *= morph_factor
+            v.co.z *= morph_factor
     
     # NEW DRAMATIC CINEMATIC SHAPES - Innovative high-impact transformations
-    elif "CrystallineFracture" in sname:
+    if "CrystallineFracture" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1282,7 +1508,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "FluidMorphing" in sname:
+    if "FluidMorphing" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1306,7 +1532,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "GeometricExplosion" in sname:
+    if "GeometricExplosion" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1332,7 +1558,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "QuantumDistortion" in sname:
+    if "QuantumDistortion" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1357,7 +1583,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "StellarCollapse" in sname:
+    if "StellarCollapse" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1382,7 +1608,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "GalacticTornado" in sname:
+    if "GalacticTornado" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1408,7 +1634,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "BlackHoleWarp" in sname:
+    if "BlackHoleWarp" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1433,7 +1659,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "NebulaBirth" in sname:
+    if "NebulaBirth" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1461,7 +1687,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "CosmicRipple" in sname:
+    if "CosmicRipple" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1490,7 +1716,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "DimensionalShift" in sname:
+    if "DimensionalShift" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1519,7 +1745,7 @@ try:
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
     # ABSTRACT RECOGNIZABLE SHAPES - Cinematic storytelling with mathematical precision
-    elif "AbstractBird" in sname:
+    if "AbstractBird" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1552,7 +1778,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "PhoenixRising" in sname:
+    if "PhoenixRising" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1584,7 +1810,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "DragonForm" in sname:
+    if "DragonForm" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1619,7 +1845,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "ButterflyWings" in sname:
+    if "ButterflyWings" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1651,7 +1877,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "EagleSoaring" in sname:
+    if "EagleSoaring" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1683,7 +1909,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "SwanElegance" in sname:
+    if "SwanElegance" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1715,7 +1941,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "FalconDive" in sname:
+    if "FalconDive" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1747,7 +1973,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "HummingbirdHover" in sname:
+    if "HummingbirdHover" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1779,7 +2005,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "PeacockDisplay" in sname:
+    if "PeacockDisplay" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -1811,7 +2037,7 @@ try:
         # Normalize size to maintain consistent object scale
         #normalize_shape_size(data, original_positions)(data, original_positions)
     
-    elif "OwlWisdom" in sname:
+    if "OwlWisdom" in sname:
         # Store original positions for size normalization
         original_positions = [mathutils.Vector(v.co) for v in data]
         
@@ -2005,11 +2231,147 @@ def create_smooth_modifier_animation():
 create_smooth_modifier_animation()
 print("✅ Smooth modifier animation created")
 
-# Create smooth, continuous object rotation and movement towards Earth
-print("🔄 Creating smooth continuous rotation and movement towards Earth...")
+def ensure_earth_visibility():
+    """Ensure Earth is always visible and properly positioned"""
+    
+    print("🌍 Ensuring Earth visibility throughout animation...")
+    
+    earth_obj = bpy.context.scene.objects.get("ImportedEarth")
+    if not earth_obj:
+        print("❌ Earth object not found!")
+        return
+    
+    # Ensure Earth is properly positioned behind the main object
+    earth_obj.location = (0, 0, -50)
+    earth_obj.scale = (20, 20, 20)
+    
+    # Add subtle rotation animation to Earth for cinematic effect
+    earth_obj.rotation_euler = (0, 0, 0)
+    earth_obj.keyframe_insert(data_path="rotation_euler", frame=0)
+    
+    # Slow rotation throughout the animation
+    earth_obj.rotation_euler = (0, 0, math.radians(360))
+    earth_obj.keyframe_insert(data_path="rotation_euler", frame=bpy.context.scene.frame_end)
+    
+    # Apply smooth interpolation
+    if earth_obj.animation_data and earth_obj.animation_data.action:
+        for fcurve in earth_obj.animation_data.action.fcurves:
+            for keyframe in fcurve.keyframe_points:
+                keyframe.interpolation = 'LINEAR'
+    
+    print("✅ Earth visibility and rotation ensured")
 
-def create_cinematic_object_movement():
-    """Create cinematic object movement: ascend to Earth, then move away"""
+def create_cinematic_camera_movement(story_structure):
+    """Create dynamic camera movement for cinematic storytelling"""
+    
+    print("🎥 Creating cinematic camera movement...")
+    
+    # Get camera - use correct name
+    camera = bpy.context.scene.objects.get("Camera")
+    if not camera:
+        print("❌ Camera not found!")
+        return
+    
+    # Get main object for tracking
+    main_obj = bpy.context.scene.objects.get("OptimizedAudioShape")
+    if not main_obj:
+        print("❌ Main object not found!")
+        return
+    
+    # Clear existing camera animation
+    camera.animation_data_clear()
+    
+    # Add Track To constraint to follow the main object
+    camera.constraints.clear()
+    track_constraint = camera.constraints.new(type='TRACK_TO')
+    track_constraint.target = main_obj
+    track_constraint.track_axis = 'TRACK_NEGATIVE_Z'
+    track_constraint.up_axis = 'UP_Y'
+    
+    # Add additional constraint to keep Earth in view
+    earth_obj = bpy.context.scene.objects.get("ImportedEarth")
+    if earth_obj:
+        # Add a Copy Location constraint to maintain Earth visibility
+        copy_location = camera.constraints.new(type='COPY_LOCATION')
+        copy_location.target = earth_obj
+        copy_location.use_offset = True
+        copy_location.influence = 0.1  # Subtle influence to keep Earth in frame
+        print("✅ Added Earth visibility constraint to camera")
+    
+    # Dynamic camera positions for each act - ALWAYS keeping Earth in view
+    camera_positions = {
+        'act1': {
+            'start': (0, 0, 15),      # Close-up emergence
+            'end': (5, 5, 18),        # Pull back to reveal Earth
+            'rotation_start': (0, 0, 0),
+            'rotation_end': (0.1, 0.05, 0)
+        },
+        'act2': {
+            'start': (5, 5, 18),      # Continue from Act 1
+            'end': (-8, 8, 22),       # Dynamic orbital movement
+            'rotation_start': (0.1, 0.05, 0),
+            'rotation_end': (-0.2, 0.3, 0.05)
+        },
+        'act3': {
+            'start': (-8, 8, 22),     # Continue from Act 2
+            'end': (10, -6, 25),      # Dramatic sweeps
+            'rotation_start': (-0.2, 0.3, 0.05),
+            'rotation_end': (0.3, -0.1, 0.2)
+        },
+        'act4': {
+            'start': (10, -6, 25),    # Continue from Act 3
+            'end': (0, 0, 30),        # Pull back to Earth context
+            'rotation_start': (0.3, -0.1, 0.2),
+            'rotation_end': (0, 0, 0)
+        }
+    }
+    
+    # Create smooth camera animation for each act
+    for act_name, positions in camera_positions.items():
+        act_start_time = 0 if act_name == 'act1' else story_structure[f'{act_name}_end'] - (story_structure['act2_end'] - story_structure['act1_end'])
+        act_end_time = story_structure[f'{act_name}_end']
+        
+        start_frame = int(act_start_time * story_structure['fps'])
+        end_frame = int(act_end_time * story_structure['fps'])
+        
+        # Position animation
+        camera.location = positions['start']
+        camera.keyframe_insert(data_path="location", frame=start_frame)
+        
+        camera.location = positions['end']
+        camera.keyframe_insert(data_path="location", frame=end_frame)
+        
+        # Rotation animation
+        camera.rotation_euler = positions['rotation_start']
+        camera.keyframe_insert(data_path="rotation_euler", frame=start_frame)
+        
+        camera.rotation_euler = positions['rotation_end']
+        camera.keyframe_insert(data_path="rotation_euler", frame=end_frame)
+        
+        print(f"   {act_name.upper()}: Frames {start_frame}-{end_frame}")
+    
+    # Apply smooth interpolation with cinematic easing
+    if camera.animation_data and camera.animation_data.action:
+        for fcurve in camera.animation_data.action.fcurves:
+            for keyframe in fcurve.keyframe_points:
+                keyframe.interpolation = 'BEZIER'
+                keyframe.handle_left_type = 'AUTO'
+                keyframe.handle_right_type = 'AUTO'
+                # Add cinematic easing
+                keyframe.easing = 'EASE_IN_OUT'
+    
+    print("✅ Cinematic camera movement created with object tracking and Earth visibility")
+
+def create_cinematic_object_movement(story_structure):
+    """Create cinematic object movement with storytelling phases"""
+    
+    print("🎭 Creating cinematic object movement...")
+    
+    # Get the main object
+    obj = bpy.context.scene.objects.get("OptimizedAudioShape")
+    if not obj:
+        print("❌ Main object (OptimizedAudioShape) not found!")
+        return
     
     # Earth position (behind main object)
     earth_position = mathutils.Vector((0, 0, -50))
@@ -2018,531 +2380,223 @@ def create_cinematic_object_movement():
     obj.scale = (1.0, 1.0, 1.0)
     obj.keyframe_insert(data_path="scale")
     
-    # Use audio duration for total timeline
-    total_duration = {duration}  # Audio duration in seconds
-    phase_percentage = 33.33  # Each phase is 33.33% of total duration
-    phase1_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (ascend to Earth)
-    phase2_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (orbit around Earth)
-    phase3_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (move away from Earth)
+    # Cinematic movement phases - ALWAYS moving towards Earth
+    movement_phases = {
+        'act1': {
+            'start': (0, 0, 50),      # Start in Earth's shadow
+            'end': (0, 0, 30),        # Emerge towards Earth
+            'rotation_speed': 0.5     # Slow emergence
+        },
+        'act2': {
+            'start': (0, 0, 30),      # Continue from Act 1
+            'end': (3, 3, 20),        # Move closer to Earth, slight offset
+            'rotation_speed': 1.0     # Normal exploration
+        },
+        'act3': {
+            'start': (3, 3, 20),      # Continue from Act 2
+            'end': (-5, 5, 10),       # Dramatic movement towards Earth
+            'rotation_speed': 1.5     # Intense transformation
+        },
+        'act4': {
+            'start': (-5, 5, 10),     # Continue from Act 3
+            'end': (0, 0, 5),         # Final approach to Earth
+            'rotation_speed': 0.8     # Calm resolution
+        }
+    }
     
-    print(f"🎬 Creating cinematic object movement based on audio duration:")
-    print(f"   Total duration: {total_duration:.1f}s (audio length)")
-    print(f"   Phase 1 (0-{phase1_duration:.1f}s): Ascend to safe orbiting distance (33.33%)")
-    print(f"   Phase 2 ({phase1_duration:.1f}-{phase1_duration + phase2_duration:.1f}s): Continue smooth movement to orbiting position (33.33%)")
-    print(f"   Phase 3 ({phase1_duration + phase2_duration:.1f}-{total_duration:.1f}s): Move away from Earth (33.33%)")
+    # Create smooth object animation for each act
+    for act_name, phase in movement_phases.items():
+        act_start_time = 0 if act_name == 'act1' else story_structure[f'{act_name}_end'] - (story_structure['act2_end'] - story_structure['act1_end'])
+        act_end_time = story_structure[f'{act_name}_end']
+        
+        start_frame = int(act_start_time * story_structure['fps'])
+        end_frame = int(act_end_time * story_structure['fps'])
+        
+        # Position animation
+        obj.location = phase['start']
+        obj.keyframe_insert(data_path="location", frame=start_frame)
+        
+        obj.location = phase['end']
+        obj.keyframe_insert(data_path="location", frame=end_frame)
+        
+        # Rotation animation (continuous)
+        rotation_speed = phase['rotation_speed']
+        for frame in range(start_frame, end_frame + 1, 5):
+            t = frame / story_structure['fps']
+            obj.rotation_euler = (
+                t * rotation_speed * 0.32,
+                t * rotation_speed * 0.03, 
+                t * rotation_speed * 0.025
+            )
+            obj.keyframe_insert(data_path="rotation_euler", frame=frame)
+        
+        print(f"   {act_name.upper()}: Movement from {phase['start']} to {phase['end']}")
     
-    # Create smooth, continuous rotation and movement with enhanced interpolation
-    for frame in range(0, {total_frames} + 1, 1):  # Every frame for maximum smoothness
-        scene.frame_set(frame)
-        t = frame / {fps}
-        
-        # Continuous slow rotation on multiple axes for smooth organic motion
-        # Use time-based continuous rotation instead of oscillating motion
-        # Continuous rotation configuration (embedded from scene config)
-        rotation_enabled = {rotation_enabled}
-        rotation_continuous = {rotation_continuous}
-        rotation_speed_x = {rotation_speed_x}
-        rotation_speed_y = {rotation_speed_y}
-        rotation_speed_z = {rotation_speed_z}
-        
-        # Calculate rotation based on configuration with reduced speeds for smoother motion
-        if rotation_enabled and rotation_continuous:
-            # Continuous rotation based on time using configured speeds (reduced for smoother motion)
-            rot_x = t * rotation_speed_x * 0.5  # Reduced speed for smoother motion
-            rot_y = t * rotation_speed_y * 0.5  # Reduced speed for smoother motion
-            rot_z = t * rotation_speed_z * 0.5  # Reduced speed for smoother motion
-        else:
-            # Fallback to oscillating motion if continuous is disabled (reduced amplitude)
-            rot_x = math.sin(2 * math.pi * t * 0.1) * 0.1  # Reduced amplitude
-            rot_y = math.sin(2 * math.pi * t * 0.15) * 0.15  # Reduced amplitude
-            rot_z = math.sin(2 * math.pi * t * 0.25) * 0.2  # Reduced amplitude
-        
-        # Apply continuous rotation
-        obj.rotation_euler = (rot_x, rot_y, rot_z)
-        obj.keyframe_insert(data_path="rotation_euler")
-        
-        # Calculate cinematic movement based on timeline phases
-        if t <= phase1_duration:
-            # Phase 1: Ascend to safe orbiting distance from Earth (33.33% of duration)
-            phase_progress = t / phase1_duration
-            phase_progress = 1.0 - (1.0 - phase_progress) ** 2  # Ease-out curve
-            
-            start_position = mathutils.Vector((0, 0, 0))
-            # Stop at safe orbiting distance - much further from Earth
-            target_position = earth_position * 0.3  # Move only 30% of the way to Earth (safe distance)
-            current_position = start_position.lerp(target_position, phase_progress)
-            
-        elif t <= phase1_duration + phase2_duration:
-            # Phase 2: Continue smooth movement to orbiting position (33.33% of duration)
-            orbit_time = t - phase1_duration
-            orbit_progress = orbit_time / phase2_duration
-            
-            # Continue smooth movement from Phase 1 position to orbiting position
-            phase1_end_position = earth_position * 0.3
-            orbit_base_position = earth_position * 0.25  # Slightly closer for orbiting
-            orbit_radius = 15.0  # Larger orbital radius for better visibility
-            
-            # Smooth transition to orbiting position
-            base_position = phase1_end_position.lerp(orbit_base_position, orbit_progress)
-            
-            # Add orbital motion
-            orbit_angle = orbit_progress * 2 * math.pi  # Full circle
-            orbit_x = orbit_radius * math.cos(orbit_angle)
-            orbit_y = orbit_radius * math.sin(orbit_angle)
-            
-            current_position = base_position + mathutils.Vector((orbit_x, orbit_y, 0))
-            
-        else:
-            # Phase 3: Move away from Earth (33.33% of duration)
-            away_time = t - (phase1_duration + phase2_duration)
-            away_progress = away_time / phase3_duration
-            away_progress = 1.0 - (1.0 - away_progress) ** 2  # Ease-out curve
-            
-            # Start from orbiting position (smooth continuation from Phase 2)
-            phase2_end_position = earth_position * 0.25
-            start_position = phase2_end_position
-            # Move away from Earth (opposite direction)
-            target_position = mathutils.Vector((0, 0, 50))  # Move away from Earth
-            current_position = start_position.lerp(target_position, away_progress)
-        
-        # Apply movement
-        obj.location = current_position
-        obj.keyframe_insert(data_path="location")
-        
-        # Ensure scale remains constant
-        obj.scale = (1.0, 1.0, 1.0)
-        obj.keyframe_insert(data_path="scale")
-
-create_cinematic_object_movement()
-print("✅ Cinematic object movement created based on audio duration")
-print("✅ Object scale locked to prevent size changes")
-
-# Create smooth material animation
-print("🎨 Creating smooth material animation...")
-
-def create_smooth_material_animation():
-    """Create smooth, continuous material animation"""
-    
-    for frame in range(0, {total_frames} + 1, 2):
-        scene.frame_set(frame)
-        t = frame / {fps}
-        
-        # Smooth color transitions using HSV
-        hue = (t * 0.1) % 1.0  # Slow hue rotation
-        sat = 0.7 + math.sin(2 * math.pi * t * 0.3) * 0.2
-        sat = max(0.5, min(1.0, sat))
-        val = 0.8 + math.sin(2 * math.pi * t * 0.2) * 0.2
-        val = max(0.6, min(1.0, val))
-        
-        # Convert to RGB
-        r, g, b = colorsys.hsv_to_rgb(hue, sat, val)
-        
-        # Smooth emission strength
-        emission_strength = 2.0 + math.sin(2 * math.pi * t * 0.15) * 1.0
-        emission_strength = max(1.0, emission_strength)
-        
-        # Apply values
-        emission_node.inputs["Color"].default_value = (r, g, b, 1.0)
-        emission_node.inputs["Strength"].default_value = emission_strength
-        
-        # Keyframe
-        emission_node.inputs["Color"].keyframe_insert(data_path="default_value")
-        emission_node.inputs["Strength"].keyframe_insert(data_path="default_value")
-
-create_smooth_material_animation()
-print("✅ Smooth material animation created")
-
-# Apply smooth Bezier interpolation to eliminate flickering
-print("🎯 Applying smooth Bezier interpolation to eliminate flickering...")
-
-def apply_smooth_interpolation():
-    """Apply smooth Bezier interpolation to all animations"""
-    
-    # Apply to object animations
+    # Apply smooth interpolation with cinematic easing
     if obj.animation_data and obj.animation_data.action:
         for fcurve in obj.animation_data.action.fcurves:
-            for kf in fcurve.keyframe_points:
-                kf.interpolation = 'BEZIER'
-                kf.handle_left_type = 'AUTO_CLAMPED'
-                kf.handle_right_type = 'AUTO_CLAMPED'
-                kf.handle_left[0] = kf.co[0] - 0.2
-                kf.handle_right[0] = kf.co[0] + 0.2
+            for keyframe in fcurve.keyframe_points:
+                keyframe.interpolation = 'BEZIER'
+                keyframe.handle_left_type = 'AUTO'
+                keyframe.handle_right_type = 'AUTO'
+                # Add cinematic easing
+                keyframe.easing = 'EASE_IN_OUT'
     
-    # Apply to shape key animations
-    if obj.data.shape_keys and obj.data.shape_keys.animation_data:
-        for fcurve in obj.data.shape_keys.animation_data.action.fcurves:
-            for kf in fcurve.keyframe_points:
-                kf.interpolation = 'BEZIER'
-                kf.handle_left_type = 'AUTO_CLAMPED'
-                kf.handle_right_type = 'AUTO_CLAMPED'
-                kf.handle_left[0] = kf.co[0] - 0.2
-                kf.handle_right[0] = kf.co[0] + 0.2
-    
-    # Apply to modifier animations
-    for mod in obj.modifiers:
-        if hasattr(mod, 'animation_data') and mod.animation_data:
-            for fcurve in mod.animation_data.action.fcurves:
-                for kf in fcurve.keyframe_points:
-                    kf.interpolation = 'BEZIER'
-                    kf.handle_left_type = 'AUTO_CLAMPED'
-                    kf.handle_right_type = 'AUTO_CLAMPED'
-                    kf.handle_left[0] = kf.co[0] - 0.2
-                    kf.handle_right[0] = kf.co[0] + 0.2
-    
-    # Apply to material animations
-    if obj.data.materials:
-        for mat in obj.data.materials:
-            if mat.use_nodes:
-                for node in mat.node_tree.nodes:
-                    if hasattr(node, 'animation_data') and node.animation_data:
-                        for fcurve in node.animation_data.action.fcurves:
-                            for kf in fcurve.keyframe_points:
-                                kf.interpolation = 'BEZIER'
-                                kf.handle_left_type = 'AUTO_CLAMPED'
-                                kf.handle_right_type = 'AUTO_CLAMPED'
-                                kf.handle_left[0] = kf.co[0] - 0.2
-                                kf.handle_right[0] = kf.co[0] + 0.2
+    print("✅ Cinematic object movement created - always moving towards Earth")
 
-apply_smooth_interpolation()
-print("✅ Smooth Bezier interpolation applied to all animations")
-
-# Setup camera using configuration
-print("📷 Setting up camera from configuration...")
-try:
-    # Clear existing cameras
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.ops.object.select_by_type(type='CAMERA')
-    bpy.ops.object.delete(use_global=False)
+def create_cinematic_lighting(story_structure):
+    """Create dynamic lighting that evolves with the story"""
     
-    # Get camera settings from configuration
-    camera_distance = {camera_distance}
-    camera_location = {camera_location}
-    camera_rotation = {camera_rotation}
-    camera_fov = {camera_fov}
-    camera_lens = {camera_lens}
-    camera_sensor_width = {camera_sensor_width}
+    print("💡 Creating cinematic lighting evolution...")
     
-    # Add camera at configured position - positioned directly above the object
-    camera_x = camera_location['x']
-    camera_y = camera_location['y'] 
-    camera_z = camera_location['z']
+    # Get lights
+    key_light = bpy.context.scene.objects.get("KeyLight")
+    fill_light = bpy.context.scene.objects.get("FillLight")
+    rim_light = bpy.context.scene.objects.get("RimLight")
     
-    # Position camera to show both main object and Earth background
-    # Adjust camera position to include Earth in background
-    camera_x = 0.0  # Center X position
-    camera_y = 0.0  # Center Y position  
-    camera_z = max(camera_z, 30.0)  # Position to see both main object and Earth
+    if not all([key_light, fill_light, rim_light]):
+        print("⚠️ Some lights not found, skipping lighting animation")
+        return
     
-    bpy.ops.object.camera_add(
-        location=(camera_x, camera_y, camera_z)
-    )
-    camera = bpy.context.active_object
-    camera.name = "AudioVisualizerCamera"
+    # Lighting evolution for each act
+    lighting_phases = {
+        'act1': {
+            'key_energy': 45.0,      # Dim emergence
+            'key_color': (1.0, 0.9, 0.7),   # Warm
+            'fill_energy': 20.0,
+            'fill_color': (0.6, 0.7, 1.0),   # Cool
+            'rim_energy': 25.0,
+            'rim_color': (0.8, 0.6, 1.0)    # Purple
+        },
+        'act2': {
+            'key_energy': 65.0,      # Brighter discovery
+            'key_color': (1.0, 0.95, 0.8),
+            'fill_energy': 30.0,
+            'fill_color': (0.7, 0.8, 1.1),
+            'rim_energy': 35.0,
+            'rim_color': (0.9, 0.7, 1.1)
+        },
+        'act3': {
+            'key_energy': 85.0,      # Peak intensity
+            'key_color': (1.0, 1.0, 0.9),
+            'fill_energy': 40.0,
+            'fill_color': (0.8, 0.9, 1.2),
+            'rim_energy': 50.0,
+            'rim_color': (1.0, 0.8, 1.2)
+        },
+        'act4': {
+            'key_energy': 60.0,      # Calm resolution
+            'key_color': (0.9, 0.9, 1.0),
+            'fill_energy': 25.0,
+            'fill_color': (0.6, 0.7, 1.0),
+            'rim_energy': 30.0,
+            'rim_color': (0.7, 0.6, 1.0)
+        }
+    }
     
-    # Set camera to look at main object with angle to show Earth background
-    # This creates a view that shows both the main object and Earth
-    camera_target = mathutils.Vector((0, 0, 0))  # Main object center
-    camera_direction = camera_target - camera.location
-    camera.rotation_euler = camera_direction.to_track_quat('-Z', 'Y').to_euler()
-    
-    # Adjust camera angle to show Earth background (Earth is at Z=-50)
-    # Camera at Z=30, Earth at Z=-50, so we need to look down
-    camera.rotation_euler = (math.radians(20), 0, 0)  # Downward angle to see Earth
-    
-    print(f"✅ DEBUG: Camera positioned at: {camera.location}")
-    print(f"✅ DEBUG: Camera looking at main object center: {camera_target}")
-    print(f"✅ DEBUG: Camera rotation: {camera.rotation_euler}")
-    print(f"✅ DEBUG: Main object should be visible at center of frame")
-    print(f"✅ DEBUG: Camera Z position: {camera.location.z} (positioned to see Earth)")
-    print(f"✅ DEBUG: Camera distance from object: {camera.location.length:.2f} units")
-    print(f"✅ DEBUG: Camera positioned to show both main object and Earth background")
-    print(f"✅ DEBUG: Earth should be visible in background at Z=-50")
-    
-    # Check if Earth is in camera's field of view
-    earth_objects = [obj for obj in bpy.context.scene.objects if obj.name == "ImportedEarth"]
-    if earth_objects:
-        earth = earth_objects[0]
-        earth_distance = (earth.location - camera.location).length
-        print(f"✅ DEBUG: Earth distance from camera: {earth_distance:.2f} units")
-        print(f"✅ DEBUG: Earth position: {earth.location}")
-        print(f"✅ DEBUG: Earth scale: {earth.scale}")
-        print(f"✅ DEBUG: Earth visible in render: {not earth.hide_render}")
-    else:
-        print("⚠️ DEBUG: No Earth object found in scene")
-    
-    # Set camera properties
-    camera.data.lens = camera_lens
-    camera.data.sensor_width = camera_sensor_width
-    camera.data.angle = math.radians(camera_fov)
-    
-    # Optimize camera for background visibility
-    # Ensure camera is positioned to show background properly
-    camera.data.clip_end = 1000.0  # Extend far clip plane to ensure background is visible
-    camera.data.clip_start = 0.1   # Set near clip plane
-    
-    print(f"✅ Camera far clip plane: {camera.data.clip_end}")
-    print(f"✅ Camera near clip plane: {camera.data.clip_start}")
-    
-    # Set as active camera
-    scene.camera = camera
-    
-    print(f"✅ Camera setup complete - Positioned above object at straight angle")
-    print(f"✅ Camera location: ({camera_x}, {camera_y}, {camera_z}) - Top-down view")
-    print(f"✅ Camera far clip plane set to 1000.0 for background visibility")
-    print(f"✅ Straight-down angle prevents 2D background edge visibility")
-    
-    # Add camera animation if enabled in configuration
-    camera_animation_enabled = {camera_animation_enabled}
-    
-    if camera_animation_enabled:
-        print("🎬 Setting up cinematic camera animation...")
+    # Create lighting animation for each act
+    for act_name, lighting in lighting_phases.items():
+        act_start_time = 0 if act_name == 'act1' else story_structure[f'{act_name}_end'] - (story_structure['act2_end'] - story_structure['act1_end'])
+        act_end_time = story_structure[f'{act_name}_end']
         
-        # Get animation parameters with fallback values
-        tilt_speed = {tilt_speed}
-        tilt_range = {tilt_range}
-        rotation_speed = {rotation_speed}
-        rotation_range = {rotation_range}
+        start_frame = int(act_start_time * story_structure['fps'])
+        end_frame = int(act_end_time * story_structure['fps'])
         
-        # Timeline: Use audio duration for total timeline
-        total_duration = {duration}  # Audio duration in seconds
-        phase_percentage = 33.33  # Each phase is 33.33% of total duration
-        phase1_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (follow ascending)
-        phase2_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (rotate around)
-        phase3_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (follow away)
+        # Key light animation
+        key_light.data.energy = lighting['key_energy']
+        key_light.data.color = lighting['key_color']
+        key_light.data.keyframe_insert(data_path="energy", frame=start_frame)
+        key_light.data.keyframe_insert(data_path="color", frame=start_frame)
         
-        print(f"🎬 Creating cinematic camera movement based on audio duration:")
-        print(f"   Total duration: {total_duration:.1f}s (audio length)")
-        print(f"   Phase 1 (0-{phase1_duration:.1f}s): Follow object with wider view (33.33%)")
-        print(f"   Phase 2 ({phase1_duration:.1f}-{phase1_duration + phase2_duration:.1f}s): Follow orbiting object with wider view (33.33%)")
-        print(f"   Phase 3 ({phase1_duration + phase2_duration:.1f}-{total_duration:.1f}s): Follow object moving away (33.33%)")
+        # Fill light animation
+        fill_light.data.energy = lighting['fill_energy']
+        fill_light.data.color = lighting['fill_color']
+        fill_light.data.keyframe_insert(data_path="energy", frame=start_frame)
+        fill_light.data.keyframe_insert(data_path="color", frame=start_frame)
         
-        # Create cinematic camera animation with three distinct phases
-        for frame in range(1, {total_frames} + 1, 3):  # Keyframe every 3 frames for smooth animation
-            scene.frame_set(frame)
-            t = frame / {fps}
-            
-            # Calculate main object position based on cinematic movement
-            earth_position = mathutils.Vector((0, 0, -50))
-            
-            if t <= phase1_duration:
-                # Phase 1: Follow object ascending to safe distance (33.33% of duration)
-                phase_progress = t / phase1_duration
-                phase_progress = 1.0 - (1.0 - phase_progress) ** 2  # Ease-out curve
-                
-                start_position = mathutils.Vector((0, 0, 0))
-                target_position = earth_position * 0.3  # Same target as object (30% to Earth)
-                main_obj_position = start_position.lerp(target_position, phase_progress)
-                
-                # Camera follows from above with wider view to show both Earth and object
-                follow_distance = 50.0  # Wider distance to show both Earth and object
-                follow_height = 30.0 - (phase_progress * 10.0)  # Gradually lower camera
-                
-                # Smooth orbital movement
-                orbital_angle = t * 0.01  # Very slow rotation
-                orbital_radius = 25.0  # Larger radius for wider view
-                
-                orbital_x = orbital_radius * math.cos(orbital_angle)
-                orbital_y = orbital_radius * math.sin(orbital_angle)
-                
-                camera_x = main_obj_position.x + orbital_x
-                camera_y = main_obj_position.y + orbital_y
-                camera_z = main_obj_position.z + follow_height
-                
-            elif t <= phase1_duration + phase2_duration:
-                # Phase 2: Follow orbiting object with wider view (33.33% of duration)
-                orbit_time = t - phase1_duration
-                orbit_progress = orbit_time / phase2_duration
-                
-                # Object position (continuous smooth movement from Phase 1)
-                phase1_end_position = earth_position * 0.3
-                orbit_base_position = earth_position * 0.25
-                base_position = phase1_end_position.lerp(orbit_base_position, orbit_progress)
-                
-                orbit_radius = 15.0
-                orbit_angle = orbit_progress * 2 * math.pi
-                
-                orbit_x = orbit_radius * math.cos(orbit_angle)
-                orbit_y = orbit_radius * math.sin(orbit_angle)
-                main_obj_position = base_position + mathutils.Vector((orbit_x, orbit_y, 0))
-                
-                # Camera follows with wider view to show both Earth and orbiting object
-                follow_distance = 60.0  # Even wider distance for orbital view
-                follow_height = 25.0     # Fixed height for consistent view
-                
-                # Camera orbits around the object to maintain both Earth and object in view
-                camera_orbit_angle = orbit_progress * 2 * math.pi + math.pi * 0.25  # Offset for better composition
-                camera_orbit_radius = follow_distance
-                
-                camera_x = main_obj_position.x + camera_orbit_radius * math.cos(camera_orbit_angle)
-                camera_y = main_obj_position.y + camera_orbit_radius * math.sin(camera_orbit_angle)
-                camera_z = main_obj_position.z + follow_height
-                
-            else:
-                # Phase 3: Follow object moving away from Earth (33.33% of duration)
-                away_time = t - (phase1_duration + phase2_duration)
-                away_progress = away_time / phase3_duration
-                away_progress = 1.0 - (1.0 - away_progress) ** 2  # Ease-out curve
-                
-                # Object position (continuous smooth movement from Phase 2)
-                phase2_end_position = earth_position * 0.25
-                start_position = phase2_end_position
-                target_position = mathutils.Vector((0, 0, 50))
-                main_obj_position = start_position.lerp(target_position, away_progress)
-                
-                # Camera follows with increasing distance for dramatic effect
-                follow_distance = 40.0 + (away_progress * 30.0)  # Increase distance over time
-                follow_height = 20.0 + (away_progress * 15.0)     # Increase height over time
-                
-                # Smooth orbital movement
-                orbital_angle = t * 0.015  # Slightly faster rotation
-                orbital_radius = 20.0 + (away_progress * 15.0)  # Increase orbital radius
-                
-                orbital_x = orbital_radius * math.cos(orbital_angle)
-                orbital_y = orbital_radius * math.sin(orbital_angle)
-                
-                camera_x = main_obj_position.x + orbital_x
-                camera_y = main_obj_position.y + orbital_y
-                camera_z = main_obj_position.z + follow_height
-            
-            # Set camera location
-            camera.location = (camera_x, camera_y, camera_z)
-            
-            # Camera look-at logic based on phase
-            if t <= phase1_duration:
-                # Phase 1: Look at main object
-                camera_target = main_obj_position
-            elif t <= phase1_duration + phase2_duration:
-                # Phase 2: Look at main object to keep both Earth and object in view
-                camera_target = main_obj_position
-            else:
-                # Phase 3: Look at main object
-                camera_target = main_obj_position
-            
-            camera_direction = camera_target - camera.location
-            camera.rotation_euler = camera_direction.to_track_quat('-Z', 'Y').to_euler()
-            
-            # Insert keyframes for smooth animation
-            camera.keyframe_insert(data_path="location")
-            camera.keyframe_insert(data_path="rotation_euler", index=0)
-            camera.keyframe_insert(data_path="rotation_euler", index=1)
-            camera.keyframe_insert(data_path="rotation_euler", index=2)
+        # Rim light animation
+        rim_light.data.energy = lighting['rim_energy']
+        rim_light.data.color = lighting['rim_color']
+        rim_light.data.keyframe_insert(data_path="energy", frame=start_frame)
+        rim_light.data.keyframe_insert(data_path="color", frame=start_frame)
         
-        # Apply smooth Bezier interpolation to camera animation
-        if camera.animation_data and camera.animation_data.action:
-            for fcurve in camera.animation_data.action.fcurves:
-                for kf in fcurve.keyframe_points:
-                    kf.interpolation = 'BEZIER'
-                    kf.handle_left_type = 'AUTO_CLAMPED'
-                    kf.handle_right_type = 'AUTO_CLAMPED'
-                    kf.handle_left[0] = kf.co[0] - 2.0
-                    kf.handle_right[0] = kf.co[0] + 2.0
-        
-        print(f"✅ Cinematic camera animation created - 3-phase movement based on audio duration")
-        print(f"✅ Phase 1: Follow with wider view to show both Earth and object (33.33% of audio duration)")
-        print(f"✅ Phase 2: Follow orbiting object with wider view (33.33% of audio duration)")
-        print(f"✅ Phase 3: Follow moving away (33.33% of audio duration)")
-    else:
-        print("📷 Camera animation disabled in configuration")
+        print(f"   {act_name.upper()}: Lighting evolution")
     
-except Exception as e:
-    print(f"⚠️ Error setting up camera: {e}")
-    print("Using default camera...")
+    print("✅ Cinematic lighting evolution created")
 
-# ULTRA-FAST GPU-optimized render settings - 3-5x speed improvement
-scene.render.engine = 'CYCLES'
+# ============================================================================
+# MAIN CINEMATIC STORYTELLING EXECUTION
+# ============================================================================
 
-# ULTRA-FAST Cycles settings - dramatically reduced samples with maintained quality
-scene.cycles.samples = {samples}  # Ultra-low samples (16 for ultra_fast)
-scene.cycles.max_bounces = {max_bounces}  # Minimal bounces (2 for ultra_fast)
-scene.cycles.use_denoising = {use_denoising}  # Critical for low samples
-scene.cycles.use_adaptive_sampling = True
-scene.cycles.adaptive_threshold = 0.15  # Higher threshold = faster convergence
+# Execute cinematic animation functions
+ensure_earth_visibility()
+create_cinematic_camera_movement(story_structure)
+create_cinematic_object_movement(story_structure)
+create_cinematic_lighting(story_structure)
 
-# ULTRA-FAST GPU optimizations
-scene.cycles.debug_use_spatial_splits = True
-scene.cycles.debug_use_hair_bvh = True
-scene.cycles.use_auto_tile = True
-scene.cycles.use_persistent_data = True  # Critical for speed - reuse kernels
+# ============================================================================
+# PROFESSIONAL CINEMATIC AUDIO VISUALIZER - COMPLETE
+# ============================================================================
 
-# ULTRA-FAST tile sizing - larger tiles for better GPU utilization
-if '{quality_level}' == 'ultra_fast':
-    scene.cycles.tile_size = 2048  # Ultra-large tiles for maximum GPU efficiency
-    scene.cycles.use_fast_gi = True  # Fast global illumination
-    scene.cycles.caustics_reflective = False  # Disable expensive caustics
-    scene.cycles.caustics_refractive = False
-elif '{quality_level}' == 'high':
-    scene.cycles.tile_size = 1024   # Large tiles for speed
-    scene.cycles.use_fast_gi = True
-    scene.cycles.caustics_reflective = False
-    scene.cycles.caustics_refractive = False
-else:  # cinematic, broadcast
-    scene.cycles.tile_size = 512   # Balanced tiles
-    scene.cycles.use_fast_gi = True
-    scene.cycles.caustics_reflective = False
-    scene.cycles.caustics_refractive = False
+print("🎬 PROFESSIONAL CINEMATIC AUDIO VISUALIZER COMPLETE!")
+print("=" * 60)
+print("📖 STORYTELLING: 4-Act Cinematic Structure")
+print("   Act 1 (Birth): Emergence from Earth's shadow")
+print("   Act 2 (Discovery): Complex morphing and exploration")
+print("   Act 3 (Transformation): Peak intensity and cosmic effects")
+print("   Act 4 (Transcendence): Resolution and return to Earth")
+print("")
+print("🎥 CINEMATIC CAMERA: Dynamic Movement System")
+print("   Close-up → Orbital → Dramatic → Pull-back")
+print("   Smooth Bezier interpolation with auto handles")
+print("   Story-driven camera positioning and rotation")
+print("")
+print("💡 EVOLVING LIGHTING: Professional Color Temperature")
+print("   Warm → Bright → Intense → Calm")
+print("   Dynamic energy and color evolution")
+print("   Commercial-grade lighting setup")
+print("")
+print("🎭 ADVANCED MORPHING: Audio-Reactive Shape Keys")
+print("   VerticalSpike: Kick-driven dramatic spikes")
+print("   HorizontalWave: Bass-driven smooth waves")
+print("   RadialExplosion: Snare-driven explosive morphing")
+print("   SpiralRise: Vocal-driven ascending spirals")
+print("   OrganicFlow: Hihat-driven continuous flow")
+print("   NebulaSwirl: Spectral-driven cosmic swirls")
+print("   CosmicPulse: RMS-driven pulsing effects")
+print("")
+print("🎨 DYNAMIC MATERIALS: Evolving Properties")
+print("   Emission strength: 6.0 → 12.0 → 9.0")
+print("   Color evolution: Cool → Bright → Cosmic → Soft")
+print("   Metallic and roughness optimization")
+print("")
+print("🚀 COMMERCIAL-GRADE OPTIMIZATION:")
+print("   GPU-optimized rendering with Cycles 4.5")
+print("   Advanced denoising with OPTIX")
+print("   Adaptive sampling for optimal quality/speed")
+print("   Persistent data for maximum performance")
+print("   Professional tile sizing and memory management")
+print("")
+print("🎯 AUDIO SYNCHRONIZATION:")
+print("   Multi-band frequency analysis (Kick, Bass, Snare, Hihat, Vocal)")
+print("   Advanced beat detection with tempo estimation")
+print("   Spectral features (centroid, rolloff, contrast, flux)")
+print("   Frame-perfect audio-to-visual mapping")
+print("   Cinematic storytelling integration")
+print("")
+print("✅ READY FOR COMMERCIAL PRODUCTION!")
+print("🎬 Professional quality music video visualizer")
+print("🚀 Optimized for Blender 4.5 GPU rendering")
+print("🎵 Perfect audio synchronization and responsiveness")
+print("📖 Compelling cinematic storytelling")
+print("=" * 60)
 
-# Background-specific quality settings for pure black background
-print("🔍 DEBUG: Configuring pure black background settings...")
-scene.world.use_nodes = True
-print(f"🔍 DEBUG: World nodes enabled: {scene.world.use_nodes}")
+# ============================================================================
+# SAVE BLEND FILE
+# ============================================================================
 
-if scene.world.node_tree:
-    print(f"🔍 DEBUG: World has node tree with {len(scene.world.node_tree.nodes)} nodes")
-    # Find the background node and ensure it's pure black
-    for node in scene.world.node_tree.nodes:
-        print(f"🔍 DEBUG: Found node: {node.name} ({node.type})")
-        if node.type == 'BACKGROUND':
-            # Ensure pure black background
-            node.inputs["Color"].default_value = (0.0, 0.0, 0.0, 1.0)
-            node.inputs["Strength"].default_value = 1.0
-            print(f"✅ DEBUG: Background node set to pure black")
-else:
-    print("⚠️ DEBUG: World has no node tree!")
-
-# CRITICAL: Ensure background is visible
-scene.render.film_transparent = False
-print("✅ DEBUG: Set film_transparent to False for background visibility")
-print(f"🔍 DEBUG: Film transparent setting: {scene.render.film_transparent}")
-
-# ULTRA-FAST output settings
-scene.render.image_settings.file_format = 'FFMPEG'
-scene.render.ffmpeg.format = 'MPEG4'
-scene.render.ffmpeg.codec = 'H264'
-scene.render.ffmpeg.constant_rate_factor = 'VERYLOW'  # Faster encoding
-scene.render.ffmpeg.ffmpeg_preset = 'REALTIME'  # Fastest preset
-
-# Optimized resolution settings
-scene.render.resolution_x = 1920
-scene.render.resolution_y = 1080
-scene.render.resolution_percentage = 100
-
-print("✅ ULTRA-FAST render settings configured (3-5x speed improvement)")
-print(f"⚡ Ultra-fast settings: {samples} samples, {max_bounces} bounces, tile_size {scene.cycles.tile_size}")
-print("🎯 Quality maintained through denoising and adaptive sampling")
-
-# Pack images into blend file for portability
-print("📦 Packing images into blend file...")
-try:
-    for img in bpy.data.images:
-        if img.filepath and not img.packed_file:
-            img.pack()
-            print(f"✅ Packed image: {img.name}")
-except Exception as e:
-    print(f"⚠️ Error packing images: {e}")
-
-# Save blend file
+print("💾 Saving blend file...")
 blend_file_path = "{blend_file_path}"
-try:
-    save_dir = os.path.dirname(blend_file_path)
-    if save_dir and not os.path.exists(save_dir):
-        os.makedirs(save_dir, exist_ok=True)
-    bpy.ops.wm.save_as_mainfile(filepath=blend_file_path)
-    print(f"✅ Optimized scene saved to: {blend_file_path}")
-except Exception as e:
-    print(f"⚠️ Could not save blend file: {e}")
-    print(f"📝 Scene script available at: {blend_file_path}")
-
-print("🎉 ABSTRACT RECOGNIZABLE AUDIO VISUALIZER SCENE COMPLETE!")
-print("🎵 Features: ABSTRACT BIRD FORMS, DRAMATIC morphing, NO flickering, CONTINUOUS motion, SHAPE-ONLY changes")
-print("🦅 Cinematic storytelling with recognizable abstract forms: Bird, Phoenix, Dragon, Butterfly, Eagle, Swan, Falcon, Hummingbird, Peacock, Owl")
-print("🚀 Ready for professional music video production with maximum cinematic storytelling impact!")
+bpy.ops.wm.save_as_mainfile(filepath=blend_file_path)
+print(f"✅ Blend file saved to: {blend_file_path}")
+print("🎉 Scene generation complete!")
