@@ -25,6 +25,12 @@
       "rotation_range": {
         "min": -3.0,
         "max": 3.0
+      },
+      "cinematic_phases": {
+        "phase_percentage": 33.33,
+        "phase1_description": "Follow object ascending to Earth",
+        "phase2_description": "Rotate around object with Earth visible",
+        "phase3_description": "Follow object moving away from Earth"
       }
     }
   },
@@ -43,8 +49,14 @@
         "y": 0.0,
         "z": -35.0
       },
-      "duration": 30.0,
-      "ease_out": true
+      "duration": 180.0,
+      "ease_out": true,
+      "cinematic_phases": {
+        "phase_percentage": 33.33,
+        "phase1_description": "Follow object ascending to Earth",
+        "phase2_description": "Rotate around object with Earth visible",
+        "phase3_description": "Follow object moving away from Earth"
+      }
     }
   },
   "lighting": {

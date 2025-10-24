@@ -2008,8 +2008,8 @@ print("✅ Smooth modifier animation created")
 # Create smooth, continuous object rotation and movement towards Earth
 print("🔄 Creating smooth continuous rotation and movement towards Earth...")
 
-def create_smooth_rotation_and_movement_animation():
-    """Create smooth, continuous rotation and movement towards Earth without flickering"""
+def create_cinematic_object_movement():
+    """Create cinematic object movement: ascend to Earth, then move away"""
     
     # Earth position (behind main object)
     earth_position = mathutils.Vector((0, 0, -50))
@@ -2017,6 +2017,19 @@ def create_smooth_rotation_and_movement_animation():
     # Ensure object scale stays constant (no size changes)
     obj.scale = (1.0, 1.0, 1.0)
     obj.keyframe_insert(data_path="scale")
+    
+    # Use audio duration for total timeline
+    total_duration = {duration}  # Audio duration in seconds
+    phase_percentage = 33.33  # Each phase is 33.33% of total duration
+    phase1_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (ascend to Earth)
+    phase2_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (orbit around Earth)
+    phase3_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (move away from Earth)
+    
+    print(f"🎬 Creating cinematic object movement based on audio duration:")
+    print(f"   Total duration: {total_duration:.1f}s (audio length)")
+    print(f"   Phase 1 (0-{phase1_duration:.1f}s): Ascend to safe orbiting distance (33.33%)")
+    print(f"   Phase 2 ({phase1_duration:.1f}-{phase1_duration + phase2_duration:.1f}s): Continue smooth movement to orbiting position (33.33%)")
+    print(f"   Phase 3 ({phase1_duration + phase2_duration:.1f}-{total_duration:.1f}s): Move away from Earth (33.33%)")
     
     # Create smooth, continuous rotation and movement with enhanced interpolation
     for frame in range(0, {total_frames} + 1, 1):  # Every frame for maximum smoothness
@@ -2048,15 +2061,49 @@ def create_smooth_rotation_and_movement_animation():
         obj.rotation_euler = (rot_x, rot_y, rot_z)
         obj.keyframe_insert(data_path="rotation_euler")
         
-        # Calculate movement towards Earth over time
-        # Start at origin (0, 0, 0) and gradually move towards Earth position
-        movement_progress = min(t / 30.0, 1.0)  # Move over 30 seconds, then stop
-        movement_progress = 1.0 - (1.0 - movement_progress) ** 2  # Ease-out curve for smooth deceleration
-        
-        # Interpolate position towards Earth - move closer to Earth for better visibility
-        start_position = mathutils.Vector((0, 0, 0))
-        target_position = earth_position * 0.9  # Move 90% of the way to Earth (closer)
-        current_position = start_position.lerp(target_position, movement_progress)
+        # Calculate cinematic movement based on timeline phases
+        if t <= phase1_duration:
+            # Phase 1: Ascend to safe orbiting distance from Earth (33.33% of duration)
+            phase_progress = t / phase1_duration
+            phase_progress = 1.0 - (1.0 - phase_progress) ** 2  # Ease-out curve
+            
+            start_position = mathutils.Vector((0, 0, 0))
+            # Stop at safe orbiting distance - much further from Earth
+            target_position = earth_position * 0.3  # Move only 30% of the way to Earth (safe distance)
+            current_position = start_position.lerp(target_position, phase_progress)
+            
+        elif t <= phase1_duration + phase2_duration:
+            # Phase 2: Continue smooth movement to orbiting position (33.33% of duration)
+            orbit_time = t - phase1_duration
+            orbit_progress = orbit_time / phase2_duration
+            
+            # Continue smooth movement from Phase 1 position to orbiting position
+            phase1_end_position = earth_position * 0.3
+            orbit_base_position = earth_position * 0.25  # Slightly closer for orbiting
+            orbit_radius = 15.0  # Larger orbital radius for better visibility
+            
+            # Smooth transition to orbiting position
+            base_position = phase1_end_position.lerp(orbit_base_position, orbit_progress)
+            
+            # Add orbital motion
+            orbit_angle = orbit_progress * 2 * math.pi  # Full circle
+            orbit_x = orbit_radius * math.cos(orbit_angle)
+            orbit_y = orbit_radius * math.sin(orbit_angle)
+            
+            current_position = base_position + mathutils.Vector((orbit_x, orbit_y, 0))
+            
+        else:
+            # Phase 3: Move away from Earth (33.33% of duration)
+            away_time = t - (phase1_duration + phase2_duration)
+            away_progress = away_time / phase3_duration
+            away_progress = 1.0 - (1.0 - away_progress) ** 2  # Ease-out curve
+            
+            # Start from orbiting position (smooth continuation from Phase 2)
+            phase2_end_position = earth_position * 0.25
+            start_position = phase2_end_position
+            # Move away from Earth (opposite direction)
+            target_position = mathutils.Vector((0, 0, 50))  # Move away from Earth
+            current_position = start_position.lerp(target_position, away_progress)
         
         # Apply movement
         obj.location = current_position
@@ -2066,8 +2113,8 @@ def create_smooth_rotation_and_movement_animation():
         obj.scale = (1.0, 1.0, 1.0)
         obj.keyframe_insert(data_path="scale")
 
-create_smooth_rotation_and_movement_animation()
-print("✅ Smooth continuous rotation and movement towards Earth created")
+create_cinematic_object_movement()
+print("✅ Cinematic object movement created based on audio duration")
 print("✅ Object scale locked to prevent size changes")
 
 # Create smooth material animation
@@ -2248,7 +2295,7 @@ try:
     camera_animation_enabled = {camera_animation_enabled}
     
     if camera_animation_enabled:
-        print("🎬 Setting up camera follow animation...")
+        print("🎬 Setting up cinematic camera animation...")
         
         # Get animation parameters with fallback values
         tilt_speed = {tilt_speed}
@@ -2256,51 +2303,121 @@ try:
         rotation_speed = {rotation_speed}
         rotation_range = {rotation_range}
         
-        # Create smooth camera follow animation - camera stays close to main object
-        for frame in range(1, {total_frames} + 1, 5):  # Keyframe every 5 frames for smooth animation
+        # Timeline: Use audio duration for total timeline
+        total_duration = {duration}  # Audio duration in seconds
+        phase_percentage = 33.33  # Each phase is 33.33% of total duration
+        phase1_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (follow ascending)
+        phase2_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (rotate around)
+        phase3_duration = total_duration * (phase_percentage / 100.0)  # 33.33% (follow away)
+        
+        print(f"🎬 Creating cinematic camera movement based on audio duration:")
+        print(f"   Total duration: {total_duration:.1f}s (audio length)")
+        print(f"   Phase 1 (0-{phase1_duration:.1f}s): Follow object with wider view (33.33%)")
+        print(f"   Phase 2 ({phase1_duration:.1f}-{phase1_duration + phase2_duration:.1f}s): Follow orbiting object with wider view (33.33%)")
+        print(f"   Phase 3 ({phase1_duration + phase2_duration:.1f}-{total_duration:.1f}s): Follow object moving away (33.33%)")
+        
+        # Create cinematic camera animation with three distinct phases
+        for frame in range(1, {total_frames} + 1, 3):  # Keyframe every 3 frames for smooth animation
             scene.frame_set(frame)
             t = frame / {fps}
             
-            # Get main object position (it moves towards Earth over time)
-            main_obj_position = mathutils.Vector((0, 0, 0))  # Default position
-            
-            # Calculate main object position based on movement animation
+            # Calculate main object position based on cinematic movement
             earth_position = mathutils.Vector((0, 0, -50))
-            movement_progress = min(t / 30.0, 1.0)  # Same movement timing as main object
-            movement_progress = 1.0 - (1.0 - movement_progress) ** 2  # Ease-out curve
-            start_position = mathutils.Vector((0, 0, 0))
-            target_position = earth_position * 0.9  # Same target as main object (90% to Earth)
-            main_obj_position = start_position.lerp(target_position, movement_progress)
             
-            # Define follow parameters - maintain constant distance from main object
-            follow_distance = 25.0  # Fixed distance from main object
-            follow_height = 15.0    # Fixed height offset from main object
-            
-            # Subtle orbital movement - enough to create dynamic following
-            orbital_speed = 0.02  # Slow rotation for gentle following
-            orbital_radius = 8.0  # Moderate orbital radius for dynamic movement
-            
-            # Calculate subtle orbital position
-            orbital_angle = t * orbital_speed
-            
-            # Calculate camera position - follows main object with orbital movement
-            orbital_x = orbital_radius * math.cos(orbital_angle)
-            orbital_y = orbital_radius * math.sin(orbital_angle)
-            
-            # Calculate proper camera position to maintain follow_distance
-            # Use 3D orbital movement to maintain consistent distance
-            orbital_z = math.sqrt(follow_distance**2 - orbital_radius**2) if follow_distance > orbital_radius else follow_height
-            
-            # Camera follows main object position with orbital offset
-            camera_x = main_obj_position.x + orbital_x
-            camera_y = main_obj_position.y + orbital_y
-            camera_z = main_obj_position.z + orbital_z
+            if t <= phase1_duration:
+                # Phase 1: Follow object ascending to safe distance (33.33% of duration)
+                phase_progress = t / phase1_duration
+                phase_progress = 1.0 - (1.0 - phase_progress) ** 2  # Ease-out curve
+                
+                start_position = mathutils.Vector((0, 0, 0))
+                target_position = earth_position * 0.3  # Same target as object (30% to Earth)
+                main_obj_position = start_position.lerp(target_position, phase_progress)
+                
+                # Camera follows from above with wider view to show both Earth and object
+                follow_distance = 50.0  # Wider distance to show both Earth and object
+                follow_height = 30.0 - (phase_progress * 10.0)  # Gradually lower camera
+                
+                # Smooth orbital movement
+                orbital_angle = t * 0.01  # Very slow rotation
+                orbital_radius = 25.0  # Larger radius for wider view
+                
+                orbital_x = orbital_radius * math.cos(orbital_angle)
+                orbital_y = orbital_radius * math.sin(orbital_angle)
+                
+                camera_x = main_obj_position.x + orbital_x
+                camera_y = main_obj_position.y + orbital_y
+                camera_z = main_obj_position.z + follow_height
+                
+            elif t <= phase1_duration + phase2_duration:
+                # Phase 2: Follow orbiting object with wider view (33.33% of duration)
+                orbit_time = t - phase1_duration
+                orbit_progress = orbit_time / phase2_duration
+                
+                # Object position (continuous smooth movement from Phase 1)
+                phase1_end_position = earth_position * 0.3
+                orbit_base_position = earth_position * 0.25
+                base_position = phase1_end_position.lerp(orbit_base_position, orbit_progress)
+                
+                orbit_radius = 15.0
+                orbit_angle = orbit_progress * 2 * math.pi
+                
+                orbit_x = orbit_radius * math.cos(orbit_angle)
+                orbit_y = orbit_radius * math.sin(orbit_angle)
+                main_obj_position = base_position + mathutils.Vector((orbit_x, orbit_y, 0))
+                
+                # Camera follows with wider view to show both Earth and orbiting object
+                follow_distance = 60.0  # Even wider distance for orbital view
+                follow_height = 25.0     # Fixed height for consistent view
+                
+                # Camera orbits around the object to maintain both Earth and object in view
+                camera_orbit_angle = orbit_progress * 2 * math.pi + math.pi * 0.25  # Offset for better composition
+                camera_orbit_radius = follow_distance
+                
+                camera_x = main_obj_position.x + camera_orbit_radius * math.cos(camera_orbit_angle)
+                camera_y = main_obj_position.y + camera_orbit_radius * math.sin(camera_orbit_angle)
+                camera_z = main_obj_position.z + follow_height
+                
+            else:
+                # Phase 3: Follow object moving away from Earth (33.33% of duration)
+                away_time = t - (phase1_duration + phase2_duration)
+                away_progress = away_time / phase3_duration
+                away_progress = 1.0 - (1.0 - away_progress) ** 2  # Ease-out curve
+                
+                # Object position (continuous smooth movement from Phase 2)
+                phase2_end_position = earth_position * 0.25
+                start_position = phase2_end_position
+                target_position = mathutils.Vector((0, 0, 50))
+                main_obj_position = start_position.lerp(target_position, away_progress)
+                
+                # Camera follows with increasing distance for dramatic effect
+                follow_distance = 40.0 + (away_progress * 30.0)  # Increase distance over time
+                follow_height = 20.0 + (away_progress * 15.0)     # Increase height over time
+                
+                # Smooth orbital movement
+                orbital_angle = t * 0.015  # Slightly faster rotation
+                orbital_radius = 20.0 + (away_progress * 15.0)  # Increase orbital radius
+                
+                orbital_x = orbital_radius * math.cos(orbital_angle)
+                orbital_y = orbital_radius * math.sin(orbital_angle)
+                
+                camera_x = main_obj_position.x + orbital_x
+                camera_y = main_obj_position.y + orbital_y
+                camera_z = main_obj_position.z + follow_height
             
             # Set camera location
             camera.location = (camera_x, camera_y, camera_z)
             
-            # Make camera look at the main object - always track the object
-            camera_target = main_obj_position
+            # Camera look-at logic based on phase
+            if t <= phase1_duration:
+                # Phase 1: Look at main object
+                camera_target = main_obj_position
+            elif t <= phase1_duration + phase2_duration:
+                # Phase 2: Look at main object to keep both Earth and object in view
+                camera_target = main_obj_position
+            else:
+                # Phase 3: Look at main object
+                camera_target = main_obj_position
+            
             camera_direction = camera_target - camera.location
             camera.rotation_euler = camera_direction.to_track_quat('-Z', 'Y').to_euler()
             
@@ -2320,11 +2437,10 @@ try:
                     kf.handle_left[0] = kf.co[0] - 2.0
                     kf.handle_right[0] = kf.co[0] + 2.0
         
-        print(f"✅ Camera follow animation created - Following main object with dynamic movement")
-        print(f"✅ Follow distance: {follow_distance}")
-        print(f"✅ Follow height: {follow_height}")
-        print(f"✅ Orbital radius: {orbital_radius} (moderate)")
-        print(f"✅ Orbital speed: {orbital_speed} radians/second (slow)")
+        print(f"✅ Cinematic camera animation created - 3-phase movement based on audio duration")
+        print(f"✅ Phase 1: Follow with wider view to show both Earth and object (33.33% of audio duration)")
+        print(f"✅ Phase 2: Follow orbiting object with wider view (33.33% of audio duration)")
+        print(f"✅ Phase 3: Follow moving away (33.33% of audio duration)")
     else:
         print("📷 Camera animation disabled in configuration")
     
