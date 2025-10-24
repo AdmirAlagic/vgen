@@ -38,63 +38,105 @@ class QualityConfig:
     use_adaptive_sampling: bool
     tile_size: int
     use_persistent_data: bool
+    adaptive_threshold: float = 0.1
+    adaptive_min_samples: int = 4
+    denoiser: str = "OPENIMAGEDENOISE"
+    use_fast_gi: bool = True
+    caustics_reflective: bool = False
+    caustics_refractive: bool = False
 
 
 class QualityConfigs:
     """Centralized quality configurations."""
     
     ULTRA_FAST = QualityConfig(
-        samples=4,  # ULTRA-AGGRESSIVE reduction for maximum speed
-        max_bounces=1,  # Minimal bounces for speed
+        samples=16,  # Improved quality while maintaining speed
+        max_bounces=3,  # Better light bounces for quality
         use_denoising=True,  # Critical for low samples
         use_adaptive_sampling=True,
-        tile_size=4096,  # Maximum tiles for GPU efficiency
-        use_persistent_data=True
+        tile_size=1024,  # Optimized tile size for most GPUs
+        use_persistent_data=True,
+        adaptive_threshold=0.1,
+        adaptive_min_samples=4,
+        denoiser="OPENIMAGEDENOISE",
+        use_fast_gi=True,
+        caustics_reflective=False,
+        caustics_refractive=False
     )
     
     LOWEST = QualityConfig(
-        samples=32,
-        max_bounces=2,
-        use_denoising=True,
-        use_adaptive_sampling=True,
-        tile_size=1024,
-        use_persistent_data=True
-    )
-    
-    PREVIEW = QualityConfig(
         samples=64,
         max_bounces=4,
         use_denoising=True,
         use_adaptive_sampling=True,
         tile_size=512,
-        use_persistent_data=True
+        use_persistent_data=True,
+        adaptive_threshold=0.08,
+        adaptive_min_samples=8,
+        denoiser="OPENIMAGEDENOISE",
+        use_fast_gi=True,
+        caustics_reflective=False,
+        caustics_refractive=False
+    )
+    
+    PREVIEW = QualityConfig(
+        samples=128,
+        max_bounces=6,
+        use_denoising=True,
+        use_adaptive_sampling=True,
+        tile_size=512,
+        use_persistent_data=True,
+        adaptive_threshold=0.06,
+        adaptive_min_samples=12,
+        denoiser="OPENIMAGEDENOISE",
+        use_fast_gi=True,
+        caustics_reflective=False,
+        caustics_refractive=False
     )
     
     HIGH = QualityConfig(
-        samples=256,
-        max_bounces=8,
+        samples=512,
+        max_bounces=10,
         use_denoising=True,
         use_adaptive_sampling=True,
         tile_size=256,
-        use_persistent_data=True
+        use_persistent_data=True,
+        adaptive_threshold=0.04,
+        adaptive_min_samples=16,
+        denoiser="OPENIMAGEDENOISE",
+        use_fast_gi=True,
+        caustics_reflective=True,
+        caustics_refractive=False
     )
     
     CINEMATIC = QualityConfig(
-        samples=1024,
-        max_bounces=12,
+        samples=1536,
+        max_bounces=14,
         use_denoising=True,
         use_adaptive_sampling=True,
         tile_size=128,
-        use_persistent_data=True
+        use_persistent_data=True,
+        adaptive_threshold=0.02,
+        adaptive_min_samples=24,
+        denoiser="OPENIMAGEDENOISE",
+        use_fast_gi=False,
+        caustics_reflective=True,
+        caustics_refractive=True
     )
     
     BROADCAST = QualityConfig(
-        samples=2048,
-        max_bounces=16,
+        samples=3072,
+        max_bounces=18,
         use_denoising=True,
         use_adaptive_sampling=True,
         tile_size=128,
-        use_persistent_data=True
+        use_persistent_data=True,
+        adaptive_threshold=0.01,
+        adaptive_min_samples=32,
+        denoiser="OPENIMAGEDENOISE",
+        use_fast_gi=False,
+        caustics_reflective=True,
+        caustics_refractive=True
     )
     
     @classmethod
@@ -227,18 +269,37 @@ class MaterialConfigs:
     HIGH_QUALITY = MaterialConfig()
     
     SIMPLIFIED = MaterialConfig(
-        noise_scale=8.0,
-        noise_detail=15.0,
-        noise_roughness=0.5,
-        emission_strength=4.0
+        noise_scale=12.0,
+        noise_detail=20.0,
+        noise_roughness=0.4,
+        emission_strength=5.0
+    )
+    
+    ENHANCED = MaterialConfig(
+        noise_scale=18.0,
+        noise_detail=30.0,
+        noise_roughness=0.25,
+        emission_strength=7.0
+    )
+    
+    CINEMATIC = MaterialConfig(
+        noise_scale=25.0,
+        noise_detail=40.0,
+        noise_roughness=0.15,
+        emission_strength=9.0
     )
     
     @classmethod
     def get_config(cls, quality_level: str) -> MaterialConfig:
         """Get material configuration by quality level."""
-        if quality_level.lower() in ['ultra_fast', 'lowest', 'preview']:
+        if quality_level.lower() in ['ultra_fast', 'lowest']:
             return cls.SIMPLIFIED
-        return cls.HIGH_QUALITY
+        elif quality_level.lower() in ['preview', 'fast', 'balanced']:
+            return cls.ENHANCED
+        elif quality_level.lower() in ['high', 'cinematic']:
+            return cls.CINEMATIC
+        else:  # broadcast, ultra
+            return cls.HIGH_QUALITY
 
 
 @dataclass

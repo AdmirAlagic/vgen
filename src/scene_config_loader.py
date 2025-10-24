@@ -88,6 +88,12 @@ class QualityConfig:
     use_adaptive_sampling: bool = True
     tile_size: int = 256
     use_persistent_data: bool = True
+    adaptive_threshold: float = 0.1
+    adaptive_min_samples: int = 4
+    denoiser: str = "OPENIMAGEDENOISE"
+    use_fast_gi: bool = True
+    caustics_reflective: bool = False
+    caustics_refractive: bool = False
 
 
 @dataclass

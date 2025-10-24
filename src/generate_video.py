@@ -230,13 +230,13 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
     """Render directly to MP4 using ULTRA-FAST optimized pipeline - NO PNG frames."""
     print("🚀 Rendering with ULTRA-FAST optimized pipeline (no temporary PNG frames)...")
     
-    # Standard quality settings for balanced rendering
+    # Enhanced quality settings for all modes
     quality_settings = {
-        'ultra_fast': {'samples': 32, 'resolution': (640, 360), 'crf': 'LOW', 'preset': 'REALTIME', 'max_bounces': 4, 'tile_size': 512},
-        'fast': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'GOOD', 'max_bounces': 8, 'tile_size': 512}, 
-        'balanced': {'samples': 256, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 12, 'tile_size': 256},
-        'high': {'samples': 512, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'GOOD', 'max_bounces': 16, 'tile_size': 256},
-        'ultra': {'samples': 1024, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'BEST', 'max_bounces': 24, 'tile_size': 256}
+        'ultra_fast': {'samples': 16, 'resolution': (1280, 720), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 3, 'tile_size': 1024, 'adaptive_threshold': 0.1},
+        'fast': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 6, 'tile_size': 512, 'adaptive_threshold': 0.06}, 
+        'balanced': {'samples': 512, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'GOOD', 'max_bounces': 10, 'tile_size': 256, 'adaptive_threshold': 0.04},
+        'high': {'samples': 1536, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'BEST', 'max_bounces': 14, 'tile_size': 128, 'adaptive_threshold': 0.02},
+        'ultra': {'samples': 3072, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'BEST', 'max_bounces': 18, 'tile_size': 128, 'adaptive_threshold': 0.01}
     }
     
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
@@ -350,9 +350,9 @@ render.resolution_percentage = 100
 if scene.render.engine == 'CYCLES':
     cycles = scene.cycles
     
-    # Dramatically reduced samples with denoising
-    cycles.samples = {settings['samples']}  # Ultra-low samples
-    cycles.max_bounces = {settings['max_bounces']}  # Minimal bounces
+    # Improved samples with better denoising
+    cycles.samples = {settings['samples']}  # Balanced samples for quality
+    cycles.max_bounces = {settings['max_bounces']}  # Better bounces for quality
     
     # Critical: Enable denoising for low samples
     cycles.use_denoising = True
@@ -360,7 +360,7 @@ if scene.render.engine == 'CYCLES':
     
     # Adaptive sampling for faster convergence
     cycles.use_adaptive_sampling = True
-    cycles.adaptive_threshold = 0.15  # Higher threshold = faster
+    cycles.adaptive_threshold = {settings.get('adaptive_threshold', 0.1)}  # Balanced threshold
     
     # GPU memory optimizations
     cycles.debug_use_spatial_splits = True
@@ -392,82 +392,81 @@ render.ffmpeg.ffmpeg_preset = '{settings['preset']}'  # REALTIME preset
 render.ffmpeg.audio_codec = 'AAC'
 render.ffmpeg.audio_bitrate = 128
 
-# ULTRA-AGGRESSIVE MATERIAL OPTIMIZATION
-print("🎨 Applying ULTRA-AGGRESSIVE material optimization...")
+# BALANCED MATERIAL OPTIMIZATION
+print("🎨 Applying balanced material optimization...")
 
-# Simplify complex materials to absolute minimum
+# Optimize materials for better quality/speed balance
 for material in bpy.data.materials:
     if material.use_nodes and material.node_tree:
         nodes = material.node_tree.nodes
         links = material.node_tree.links
         
-        # Find and AGGRESSIVELY optimize noise textures
+        # Optimize noise textures for better quality
         for node in nodes:
             if node.type == 'TEX_NOISE':
-                # EXTREME reduction for maximum speed
+                # Balanced reduction for quality/speed
                 if 'Detail' in node.inputs:
-                    node.inputs['Detail'].default_value = 2.0  # Minimal detail
+                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 8.0)  # Reasonable detail
                 if 'Roughness' in node.inputs:
-                    node.inputs['Roughness'].default_value = 0.8  # Maximum smoothness
+                    node.inputs['Roughness'].default_value = min(node.inputs['Roughness'].default_value, 0.6)  # Better smoothness
                 if 'Scale' in node.inputs:
-                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 5.0)  # Lower scale
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 10.0)  # Better scale
         
-        # AGGRESSIVELY optimize voronoi textures
+        # Optimize voronoi textures for better quality
         for node in nodes:
             if node.type == 'TEX_VORONOI':
                 if 'Randomness' in node.inputs:
-                    node.inputs['Randomness'].default_value = 0.5  # Minimal randomness
+                    node.inputs['Randomness'].default_value = min(node.inputs['Randomness'].default_value, 0.8)  # Better randomness
                 if 'Scale' in node.inputs:
-                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 5.0)  # Lower scale
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 10.0)  # Better scale
 
-print("✅ ULTRA-AGGRESSIVE material optimization complete")
+print("✅ Balanced material optimization complete")
 
-# ULTRA-AGGRESSIVE GEOMETRY OPTIMIZATION
-print("🔧 Applying ULTRA-AGGRESSIVE geometry optimization...")
+# BALANCED GEOMETRY OPTIMIZATION
+print("🔧 Applying balanced geometry optimization...")
 
-# EXTREME geometry reduction for maximum speed
+# Optimize geometry for better quality/speed balance
 for obj in bpy.context.scene.objects:
     if obj.type == 'MESH':
-        # Remove ALL subdivision modifiers for ultra-fast rendering
+        # Reduce subdivision modifiers for speed but keep some quality
         modifiers_to_remove = []
         for modifier in obj.modifiers:
             if modifier.type == 'SUBSURF':
-                modifiers_to_remove.append(modifier)
-                print(f"🚀 Removing subdivision modifier from {{obj.name}} for ultra-speed")
+                # Only remove high-level subdivisions, keep low-level ones
+                if modifier.levels > 1:
+                    modifiers_to_remove.append(modifier)
+                    print(f"🚀 Reducing subdivision modifier from {{obj.name}} (level {{modifier.levels}} -> 1)")
+                    modifier.levels = 1
         
-        # Remove modifiers
-        for modifier in modifiers_to_remove:
-            obj.modifiers.remove(modifier)
-        
-        # Reduce other modifiers to minimum
+        # Reduce other modifiers moderately
         for modifier in obj.modifiers:
             if modifier.type == 'DISPLACE':
-                modifier.strength = 0.0  # Disable displacement
+                modifier.strength = modifier.strength * 0.5  # Reduce displacement by half
             elif modifier.type == 'SIMPLE_DEFORM':
-                modifier.angle = 0.0  # Disable deformation
+                modifier.angle = modifier.angle * 0.7  # Reduce deformation
             elif modifier.type == 'CAST':
-                modifier.factor = 0.0  # Disable casting
+                modifier.factor = modifier.factor * 0.8  # Reduce casting
 
-print("✅ ULTRA-AGGRESSIVE geometry optimization complete")
+print("✅ Balanced geometry optimization complete")
 
-# ULTRA-AGGRESSIVE LIGHTING OPTIMIZATION
-print("💡 Applying ULTRA-AGGRESSIVE lighting optimization...")
+# BALANCED LIGHTING OPTIMIZATION
+print("💡 Applying balanced lighting optimization...")
 
-# EXTREME lighting reduction for maximum speed
+# Optimize lighting for better quality/speed balance
 light_count = 0
 for obj in bpy.context.scene.objects:
     if obj.type == 'LIGHT':
         light_count += 1
-        # Keep only first 2 lights, disable the rest
-        if light_count > 2:
+        # Keep first 3 lights, disable the rest
+        if light_count > 3:
             obj.hide_render = True
-            print(f"🚀 Disabled light {{obj.name}} for ultra-speed")
+            print(f"🚀 Disabled light {{obj.name}} for speed")
         else:
-            # AGGRESSIVELY reduce energy for remaining lights
-            obj.data.energy = obj.data.energy * 0.3  # 70% reduction
+            # Moderate reduction for remaining lights
+            obj.data.energy = obj.data.energy * 0.7  # 30% reduction
             print(f"🚀 Reduced light energy for {{obj.name}} to {{obj.data.energy:.1f}}")
 
-print("✅ ULTRA-AGGRESSIVE lighting optimization complete")
+print("✅ Balanced lighting optimization complete")
 
 # Set output path
 render.filepath = "{output_path}"
@@ -578,13 +577,13 @@ except Exception as e:
         print(f"🎯 Quality: {quality_mode.upper()}")
         print(f"📈 Total frames to render: {total_frames}")
         
-        # Estimate render time based on ULTRA-AGGRESSIVE optimization
+        # Estimate render time based on enhanced quality optimization
         estimated_time_per_frame = {
-            'ultra_fast': 0.02,  # seconds per frame (ULTRA-AGGRESSIVE optimization)
-            'fast': 0.05,
-            'balanced': 0.1,
-            'high': 0.2,
-            'ultra': 0.3
+            'ultra_fast': 0.05,  # seconds per frame (improved quality)
+            'fast': 0.12,        # seconds per frame (enhanced quality)
+            'balanced': 0.25,    # seconds per frame (high quality)
+            'high': 0.6,         # seconds per frame (cinematic quality)
+            'ultra': 1.2         # seconds per frame (broadcast quality)
         }
         estimated_total_time = estimated_time_per_frame.get(quality_mode, 2.0) * total_frames
         print(f"⏰ Estimated render time: ~{estimated_total_time/60:.1f} minutes")
@@ -689,11 +688,11 @@ def main():
         print("  - ENHANCED transient detection for better music responsiveness")
         print("  - COMMERCIAL-GRADE materials and lighting")
         print("\nGPU-optimized quality modes:")
-        print("  ultra_fast - 720p, 32 samples, IMPROVED settings for better quality")
-        print("  fast       - 1080p, 64 samples, GPU-accelerated quick rendering")
-        print("  balanced   - 1080p, 256 samples, GPU-optimized quality/speed (default)")
-        print("  high       - 1080p, 512 samples, GPU-accelerated high quality")
-        print("  ultra      - 1080p, 1024 samples, GPU-optimized maximum quality")
+        print("  ultra_fast - 720p, 16 samples, ENHANCED settings for better quality")
+        print("  fast       - 1080p, 128 samples, ENHANCED quality with better bounces")
+        print("  balanced   - 1080p, 512 samples, HIGH quality balanced rendering (default)")
+        print("  high       - 1080p, 1536 samples, CINEMATIC quality rendering")
+        print("  ultra      - 1080p, 3072 samples, BROADCAST quality maximum quality")
         print("\nExamples:")
         print("  python generate_video.py music.wav my_video balanced")
         print("  python generate_video.py music.wav my_video high")
