@@ -50,90 +50,90 @@ class QualityConfigs:
     """Centralized quality configurations."""
     
     ULTRA_FAST = QualityConfig(
-        samples=16,  # Improved quality while maintaining speed
-        max_bounces=3,  # Better light bounces for quality
+        samples=2,  # Ultra-low samples for maximum speed
+        max_bounces=1,  # Minimal bounces for speed
         use_denoising=True,  # Critical for low samples
         use_adaptive_sampling=True,
-        tile_size=1024,  # Optimized tile size for most GPUs
+        tile_size=8192,  # Maximum GPU utilization
         use_persistent_data=True,
-        adaptive_threshold=0.1,
-        adaptive_min_samples=4,
-        denoiser="OPENIMAGEDENOISE",
+        adaptive_threshold=0.5,
+        adaptive_min_samples=1,
+        denoiser="OPTIX",
         use_fast_gi=True,
         caustics_reflective=False,
         caustics_refractive=False
     )
     
     LOWEST = QualityConfig(
-        samples=64,
-        max_bounces=4,
+        samples=4,
+        max_bounces=2,
         use_denoising=True,
         use_adaptive_sampling=True,
-        tile_size=512,
+        tile_size=8192,
         use_persistent_data=True,
-        adaptive_threshold=0.08,
-        adaptive_min_samples=8,
-        denoiser="OPENIMAGEDENOISE",
+        adaptive_threshold=0.3,
+        adaptive_min_samples=1,
+        denoiser="OPTIX",
         use_fast_gi=True,
         caustics_reflective=False,
         caustics_refractive=False
     )
     
     PREVIEW = QualityConfig(
-        samples=128,
-        max_bounces=6,
+        samples=8,
+        max_bounces=3,
         use_denoising=True,
         use_adaptive_sampling=True,
-        tile_size=512,
+        tile_size=4096,
         use_persistent_data=True,
-        adaptive_threshold=0.06,
-        adaptive_min_samples=12,
-        denoiser="OPENIMAGEDENOISE",
+        adaptive_threshold=0.2,
+        adaptive_min_samples=2,
+        denoiser="OPTIX",
         use_fast_gi=True,
         caustics_reflective=False,
         caustics_refractive=False
     )
     
     HIGH = QualityConfig(
-        samples=512,
-        max_bounces=10,
+        samples=16,
+        max_bounces=4,
         use_denoising=True,
         use_adaptive_sampling=True,
-        tile_size=256,
+        tile_size=2048,
         use_persistent_data=True,
-        adaptive_threshold=0.04,
-        adaptive_min_samples=16,
-        denoiser="OPENIMAGEDENOISE",
+        adaptive_threshold=0.15,
+        adaptive_min_samples=4,
+        denoiser="OPTIX",
         use_fast_gi=True,
         caustics_reflective=True,
         caustics_refractive=False
     )
     
     CINEMATIC = QualityConfig(
-        samples=1536,
-        max_bounces=14,
+        samples=32,
+        max_bounces=6,
         use_denoising=True,
         use_adaptive_sampling=True,
-        tile_size=128,
+        tile_size=1024,
         use_persistent_data=True,
-        adaptive_threshold=0.02,
-        adaptive_min_samples=24,
-        denoiser="OPENIMAGEDENOISE",
+        adaptive_threshold=0.1,
+        adaptive_min_samples=8,
+        denoiser="OPTIX",
         use_fast_gi=False,
         caustics_reflective=True,
         caustics_refractive=True
     )
     
     BROADCAST = QualityConfig(
-        samples=3072,
-        max_bounces=18,
+        samples=64,
+        max_bounces=8,
         use_denoising=True,
         use_adaptive_sampling=True,
-        tile_size=128,
+        tile_size=512,
         use_persistent_data=True,
-        adaptive_threshold=0.01,
-        adaptive_min_samples=32,
-        denoiser="OPENIMAGEDENOISE",
+        adaptive_threshold=0.05,
+        adaptive_min_samples=16,
+        denoiser="OPTIX",
         use_fast_gi=False,
         caustics_reflective=True,
         caustics_refractive=True

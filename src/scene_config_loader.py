@@ -462,12 +462,12 @@ def get_default_config() -> Dict[str, Any]:
             "engine": "CYCLES"
         },
         "quality_levels": {
-            "ultra_fast": {"samples": 64, "max_bounces": 4, "use_denoising": True, "use_adaptive_sampling": True},
-            "lowest": {"samples": 32, "max_bounces": 2, "use_denoising": True, "use_adaptive_sampling": True},
-            "preview": {"samples": 64, "max_bounces": 4, "use_denoising": True, "use_adaptive_sampling": True},
-            "high": {"samples": 256, "max_bounces": 8, "use_denoising": True, "use_adaptive_sampling": True},
-            "cinematic": {"samples": 1024, "max_bounces": 12, "use_denoising": True, "use_adaptive_sampling": True},
-            "broadcast": {"samples": 2048, "max_bounces": 16, "use_denoising": True, "use_adaptive_sampling": True}
+            "ultra_fast": {"samples": 2, "max_bounces": 1, "use_denoising": True, "use_adaptive_sampling": True, "tile_size": 8192},
+            "lowest": {"samples": 4, "max_bounces": 2, "use_denoising": True, "use_adaptive_sampling": True, "tile_size": 8192},
+            "preview": {"samples": 8, "max_bounces": 3, "use_denoising": True, "use_adaptive_sampling": True, "tile_size": 4096},
+            "high": {"samples": 16, "max_bounces": 4, "use_denoising": True, "use_adaptive_sampling": True, "tile_size": 2048},
+            "cinematic": {"samples": 32, "max_bounces": 6, "use_denoising": True, "use_adaptive_sampling": True, "tile_size": 1024},
+            "broadcast": {"samples": 64, "max_bounces": 8, "use_denoising": True, "use_adaptive_sampling": True, "tile_size": 512}
         },
         "morph_styles": {
             "flow": {

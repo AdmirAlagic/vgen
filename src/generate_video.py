@@ -391,13 +391,13 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
     """Render directly to MP4 using ULTRA-FAST optimized pipeline - NO PNG frames."""
     print("🚀 Rendering with ULTRA-FAST optimized pipeline (no temporary PNG frames)...")
     
-    # Enhanced quality settings for all modes
+    # ULTRA-OPTIMIZED quality settings for maximum speed with maintained quality
     quality_settings = {
-        'ultra_fast': {'samples': 16, 'resolution': (1280, 720), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 3, 'tile_size': 1024, 'adaptive_threshold': 0.1},
-        'fast': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 6, 'tile_size': 512, 'adaptive_threshold': 0.06}, 
-        'balanced': {'samples': 512, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'GOOD', 'max_bounces': 10, 'tile_size': 256, 'adaptive_threshold': 0.04},
-        'high': {'samples': 1536, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'BEST', 'max_bounces': 14, 'tile_size': 128, 'adaptive_threshold': 0.02},
-        'ultra': {'samples': 3072, 'resolution': (1920, 1080), 'crf': 'HIGH', 'preset': 'BEST', 'max_bounces': 18, 'tile_size': 128, 'adaptive_threshold': 0.01}
+        'ultra_fast': {'samples': 2, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 1, 'tile_size': 8192, 'adaptive_threshold': 0.5},
+        'fast': {'samples': 4, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 2, 'tile_size': 8192, 'adaptive_threshold': 0.3}, 
+        'balanced': {'samples': 8, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 3, 'tile_size': 4096, 'adaptive_threshold': 0.2},
+        'high': {'samples': 16, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 4, 'tile_size': 2048, 'adaptive_threshold': 0.15},
+        'ultra': {'samples': 32, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 6, 'tile_size': 1024, 'adaptive_threshold': 0.1}
     }
     
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
@@ -738,13 +738,13 @@ except Exception as e:
         print(f"🎯 Quality: {quality_mode.upper()}")
         print(f"📈 Total frames to render: {total_frames}")
         
-        # Estimate render time based on enhanced quality optimization
+        # Estimate render time based on ULTRA-OPTIMIZED settings
         estimated_time_per_frame = {
-            'ultra_fast': 0.05,  # seconds per frame (improved quality)
-            'fast': 0.12,        # seconds per frame (enhanced quality)
-            'balanced': 0.25,    # seconds per frame (high quality)
-            'high': 0.6,         # seconds per frame (cinematic quality)
-            'ultra': 1.2         # seconds per frame (broadcast quality)
+            'ultra_fast': 0.01,  # seconds per frame (ultra-optimized)
+            'fast': 0.02,        # seconds per frame (ultra-optimized)
+            'balanced': 0.04,    # seconds per frame (optimized)
+            'high': 0.08,        # seconds per frame (balanced)
+            'ultra': 0.15        # seconds per frame (high quality)
         }
         estimated_total_time = estimated_time_per_frame.get(quality_mode, 2.0) * total_frames
         print(f"⏰ Estimated render time: ~{estimated_total_time/60:.1f} minutes")
