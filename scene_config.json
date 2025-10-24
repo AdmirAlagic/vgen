@@ -16,15 +16,15 @@
     "sensor_width": 36.0,
     "animation": {
       "enabled": true,
-      "tilt_speed": 1.3,
+      "tilt_speed": 0.3,
       "tilt_range": {
-        "min": -15.0,
-        "max": 15.0
+        "min": -5.0,
+        "max": 5.0
       },
-      "rotation_speed": 3.02,
+      "rotation_speed": 0.5,
       "rotation_range": {
-        "min": -10.0,
-        "max": 10.0
+        "min": -3.0,
+        "max": 3.0
       }
     }
   },
@@ -35,6 +35,16 @@
       "speed_y": 0.03,
       "speed_z": 0.025,
       "continuous": true
+    },
+    "movement": {
+      "enabled": true,
+      "target_position": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": -35.0
+      },
+      "duration": 30.0,
+      "ease_out": true
     }
   },
   "lighting": {
@@ -101,17 +111,17 @@
   },
   "quality_levels": {
     "ultra_fast": {
-      "samples": 8,
-      "max_bounces": 3,
+      "samples": 1,
+      "max_bounces": 1,
       "use_denoising": true,
       "use_adaptive_sampling": true,
-      "adaptive_threshold": 0.15,
-      "adaptive_min_samples": 2,
-      "tile_size": 4096,
+      "adaptive_threshold": 0.5,
+      "adaptive_min_samples": 1,
+      "tile_size": 16384,
       "use_persistent_data": true,
       "denoiser": "OPTIX",
       "use_fast_gi": true,
-      "caustics_reflective": true,
+      "caustics_reflective": false,
       "caustics_refractive": false
     },
     "lowest": {

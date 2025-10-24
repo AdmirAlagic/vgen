@@ -99,16 +99,16 @@ class UltraGPUOptimizedPipeline:
         config = UltraGPUConfig()
         
         if quality_mode == 'ultra_fast':
-            # Lowest settings for ultra_fast
-            config.samples = 4
-            config.max_bounces = 1
-            config.tile_size = 8192  # Maximum GPU utilization
-            config.adaptive_threshold = 0.2  # Higher threshold for faster convergence
-            config.adaptive_min_samples = 1
+            # Absolute lowest settings for ultra_fast
+            config.samples = 1  # Absolute minimum
+            config.max_bounces = 1  # Absolute minimum
+            config.tile_size = 16384  # Maximum possible GPU utilization
+            config.adaptive_threshold = 0.5  # Highest threshold for fastest convergence
+            config.adaptive_min_samples = 1  # Absolute minimum
             config.caustics_reflective = False
             config.caustics_refractive = False
             config.use_transparent = False
-            config.texture_quality = 1024
+            config.texture_quality = 512  # Lower texture quality
             config.light_bounces = 1
         elif quality_mode == 'ultra':
             # Highest settings for ultra quality
@@ -214,9 +214,10 @@ render = scene.render
 
 {audio_script_section}
 
-# ULTRA GPU-OPTIMIZED RENDER PIPELINE - MAXIMUM GPU UTILIZATION
-print("🚀 Applying ULTRA GPU-optimized render pipeline...")
-print("⚡ Target: 70-80% CPU reduction with maintained quality")
+# {self.quality_mode.upper()} GPU-OPTIMIZED RENDER PIPELINE
+print(f"🚀 Applying {self.quality_mode.upper()} GPU-optimized render pipeline...")
+print(f"⚡ Quality mode: {self.quality_mode}")
+print(f"🎯 Target: Optimized for {self.quality_mode} quality")
 
 # ULTRA GPU OPTIMIZATION - Force GPU usage
 try:
@@ -272,8 +273,8 @@ except Exception as e:
     print("❌ Cannot proceed without GPU acceleration")
     raise
 
-# ULTRA GPU-OPTIMIZED RENDER SETTINGS
-print("⚡ Applying ULTRA GPU-optimized render settings...")
+# {self.quality_mode.upper()} GPU-OPTIMIZED RENDER SETTINGS
+print(f"⚡ Applying {self.quality_mode.upper()} GPU-optimized render settings...")
 
 # Scene frame settings
 scene.frame_start = 0
@@ -322,13 +323,13 @@ if scene.render.engine == 'CYCLES':
     cycles.feature_set = 'SUPPORTED'
     cycles.use_transparent = False
     
-    print(f"✅ ULTRA GPU Cycles settings:")
-    print(f"   Samples: {{cycles.samples}} (ultra-low)")
-    print(f"   Max bounces: {{cycles.max_bounces}} (minimal)")
+    print(f"✅ {self.quality_mode.upper()} GPU Cycles settings:")
+    print(f"   Samples: {{cycles.samples}} ({self.quality_mode} quality)")
+    print(f"   Max bounces: {{cycles.max_bounces}} ({self.quality_mode} quality)")
     print(f"   Denoiser: {{cycles.denoiser}} (GPU-optimized)")
-    print(f"   Tile size: {{cycles.tile_size}} (MASSIVE for GPU)")
-    print(f"   Adaptive threshold: {{cycles.adaptive_threshold}} (aggressive)")
-    print(f"   Persistent data: {{cycles.use_persistent_data}} (speed boost)")
+    print(f"   Tile size: {{cycles.tile_size}} ({self.quality_mode} optimization)")
+    print(f"   Adaptive threshold: {{cycles.adaptive_threshold}} ({self.quality_mode} setting)")
+    print(f"   Persistent data: {{cycles.use_persistent_data}} (performance boost)")
 
 # ULTRA GPU-ACCELERATED OUTPUT SETTINGS
 render.image_settings.file_format = 'FFMPEG'
@@ -351,65 +352,65 @@ else:  # Windows
 render.ffmpeg.audio_codec = 'AAC'
 render.ffmpeg.audio_bitrate = 128
 
-# ENHANCED TEXTURE OPTIMIZATION - Balanced quality and performance
-print("🖼️ Applying ENHANCED texture optimization for realism...")
+# {self.quality_mode.upper()} TEXTURE OPTIMIZATION
+print(f"🖼️ Applying {self.quality_mode.upper()} texture optimization...")
 
-# Optimize textures for balanced quality and GPU processing
+# Ultra-aggressive texture optimization for maximum speed
 for img in bpy.data.images:
-    if img.size[0] > 4096 or img.size[1] > 4096:
-        # Scale down very large textures but preserve quality
+    if img.size[0] > 512 or img.size[1] > 512:
+        # Scale down all textures to ultra-low resolution for maximum speed
         original_size = str(img.size[0]) + "x" + str(img.size[1])
-        img.scale(4096, 4096)
-        print("🚀 Scaled texture " + img.name + " from " + original_size + " to 4096x4096 for balanced quality/performance")
-    elif img.size[0] < 512 or img.size[1] < 512:
-        # Scale up very small textures for better quality
+        img.scale(512, 512)
+        print("🚀 Ultra-fast scaled texture " + img.name + " from " + original_size + " to 512x512 for maximum speed")
+    elif img.size[0] < 256 or img.size[1] < 256:
+        # Scale up very small textures to minimum usable size
         original_size = str(img.size[0]) + "x" + str(img.size[1])
-        img.scale(1024, 1024)
-        print("🚀 Enhanced texture " + img.name + " from " + original_size + " to 1024x1024 for better quality")
+        img.scale(256, 256)
+        print("🚀 Ultra-fast enhanced texture " + img.name + " from " + original_size + " to 256x256 for minimum quality")
 
-print("✅ ENHANCED texture optimization complete")
+print(f"✅ {self.quality_mode.upper()} texture optimization complete")
 
-# Enhanced material optimization for better realism
+# {self.quality_mode.upper()} material optimization
 for material in bpy.data.materials:
     if material.use_nodes and material.node_tree:
         nodes = material.node_tree.nodes
         
-        # Enhanced material optimization for better quality
+        # Ultra-fast material optimization for maximum speed
         for node in nodes:
             if node.type == 'TEX_NOISE':
-                # Balanced detail for quality and performance
+                # Minimal detail for maximum speed
                 if 'Detail' in node.inputs:
-                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 12.0)  # Increased from 5.0
+                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 2.0)  # Ultra-low detail
                 if 'Roughness' in node.inputs:
-                    node.inputs['Roughness'].default_value = max(node.inputs['Roughness'].default_value, 0.4)  # Reduced from 0.8
+                    node.inputs['Roughness'].default_value = max(node.inputs['Roughness'].default_value, 0.8)  # High roughness for speed
                 if 'Scale' in node.inputs:
-                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 15.0)  # Increased from 8.0
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 3.0)  # Ultra-low scale
             
             elif node.type == 'TEX_VORONOI':
-                # Enhanced complexity for better quality
+                # Minimal complexity for maximum speed
                 if 'Randomness' in node.inputs:
-                    node.inputs['Randomness'].default_value = min(node.inputs['Randomness'].default_value, 0.8)  # Increased from 0.6
+                    node.inputs['Randomness'].default_value = min(node.inputs['Randomness'].default_value, 0.3)  # Ultra-low randomness
                 if 'Scale' in node.inputs:
-                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 12.0)  # Increased from 8.0
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 3.0)  # Ultra-low scale
             
             elif node.type == 'TEX_WAVE':
-                # Enhanced wave textures for better quality
+                # Minimal wave textures for maximum speed
                 if 'Scale' in node.inputs:
-                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 10.0)
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 2.0)
                 if 'Detail' in node.inputs:
-                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 8.0)
+                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 2.0)
             
             elif node.type == 'TEX_MUSGRAVE':
-                # Enhanced musgrave textures for better quality
+                # Minimal musgrave textures for maximum speed
                 if 'Scale' in node.inputs:
-                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 12.0)
+                    node.inputs['Scale'].default_value = min(node.inputs['Scale'].default_value, 3.0)
                 if 'Detail' in node.inputs:
-                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 10.0)
+                    node.inputs['Detail'].default_value = min(node.inputs['Detail'].default_value, 2.0)
 
-print("✅ ENHANCED material optimization complete")
+print(f"✅ {self.quality_mode.upper()} material optimization complete")
 
-# ULTRA GEOMETRY OPTIMIZATION - GPU-friendly (PRESERVING SMOOTH SURFACES)
-print("🔧 Applying ULTRA GPU-friendly geometry optimization...")
+# {self.quality_mode.upper()} GEOMETRY OPTIMIZATION - GPU-friendly (PRESERVING SMOOTH SURFACES)
+print(f"🔧 Applying {self.quality_mode.upper()} GPU-friendly geometry optimization...")
 
 # Ultra-aggressive geometry optimization while preserving smooth surfaces
 for obj in bpy.context.scene.objects:
@@ -437,38 +438,38 @@ for obj in bpy.context.scene.objects:
             elif modifier.type == 'CAST':
                 modifier.factor = modifier.factor * 0.8  # Reduced from 40% reduction to 20% reduction
 
-print("✅ ULTRA GPU-friendly geometry optimization complete (smooth surfaces preserved)")
+print(f"✅ {self.quality_mode.upper()} GPU-friendly geometry optimization complete (smooth surfaces preserved)")
 
-# ENHANCED LIGHTING OPTIMIZATION - Balanced quality and performance
-print("💡 Applying ENHANCED lighting optimization for realism...")
+# {self.quality_mode.upper()} LIGHTING OPTIMIZATION
+print(f"💡 Applying {self.quality_mode.upper()} lighting optimization...")
 
-# Enhanced lighting optimization for better quality
+# Ultra-aggressive lighting optimization for maximum speed
 light_count = 0
 for obj in bpy.context.scene.objects:
     if obj.type == 'LIGHT':
         light_count += 1
-        # Keep first 4 lights for better lighting quality (increased from 2)
-        if light_count > 4:
+        # Keep only first 2 lights for ultra-fast rendering
+        if light_count > 2:
             obj.hide_render = True
-            print(f"🚀 Disabled light {{obj.name}} for balanced performance")
+            print(f"🚀 Disabled light {{obj.name}} for ultra-fast performance")
         else:
-            # Moderate reduction for remaining lights to maintain quality
-            obj.data.energy = obj.data.energy * 0.8  # Reduced from 50% reduction to 20% reduction
-            print(f"🚀 Enhanced light energy for {{obj.name}} to {{obj.data.energy:.1f}}")
+            # Aggressive reduction for remaining lights for maximum speed
+            obj.data.energy = obj.data.energy * 0.5  # 50% reduction for speed
+            print(f"🚀 Ultra-fast light energy for {{obj.name}} to {{obj.data.energy:.1f}}")
             
-            # Enhance light properties for better quality
+            # Minimal light properties for maximum speed
             if hasattr(obj.data, 'size'):
-                obj.data.size = max(obj.data.size, 0.5)  # Ensure minimum light size for quality
+                obj.data.size = max(obj.data.size, 0.1)  # Minimal light size for speed
             if hasattr(obj.data, 'spot_size'):
-                obj.data.spot_size = max(obj.data.spot_size, 0.1)  # Ensure minimum spot size
+                obj.data.spot_size = max(obj.data.spot_size, 0.05)  # Minimal spot size
 
-print("✅ ENHANCED lighting optimization complete")
+print(f"✅ {self.quality_mode.upper()} lighting optimization complete")
 
 # Set output path
 render.filepath = "{output_path}"
 
 # Validate scene before rendering
-print("🔍 Validating ULTRA GPU-optimized scene...")
+print(f"🔍 Validating {self.quality_mode.upper()} GPU-optimized scene...")
 try:
     if not scene.camera:
         print("❌ Error: No camera found in scene")
@@ -494,32 +495,32 @@ try:
             print("❌ ERROR: Not using GPU device!")
             raise Exception("GPU device not configured")
     
-    print("✅ ULTRA GPU-optimized scene validation complete")
+    print(f"✅ {self.quality_mode.upper()} GPU-optimized scene validation complete")
     
 except Exception as e:
     print(f"❌ Scene validation failed: {{e}}")
     raise
 
-# Render animation with ULTRA GPU optimization
-print("🎬 Starting ULTRA GPU-optimized render...")
-print(f"📊 ULTRA settings: {{cycles.samples}} samples, {{cycles.max_bounces}} bounces")
-print(f"⚡ Expected CPU reduction: 70-80%")
-print(f"🎯 Quality maintained through advanced denoising")
+# Render animation with {self.quality_mode.upper()} GPU optimization
+print(f"🎬 Starting {self.quality_mode.upper()} GPU-optimized render...")
+print(f"📊 {self.quality_mode.upper()} settings: {{cycles.samples}} samples, {{cycles.max_bounces}} bounces")
+print(f"⚡ Quality mode: {self.quality_mode}")
+print(f"🎯 Tile size: {{cycles.tile_size}}px for optimal GPU utilization")
 print(f"🚀 GPU utilization: MAXIMUM")
 
 try:
     bpy.ops.render.render(animation=True)
-    print("✅ ULTRA GPU-optimized render complete!")
-    print("🎉 CPU usage reduced by 70-80% while maintaining quality!")
+    print(f"✅ {self.quality_mode.upper()} GPU-optimized render complete!")
+    print(f"🎉 {self.quality_mode.upper()} quality achieved!")
 except Exception as e:
-    print(f"❌ ULTRA GPU render failed: {{e}}")
+    print(f"❌ {self.quality_mode.upper()} GPU render failed: {{e}}")
     print("❌ This pipeline requires GPU acceleration")
     raise
 
-print("🎉 ULTRA GPU-OPTIMIZED RENDER PIPELINE COMPLETE!")
-print("⚡ Performance: 70-80% CPU reduction")
-print("🎯 Quality: Maintained through advanced GPU denoising")
-print("🚀 GPU utilization: MAXIMUM")
+print(f"🎉 {self.quality_mode.upper()} GPU-OPTIMIZED RENDER PIPELINE COMPLETE!")
+print(f"⚡ Performance: {self.quality_mode} quality")
+print(f"🎯 Settings: Optimized for {self.quality_mode} quality")
+print(f"🚀 GPU utilization: MAXIMUM")
 '''
         
         return script
@@ -531,8 +532,8 @@ print("🚀 GPU utilization: MAXIMUM")
                                   audio_path: Optional[str] = None) -> bool:
         """Render video using ultra GPU-optimized pipeline."""
         
-        logger.info(f"🚀 Starting ULTRA GPU-optimized rendering: {output_path}")
-        logger.info(f"⚡ Target: 70-80% CPU reduction with maintained quality")
+        logger.info(f"🚀 Starting {self.quality_mode.upper()} GPU-optimized rendering: {output_path}")
+        logger.info(f"⚡ Target: {self.quality_mode} quality with optimized settings")
         
         # Create output directory
         output_dir = Path(output_path).parent
@@ -564,10 +565,10 @@ print("🚀 GPU utilization: MAXIMUM")
             pass
         
         if success:
-            logger.info(f"✅ ULTRA GPU-optimized rendering complete: {output_path}")
-            logger.info("🎉 CPU usage reduced by 70-80% while maintaining quality!")
+            logger.info(f"✅ {self.quality_mode.upper()} GPU-optimized rendering complete: {output_path}")
+            logger.info(f"🎉 {self.quality_mode.upper()} quality achieved!")
         else:
-            logger.error(f"❌ ULTRA GPU-optimized rendering failed")
+            logger.error(f"❌ {self.quality_mode.upper()} GPU-optimized rendering failed")
         
         return success
     
@@ -602,11 +603,11 @@ print("🚀 GPU utilization: MAXIMUM")
                 '--python', script_path
             ]
             
-            logger.info(f"🎬 Rendering with ULTRA GPU optimization: {output_path}")
+            logger.info(f"🎬 Rendering with {self.quality_mode.upper()} GPU optimization: {output_path}")
             logger.info(f"📊 Total frames to render: {total_frames}")
-            logger.info(f"⚡ Expected CPU reduction: 70-80%")
-            logger.info(f"🚀 GPU utilization: MAXIMUM (8192px tiles)")
-            logger.info(f"🎯 Quality: Maintained through advanced denoising")
+            logger.info(f"⚡ Quality mode: {self.quality_mode}")
+            logger.info(f"🚀 GPU utilization: MAXIMUM ({self.config.tile_size}px tiles)")
+            logger.info(f"🎯 Samples: {self.config.samples}, Bounces: {self.config.max_bounces}")
             
             # Start render process
             process = subprocess.Popen(
@@ -660,15 +661,15 @@ print("🚀 GPU utilization: MAXIMUM")
             
             if process.returncode == 0:
                 render_time = time.time() - start_time
-                logger.info(f"✅ ULTRA GPU render completed in {render_time:.1f}s")
-                logger.info("🎉 CPU usage reduced by 70-80%!")
+                logger.info(f"✅ {self.quality_mode.upper()} GPU render completed in {render_time:.1f}s")
+                logger.info(f"🎉 {self.quality_mode.upper()} quality achieved!")
                 return True
             else:
-                logger.error(f"❌ ULTRA GPU render failed with return code {process.returncode}")
+                logger.error(f"❌ {self.quality_mode.upper()} GPU render failed with return code {process.returncode}")
                 return False
                 
         except Exception as e:
-            logger.error(f"❌ Error in ULTRA GPU render: {e}")
+            logger.error(f"❌ Error in {self.quality_mode.upper()} GPU render: {e}")
             return False
 
 
@@ -681,10 +682,10 @@ if __name__ == "__main__":
     # Test the ultra GPU pipeline
     pipeline = create_ultra_gpu_pipeline()
     
-    print("🚀 ULTRA GPU-OPTIMIZED PIPELINE TEST")
+    print("🚀 ULTRA FAST GPU-OPTIMIZED PIPELINE TEST")
     print("=" * 50)
     print(f"System: {platform.system()}")
-    print(f"Target: 70-80% CPU reduction")
-    print(f"Quality: Maintained through advanced denoising")
+    print(f"Target: Absolute maximum speed")
+    print(f"Settings: Absolute minimum for maximum speed")
     print(f"GPU utilization: MAXIMUM")
     print("=" * 50)

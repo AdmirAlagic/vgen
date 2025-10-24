@@ -1339,17 +1339,20 @@ def create_smooth_modifier_animation():
 create_smooth_modifier_animation()
 print("✅ Smooth modifier animation created")
 
-# Create smooth, continuous object rotation and ensure no size changes
-print("🔄 Creating smooth continuous rotation...")
+# Create smooth, continuous object rotation and movement towards Earth
+print("🔄 Creating smooth continuous rotation and movement towards Earth...")
 
-def create_smooth_rotation_animation():
-    """Create smooth, continuous rotation without flickering"""
+def create_smooth_rotation_and_movement_animation():
+    """Create smooth, continuous rotation and movement towards Earth without flickering"""
+    
+    # Earth position (behind main object)
+    earth_position = mathutils.Vector((0, 0, -50))
     
     # Ensure object scale stays constant (no size changes)
     obj.scale = (1.0, 1.0, 1.0)
     obj.keyframe_insert(data_path="scale")
     
-    # Create smooth, continuous rotation with enhanced interpolation
+    # Create smooth, continuous rotation and movement with enhanced interpolation
     for frame in range(0, {total_frames} + 1, 1):  # Every frame for maximum smoothness
         scene.frame_set(frame)
         t = frame / {fps}
@@ -1379,12 +1382,26 @@ def create_smooth_rotation_animation():
         obj.rotation_euler = (rot_x, rot_y, rot_z)
         obj.keyframe_insert(data_path="rotation_euler")
         
+        # Calculate movement towards Earth over time
+        # Start at origin (0, 0, 0) and gradually move towards Earth position
+        movement_progress = min(t / 30.0, 1.0)  # Move over 30 seconds, then stop
+        movement_progress = 1.0 - (1.0 - movement_progress) ** 2  # Ease-out curve for smooth deceleration
+        
+        # Interpolate position towards Earth
+        start_position = mathutils.Vector((0, 0, 0))
+        target_position = earth_position * 0.7  # Move 70% of the way to Earth
+        current_position = start_position.lerp(target_position, movement_progress)
+        
+        # Apply movement
+        obj.location = current_position
+        obj.keyframe_insert(data_path="location")
+        
         # Ensure scale remains constant
         obj.scale = (1.0, 1.0, 1.0)
         obj.keyframe_insert(data_path="scale")
 
-create_smooth_rotation_animation()
-print("✅ Smooth continuous rotation created")
+create_smooth_rotation_and_movement_animation()
+print("✅ Smooth continuous rotation and movement towards Earth created")
 print("✅ Object scale locked to prevent size changes")
 
 # Create smooth material animation
@@ -1565,7 +1582,7 @@ try:
     camera_animation_enabled = {camera_animation_enabled}
     
     if camera_animation_enabled:
-        print("🎬 Setting up camera animation...")
+        print("🎬 Setting up camera follow animation...")
         
         # Get animation parameters with fallback values
         tilt_speed = {tilt_speed}
@@ -1573,29 +1590,48 @@ try:
         rotation_speed = {rotation_speed}
         rotation_range = {rotation_range}
         
-        # Create smooth camera orbital rotation around the main object
+        # Create smooth camera follow animation with reduced orbital movement
         for frame in range(1, {total_frames} + 1, 5):  # Keyframe every 5 frames for smooth animation
             scene.frame_set(frame)
             t = frame / {fps}
             
-            # Define orbital parameters
-            orbital_radius = camera_distance  # Distance from center
-            orbital_height = camera_z  # Height above the object
-            orbital_speed = 0.1  # Slow rotation speed (radians per second)
+            # Get main object position (it moves towards Earth over time)
+            main_obj_position = mathutils.Vector((0, 0, 0))  # Default position
             
-            # Calculate orbital position
+            # Calculate main object position based on movement animation
+            earth_position = mathutils.Vector((0, 0, -50))
+            movement_progress = min(t / 30.0, 1.0)  # Same movement timing as main object
+            movement_progress = 1.0 - (1.0 - movement_progress) ** 2  # Ease-out curve
+            start_position = mathutils.Vector((0, 0, 0))
+            target_position = earth_position * 0.7  # Same target as main object
+            main_obj_position = start_position.lerp(target_position, movement_progress)
+            
+            # Define follow parameters with reduced orbital movement
+            follow_distance = camera_distance * 0.8  # Slightly closer to object
+            follow_height = camera_z * 0.9  # Slightly lower height
+            
+            # Reduced orbital movement - much slower and smaller range
+            orbital_speed = 0.02  # Much slower rotation (reduced from 0.1)
+            orbital_radius = follow_distance * 0.3  # Much smaller orbital radius
+            orbital_height = follow_height
+            
+            # Calculate reduced orbital position
             orbital_angle = t * orbital_speed
             
-            # Calculate camera position in orbit
-            camera_x = orbital_radius * math.cos(orbital_angle)
-            camera_y = orbital_radius * math.sin(orbital_angle)
-            camera_z = orbital_height
+            # Calculate camera position - follows main object with small orbital movement
+            orbital_x = orbital_radius * math.cos(orbital_angle)
+            orbital_y = orbital_radius * math.sin(orbital_angle)
+            
+            # Camera follows main object position with small orbital offset
+            camera_x = main_obj_position.x + orbital_x
+            camera_y = main_obj_position.y + orbital_y
+            camera_z = main_obj_position.z + orbital_height
             
             # Set camera location
             camera.location = (camera_x, camera_y, camera_z)
             
-            # Make camera look at the center object (0, 0, 0)
-            camera_target = mathutils.Vector((0, 0, 0))
+            # Make camera look at the main object (not center)
+            camera_target = main_obj_position
             camera_direction = camera_target - camera.location
             camera.rotation_euler = camera_direction.to_track_quat('-Z', 'Y').to_euler()
             
@@ -1615,10 +1651,11 @@ try:
                     kf.handle_left[0] = kf.co[0] - 2.0
                     kf.handle_right[0] = kf.co[0] + 2.0
         
-        print(f"✅ Camera orbital animation created - Slow rotation around main object")
-        print(f"✅ Orbital radius: {orbital_radius}")
-        print(f"✅ Orbital height: {orbital_height}")
-        print(f"✅ Orbital speed: {orbital_speed} radians/second")
+        print(f"✅ Camera follow animation created - Following main object with reduced orbital movement")
+        print(f"✅ Follow distance: {follow_distance}")
+        print(f"✅ Follow height: {follow_height}")
+        print(f"✅ Orbital radius: {orbital_radius} (reduced)")
+        print(f"✅ Orbital speed: {orbital_speed} radians/second (reduced)")
     else:
         print("📷 Camera animation disabled in configuration")
     
