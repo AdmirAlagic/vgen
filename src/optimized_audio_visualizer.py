@@ -145,6 +145,11 @@ class OptimizedAudioVisualizer:
         rotation_speed = getattr(self.scene_config.camera.animation, 'rotation_speed', 3.02) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation else 3.02
         rotation_range = getattr(self.scene_config.camera.animation.rotation_range, 'min', -10.0) if hasattr(self.scene_config.camera, 'animation') and self.scene_config.camera.animation and hasattr(self.scene_config.camera.animation, 'rotation_range') else -10.0
         
+        # Main object scale configuration
+        main_object_scale_x = self.scene_config.main_object.scale.x if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'scale') else 1.0
+        main_object_scale_y = self.scene_config.main_object.scale.y if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'scale') else 1.0
+        main_object_scale_z = self.scene_config.main_object.scale.z if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'scale') else 1.0
+        
         # Rotation configuration
         rotation_enabled = self.scene_config.main_object.rotation.enabled if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'rotation') else True
         rotation_continuous = self.scene_config.main_object.rotation.continuous if hasattr(self.scene_config, 'main_object') and hasattr(self.scene_config.main_object, 'rotation') else True
@@ -182,6 +187,9 @@ class OptimizedAudioVisualizer:
             'rotation_speed_x': str(rotation_speed_x),
             'rotation_speed_y': str(rotation_speed_y),
             'rotation_speed_z': str(rotation_speed_z),
+            'main_object_scale_x': str(main_object_scale_x),
+            'main_object_scale_y': str(main_object_scale_y),
+            'main_object_scale_z': str(main_object_scale_z),
             'blend_file_path': target_blend_path
         }
     

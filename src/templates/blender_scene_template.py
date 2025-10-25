@@ -1288,6 +1288,338 @@ def create_cinematic_material_animation(story_structure):
     print("✅ Cinematic material animation created")
 
 # ============================================================================
+# AUDIO-RESPONSIVE COLOR ANIMATION SYSTEM
+# ============================================================================
+
+def create_audio_responsive_color_animation():
+    """Create audio-responsive color animation for the main object"""
+    
+    print("🎨 Creating audio-responsive color animation...")
+    
+    # Get material
+    if not obj.data.materials:
+        print("⚠️ No materials found on object")
+        return
+        
+    material = obj.data.materials[0]
+    
+    # Get audio data from features
+    audio_data = features_data
+    
+    # Define color mapping for different audio bands
+    color_mappings = {
+        'kick_energy': {
+            'base_color': (1.0, 0.2, 0.2),  # Red for kick
+            'intensity_factor': 2.0,
+            'hue_shift': 0.0
+        },
+        'bass_energy': {
+            'base_color': (0.2, 0.2, 1.0),  # Blue for bass
+            'intensity_factor': 1.8,
+            'hue_shift': 0.1
+        },
+        'snare_energy': {
+            'base_color': (1.0, 1.0, 0.2),  # Yellow for snare
+            'intensity_factor': 2.2,
+            'hue_shift': 0.05
+        },
+        'hihat_energy': {
+            'base_color': (0.2, 1.0, 0.2),  # Green for hihat
+            'intensity_factor': 1.5,
+            'hue_shift': 0.15
+        },
+        'vocal_energy': {
+            'base_color': (1.0, 0.2, 1.0),  # Magenta for vocal
+            'intensity_factor': 1.9,
+            'hue_shift': 0.08
+        },
+        'spectral_centroid': {
+            'base_color': (1.0, 0.8, 0.2),  # Orange for brightness
+            'intensity_factor': 1.6,
+            'hue_shift': 0.12
+        }
+    }
+    
+    # Create audio-responsive color animation for each frame
+    for frame in range(0, {total_frames} + 1, 1):  # Every frame for smooth color changes
+        scene.frame_set(frame)
+        
+        # Initialize combined color values
+        combined_r = 0.0
+        combined_g = 0.0
+        combined_b = 0.0
+        total_weight = 0.0
+        
+        # Process each audio band
+        for band_name, color_config in color_mappings.items():
+            if band_name in audio_data and isinstance(audio_data[band_name], list):
+                # Get audio value for this frame
+                audio_value = audio_data[band_name][min(frame, len(audio_data[band_name]) - 1)]
+                
+                # Apply intensity factor and smoothing
+                intensity = audio_value * color_config['intensity_factor']
+                intensity = max(0.0, min(1.0, intensity))  # Clamp to 0-1
+                
+                # Apply hue shift for dynamic color variation
+                base_color = color_config['base_color']
+                hue_shift = color_config['hue_shift'] * intensity
+                
+                # Convert RGB to HSV for hue manipulation
+                h, s, v = colorsys.rgb_to_hsv(base_color[0], base_color[1], base_color[2])
+                h = (h + hue_shift) % 1.0  # Shift hue
+                s = min(1.0, s + intensity * 0.3)  # Increase saturation with intensity
+                v = min(1.0, v + intensity * 0.2)  # Increase brightness with intensity
+                
+                # Convert back to RGB
+                r, g, b = colorsys.hsv_to_rgb(h, s, v)
+                
+                # Add to combined color with weight
+                weight = intensity
+                combined_r += r * weight
+                combined_g += g * weight
+                combined_b += b * weight
+                total_weight += weight
+        
+        # Normalize combined color
+        if total_weight > 0:
+            combined_r /= total_weight
+            combined_g /= total_weight
+            combined_b /= total_weight
+        else:
+            # Default color when no audio data
+            combined_r, combined_g, combined_b = (0.8, 0.9, 1.2)
+        
+        # Ensure color values are in valid range
+        combined_r = max(0.0, min(1.0, combined_r))
+        combined_g = max(0.0, min(1.0, combined_g))
+        combined_b = max(0.0, min(1.0, combined_b))
+        
+        # Apply color to emission node
+        try:
+            emission_node = material.node_tree.nodes.get("Emission")
+            if emission_node:
+                # Set emission color
+                emission_node.inputs[0].default_value = (combined_r, combined_g, combined_b, 1.0)
+                emission_node.inputs[0].keyframe_insert(data_path="default_value", frame=frame)
+                
+                # Also animate emission strength based on overall audio intensity
+                overall_intensity = 0.0
+                for band_name in color_mappings.keys():
+                    if band_name in audio_data and isinstance(audio_data[band_name], list):
+                        audio_value = audio_data[band_name][min(frame, len(audio_data[band_name]) - 1)]
+                        overall_intensity += audio_value
+                
+                # Normalize overall intensity
+                overall_intensity = min(1.0, overall_intensity / len(color_mappings))
+                
+                # Map to emission strength (base 6.0 + audio response up to 8.0)
+                emission_strength = 6.0 + (overall_intensity * 8.0)
+                emission_node.inputs[1].default_value = emission_strength
+                emission_node.inputs[1].keyframe_insert(data_path="default_value", frame=frame)
+                
+        except Exception as e:
+            print(f"⚠️ Error setting emission color at frame {frame}: {e}")
+    
+    print("✅ Audio-responsive color animation created")
+
+def create_enhanced_audio_color_system():
+    """Create enhanced audio-responsive color system with advanced blending"""
+    
+    print("🎨 Creating enhanced audio-responsive color system...")
+    
+    # Get material
+    if not obj.data.materials:
+        print("⚠️ No materials found on object")
+        return
+        
+    material = obj.data.materials[0]
+    
+    # Get audio data from features
+    audio_data = features_data
+    
+    # Enhanced color mappings with more sophisticated responses
+    enhanced_color_mappings = {
+        'kick_energy': {
+            'base_color': (1.0, 0.1, 0.1),  # Deep red for kick
+            'intensity_factor': 2.5,
+            'hue_shift': 0.0,
+            'saturation_boost': 0.4,
+            'brightness_boost': 0.3,
+            'response_type': 'punchy'
+        },
+        'bass_energy': {
+            'base_color': (0.1, 0.1, 1.0),  # Deep blue for bass
+            'intensity_factor': 2.2,
+            'hue_shift': 0.15,
+            'saturation_boost': 0.3,
+            'brightness_boost': 0.2,
+            'response_type': 'flowing'
+        },
+        'snare_energy': {
+            'base_color': (1.0, 0.8, 0.1),  # Bright yellow for snare
+            'intensity_factor': 2.8,
+            'hue_shift': 0.05,
+            'saturation_boost': 0.5,
+            'brightness_boost': 0.4,
+            'response_type': 'crisp'
+        },
+        'hihat_energy': {
+            'base_color': (0.1, 1.0, 0.1),  # Bright green for hihat
+            'intensity_factor': 1.8,
+            'hue_shift': 0.2,
+            'saturation_boost': 0.3,
+            'brightness_boost': 0.3,
+            'response_type': 'sparkly'
+        },
+        'vocal_energy': {
+            'base_color': (1.0, 0.1, 0.8),  # Magenta for vocal
+            'intensity_factor': 2.3,
+            'hue_shift': 0.1,
+            'saturation_boost': 0.4,
+            'brightness_boost': 0.3,
+            'response_type': 'dynamic'
+        },
+        'spectral_centroid': {
+            'base_color': (1.0, 0.6, 0.1),  # Orange for brightness
+            'intensity_factor': 2.0,
+            'hue_shift': 0.15,
+            'saturation_boost': 0.3,
+            'brightness_boost': 0.4,
+            'response_type': 'bright'
+        },
+        'rms_energy': {
+            'base_color': (0.8, 0.8, 1.0),  # Light blue for overall energy
+            'intensity_factor': 1.5,
+            'hue_shift': 0.1,
+            'saturation_boost': 0.2,
+            'brightness_boost': 0.2,
+            'response_type': 'ambient'
+        }
+    }
+    
+    # Create enhanced audio-responsive color animation
+    for frame in range(0, {total_frames} + 1, 1):
+        scene.frame_set(frame)
+        
+        # Initialize enhanced color blending
+        color_components = []
+        total_weight = 0.0
+        
+        # Process each audio band with enhanced response
+        for band_name, color_config in enhanced_color_mappings.items():
+            if band_name in audio_data and isinstance(audio_data[band_name], list):
+                # Get audio value for this frame
+                audio_value = audio_data[band_name][min(frame, len(audio_data[band_name]) - 1)]
+                
+                # Apply response type specific processing
+                response_type = color_config['response_type']
+                processed_value = audio_value
+                
+                if response_type == 'punchy':
+                    # Emphasize transients
+                    processed_value = audio_value ** 0.7
+                elif response_type == 'flowing':
+                    # Smooth response
+                    processed_value = audio_value ** 0.9
+                elif response_type == 'crisp':
+                    # Sharp response
+                    processed_value = audio_value ** 0.6
+                elif response_type == 'sparkly':
+                    # High-frequency detail
+                    processed_value = audio_value ** 0.8
+                elif response_type == 'dynamic':
+                    # Full range response
+                    processed_value = audio_value ** 0.75
+                elif response_type == 'bright':
+                    # Brightness emphasis
+                    processed_value = audio_value ** 0.85
+                elif response_type == 'ambient':
+                    # Ambient response
+                    processed_value = audio_value ** 1.0
+                
+                # Apply intensity factor
+                intensity = processed_value * color_config['intensity_factor']
+                intensity = max(0.0, min(1.0, intensity))
+                
+                if intensity > 0.1:  # Only process significant values
+                    # Enhanced color processing
+                    base_color = color_config['base_color']
+                    hue_shift = color_config['hue_shift'] * intensity
+                    sat_boost = color_config['saturation_boost'] * intensity
+                    bright_boost = color_config['brightness_boost'] * intensity
+                    
+                    # Convert to HSV for manipulation
+                    h, s, v = colorsys.rgb_to_hsv(base_color[0], base_color[1], base_color[2])
+                    
+                    # Apply enhancements
+                    h = (h + hue_shift) % 1.0
+                    s = min(1.0, s + sat_boost)
+                    v = min(1.0, v + bright_boost)
+                    
+                    # Convert back to RGB
+                    r, g, b = colorsys.hsv_to_rgb(h, s, v)
+                    
+                    # Add to color components with weight
+                    color_components.append({
+                        'color': (r, g, b),
+                        'weight': intensity,
+                        'response_type': response_type
+                    })
+                    total_weight += intensity
+        
+        # Blend colors using weighted average
+        if color_components and total_weight > 0:
+            final_r = sum(comp['color'][0] * comp['weight'] for comp in color_components) / total_weight
+            final_g = sum(comp['color'][1] * comp['weight'] for comp in color_components) / total_weight
+            final_b = sum(comp['color'][2] * comp['weight'] for comp in color_components) / total_weight
+        else:
+            # Default cosmic color
+            final_r, final_g, final_b = (0.8, 0.9, 1.2)
+        
+        # Apply color enhancement
+        final_r = max(0.0, min(1.0, final_r))
+        final_g = max(0.0, min(1.0, final_g))
+        final_b = max(0.0, min(1.0, final_b))
+        
+        # Apply to material
+        try:
+            emission_node = material.node_tree.nodes.get("Emission")
+            if emission_node:
+                # Set enhanced emission color
+                emission_node.inputs[0].default_value = (final_r, final_g, final_b, 1.0)
+                emission_node.inputs[0].keyframe_insert(data_path="default_value", frame=frame)
+                
+                # Enhanced emission strength calculation
+                overall_intensity = 0.0
+                peak_intensity = 0.0
+                
+                for band_name in enhanced_color_mappings.keys():
+                    if band_name in audio_data and isinstance(audio_data[band_name], list):
+                        audio_value = audio_data[band_name][min(frame, len(audio_data[band_name]) - 1)]
+                        overall_intensity += audio_value
+                        peak_intensity = max(peak_intensity, audio_value)
+                
+                # Enhanced emission strength with peak detection
+                base_strength = 6.0
+                intensity_strength = (overall_intensity / len(enhanced_color_mappings)) * 6.0
+                peak_strength = peak_intensity * 4.0
+                
+                emission_strength = base_strength + intensity_strength + peak_strength
+                emission_strength = max(4.0, min(20.0, emission_strength))  # Clamp to reasonable range
+                
+                emission_node.inputs[1].default_value = emission_strength
+                emission_node.inputs[1].keyframe_insert(data_path="default_value", frame=frame)
+                
+        except Exception as e:
+            print(f"⚠️ Error setting enhanced emission color at frame {frame}: {e}")
+    
+    print("✅ Enhanced audio-responsive color system created")
+
+# Create both color animation systems
+create_audio_responsive_color_animation()
+create_enhanced_audio_color_system()
+
+# ============================================================================
 # CINEMATIC STORYTELLING SYSTEM - 4-ACT STRUCTURE
 # ============================================================================
 
@@ -2434,7 +2766,7 @@ def create_cinematic_object_movement(story_structure):
     earth_position = mathutils.Vector((0, 0, -15))
     
     # Ensure object scale stays constant (no size changes)
-    obj.scale = (2.0, 2.0, 2.0)  # Larger for better visibility
+    obj.scale = ({main_object_scale_x}, {main_object_scale_y}, {main_object_scale_z})  # Configurable scale for better Earth visibility
     obj.keyframe_insert(data_path="scale")
     
     # Cinematic movement phases - ALWAYS moving towards Earth

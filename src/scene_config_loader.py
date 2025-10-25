@@ -121,6 +121,14 @@ class PresetConfig:
 
 
 @dataclass
+class MainObjectScaleConfig:
+    """Main object scale configuration settings."""
+    x: float
+    y: float
+    z: float
+
+
+@dataclass
 class MainObjectRotationConfig:
     """Main object rotation configuration settings."""
     enabled: bool
@@ -133,6 +141,7 @@ class MainObjectRotationConfig:
 @dataclass
 class MainObjectConfig:
     """Main object configuration settings."""
+    scale: MainObjectScaleConfig
     rotation: MainObjectRotationConfig
 
 
@@ -310,7 +319,21 @@ def save_scene_config(scene_config: SceneConfig, output_path: str = None):
         },
         'quality_levels': scene_config.quality_levels,
         'morph_styles': scene_config.morph_styles,
-        'presets': scene_config.presets
+        'presets': scene_config.presets,
+        'main_object': {
+            'scale': {
+                'x': scene_config.main_object.scale.x,
+                'y': scene_config.main_object.scale.y,
+                'z': scene_config.main_object.scale.z
+            },
+            'rotation': {
+                'enabled': scene_config.main_object.rotation.enabled,
+                'speed_x': scene_config.main_object.rotation.speed_x,
+                'speed_y': scene_config.main_object.rotation.speed_y,
+                'speed_z': scene_config.main_object.rotation.speed_z,
+                'continuous': scene_config.main_object.rotation.continuous
+            }
+        } if scene_config.main_object else None
     }
     
     # Save to file
@@ -384,9 +407,11 @@ def _convert_to_scene_config(config_data: Dict[str, Any]) -> SceneConfig:
     main_object = None
     if 'main_object' in config_data:
         main_object_data = config_data['main_object']
+        scale_data = main_object_data['scale']
+        scale = MainObjectScaleConfig(**scale_data)
         rotation_data = main_object_data['rotation']
         rotation = MainObjectRotationConfig(**rotation_data)
-        main_object = MainObjectConfig(rotation=rotation)
+        main_object = MainObjectConfig(scale=scale, rotation=rotation)
     
     return SceneConfig(
         camera=camera,

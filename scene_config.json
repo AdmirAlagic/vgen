@@ -29,6 +29,11 @@
     }
   },
   "main_object": {
+    "scale": {
+      "x": 0.8,
+      "y": 0.8,
+      "z": 0.8
+    },
     "rotation": {
       "enabled": true,
       "speed_x": 0.32,
