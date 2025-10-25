@@ -25,12 +25,6 @@
       "rotation_range": {
         "min": -3.0,
         "max": 3.0
-      },
-      "cinematic_phases": {
-        "phase_percentage": 33.33,
-        "phase1_description": "Follow object ascending to Earth",
-        "phase2_description": "Rotate around object with Earth visible",
-        "phase3_description": "Follow object moving away from Earth"
       }
     }
   },
@@ -41,22 +35,6 @@
       "speed_y": 0.03,
       "speed_z": 0.025,
       "continuous": true
-    },
-    "movement": {
-      "enabled": true,
-      "target_position": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": -35.0
-      },
-      "duration": 180.0,
-      "ease_out": true,
-      "cinematic_phases": {
-        "phase_percentage": 33.33,
-        "phase1_description": "Follow object ascending to Earth",
-        "phase2_description": "Rotate around object with Earth visible",
-        "phase3_description": "Follow object moving away from Earth"
-      }
     }
   },
   "lighting": {
@@ -102,7 +80,7 @@
     }
   },
   "material": {
-    "emission_strength": 9.5,
+    "emission_strength": 1.5,
     "emission_color": [0.8, 0.9, 1.2],
     "color_ramp_low": [0.1, 0.05, 0.3],
     "color_ramp_high": [0.9, 0.6, 1.2],
