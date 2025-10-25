@@ -413,10 +413,19 @@ try:
     
         # Create smooth rotation animation for Earth
         print("🔄 Creating smooth Earth rotation animation...")
-        print("🌍 Earth will ONLY rotate slowly - it does NOT respond to audio")
+        print("🌍 Earth, atmosphere, and clouds will rotate together - they do NOT respond to audio")
         print("🎵 Only the main object (OptimizedAudioShape) responds to audio")
         
-        # Create realistic Earth rotation (only for mesh objects)
+        # Get all Earth-related mesh objects to rotate together
+        earth_meshes = []
+        for obj in bpy.context.scene.objects:
+            if obj.name in ['ImportedEarth', 'atmo', 'clouds'] and obj.type == 'MESH':
+                earth_meshes.append(obj)
+                print(f"🌍 Added {obj.name} to rotation")
+        
+        print(f"🔄 Found {len(earth_meshes)} Earth objects to rotate together")
+        
+        # Create realistic Earth rotation for ALL Earth objects (earth, atmo, clouds)
         for frame in range(0, {total_frames} + 1, 5):  # Keyframe every 5 frames
             scene.frame_set(frame)
             t = frame / {fps}
@@ -425,23 +434,23 @@ try:
             rotation_speed = 0.1  # radians per second
             rotation_angle = t * rotation_speed
             
-            # Rotate around Z-axis (vertical axis) - Earth's rotation
-            # Only apply rotation to mesh objects, not lights
-            if earth_sphere.type == 'MESH':
-                earth_sphere.rotation_euler = (rotation_angle, 0, 0)
-                earth_sphere.keyframe_insert(data_path="rotation_euler")
+            # Rotate ALL Earth objects together - same rotation for earth, atmo, and clouds
+            for earth_obj in earth_meshes:
+                earth_obj.rotation_euler = (rotation_angle, 0, 0)
+                earth_obj.keyframe_insert(data_path="rotation_euler")
             
         
-        # Apply smooth Bezier interpolation (only for mesh objects)
-        if earth_sphere.type == 'MESH' and earth_sphere.animation_data and earth_sphere.animation_data.action:
-            for fcurve in earth_sphere.animation_data.action.fcurves:
-                for kf in fcurve.keyframe_points:
-                    kf.interpolation = 'BEZIER'
-                    kf.handle_left_type = 'AUTO_CLAMPED'
-                    kf.handle_right_type = 'AUTO_CLAMPED'
+        # Apply smooth Bezier interpolation to ALL Earth objects
+        for earth_obj in earth_meshes:
+            if earth_obj.animation_data and earth_obj.animation_data.action:
+                for fcurve in earth_obj.animation_data.action.fcurves:
+                    for kf in fcurve.keyframe_points:
+                        kf.interpolation = 'BEZIER'
+                        kf.handle_left_type = 'AUTO_CLAMPED'
+                        kf.handle_right_type = 'AUTO_CLAMPED'
         
         
-        print("✅ Smooth Earth rotation animation created")
+        print("✅ Smooth Earth rotation animation created - Earth, atmo, and clouds rotate together")
     
         # Add professional lighting for Earth
         print("💡 Setting up professional Earth lighting...")
@@ -797,15 +806,15 @@ except Exception as e:
     print(f"⚠️ Error configuring color ramp: {e}")
     # Fallback to basic color ramp
     color_ramp.color_ramp.elements[0].position = 0.0
-    color_ramp.color_ramp.elements[0].color = (0.05, 0.02, 0.15, 1.0)
+    color_ramp.color_ramp.elements[0].color = (0.2, 0.6, 1.2, 1.0)  # Vibrant electric blue
     color_ramp.color_ramp.elements[1].position = 1.0
-    color_ramp.color_ramp.elements[1].color = (1.0, 0.8, 1.4, 1.0)
+    color_ramp.color_ramp.elements[1].color = (1.0, 0.3, 0.5, 1.0)  # Vibrant red-orange
 
-# Enhanced Principled BSDF settings for ultra-realistic space material
-principled_node.inputs["Metallic"].default_value = 0.98
-principled_node.inputs["Roughness"].default_value = 0.08
-principled_node.inputs["IOR"].default_value = 2.2
-principled_node.inputs["Subsurface Weight"].default_value = 0.15
+# Enhanced Principled BSDF settings for vibrant glowing material
+principled_node.inputs["Metallic"].default_value = 0.85
+principled_node.inputs["Roughness"].default_value = 0.15  # More glossy to enhance colors
+principled_node.inputs["IOR"].default_value = 1.8
+principled_node.inputs["Subsurface Weight"].default_value = 0.2  # Slight subsurface for glow
 principled_node.inputs["Subsurface Radius"].default_value = (1.2, 0.6, 0.8)
 principled_node.inputs["Transmission Weight"].default_value = 0.08
 # Note: Transmission Roughness was removed in Blender 4.5
@@ -818,9 +827,9 @@ principled_node.inputs["Specular Tint"].default_value = (0.3, 0.3, 0.3, 1.0)
 principled_node.inputs["Anisotropic"].default_value = 0.4
 principled_node.inputs["Anisotropic Rotation"].default_value = 0.2
 
-# Enhanced emission settings for space glow
-emission_node.inputs["Strength"].default_value = 6.0
-emission_node.inputs["Color"].default_value = (0.9, 1.0, 1.3, 1.0)  # Enhanced cosmic blue-white
+# Enhanced emission settings for vibrant glowing effect
+emission_node.inputs["Strength"].default_value = 25.0  # Strong glowing effect
+emission_node.inputs["Color"].default_value = (0.2, 0.8, 1.2, 1.0)  # Vibrant electric blue
 
 # Set up bump mapping for surface detail
 if 'bump_node' in locals():
@@ -889,40 +898,40 @@ try:
     bpy.ops.object.delete(use_global=False)
     print("✅ Cleared existing lights (Sun light and main object preserved)")
     
-    # Add key light (main illumination)
+    # Add key light (reduced for emission glow)
     bpy.ops.object.light_add(type='AREA', location=(8, 6, 8))
     key_light = bpy.context.active_object
     key_light.name = "KeyLight"
-    key_light.data.energy = 75.0
+    key_light.data.energy = 15.0  # Reduced for emission to show through
     key_light.data.size = 3.0
-    key_light.data.color = (1.0, 0.98, 0.9)  # Warm cosmic white
+    key_light.data.color = (0.3, 0.3, 0.4)  # Dim cool blue
     
-    # Add fill light (softer illumination)
+    # Add fill light (reduced for emission glow)
     bpy.ops.object.light_add(type='AREA', location=(-5, -3, 4))
     fill_light = bpy.context.active_object
     fill_light.name = "FillLight"
-    fill_light.data.energy = 35.0
+    fill_light.data.energy = 8.0  # Reduced for emission to show through
     fill_light.data.size = 4.0
-    fill_light.data.color = (0.7, 0.8, 1.1)  # Cool cosmic blue
+    fill_light.data.color = (0.2, 0.3, 0.5)  # Very dim cool blue
     
-    # Add rim light (edge definition)
+    # Add rim light (reduced for emission glow)
     bpy.ops.object.light_add(type='SPOT', location=(0, -10, 3))
     rim_light = bpy.context.active_object
     rim_light.name = "RimLight"
-    rim_light.data.energy = 45.0
+    rim_light.data.energy = 12.0  # Reduced for emission to show through
     rim_light.data.spot_size = math.radians(60)
-    rim_light.data.color = (0.8, 0.6, 1.2)  # Cosmic purple tint
+    rim_light.data.color = (0.4, 0.3, 0.6)  # Dim purple tint
     
     # Point rim light at the object
     rim_light.rotation_euler = (math.radians(15), 0, 0)
     
-    # Add ambient light for space atmosphere
+    # Add ambient light (reduced for emission glow)
     bpy.ops.object.light_add(type='AREA', location=(0, 0, 15))
     ambient_light = bpy.context.active_object
     ambient_light.name = "AmbientLight"
-    ambient_light.data.energy = 15.0
+    ambient_light.data.energy = 3.0  # Very reduced for emission to show through
     ambient_light.data.size = 8.0
-    ambient_light.data.color = (0.4, 0.5, 0.8)  # Deep space blue
+    ambient_light.data.color = (0.15, 0.2, 0.3)  # Very dim deep space
     
     print("✅ Professional space lighting setup complete")
     
@@ -1233,31 +1242,31 @@ def create_cinematic_material_animation(story_structure):
         
     material = obj.data.materials[0]
     
-    # Material evolution for each act
+    # Material evolution for each act - Vibrant blue and red glowing
     material_phases = {
         'act1': {
-            'emission_strength': 6.0,      # Dim emergence
-            'emission_color': (0.6, 0.7, 0.9),  # Cool blue
-            'metallic': 0.8,
-            'roughness': 0.3
-        },
-        'act2': {
-            'emission_strength': 8.0,      # Brighter discovery
-            'emission_color': (0.8, 0.8, 1.0),  # Bright white
+            'emission_strength': 20.0,      # Strong glow
+            'emission_color': (0.2, 0.8, 1.2),  # Vibrant electric blue
             'metallic': 0.9,
             'roughness': 0.2
         },
+        'act2': {
+            'emission_strength': 28.0,      # Brighter glow
+            'emission_color': (1.0, 0.3, 0.5),  # Vibrant red-orange
+            'metallic': 0.85,
+            'roughness': 0.15
+        },
         'act3': {
-            'emission_strength': 12.0,     # Peak intensity
-            'emission_color': (1.0, 0.9, 1.2),  # Bright cosmic
-            'metallic': 0.95,
+            'emission_strength': 35.0,     # Peak intense glow
+            'emission_color': (0.8, 0.4, 1.0),  # Vibrant purple (blue-red mix)
+            'metallic': 0.9,
             'roughness': 0.1
         },
         'act4': {
-            'emission_strength': 9.0,      # Calm resolution
-            'emission_color': (0.7, 0.8, 1.1),  # Soft cosmic
+            'emission_strength': 25.0,      # Balanced glow
+            'emission_color': (0.6, 0.2, 1.0),  # Bright blue-red
             'metallic': 0.85,
-            'roughness': 0.25
+            'roughness': 0.2
         }
     }
     
@@ -1329,21 +1338,21 @@ def create_audio_responsive_color_animation():
     # Get audio data from features
     audio_data = features_data
     
-    # Define color mapping for different audio bands
+    # Define color mapping for different audio bands - Vibrant blues and reds
     color_mappings = {
         'kick_energy': {
-            'base_color': (1.0, 0.2, 0.2),  # Red for kick
-            'intensity_factor': 2.0,
+            'base_color': (1.0, 0.3, 0.5),  # Vibrant red-orange for kick
+            'intensity_factor': 3.5,
             'hue_shift': 0.0
         },
         'bass_energy': {
-            'base_color': (0.2, 0.2, 1.0),  # Blue for bass
-            'intensity_factor': 1.8,
+            'base_color': (0.2, 0.8, 1.2),  # Vibrant electric blue for bass
+            'intensity_factor': 3.0,
             'hue_shift': 0.1
         },
         'snare_energy': {
-            'base_color': (1.0, 1.0, 0.2),  # Yellow for snare
-            'intensity_factor': 2.2,
+            'base_color': (0.9, 0.4, 1.0),  # Vibrant purple for snare
+            'intensity_factor': 3.2,
             'hue_shift': 0.05
         },
         'hihat_energy': {
