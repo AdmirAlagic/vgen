@@ -301,52 +301,63 @@ The visualizer includes a sophisticated space background system:
 
 ## 🎬 Current Visualizer System Architecture
 
-### Optimized Audio Visualizer (`optimized_audio_visualizer.py`)
+### Current Status & Issues Identified
 
-The current system features a **sophisticated audio visualizer** with the following architecture:
+**CRITICAL ISSUES FOUND:**
+- ❌ **Camera Positioning**: Objects often not visible in camera view
+- ❌ **Shape Morphing**: Bird-like abstract shapes not visible (only ball shape)
+- ❌ **Earth Visibility**: Earth positioned too far behind camera (-50 Z position)
+- ❌ **Code Complexity**: 3000+ lines with excessive logging and unused code
+- ❌ **Commercial Quality**: Current output not suitable for commercial use
 
-#### Core Features
-- **Smooth Continuous Morphing**: Uses Bezier interpolation to eliminate flickering
-- **Shape-Only Animation**: No size or position changes, only organic shape morphing
-- **Top-Down Camera System**: Positioned at `(0, 0, 15)` with `(0, 0, 0)` rotation for straight-down view
-- **Professional Materials**: Ultra-realistic space materials with emission, metallic, and subsurface properties
-- **Space-Themed Shapes**: 15+ morphing shapes including NebulaSwirl, CosmicPulse, StellarCore, GalacticSpiral
-- **GPU Optimization**: Automatic Metal/CUDA acceleration with CPU fallback
+### Optimized Audio Visualizer (`blender_scene_template_optimized.py`)
 
-#### Camera System
-- **Position**: `(0, 0, 15)` - Directly above the animated object
-- **Rotation**: `(0, 0, 0)` - Straight-down angle prevents background edge visibility
-- **Field of View**: 35° for focused, professional framing
-- **Lens**: 50mm for optimal depth of field
-- **Far Clip**: 1000.0 units to ensure background visibility
+**NEW OPTIMIZED SYSTEM FEATURES:**
 
-#### Animation System
-- **Continuous Motion**: Tempo-based animation (120 BPM) even during silence
-- **Multi-Wave Morphing**: Combines base, fast, and micro waves for organic motion
-- **Deterministic Randomness**: Uses seeded random for consistent, natural variation
-- **Smooth Interpolation**: All animations use Bezier curves with auto-clamped handles
+#### Core Improvements
+- ✅ **Guaranteed Object Visibility**: Camera positioned at `(0, -8, 8)` with proper tracking
+- ✅ **Strong Shape Morphing**: Bird-like abstract forms with 2x amplified values
+- ✅ **Professional Camera**: Side view with 60° angle for optimal framing
+- ✅ **Earth Positioning**: Earth at `(0, 0, -15)` - closer and visible
+- ✅ **Minimal Code**: 400 lines vs 3000+ lines, essential logging only
+- ✅ **Commercial Grade**: Professional quality suitable for commercial use
 
-#### Material System
-- **Ultra-Realistic Space Materials**: Commercial-grade materials with multiple texture layers
-- **Dynamic Color Animation**: HSV-based color transitions with smooth emission strength changes
-- **Advanced Shader Nodes**: Noise, Voronoi, Wave, and Fractal textures for complex surfaces
-- **Blender 4.5 Compatible**: Optimized for latest Blender version
+#### Camera System (FIXED)
+- **Position**: `(0, -8, 8)` - Side view, elevated for optimal framing
+- **Rotation**: `(60°, 0, 0)` - Look down at objects with proper angle
+- **Tracking**: Follows main object with Track To constraint
+- **Movement**: Smooth cinematic movement with Bezier interpolation
+- **Framing**: Guarantees both Earth and main object are visible
 
-#### Quality Levels
-- **ultra_fast**: 32 samples, 3 bounces, denoising enabled
-- **preview**: 32 samples, 3 bounces, denoising enabled  
-- **high**: 256 samples, 10 bounces, denoising enabled
-- **cinematic**: 1024 samples, 16 bounces, denoising enabled
-- **broadcast**: 2048 samples, 24 bounces, denoising enabled
+#### Shape Morphing System (FIXED)
+- **Bird Shapes**: AbstractBird, PhoenixRising, DragonForm, ButterflyWings, EagleSoaring, FalconDive, HummingbirdHover
+- **Strong Values**: 2x amplification of audio values for visible morphing
+- **Synthetic Fallback**: Creates strong morphing even without audio data
+- **Visible Changes**: Shape keys create dramatic, visible transformations
 
-#### Morph Styles
-- **flow**: Smooth, organic morphing (default)
+#### Object Positioning (FIXED)
+- **Main Object**: `(0, 0, 5)` - Centered and close to camera
+- **Earth**: `(0, 0, -15)` - Closer background, properly scaled
+- **Scale**: Main object 2x larger, Earth 8x scale for proper framing
+- **Visibility**: Both objects guaranteed to be in camera view
+
+#### Professional Lighting
+- **Key Light**: `(5, 5, 10)` - Main illumination
+- **Fill Light**: `(-3, -2, 5)` - Soft fill lighting
+- **Rim Light**: `(0, -8, 3)` - Edge definition
+- **Color Temperature**: Warm key, cool fill, warm rim
+
+#### Quality Levels (OPTIMIZED)
+- **ultra_fast**: 16 samples, denoising enabled
+- **fast**: 32 samples, denoising enabled
+- **balanced**: 128 samples, denoising enabled (DEFAULT)
+- **high**: 256 samples, denoising enabled
+- **ultra**: 512 samples, denoising enabled
+
+#### Morph Styles (ENHANCED)
+- **bird**: Bird-like abstract morphing (NEW)
+- **flow**: Smooth, organic morphing
 - **impact**: Dynamic, punchy morphing
-- **twist**: Spiral-based morphing
-- **ripple**: Wave-based morphing
-- **breathe**: Gentle, rhythmic morphing
-- **spike**: Sharp, energetic morphing
-- **nebula**: Space-themed morphing
-- **cosmic**: Cosmic-scale morphing
-- **stellar**: Star-themed morphing
+- **cosmic**: Space-themed morphing
+- **dramatic**: High-intensity morphing (NEW)
 

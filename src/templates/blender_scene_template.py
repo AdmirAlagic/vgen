@@ -161,13 +161,17 @@ try:
             # Position all Earth objects for our scene
             for obj in earth_objects:
                 if obj.type == 'MESH':
-                    obj.location = (0, 0, -50)  # Behind main object
-                    # Scale atmosphere object smaller than other Earth objects
-                    if obj.name.lower() == 'atmo' or obj.name.lower() == 'clouds':
-                        obj.scale = (2, 2, 2)  # Smaller scale for atmosphere
-                        print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale} (atmosphere)")
+                    obj.location = (0, 0, -15)  # Closer to camera for better visibility
+                    # Scale based on object type - atmo and clouds should match Earth exactly
+                    if obj.name.lower() == 'earth':
+                        obj.scale = (8, 8, 8)  # Main Earth scale
+                        print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale} (main Earth)")
+                    elif obj.name.lower() in ['atmo', 'clouds']:
+                        # Atmo and clouds should be same size as Earth model, not scaled up
+                        obj.scale = (1, 1, 1)  # Original scale to match Earth model exactly
+                        print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale} (atmosphere/clouds - original scale)")
                     else:
-                        obj.scale = (20, 20, 20)  # Scale up for visibility
+                        obj.scale = (8, 8, 8)  # Default scale for other Earth objects
                         print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale}")
                 elif obj.type == 'LIGHT':
                     # Configure Sun light properly for visibility
@@ -1131,8 +1135,8 @@ def create_advanced_audio_morphing(story_structure):
             if frame >= len(audio_values):
                 continue
                 
-            # Get base audio value
-            audio_value = audio_values[frame]
+            # Get base audio value and amplify for stronger morphing
+            audio_value = audio_values[frame] * 2.0  # Double the strength for visible morphing
             
             # Apply cinematic storytelling enhancement
             if phase_start_frame <= frame <= phase_end_frame:
@@ -2242,8 +2246,22 @@ def ensure_earth_visibility():
         return
     
     # Ensure Earth is properly positioned behind the main object
-    earth_obj.location = (0, 0, -50)
-    earth_obj.scale = (20, 20, 20)
+    earth_obj.location = (0, 0, -15)  # Closer to camera for better visibility
+    earth_obj.scale = (8, 8, 8)  # Consistent with initial setup
+    
+    # Ensure atmo and clouds are also properly scaled
+    atmo_obj = bpy.context.scene.objects.get("atmo")
+    clouds_obj = bpy.context.scene.objects.get("clouds")
+    
+    if atmo_obj:
+        atmo_obj.location = (0, 0, -15)
+        atmo_obj.scale = (1, 1, 1)  # Original scale to match Earth model
+        print(f"📍 Updated atmo position and scale: {atmo_obj.location}, {atmo_obj.scale}")
+    
+    if clouds_obj:
+        clouds_obj.location = (0, 0, -15)
+        clouds_obj.scale = (1, 1, 1)  # Original scale to match Earth model
+        print(f"📍 Updated clouds position and scale: {clouds_obj.location}, {clouds_obj.scale}")
     
     # Add subtle rotation animation to Earth for cinematic effect
     earth_obj.rotation_euler = (0, 0, 0)
@@ -2288,41 +2306,39 @@ def create_cinematic_camera_movement(story_structure):
     track_constraint.track_axis = 'TRACK_NEGATIVE_Z'
     track_constraint.up_axis = 'UP_Y'
     
-    # Add additional constraint to keep Earth in view
-    earth_obj = bpy.context.scene.objects.get("ImportedEarth")
-    if earth_obj:
-        # Add a Copy Location constraint to maintain Earth visibility
-        copy_location = camera.constraints.new(type='COPY_LOCATION')
-        copy_location.target = earth_obj
-        copy_location.use_offset = True
-        copy_location.influence = 0.1  # Subtle influence to keep Earth in frame
-        print("✅ Added Earth visibility constraint to camera")
+    # Add Distance constraint to maintain camera distance from main object
+    distance_constraint = camera.constraints.new(type='LIMIT_DISTANCE')
+    distance_constraint.target = main_obj
+    distance_constraint.distance = 25.0  # Maintain 25 units distance for better Earth visibility and overview
+    distance_constraint.limit_mode = 'LIMITDIST_ONSURFACE'
+    distance_constraint.use_transform_limit = True
+    print("✅ Added distance constraint to maintain camera distance")
     
-    # Dynamic camera positions for each act - ALWAYS keeping Earth in view
+    # Simplified camera positioning for guaranteed visibility - looking from above with more distance
     camera_positions = {
         'act1': {
-            'start': (0, 0, 15),      # Close-up emergence
-            'end': (5, 5, 18),        # Pull back to reveal Earth
-            'rotation_start': (0, 0, 0),
-            'rotation_end': (0.1, 0.05, 0)
+            'start': (0, -12, 20),    # Looking from above, elevated and distant
+            'end': (3, -10, 20),      # Subtle movement from above
+            'rotation_start': (math.radians(25), 0, 0),  # Looking down at object
+            'rotation_end': (math.radians(25), 0, 0)
         },
         'act2': {
-            'start': (5, 5, 18),      # Continue from Act 1
-            'end': (-8, 8, 22),       # Dynamic orbital movement
-            'rotation_start': (0.1, 0.05, 0),
-            'rotation_end': (-0.2, 0.3, 0.05)
+            'start': (3, -10, 20),    # Continue from Act 1
+            'end': (-3, -10, 20),     # Side-to-side movement from above
+            'rotation_start': (math.radians(25), 0, 0),
+            'rotation_end': (math.radians(25), 0, 0)
         },
         'act3': {
-            'start': (-8, 8, 22),     # Continue from Act 2
-            'end': (10, -6, 25),      # Dramatic sweeps
-            'rotation_start': (-0.2, 0.3, 0.05),
-            'rotation_end': (0.3, -0.1, 0.2)
+            'start': (-3, -10, 20),   # Continue from Act 2
+            'end': (0, -12, 20),      # Return to center from above
+            'rotation_start': (math.radians(25), 0, 0),
+            'rotation_end': (math.radians(25), 0, 0)
         },
         'act4': {
-            'start': (10, -6, 25),    # Continue from Act 3
-            'end': (0, 0, 30),        # Pull back to Earth context
-            'rotation_start': (0.3, -0.1, 0.2),
-            'rotation_end': (0, 0, 0)
+            'start': (0, -12, 20),    # Continue from Act 3
+            'end': (0, -12, 20),      # Stable final position from above
+            'rotation_start': (math.radians(25), 0, 0),
+            'rotation_end': (math.radians(25), 0, 0)
         }
     }
     
@@ -2374,10 +2390,10 @@ def create_cinematic_object_movement(story_structure):
         return
     
     # Earth position (behind main object)
-    earth_position = mathutils.Vector((0, 0, -50))
+    earth_position = mathutils.Vector((0, 0, -15))
     
     # Ensure object scale stays constant (no size changes)
-    obj.scale = (1.0, 1.0, 1.0)
+    obj.scale = (2.0, 2.0, 2.0)  # Larger for better visibility
     obj.keyframe_insert(data_path="scale")
     
     # Cinematic movement phases - ALWAYS moving towards Earth
