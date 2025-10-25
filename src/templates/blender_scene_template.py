@@ -162,14 +162,18 @@ try:
             for obj in earth_objects:
                 if obj.type == 'MESH':
                     obj.location = (0, 0, -15)  # Closer to camera for better visibility
-                    # Scale based on object type - atmo and clouds should match Earth exactly
+                    # Scale based on object type - atmo and clouds should be slightly larger than Earth
                     if obj.name.lower() == 'earth':
                         obj.scale = (8, 8, 8)  # Main Earth scale
                         print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale} (main Earth)")
                     elif obj.name.lower() in ['atmo', 'clouds']:
-                        # Atmo and clouds should be same size as Earth model, not scaled up
-                        obj.scale = (1, 1, 1)  # Original scale to match Earth model exactly
-                        print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale} (atmosphere/clouds - original scale)")
+                        # Atmo and clouds need special scaling to be slightly larger than Earth
+                        # They were designed to be much larger than Earth, so we need to scale them down significantly
+                        if obj.name.lower() == 'atmo':
+                            obj.scale = (0.1089, 0.1089, 0.1089)  # Atmosphere slightly larger than Earth
+                        elif obj.name.lower() == 'clouds':
+                            obj.scale = (0.1045, 0.1045, 0.1045)  # Clouds slightly larger than Earth
+                        print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale} (atmosphere/clouds - properly sized)")
                     else:
                         obj.scale = (8, 8, 8)  # Default scale for other Earth objects
                         print(f"📍 Positioned {obj.name} mesh at {obj.location} with scale {obj.scale}")
@@ -2587,12 +2591,12 @@ def ensure_earth_visibility():
     
     if atmo_obj:
         atmo_obj.location = (0, 0, -15)
-        atmo_obj.scale = (1, 1, 1)  # Original scale to match Earth model
+        atmo_obj.scale = (0.8, 0.8, 0.8)  # Properly scaled atmosphere
         print(f"📍 Updated atmo position and scale: {atmo_obj.location}, {atmo_obj.scale}")
     
     if clouds_obj:
         clouds_obj.location = (0, 0, -15)
-        clouds_obj.scale = (1, 1, 1)  # Original scale to match Earth model
+        clouds_obj.scale = (0.8, 0.8, 0.8)  # Properly scaled clouds
         print(f"📍 Updated clouds position and scale: {clouds_obj.location}, {clouds_obj.scale}")
     
     # Add subtle rotation animation to Earth for cinematic effect
