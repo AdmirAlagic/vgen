@@ -2277,6 +2277,21 @@ def ensure_earth_visibility():
             for keyframe in fcurve.keyframe_points:
                 keyframe.interpolation = 'LINEAR'
     
+    # Also rotate atmo and clouds slowly for realistic effect
+    if atmo_obj:
+        atmo_obj.rotation_euler = (0, 0, 0)
+        atmo_obj.keyframe_insert(data_path="rotation_euler", frame=0)
+        atmo_obj.rotation_euler = (0, 0, math.radians(360))
+        atmo_obj.keyframe_insert(data_path="rotation_euler", frame=bpy.context.scene.frame_end)
+        print("✅ Atmo rotation animation added")
+    
+    if clouds_obj:
+        clouds_obj.rotation_euler = (0, 0, 0)
+        clouds_obj.keyframe_insert(data_path="rotation_euler", frame=0)
+        clouds_obj.rotation_euler = (0, 0, math.radians(360))
+        clouds_obj.keyframe_insert(data_path="rotation_euler", frame=bpy.context.scene.frame_end)
+        print("✅ Clouds rotation animation added")
+    
     print("✅ Earth visibility and rotation ensured")
 
 def create_cinematic_camera_movement(story_structure):
@@ -2314,31 +2329,31 @@ def create_cinematic_camera_movement(story_structure):
     distance_constraint.use_transform_limit = True
     print("✅ Added distance constraint to maintain camera distance")
     
-    # Simplified camera positioning for guaranteed visibility - looking from above with more distance
+    # Simplified camera positioning for guaranteed visibility - more vertical angle for Earth visibility
     camera_positions = {
         'act1': {
-            'start': (0, -12, 20),    # Looking from above, elevated and distant
-            'end': (3, -10, 20),      # Subtle movement from above
-            'rotation_start': (math.radians(25), 0, 0),  # Looking down at object
-            'rotation_end': (math.radians(25), 0, 0)
+            'start': (0, -15, 25),    # More vertical angle, higher position
+            'end': (3, -12, 25),      # Subtle movement with Earth in view
+            'rotation_start': (math.radians(15), 0, 0),  # Less steep angle for better Earth visibility
+            'rotation_end': (math.radians(15), 0, 0)
         },
         'act2': {
-            'start': (3, -10, 20),    # Continue from Act 1
-            'end': (-3, -10, 20),     # Side-to-side movement from above
-            'rotation_start': (math.radians(25), 0, 0),
-            'rotation_end': (math.radians(25), 0, 0)
+            'start': (3, -12, 25),    # Continue from Act 1
+            'end': (-3, -12, 25),     # Side-to-side movement with Earth visible
+            'rotation_start': (math.radians(15), 0, 0),
+            'rotation_end': (math.radians(15), 0, 0)
         },
         'act3': {
-            'start': (-3, -10, 20),   # Continue from Act 2
-            'end': (0, -12, 20),      # Return to center from above
-            'rotation_start': (math.radians(25), 0, 0),
-            'rotation_end': (math.radians(25), 0, 0)
+            'start': (-3, -12, 25),   # Continue from Act 2
+            'end': (0, -15, 25),      # Return to center with Earth in view
+            'rotation_start': (math.radians(15), 0, 0),
+            'rotation_end': (math.radians(15), 0, 0)
         },
         'act4': {
-            'start': (0, -12, 20),    # Continue from Act 3
-            'end': (0, -12, 20),      # Stable final position from above
-            'rotation_start': (math.radians(25), 0, 0),
-            'rotation_end': (math.radians(25), 0, 0)
+            'start': (0, -15, 25),    # Continue from Act 3
+            'end': (0, -15, 25),      # Stable final position with Earth visible
+            'rotation_start': (math.radians(15), 0, 0),
+            'rotation_end': (math.radians(15), 0, 0)
         }
     }
     
