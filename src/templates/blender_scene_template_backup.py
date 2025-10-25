@@ -1762,108 +1762,74 @@ try:
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # DRAMATIC spike using additive deformation (shape change, not size)
-                # Create spike extending upward
-                spike_strength = math.exp(-(v.co.x**2 + v.co.y**2) * 0.8) * (1.0 + abs(v.co.z) * 1.5)
+                # DRAMATIC spike with extreme mathematical precision
+                spike_factor = 1.0 + 12.0 * math.exp(-(v.co.x**2 + v.co.y**2) * 0.8) * (1.0 + v.co.z * 1.5)
+                v.co.z *= spike_factor
+                # More dramatic compression for cinematic effect
+                v.co.x *= 0.5
+                v.co.y *= 0.5
                 
-                # Apply subtle spike deformation
-                v.co.z += spike_strength * 0.8  # Subtle spike extends up
-                v.co.x *= 0.95  # Minimal compression
-                v.co.y *= 0.95  # Minimal compression
-                
-                # Add subtle secondary spike
-                secondary_spike = 0.2 * math.exp(-(v.co.x**2 + v.co.y**2) * 1.5) * math.sin(v.co.z * 4.0)
-                v.co.z += secondary_spike
+                # Add secondary spike variations for complexity
+                secondary_spike = 4.0 * math.exp(-(v.co.x**2 + v.co.y**2) * 1.5) * math.sin(v.co.z * 4.0)
+                v.co.z += secondary_spike * 0.8
         
         elif "HorizontalWave" in sname:
-            # DRAMATIC horizontal wave transformation using additive deformation
+            # DRAMATIC horizontal wave transformation
             for j, v in enumerate(data):
-                # Create subtle wave displacement
-                wave_strength = 0.4 * math.sin(v.co.x * 1.5) * math.cos(v.co.z * 2.0)
-                
-                v.co.y += wave_strength  # Wave motion
-                v.co.x *= 1.05  # Subtle horizontal extension
-                v.co.z *= 0.98  # Subtle vertical compression
+                wave_factor = 1.0 + 8.0 * math.sin(v.co.x * 1.5) * math.cos(v.co.z * 2.0)
+                v.co.y *= wave_factor
+                v.co.x *= 1.5  # Stretch horizontally for dramatic effect
+                v.co.z *= 0.8  # Compress vertically
         
         elif "RadialExplosion" in sname:
-            # DRAMATIC radial explosion effect using additive deformation
+            # DRAMATIC radial explosion effect
             for j, v in enumerate(data):
                 dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2)
-                
-                # Create subtle radial expansion
-                radial_strength = 0.3 * math.exp(-dist_from_center * 0.5) * (1.0 + abs(v.co.z) * 0.3)
-                
-                # Direction vector for radial expansion
-                if dist_from_center > 0.001:
-                    direction_x = v.co.x / dist_from_center
-                    direction_y = v.co.y / dist_from_center
-                    
-                    v.co.x += direction_x * radial_strength  # Subtle radial expansion
-                    v.co.y += direction_y * radial_strength
-                    v.co.z += radial_strength * 0.4  # Subtle vertical expansion
+                explosion_factor = 1.0 + 6.0 * math.exp(-dist_from_center * 0.3) * (1.0 + v.co.z * 0.8)
+                v.co.x *= explosion_factor
+                v.co.y *= explosion_factor
+                v.co.z *= explosion_factor * 1.2
         
-        elif "SpiralRise" in sname:
-            # DRAMATIC spiral rising effect using additive deformation
+            elif "SpiralRise" in sname:
+            # DRAMATIC spiral rising effect
             for j, v in enumerate(data):
                 angle = math.atan2(v.co.y, v.co.x)
-                
-                # Create subtle spiral displacement
-                spiral_strength = 0.3 * math.sin(angle * 2.0 + v.co.z * 3.0)
-                
-                # Apply spiral motion
-                v.co.z += spiral_strength  # Subtle spiral rises
-                
-                # Subtle radial expansion
-                radial_expand = 0.1 * math.cos(angle * 2.0) * math.exp(-v.co.z * 0.5)
-                if math.sqrt(v.co.x**2 + v.co.y**2) > 0.001:
-                    direction_x = v.co.x / math.sqrt(v.co.x**2 + v.co.y**2)
-                    direction_y = v.co.y / math.sqrt(v.co.x**2 + v.co.y**2)
-                    v.co.x += direction_x * radial_expand
-                    v.co.y += direction_y * radial_expand
+                spiral_factor = 1.0 + 5.0 * math.sin(angle * 2.0 + v.co.z * 3.0)
+                v.co.z *= spiral_factor
+                v.co.x *= 1.3
+                v.co.y *= 1.3
         
         elif "OrganicFlow" in sname:
-            # DRAMATIC organic flow transformation using additive deformation
+            # DRAMATIC organic flow transformation
             for j, v in enumerate(data):
-                # Create subtle organic flow displacement
-                flow_x = 0.2 * math.sin(v.co.x * 2.5) * math.cos(v.co.y * 2.5) * math.sin(v.co.z * 2.5)
-                flow_y = 0.2 * math.cos(v.co.y * 2.5) * math.sin(v.co.x * 2.5) * math.cos(v.co.z * 2.5)
-                flow_z = 0.2 * math.sin(v.co.z * 2.5) * math.cos(v.co.x * 2.5) * math.sin(v.co.y * 2.5)
-                
-                v.co.x += flow_x
-                v.co.y += flow_y
-                v.co.z += flow_z
+                flow_factor = 1.0 + 4.0 * math.sin(v.co.x * 2.5) * math.cos(v.co.y * 2.5) * math.sin(v.co.z * 2.5)
+                v.co.x *= flow_factor
+                v.co.y *= flow_factor
+                v.co.z *= flow_factor
         
         elif "NebulaSwirl" in sname:
-            # DRAMATIC nebula swirl effect using additive deformation
+            # DRAMATIC nebula swirl effect
             for j, v in enumerate(data):
-                # Create subtle nebula swirl displacement
-                swirl_x = 0.2 * math.sin(v.co.x * 3.0) * math.cos(v.co.y * 3.0) * math.sin(v.co.z * 2.0)
-                swirl_y = 0.2 * math.cos(v.co.y * 3.0) * math.sin(v.co.x * 3.0) * math.cos(v.co.z * 2.0)
-                swirl_z = 0.2 * math.sin(v.co.z * 3.0) * math.cos(v.co.x * 3.0) * math.sin(v.co.y * 2.0)
-                
-                v.co.x += swirl_x
-                v.co.y += swirl_y
-                v.co.z += swirl_z
+                swirl_factor = 1.0 + 3.0 * math.sin(v.co.x * 3.0) * math.cos(v.co.y * 3.0)
+                v.co.x *= swirl_factor
+                v.co.y *= swirl_factor
+                v.co.z *= swirl_factor * 1.5
         
         elif "CosmicPulse" in sname:
-            # DRAMATIC cosmic pulsing effect using additive deformation
+            # DRAMATIC cosmic pulsing effect
             for j, v in enumerate(data):
-                # Create subtle cosmic pulse displacement
-                pulse_x = 0.15 * math.sin(v.co.x * 4.0) * math.sin(v.co.y * 4.0) * math.sin(v.co.z * 4.0)
-                pulse_y = 0.15 * math.cos(v.co.y * 4.0) * math.cos(v.co.x * 4.0) * math.cos(v.co.z * 4.0)
-                pulse_z = 0.15 * math.sin(v.co.z * 4.0) * math.cos(v.co.x * 4.0) * math.sin(v.co.y * 4.0)
-                
-                v.co.x += pulse_x
-                v.co.y += pulse_y
-                v.co.z += pulse_z
+                pulse_factor = 1.0 + 4.0 * math.sin(v.co.x * 4.0) * math.sin(v.co.y * 4.0) * math.sin(v.co.z * 4.0)
+                v.co.x *= pulse_factor
+                v.co.y *= pulse_factor
+                v.co.z *= pulse_factor
         
         elif "CrystallineFracture" in sname:
             # Store original positions for size normalization
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Crystal fracture simulation with subtle shattering
-                fracture_intensity = 0.3 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.3)
+                # Crystal fracture simulation with dramatic shattering effect
+                fracture_intensity = 8.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.3)
                 
                 # Multi-directional fracture patterns
                 fracture_x = fracture_intensity * math.sin(v.co.x * 6.0) * math.cos(v.co.y * 4.0)
@@ -1874,8 +1840,8 @@ try:
                 v.co.y += fracture_y
                 v.co.z += fracture_z
                 
-                # Add subtle scaling variations
-                scale_factor = 0.95 + 0.05 * math.sin(v.co.x * 3.0) * math.cos(v.co.y * 3.0) * math.sin(v.co.z * 3.0)
+                # Add dramatic scaling variations
+                scale_factor = 0.4 + 0.6 * math.sin(v.co.x * 3.0) * math.cos(v.co.y * 3.0) * math.sin(v.co.z * 3.0)
                 v.co *= scale_factor
         
         # Add bird shapes to the elif chain
@@ -1884,23 +1850,23 @@ try:
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle bird shape deformation
-                # Body extends forward
-                body_shift = math.exp(-abs(v.co.x) * 0.4) * v.co.x * 0.3
+                # SIMPLIFIED bird silhouette with STRONG visible transformations
+                # Body extension (elongate forward)
+                body_stretch = math.exp(-abs(v.co.x) * 0.3) * (1.0 + abs(v.co.z) * 0.3)
                 
-                # Wings spread outward  
-                wing_spread = math.exp(-abs(v.co.y) * 0.3) * v.co.y * 0.5
+                # Wings spread (wider horizontally)
+                wing_stretch = math.exp(-abs(v.co.y) * 0.3) * (1.0 + abs(v.co.x) * 0.5)
                 
-                # Tail extends backward
-                tail_shift = math.exp(-abs(v.co.x + 0.8) * 2.0) * 0.15
+                # Combine for bird-like form
+                total_stretch = body_stretch * wing_stretch
                 
-                # Apply subtle bird deformation
-                v.co.x += body_shift  # Bird head/body shifts forward
-                v.co.y += wing_spread  # Wings spread wider
-                v.co.z += tail_shift  # Tail extends down
+                # Apply DRAMATIC bird deformation - 3X stronger for visibility
+                v.co.x *= 1.0 + total_stretch * 1.8  # Forward elongation (was 0.6)
+                v.co.y *= 1.0 + total_stretch * 2.4  # Wider wings (was 0.8)
+                v.co.z *= 1.0 + total_stretch * 1.2  # Vertical compression (was 0.4)
                 
-                # Add subtle wing detail
-                wing_wave = math.sin(v.co.y * 3.0) * math.cos(v.co.x * 2.0) * 0.08
+                # Add wing wave detail
+                wing_wave = 0.9 * math.sin(v.co.y * 2.0) * math.cos(v.co.x * 1.5)  # Was 0.3
                 v.co.z += wing_wave
         
         elif "PhoenixRising" in sname:
@@ -1908,92 +1874,93 @@ try:
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle phoenix shape deformation
-                # Flames rise upward
-                flame_rise = math.exp(-(v.co.x**2 + v.co.y**2) * 0.5) * 0.25
+                # SIMPLIFIED Phoenix with VISIBLE rising flames
+                # Rising flames (vertical extension)
+                flame_stretch = math.exp(-(v.co.x**2 + v.co.y**2) * 0.4) * (1.0 + v.co.z * 0.6)
                 
-                # Wings spread out
-                wing_spread = math.exp(-abs(v.co.y) * 0.4) * v.co.y * 0.4
+                # Wings (horizontal spread)
+                wing_stretch = math.exp(-abs(v.co.y) * 0.3) * (1.0 + abs(v.co.x) * 0.7)
                 
-                # Apply subtle phoenix deformation
-                v.co.z += flame_rise  # Flames rise
-                v.co.y += wing_spread  # Wings spread
-                v.co.x += wing_spread * 0.2  # Flame spread
+                # Combine for phoenix form
+                total_stretch = flame_stretch * wing_stretch
                 
-                # Add subtle flame detail
-                flame_wave = math.sin(v.co.x * 3.0) * math.cos(v.co.y * 2.5) * math.sin(v.co.z * 2.0) * 0.1
-                v.co += mathutils.Vector((flame_wave * 0.5, flame_wave * 0.5, flame_wave * 0.15))
+                # Apply DRAMATIC phoenix deformation - 3X stronger
+                v.co.x *= 1.0 + total_stretch * 1.5  # Was 0.5
+                v.co.y *= 1.0 + total_stretch * 2.7  # Was 0.9
+                v.co.z *= 1.0 + total_stretch * 2.1  # Rising upward (was 0.7)
+                
+                # Add flame wave detail
+                flame_wave = 1.2 * math.sin(v.co.x * 3.0) * math.cos(v.co.y * 2.5) * math.sin(v.co.z * 2.0)  # Was 0.4
+                v.co += mathutils.Vector((flame_wave * 0.6, flame_wave * 0.6, flame_wave * 1.5))
         
         elif "DragonForm" in sname:
             # Store original positions for size normalization
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle dragon shape deformation
-                # Head extends forward
-                head_forward = math.exp(-abs(v.co.x - 0.5) * 3.0) * 0.15
+                # SIMPLIFIED Dragon with VISIBLE serpentine body
+                # Serpentine body (snaking curve)
+                body_curve = 1.0 + 1.0 * math.sin(v.co.x * 1.5) * math.exp(-(v.co.y**2 + v.co.z**2) * 0.6)
                 
-                # Body curves
-                body_curve = math.sin(v.co.x * 2.0) * math.exp(-(v.co.y**2 + v.co.z**2) * 0.8) * 0.15
+                # Wings (powerful spread)
+                wing_spread = math.exp(-abs(v.co.y) * 0.4) * (1.0 + abs(v.co.x) * 0.8)
                 
-                # Wings spread wide
-                wing_wide = math.exp(-abs(v.co.y) * 0.5) * v.co.y * 0.4
+                # Combine for dragon form
+                total_deform = body_curve * (1.0 + wing_spread * 0.5)
                 
-                # Tail extends back
-                tail_extend = math.exp(-abs(v.co.x + 0.8) * 2.5) * 0.15
+                # Apply DRAMATIC dragon deformation - 3X stronger
+                v.co.x *= 1.0 + total_deform * 2.1  # Was 0.7
+                v.co.y *= 1.0 + total_deform * 3.0  # Was 1.0
+                v.co.z *= 1.0 + total_deform * 1.8  # Was 0.6
                 
-                # Apply subtle dragon deformation
-                v.co.x += head_forward * 1.0  # Head forward
-                v.co.x += body_curve  # Body curves
-                v.co.y += wing_wide  # Wings spread
-                v.co.z += tail_extend * 0.5  # Tail extends
-                
-                # Add subtle serpent detail
-                serpent_wave = math.sin(v.co.x * 2.5) * math.cos(v.co.y * 2.0) * math.sin(v.co.z * 1.5) * 0.1
-                v.co += mathutils.Vector((serpent_wave * 0.5, serpent_wave * 0.5, serpent_wave * 0.4))
+                # Add serpent detail
+                serpent_wave = 1.5 * math.sin(v.co.x * 2.5) * math.cos(v.co.y * 2.0) * math.sin(v.co.z * 1.5)  # Was 0.5
+                v.co += mathutils.Vector((serpent_wave * 0.9, serpent_wave * 0.9, serpent_wave * 0.6))
         
         elif "ButterflyWings" in sname:
             # Store original positions for size normalization
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle butterfly shape deformation
-                # Central body stays compact
-                body_factor = math.exp(-(v.co.y**2 + v.co.z**2) * 0.8)
+                # SIMPLIFIED Butterfly with VISIBLE wing form
+                # Central body
+                body_stretch = math.exp(-(v.co.y**2 + v.co.z**2) * 0.8) * (1.0 + abs(v.co.x) * 0.4)
                 
-                # Wings extend outward (shift, not scale)
-                wing_extend_y = math.exp(-abs(v.co.y) * 0.4) * v.co.y * 0.4
-                wing_extend_x = math.exp(-abs(v.co.x) * 0.3) * v.co.x * 0.3
+                # Wings (wide spread)
+                wing_stretch = math.exp(-abs(v.co.y) * 0.4) * (1.0 + abs(v.co.x) * 0.9)
                 
-                # Apply subtle butterfly deformation (shape change, not size)
-                v.co.x += wing_extend_x  # Wings extend
-                v.co.y += wing_extend_y  # Wings spread wide
-                v.co.z += body_factor * 0.1  # Body slightly flattens
+                total_stretch = body_stretch * wing_stretch
                 
-                # Add subtle wing detail
-                wing_wave = 0.15 * math.sin(v.co.y * 3.5) * math.cos(v.co.x * 2.5)
-                v.co.z += wing_wave
+                # Apply DRAMATIC butterfly deformation - 3X stronger
+                v.co.x *= 1.0 + total_stretch * 1.2  # Was 0.4
+                v.co.y *= 1.0 + total_stretch * 2.7  # Wide wings (was 0.9)
+                v.co.z *= 1.0 + total_stretch * 1.5  # Was 0.5
+                
+                # Add wing ripples
+                wing_ripple = 1.5 * math.sin(v.co.y * 3.5) * math.cos(v.co.x * 2.5)  # Was 0.5
+                v.co.z += wing_ripple
         
         elif "EagleSoaring" in sname:
             # Store original positions for size normalization
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle eagle shape deformation
-                # Strong body stays compact
-                body_factor = math.exp(-(v.co.x**2 + v.co.y**2) * 0.7)
+                # SIMPLIFIED Eagle with VISIBLE soaring form
+                # Strong body
+                body_stretch = math.exp(-(v.co.x**2 + v.co.y**2) * 0.7) * (1.0 + abs(v.co.z) * 0.5)
                 
-                # Powerful wings extend wide
-                wing_spread_y = math.exp(-abs(v.co.y) * 0.3) * v.co.y * 0.5
-                wing_spread_x = math.exp(-abs(v.co.x) * 0.5) * v.co.x * 0.4
+                # Powerful wings
+                wing_stretch = math.exp(-abs(v.co.y) * 0.3) * (1.0 + abs(v.co.x) * 1.0)
                 
-                # Apply subtle eagle deformation
-                v.co.x += wing_spread_x  # Wings extend forward
-                v.co.y += wing_spread_y  # Wings spread wide
-                v.co.z += body_factor * 0.15  # Body stays compact
+                total_stretch = body_stretch * wing_stretch
                 
-                # Add subtle wing detail
-                wing_detail = 0.15 * math.sin(v.co.y * 3.0) * math.cos(v.co.x * 2.0)
+                # Apply DRAMATIC eagle deformation - 3X stronger
+                v.co.x *= 1.0 + total_stretch * 1.8  # Was 0.6
+                v.co.y *= 1.0 + total_stretch * 3.6  # Very wide wingspan (was 1.2)
+                v.co.z *= 1.0 + total_stretch * 1.8  # Was 0.6
+                
+                # Add wing detail
+                wing_detail = 1.8 * math.sin(v.co.y * 3.0) * math.cos(v.co.x * 2.0)  # Was 0.6
                 v.co.z += wing_detail
         
         elif "SwanElegance" in sname:
@@ -2001,24 +1968,22 @@ try:
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle swan shape deformation
-                # Graceful body stays compact
-                body_factor = math.exp(-(v.co.x**2 + v.co.y**2) * 0.6)
+                # SIMPLIFIED Swan with VISIBLE elegant form
+                # Graceful body
+                body_stretch = math.exp(-(v.co.x**2 + v.co.y**2) * 0.6) * (1.0 + abs(v.co.z) * 0.4)
                 
-                # Elegant wings extend gracefully
-                wing_extend_y = math.exp(-abs(v.co.y) * 0.4) * v.co.y * 0.45
-                wing_extend_x = math.exp(-abs(v.co.x) * 0.6) * v.co.x * 0.35
+                # Elegant wings (curved)
+                wing_stretch = math.exp(-abs(v.co.y) * 0.4) * (1.0 + abs(v.co.x) * 0.8)
                 
-                # Neck extends up gracefully
-                neck_extend = math.exp(-(v.co.x**2 + v.co.y**2) * 0.9) * v.co.z * 0.15
+                total_stretch = body_stretch * wing_stretch
                 
-                # Apply subtle swan deformation
-                v.co.x += wing_extend_x  # Wings extend forward
-                v.co.y += wing_extend_y  # Wings spread wide
-                v.co.z += neck_extend  # Neck extends up
+                # Apply DRAMATIC swan deformation - 3X stronger
+                v.co.x *= 1.0 + total_stretch * 2.1  # Was 0.7
+                v.co.y *= 1.0 + total_stretch * 3.0  # Was 1.0
+                v.co.z *= 1.0 + total_stretch * 2.4  # Was 0.8
                 
-                # Add subtle smooth curves
-                swan_curve = 0.15 * math.sin(v.co.y * 2.5) * math.cos(v.co.x * 2.0)
+                # Add smooth curves
+                swan_curve = 1.5 * math.sin(v.co.y * 2.5) * math.cos(v.co.x * 2.0)  # Was 0.5
                 v.co.z += swan_curve
     
     print(f"✅ ABSTRACT RECOGNIZABLE shape keys created with cinematic storytelling")
@@ -2053,18 +2018,18 @@ print(f"🎵 Synthetic tempo: {synthetic_tempo} BPM for continuous motion")
 
 # Define SOPHISTICATED bird morphing phases - Focus on elegant bird transformations
 morph_phases = [
-    # PRIMARY BIRD SHAPES - Strong audio response (75% of morphing)
-    {"name": "AbstractBird", "weight": 0.35, "speed": 0.35},       # Main bird - responds to kick
-    {"name": "PhoenixRising", "weight": 0.25, "speed": 0.3},      # Phoenix rebirth - responds to bass
-    {"name": "DragonForm", "weight": 0.15, "speed": 0.4},        # Dragon majesty - responds to snare
+    # PRIMARY BIRD SHAPES - Sophisticated and prominent (70% of morphing)
+    {"name": "AbstractBird", "weight": 0.30, "speed": 0.35},       # Main bird silhouette - responds to kick
+    {"name": "PhoenixRising", "weight": 0.22, "speed": 0.3},      # Phoenix rebirth - responds to bass
+    {"name": "DragonForm", "weight": 0.18, "speed": 0.4},        # Dragon majesty - responds to snare
     
-    # ELEGANT SECONDARY SHAPES - Visible patterns (20% of morphing)
-    {"name": "ButterflyWings", "weight": 0.10, "speed": 0.5},     # Butterfly grace - responds to hihat
-    {"name": "EagleSoaring", "weight": 0.08, "speed": 0.4},       # Eagle vision - responds to vocals
-    {"name": "SwanElegance", "weight": 0.05, "speed": 0.3},       # Swan beauty - responds to spectral brightness
+    # ELEGANT SECONDARY SHAPES - Graceful flight patterns (25% of morphing)
+    {"name": "ButterflyWings", "weight": 0.12, "speed": 0.5},     # Butterfly grace - responds to hihat
+    {"name": "EagleSoaring", "weight": 0.10, "speed": 0.4},       # Eagle vision - responds to vocals
+    {"name": "SwanElegance", "weight": 0.08, "speed": 0.3},       # Swan beauty - responds to spectral brightness
     
     # MINIMAL SUPPORT SHAPES - Subtle accent only (5% of morphing)
-    {"name": "OrganicFlow", "weight": 0.02, "speed": 0.45},      # Organic motion - subtle base
+    {"name": "OrganicFlow", "weight": 0.03, "speed": 0.45},      # Organic motion - subtle base
     {"name": "CosmicPulse", "weight": 0.02, "speed": 0.35},       # Cosmic rhythm - ambient response
 ]
 
@@ -2141,11 +2106,11 @@ for phase_idx, phase in enumerate(morph_phases):
         else:
             audio_value = audio_values[-1] if audio_values else 0.5
         
-        # Create smooth base motion with stronger audio response
-        base_motion = math.sin(2 * math.pi * t * phase["speed"] * 0.1) * 0.15  # Reduced to allow more audio control
+        # Create smooth base motion - Increased amplitude for visibility
+        base_motion = math.sin(2 * math.pi * t * phase["speed"] * 0.1) * 0.3  # Increased from 0.1 to 0.3
         
-        # Apply audio responsiveness with STRONG scaling for cinematic effect
-        audio_response = audio_value * phase["weight"] * 5.0  # Increased for strong audio response
+        # Apply audio responsiveness with VISIBLE scaling - Increased from 0.8 to 1.5 for visibility
+        audio_response = audio_value * phase["weight"] * 1.5  # Scale up for visibility
         
         # Combine base motion with audio response
         combined_value = base_motion + audio_response
@@ -2198,6 +2163,650 @@ if obj.data.shape_keys and obj.data.shape_keys.animation_data and obj.data.shape
     print(f"✅ Smooth interpolation applied to {fcurves_processed} fcurves, {total_keyframes} total keyframes")
 else:
     print(f"⚠️ DEBUG: Cannot apply interpolation - missing shape keys, animation data, or action")
+
+# Create smooth, continuous modifier animation
+print("🔧 Creating smooth continuous modifier animation...")
+
+def create_smooth_modifier_animation():
+            geometric_wave = 4.0 * math.sin(distance * 6.0) * math.exp(-distance * 1.2)  # Geometric wave
+            fractal_detail = 2.0 * math.sin(distance * 12.0) * math.cos(distance * 8.0) * math.exp(-distance * 2.0)  # Fractal detail
+            
+            total_factor = geometric_factor + geometric_wave + fractal_detail
+            v.co = center + direction * distance * total_factor
+            
+            # Add geometric compression patterns
+            compression_pattern = 0.3 + 0.4 * math.sin(distance * 4.0) * math.cos(distance * 3.0)
+            v.co.x *= compression_pattern
+            v.co.y *= compression_pattern
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "QuantumDistortion" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # Quantum field distortion with reality-bending effects
+            quantum_field_x = 3.0 * math.sin(v.co.x * 8.0) * math.cos(v.co.y * 5.0) * math.sin(v.co.z * 3.0)
+            quantum_field_y = 3.0 * math.cos(v.co.y * 8.0) * math.sin(v.co.z * 5.0) * math.cos(v.co.x * 3.0)
+            quantum_field_z = 3.0 * math.sin(v.co.z * 8.0) * math.cos(v.co.x * 5.0) * math.sin(v.co.y * 3.0)
+            
+            # Quantum tunneling effect
+            tunneling_factor = 2.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.4)
+            tunneling_x = tunneling_factor * math.sin(v.co.x * 10.0)
+            tunneling_y = tunneling_factor * math.cos(v.co.y * 10.0)
+            tunneling_z = tunneling_factor * math.sin(v.co.z * 10.0)
+            
+            v.co += mathutils.Vector((quantum_field_x + tunneling_x, quantum_field_y + tunneling_y, quantum_field_z + tunneling_z))
+            
+            # Quantum compression
+            quantum_compression = 0.4 + 0.5 * math.sin(v.co.length * 3.0) * math.cos(v.co.length * 2.0)
+            v.co *= quantum_compression
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "StellarCollapse" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            center = mathutils.Vector((0, 0, 0))
+            direction = (v.co - center).normalized()
+            distance = (v.co - center).length
+            
+            # Stellar collapse simulation with gravitational effects
+            collapse_factor = 1.0 + 10.0 * math.exp(-distance * 0.4)  # Intense gravitational collapse
+            gravitational_wave = 5.0 * math.sin(distance * 4.0) * math.exp(-distance * 0.8)  # Gravitational waves
+            stellar_compression = 3.0 * math.cos(distance * 8.0) * math.exp(-distance * 1.5)  # Stellar compression
+            
+            total_factor = collapse_factor + gravitational_wave + stellar_compression
+            v.co = center + direction * distance * total_factor
+            
+            # Add stellar compression effects
+            stellar_scale = 0.2 + 0.6 * math.sin(distance * 6.0) * math.cos(distance * 4.0)
+            v.co.x *= stellar_scale
+            v.co.y *= stellar_scale
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "GalacticTornado" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            angle = math.atan2(v.co.y, v.co.x)
+            radius = math.sqrt(v.co.x**2 + v.co.y**2)
+            
+            # Galactic tornado with spiral galaxy dynamics
+            tornado_factor = 1.0 + 4.0 * math.sin(angle * 6.0 + radius * 2.0)  # Primary tornado
+            galactic_spiral = 3.0 * math.cos(angle * 4.0 + radius * 1.5) * math.exp(-radius * 0.3)  # Galactic spiral
+            vertical_twist = 2.0 * math.sin(angle * 8.0) * math.cos(radius * 3.0)  # Vertical twisting
+            
+            total_factor = tornado_factor + galactic_spiral
+            v.co.x = radius * math.cos(angle) * total_factor
+            v.co.y = radius * math.sin(angle) * total_factor
+            v.co.z += vertical_twist
+            
+            # Galactic compression
+            galactic_compression = 0.5 + 0.3 * math.sin(radius * 4.0) * math.cos(angle * 2.0)
+            v.co.x *= galactic_compression
+            v.co.y *= galactic_compression
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "BlackHoleWarp" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            center = mathutils.Vector((0, 0, 0))
+            direction = (v.co - center).normalized()
+            distance = (v.co - center).length
+            
+            # Black hole gravitational warping with extreme distortion
+            warp_factor = 1.0 + 12.0 * math.exp(-distance * 0.2)  # Extreme gravitational warping
+            event_horizon = 8.0 * math.sin(distance * 8.0) * math.exp(-distance * 0.6)  # Event horizon effects
+            spacetime_curvature = 4.0 * math.cos(distance * 12.0) * math.exp(-distance * 1.0)  # Spacetime curvature
+            
+            total_factor = warp_factor + event_horizon + spacetime_curvature
+            v.co = center + direction * distance * total_factor
+            
+            # Black hole compression
+            blackhole_compression = 0.1 + 0.7 * math.sin(distance * 8.0) * math.cos(distance * 6.0)
+            v.co.x *= blackhole_compression
+            v.co.y *= blackhole_compression
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "NebulaBirth" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # Star formation nebula with dramatic birth effects
+            nebula_intensity = 6.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.2)
+            
+            # Nebula formation patterns
+            nebula_x = nebula_intensity * math.sin(v.co.x * 3.0) * math.cos(v.co.y * 2.0) * math.sin(v.co.z * 1.5)
+            nebula_y = nebula_intensity * math.cos(v.co.y * 3.0) * math.sin(v.co.z * 2.0) * math.cos(v.co.x * 1.5)
+            nebula_z = nebula_intensity * math.sin(v.co.z * 3.0) * math.cos(v.co.x * 2.0) * math.sin(v.co.y * 1.5)
+            
+            # Star formation compression
+            star_formation = 2.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.5)
+            star_x = star_formation * math.sin(v.co.x * 6.0)
+            star_y = star_formation * math.cos(v.co.y * 6.0)
+            star_z = star_formation * math.sin(v.co.z * 6.0)
+            
+            v.co += mathutils.Vector((nebula_x + star_x, nebula_y + star_y, nebula_z + star_z))
+            
+            # Nebula expansion/compression
+            nebula_scale = 0.6 + 0.3 * math.sin(v.co.length * 2.0) * math.cos(v.co.length * 1.5)
+            v.co *= nebula_scale
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "CosmicRipple" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            center = mathutils.Vector((0, 0, 0))
+            distance = (v.co - center).length
+            
+            # Space-time ripple effects with gravitational waves
+            ripple_intensity = 5.0 * math.exp(-distance * 0.4)
+            primary_ripple = ripple_intensity * math.sin(distance * 4.0)  # Primary ripple
+            secondary_ripple = 2.0 * ripple_intensity * math.cos(distance * 8.0)  # Secondary ripple
+            tertiary_ripple = 1.0 * ripple_intensity * math.sin(distance * 16.0)  # Tertiary ripple
+            
+            total_ripple = primary_ripple + secondary_ripple + tertiary_ripple
+            
+            # Apply ripple in all directions
+            v.co.x += total_ripple * math.cos(math.atan2(v.co.y, v.co.x))
+            v.co.y += total_ripple * math.sin(math.atan2(v.co.y, v.co.x))
+            v.co.z += total_ripple * 0.5
+            
+            # Ripple compression
+            ripple_compression = 0.7 + 0.2 * math.sin(distance * 6.0) * math.cos(distance * 4.0)
+            v.co.x *= ripple_compression
+            v.co.y *= ripple_compression
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "DimensionalShift" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # Multi-dimensional transformation with reality distortion
+            dimensional_factor = 4.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.3)
+            
+            # Dimensional shifting in multiple planes
+            dim_x = dimensional_factor * math.sin(v.co.x * 5.0) * math.cos(v.co.y * 3.0) * math.sin(v.co.z * 2.0)
+            dim_y = dimensional_factor * math.cos(v.co.y * 5.0) * math.sin(v.co.z * 3.0) * math.cos(v.co.x * 2.0)
+            dim_z = dimensional_factor * math.sin(v.co.z * 5.0) * math.cos(v.co.x * 3.0) * math.sin(v.co.y * 2.0)
+            
+            # Reality distortion effects
+            reality_warp = 2.0 * math.sin(v.co.x * 7.0) * math.cos(v.co.y * 5.0) * math.sin(v.co.z * 3.0)
+            reality_x = reality_warp * math.cos(v.co.x * 4.0)
+            reality_y = reality_warp * math.sin(v.co.y * 4.0)
+            reality_z = reality_warp * math.cos(v.co.z * 4.0)
+            
+            v.co += mathutils.Vector((dim_x + reality_x, dim_y + reality_y, dim_z + reality_z))
+            
+            # Dimensional compression
+            dimensional_scale = 0.3 + 0.6 * math.sin(v.co.length * 3.0) * math.cos(v.co.length * 2.0)
+            v.co *= dimensional_scale
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    # ABSTRACT RECOGNIZABLE SHAPES - Simplified for VISIBLE transformations
+    if "AbstractBird" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # SIMPLIFIED bird silhouette with STRONG visible transformations
+            # Body extension (elongate forward)
+            body_stretch = math.exp(-abs(v.co.x) * 0.3) * (1.0 + abs(v.co.z) * 0.3)
+            
+            # Wings spread (wider horizontally)
+            wing_stretch = math.exp(-abs(v.co.y) * 0.3) * (1.0 + abs(v.co.x) * 0.5)
+            
+            # Combine for bird-like form
+            total_stretch = body_stretch * wing_stretch
+            
+            # Apply DRAMATIC bird deformation - 3X stronger for visibility
+            v.co.x *= 1.0 + total_stretch * 1.8  # Forward elongation (was 0.6)
+            v.co.y *= 1.0 + total_stretch * 2.4  # Wider wings (was 0.8)
+            v.co.z *= 1.0 + total_stretch * 1.2  # Vertical compression (was 0.4)
+            
+            # Add wing wave detail
+            wing_wave = 0.9 * math.sin(v.co.y * 2.0) * math.cos(v.co.x * 1.5)  # Was 0.3
+            v.co.z += wing_wave
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "PhoenixRising" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # SIMPLIFIED Phoenix with VISIBLE rising flames
+            # Rising flames (vertical extension)
+            flame_stretch = math.exp(-(v.co.x**2 + v.co.y**2) * 0.4) * (1.0 + v.co.z * 0.6)
+            
+            # Wings (horizontal spread)
+            wing_stretch = math.exp(-abs(v.co.y) * 0.3) * (1.0 + abs(v.co.x) * 0.7)
+            
+            # Combine for phoenix form
+            total_stretch = flame_stretch * wing_stretch
+            
+            # Apply DRAMATIC phoenix deformation - 3X stronger
+            v.co.x *= 1.0 + total_stretch * 1.5  # Was 0.5
+            v.co.y *= 1.0 + total_stretch * 2.7  # Was 0.9
+            v.co.z *= 1.0 + total_stretch * 2.1  # Rising upward (was 0.7)
+            
+            # Add flame wave detail
+            flame_wave = 1.2 * math.sin(v.co.x * 3.0) * math.cos(v.co.y * 2.5) * math.sin(v.co.z * 2.0)  # Was 0.4
+            v.co += mathutils.Vector((flame_wave * 0.6, flame_wave * 0.6, flame_wave * 1.5))
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "DragonForm" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # SIMPLIFIED Dragon with VISIBLE serpentine body
+            # Serpentine body (snaking curve)
+            body_curve = 1.0 + 1.0 * math.sin(v.co.x * 1.5) * math.exp(-(v.co.y**2 + v.co.z**2) * 0.6)
+            
+            # Wings (powerful spread)
+            wing_spread = math.exp(-abs(v.co.y) * 0.4) * (1.0 + abs(v.co.x) * 0.8)
+            
+            # Combine for dragon form
+            total_deform = body_curve * (1.0 + wing_spread * 0.5)
+            
+            # Apply DRAMATIC dragon deformation - 3X stronger
+            v.co.x *= 1.0 + total_deform * 2.1  # Was 0.7
+            v.co.y *= 1.0 + total_deform * 3.0  # Was 1.0
+            v.co.z *= 1.0 + total_deform * 1.8  # Was 0.6
+            
+            # Add serpent detail
+            serpent_wave = 1.5 * math.sin(v.co.x * 2.5) * math.cos(v.co.y * 2.0) * math.sin(v.co.z * 1.5)  # Was 0.5
+            v.co += mathutils.Vector((serpent_wave * 0.9, serpent_wave * 0.9, serpent_wave * 0.6))
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "ButterflyWings" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # SIMPLIFIED Butterfly with VISIBLE wing form
+            # Central body
+            body_stretch = math.exp(-(v.co.y**2 + v.co.z**2) * 0.8) * (1.0 + abs(v.co.x) * 0.4)
+            
+            # Wings (wide spread)
+            wing_stretch = math.exp(-abs(v.co.y) * 0.4) * (1.0 + abs(v.co.x) * 0.9)
+            
+            total_stretch = body_stretch * wing_stretch
+            
+            # Apply DRAMATIC butterfly deformation - 3X stronger
+            v.co.x *= 1.0 + total_stretch * 1.2  # Was 0.4
+            v.co.y *= 1.0 + total_stretch * 2.7  # Wide wings (was 0.9)
+            v.co.z *= 1.0 + total_stretch * 1.5  # Was 0.5
+            
+            # Add wing ripples
+            wing_ripple = 1.5 * math.sin(v.co.y * 3.5) * math.cos(v.co.x * 2.5)  # Was 0.5
+            v.co.z += wing_ripple
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "EagleSoaring" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # SIMPLIFIED Eagle with VISIBLE soaring form
+            # Strong body
+            body_stretch = math.exp(-(v.co.x**2 + v.co.y**2) * 0.7) * (1.0 + abs(v.co.z) * 0.5)
+            
+            # Powerful wings
+            wing_stretch = math.exp(-abs(v.co.y) * 0.3) * (1.0 + abs(v.co.x) * 1.0)
+            
+            total_stretch = body_stretch * wing_stretch
+            
+            # Apply DRAMATIC eagle deformation - 3X stronger
+            v.co.x *= 1.0 + total_stretch * 1.8  # Was 0.6
+            v.co.y *= 1.0 + total_stretch * 3.6  # Very wide wingspan (was 1.2)
+            v.co.z *= 1.0 + total_stretch * 1.8  # Was 0.6
+            
+            # Add wing detail
+            wing_detail = 1.8 * math.sin(v.co.y * 3.0) * math.cos(v.co.x * 2.0)  # Was 0.6
+            v.co.z += wing_detail
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "SwanElegance" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # SIMPLIFIED Swan with VISIBLE elegant form
+            # Graceful body
+            body_stretch = math.exp(-(v.co.x**2 + v.co.y**2) * 0.6) * (1.0 + abs(v.co.z) * 0.4)
+            
+            # Elegant wings (curved)
+            wing_stretch = math.exp(-abs(v.co.y) * 0.4) * (1.0 + abs(v.co.x) * 0.8)
+            
+            total_stretch = body_stretch * wing_stretch
+            
+            # Apply DRAMATIC swan deformation - 3X stronger
+            v.co.x *= 1.0 + total_stretch * 2.1  # Was 0.7
+            v.co.y *= 1.0 + total_stretch * 3.0  # Was 1.0
+            v.co.z *= 1.0 + total_stretch * 2.4  # Was 0.8
+            
+            # Add smooth curves
+            swan_curve = 1.5 * math.sin(v.co.y * 2.5) * math.cos(v.co.x * 2.0)  # Was 0.5
+            v.co.z += swan_curve
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "FalconDive" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # Falcon in diving position with streamlined form
+            # Falcon body (streamlined for speed)
+            falcon_body = 1.0 + 3.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.8)
+            
+            # Diving wings (folded for speed)
+            dive_wings = 1.0 + 2.0 * math.exp(-(v.co.y**2 + v.co.z**2) * 0.7) * (1.0 + abs(v.co.x) * 0.4)
+            
+            # Falcon head (aerodynamic)
+            falcon_head = 1.0 + 2.5 * math.exp(-((v.co.x - 0.6)**2 + v.co.y**2 + v.co.z**2) * 1.2)
+            
+            # Falcon tail (rudder for control)
+            tail_rudder = 1.0 + 1.8 * math.exp(-((v.co.x + 0.6)**2 + v.co.y**2 + v.co.z**2) * 0.8)
+            
+            total_factor = falcon_body * dive_wings * falcon_head * tail_rudder
+            
+            # Apply falcon scaling (streamlined)
+            v.co.x *= total_factor * 1.1
+            v.co.y *= total_factor * 0.8
+            v.co.z *= total_factor * 0.9
+            
+            # Add falcon detail
+            falcon_detail = 0.6 * math.sin(v.co.x * 5.0) * math.cos(v.co.y * 3.0) * math.sin(v.co.z * 2.0)
+            v.co += mathutils.Vector((falcon_detail * 0.4, falcon_detail * 0.2, falcon_detail * 0.3))
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "HummingbirdHover" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # Hummingbird with rapid wing movement and hovering form
+            # Hummingbird body (tiny and agile)
+            hummingbird_body = 1.0 + 4.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 1.0)
+            
+            # Rapid wings (blurred motion)
+            rapid_wings = 1.0 + 3.0 * math.exp(-(v.co.y**2 + v.co.z**2) * 0.8) * (1.0 + abs(v.co.x) * 0.6)
+            
+            # Hummingbird beak (long and precise)
+            beak_precise = 1.0 + 2.5 * math.exp(-((v.co.x - 0.4)**2 + v.co.y**2 + v.co.z**2) * 1.5)
+            
+            # Hovering motion (vertical stability)
+            hover_stable = 1.0 + 1.5 * math.sin(v.co.z * 8.0) * math.cos(v.co.x * 4.0) * math.sin(v.co.y * 4.0)
+            
+            total_factor = hummingbird_body * rapid_wings * beak_precise * hover_stable
+            
+            # Apply hummingbird scaling (small and agile)
+            v.co.x *= total_factor * 0.7
+            v.co.y *= total_factor * 1.0
+            v.co.z *= total_factor * 0.8
+            
+            # Add hummingbird detail
+            hummingbird_detail = 0.8 * math.sin(v.co.x * 10.0) * math.cos(v.co.y * 8.0) * math.sin(v.co.z * 6.0)
+            v.co += mathutils.Vector((hummingbird_detail * 0.2, hummingbird_detail * 0.3, hummingbird_detail * 0.1))
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "PeacockDisplay" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # Peacock with magnificent tail display
+            # Peacock body (regal presence)
+            peacock_body = 1.0 + 3.0 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.6)
+            
+            # Magnificent tail (fan display)
+            tail_display = 1.0 + 4.0 * math.exp(-((v.co.x + 0.5)**2 + v.co.y**2) * 0.4) * (1.0 + v.co.z * 0.8)
+            
+            # Peacock head (crown-like)
+            head_crown = 1.0 + 2.0 * math.exp(-((v.co.x - 0.5)**2 + v.co.y**2 + v.co.z**2) * 1.0)
+            
+            # Tail feathers (radiating pattern)
+            feather_pattern = 1.0 + 1.5 * math.sin(v.co.y * 6.0) * math.cos(v.co.x * 4.0) * math.exp(-abs(v.co.z) * 0.5)
+            
+            total_factor = peacock_body * tail_display * head_crown * feather_pattern
+            
+            # Apply peacock scaling
+            v.co.x *= total_factor * 0.8
+            v.co.y *= total_factor * 1.5
+            v.co.z *= total_factor * 1.2
+            
+            # Add peacock detail
+            peacock_detail = 0.7 * math.sin(v.co.x * 4.0) * math.cos(v.co.y * 6.0) * math.sin(v.co.z * 3.0)
+            v.co += mathutils.Vector((peacock_detail * 0.3, peacock_detail * 0.4, peacock_detail * 0.2))
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+    
+    if "OwlWisdom" in sname:
+        # Store original positions for size normalization
+        original_positions = [mathutils.Vector(v.co) for v in data]
+        
+        for i, v in enumerate(data):
+            # Owl with wise presence and distinctive features
+            # Owl body (round and wise)
+            owl_body = 1.0 + 3.5 * math.exp(-(v.co.x**2 + v.co.y**2 + v.co.z**2) * 0.7)
+            
+            # Owl head (large and round)
+            head_wise = 1.0 + 3.0 * math.exp(-((v.co.x - 0.3)**2 + v.co.y**2 + v.co.z**2) * 0.9)
+            
+            # Owl wings (silent flight)
+            silent_wings = 1.0 + 2.5 * math.exp(-(v.co.y**2 + v.co.z**2) * 0.6) * (1.0 + abs(v.co.x) * 0.7)
+            
+            # Owl eyes (wise and knowing)
+            wise_eyes = 1.0 + 2.0 * math.exp(-((v.co.x - 0.2)**2 + (v.co.y - 0.2)**2 + v.co.z**2) * 2.0)
+            
+            total_factor = owl_body * head_wise * silent_wings * wise_eyes
+            
+            # Apply owl scaling
+            v.co.x *= total_factor * 0.9
+            v.co.y *= total_factor * 1.1
+            v.co.z *= total_factor * 0.9
+            
+            # Add owl detail
+            owl_detail = 0.6 * math.sin(v.co.x * 3.0) * math.cos(v.co.y * 2.0) * math.sin(v.co.z * 1.5)
+            v.co += mathutils.Vector((owl_detail * 0.3, owl_detail * 0.3, owl_detail * 0.2))
+        
+        # Normalize size to maintain consistent object scale
+        #normalize_shape_size(data, original_positions)(data, original_positions)
+
+    print(f"✅ ABSTRACT RECOGNIZABLE shape keys created with cinematic storytelling")
+    print(f"🔍 DEBUG: Number of shape keys created: {len(obj.data.shape_keys.key_blocks) if obj.data.shape_keys else 0}")
+    if obj.data.shape_keys:
+        print(f"🔍 DEBUG: Shape key names: {[sk.name for sk in obj.data.shape_keys.key_blocks]}")
+    
+except Exception as e:
+    print(f"❌ CRITICAL ERROR: Failed to create shape keys: {e}")
+    print("🔄 Shape key creation will be skipped")
+    import traceback
+    traceback.print_exc()
+
+# Helper: safely sample a feature array at current frame
+def feature_at(name: str, idx: int, default: float = 0.0) -> float:
+    arr = features_data.get(name)
+    if isinstance(arr, list) and len(arr) > 0:
+        if idx < len(arr):
+            return float(arr[idx])
+        return float(arr[-1])
+    return float(default)
+
+# Create smooth, continuous shape morphing animation (OPTIMIZED VERSION)
+print("🎵 Creating smooth continuous shape morphing without flickering...")
+
+# Create synthetic tempo for continuous motion during silence
+synthetic_tempo = 120.0
+beat_duration = 60.0 / synthetic_tempo
+frames_per_beat = beat_duration * {fps}
+
+print(f"🎵 Synthetic tempo: {synthetic_tempo} BPM for continuous motion")
+
+# Define SOPHISTICATED bird morphing phases - Focus on elegant bird transformations
+morph_phases = [
+    # PRIMARY BIRD SHAPES - Sophisticated and prominent (70% of morphing)
+    {"name": "AbstractBird", "weight": 0.30, "speed": 0.35},       # Main bird silhouette - responds to kick
+    {"name": "PhoenixRising", "weight": 0.22, "speed": 0.3},      # Phoenix rebirth - responds to bass
+    {"name": "DragonForm", "weight": 0.18, "speed": 0.4},        # Dragon majesty - responds to snare
+    
+    # ELEGANT SECONDARY SHAPES - Graceful flight patterns (25% of morphing)
+    {"name": "ButterflyWings", "weight": 0.12, "speed": 0.5},     # Butterfly grace - responds to hihat
+    {"name": "EagleSoaring", "weight": 0.10, "speed": 0.4},       # Eagle vision - responds to vocals
+    {"name": "SwanElegance", "weight": 0.08, "speed": 0.3},       # Swan beauty - responds to spectral brightness
+    
+    # MINIMAL SUPPORT SHAPES - Subtle accent only (5% of morphing)
+    {"name": "OrganicFlow", "weight": 0.03, "speed": 0.45},      # Organic motion - subtle base
+    {"name": "CosmicPulse", "weight": 0.02, "speed": 0.35},       # Cosmic rhythm - ambient response
+]
+
+# Create smooth, continuous morphing for each shape key with enhanced interpolation
+print("🎵 Applying audio-responsive morphing to MAIN OBJECT (OptimizedAudioShape)...")
+print(f"🎯 Main object name: {obj.name}")
+print(f"🎯 Main object type: {obj.type}")
+print(f"🎯 Main object location: {obj.location}")
+print("🎵 This object will respond to audio with shape morphing")
+print("🌍 Earth object will only rotate slowly in background")
+
+# AUDIO-RESPONSIVE SHAPE MORPHING - Smooth transitions with audio data
+print("🎵 Creating audio-responsive shape morphing with smooth transitions...")
+
+# Get audio data from features
+audio_data = features_data
+print(f"📊 Audio data keys: {list(audio_data.keys())}")
+
+# Define audio band mappings for bird shapes
+audio_mappings = {
+    "AbstractBird": "kick_energy",      # Main bird responds to kick
+    "PhoenixRising": "bass_energy",    # Phoenix responds to bass
+    "DragonForm": "snare_energy",       # Dragon responds to snare
+    "ButterflyWings": "hihat_energy",   # Butterfly responds to hihat
+    "EagleSoaring": "vocal_energy",     # Eagle responds to vocals
+    "SwanElegance": "spectral_centroid", # Swan responds to brightness
+    "VerticalSpike": "kick_energy",     # Spike responds to kick
+    "HorizontalWave": "bass_energy",    # Wave responds to bass
+    "RadialExplosion": "snare_energy"   # Explosion responds to snare
+}
+
+print(f"🔍 DEBUG: Starting to animate {len(morph_phases)} morph phases")
+print(f"🔍 DEBUG: obj.data.shape_keys exists: {obj.data.shape_keys is not None}")
+if obj.data.shape_keys:
+    print(f"🔍 DEBUG: Available shape keys: {[sk.name for sk in obj.data.shape_keys.key_blocks]}")
+
+for phase_idx, phase in enumerate(morph_phases):
+    print(f"🔍 DEBUG [{phase_idx+1}/{len(morph_phases)}]: Processing phase '{phase['name']}'")
+    if not obj.data.shape_keys:
+        print(f"⚠️ DEBUG: obj.data.shape_keys is None for phase '{phase['name']}'")
+        continue
+        
+    shape_key = obj.data.shape_keys.key_blocks.get(phase["name"])
+    if not shape_key:
+        print(f"⚠️ DEBUG: Shape key '{phase['name']}' not found in key_blocks")
+        print(f"🔍 DEBUG: Available keys are: {[sk.name for sk in obj.data.shape_keys.key_blocks]}")
+        continue
+    
+    print(f"✅ DEBUG: Found shape key '{phase['name']}', value={shape_key.value}")
+        
+    # Clear existing keyframes
+    shape_key.value = 0.0
+    
+    # Get audio band for this shape
+    audio_band = audio_mappings.get(phase["name"], "kick_energy")
+    audio_values = audio_data.get(audio_band, [])
+    
+    if not audio_values:
+        print(f"⚠️ No audio data for {audio_band}, using synthetic motion")
+        audio_values = [0.5] * {total_frames}  # Fallback to constant value
+    
+    print(f"🎵 {phase['name']} -> {audio_band}: {len(audio_values)} audio samples")
+    
+    # Create smooth, audio-responsive morphing
+    keyframes_created = 0
+    sample_every = max(1, {total_frames} // 10)  # Sample 10 frames to show progress
+    for frame in range(0, {total_frames} + 1, 1):
+        scene.frame_set(frame)
+        t = frame / {fps}
+        
+        # Get audio value for this frame
+        if frame < len(audio_values):
+            audio_value = audio_values[frame]
+        else:
+            audio_value = audio_values[-1] if audio_values else 0.5
+        
+        # Create smooth base motion - Increased amplitude for visibility
+        base_motion = math.sin(2 * math.pi * t * phase["speed"] * 0.1) * 0.3  # Increased from 0.1 to 0.3
+        
+        # Apply audio responsiveness with VISIBLE scaling - Increased from 0.8 to 1.5 for visibility
+        audio_response = audio_value * phase["weight"] * 1.5  # Scale up for visibility
+        
+        # Combine base motion with audio response
+        combined_value = base_motion + audio_response
+        
+        # Apply smooth interpolation curve for gentle transitions
+        def smooth_interpolation(x):
+            x = max(0.0, min(1.0, x))
+            return x * x * (3.0 - 2.0 * x)  # Smooth step
+        
+        final_value = smooth_interpolation(combined_value)
+        
+        # CRITICAL FIX: Ensure minimum visibility threshold
+        # Shape keys need at least 0.05 value to be visibly noticeable
+        if final_value < 0.05:
+            final_value = 0.05 + final_value * 0.1  # Add base visibility + small variation
+        
+        # Apply keyframe
+        shape_key.value = final_value
+        shape_key.keyframe_insert(data_path="value")
+        keyframes_created += 1
+        
+        # Debug output for sample frames
+        if frame % sample_every == 0:
+            print(f"🔍 DEBUG: Frame {frame}/{total_frames}: {phase['name']} = {final_value:.4f} (audio={audio_value:.4f}, weight={phase['weight']}, combined={combined_value:.4f})")
+    
+    print(f"✅ DEBUG: Created {keyframes_created} keyframes for '{phase['name']}'")
 
 print("✅ ABSTRACT RECOGNIZABLE shape morphing animation created")
 
@@ -2511,27 +3120,27 @@ def create_cinematic_object_movement(story_structure):
     obj.scale = ({main_object_scale_x}, {main_object_scale_y}, {main_object_scale_z})  # Configurable scale for better Earth visibility
     obj.keyframe_insert(data_path="scale")
     
-    # Cinematic movement phases - ALWAYS moving towards Earth with dramatic descent
+    # Cinematic movement phases - ALWAYS moving towards Earth
     movement_phases = {
         'act1': {
-            'start': (0, 0, 80),      # High above Earth - dramatic entry
-            'end': (0, 0, 50),        # Significant descent toward Earth
+            'start': (0, 0, 50),      # Start in Earth's shadow
+            'end': (0, 0, 30),        # Emerge towards Earth
             'rotation_speed': 0.5     # Slow emergence
         },
         'act2': {
-            'start': (0, 0, 50),      # Continue from Act 1
-            'end': (4, 4, 25),        # Accelerate toward Earth with orbital drift
+            'start': (0, 0, 30),      # Continue from Act 1
+            'end': (3, 3, 20),        # Move closer to Earth, slight offset
             'rotation_speed': 1.0     # Normal exploration
         },
         'act3': {
-            'start': (4, 4, 25),      # Continue from Act 2
-            'end': (-8, 8, 8),        # Dramatic plunge toward Earth
-            'rotation_speed': 2.0     # Intense transformation
+            'start': (3, 3, 20),      # Continue from Act 2
+            'end': (-5, 5, 10),       # Dramatic movement towards Earth
+            'rotation_speed': 1.5     # Intense transformation
         },
         'act4': {
-            'start': (-8, 8, 8),      # Continue from Act 3
-            'end': (0, 0, 2),         # Final dramatic approach to Earth surface
-            'rotation_speed': 1.2     # Building intensity
+            'start': (-5, 5, 10),     # Continue from Act 3
+            'end': (0, 0, 5),         # Final approach to Earth
+            'rotation_speed': 0.8     # Calm resolution
         }
     }
     
