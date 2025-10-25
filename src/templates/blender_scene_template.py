@@ -1884,23 +1884,23 @@ try:
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle bird shape deformation
-                # Body extends forward
-                body_shift = math.exp(-abs(v.co.x) * 0.4) * v.co.x * 0.3
+                # Distinctive bird shape deformation
+                # Body extends forward (bird head)
+                body_shift = math.exp(-abs(v.co.x) * 0.4) * v.co.x * 1.2
                 
-                # Wings spread outward  
-                wing_spread = math.exp(-abs(v.co.y) * 0.3) * v.co.y * 0.5
+                # Wings spread outward (bird wingspan)
+                wing_spread = math.exp(-abs(v.co.y) * 0.3) * v.co.y * 2.0
                 
-                # Tail extends backward
-                tail_shift = math.exp(-abs(v.co.x + 0.8) * 2.0) * 0.15
+                # Tail extends backward (bird tail)
+                tail_shift = math.exp(-abs(v.co.x + 0.8) * 2.0) * 0.8
                 
-                # Apply subtle bird deformation
+                # Apply bird deformation - creates visible bird shape
                 v.co.x += body_shift  # Bird head/body shifts forward
                 v.co.y += wing_spread  # Wings spread wider
                 v.co.z += tail_shift  # Tail extends down
                 
-                # Add subtle wing detail
-                wing_wave = math.sin(v.co.y * 3.0) * math.cos(v.co.x * 2.0) * 0.08
+                # Add wing detail for realism
+                wing_wave = math.sin(v.co.y * 3.0) * math.cos(v.co.x * 2.0) * 0.4
                 v.co.z += wing_wave
         
         elif "PhoenixRising" in sname:
@@ -1908,70 +1908,70 @@ try:
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle phoenix shape deformation
+                # Dramatic phoenix shape deformation - rising flames
                 # Flames rise upward
-                flame_rise = math.exp(-(v.co.x**2 + v.co.y**2) * 0.5) * 0.25
+                flame_rise = math.exp(-(v.co.x**2 + v.co.y**2) * 0.5) * 1.5
                 
-                # Wings spread out
-                wing_spread = math.exp(-abs(v.co.y) * 0.4) * v.co.y * 0.4
+                # Wings spread out dramatically
+                wing_spread = math.exp(-abs(v.co.y) * 0.4) * v.co.y * 2.5
                 
-                # Apply subtle phoenix deformation
-                v.co.z += flame_rise  # Flames rise
-                v.co.y += wing_spread  # Wings spread
-                v.co.x += wing_spread * 0.2  # Flame spread
+                # Apply phoenix deformation - flames rise upward
+                v.co.z += flame_rise  # Flames rise dramatically
+                v.co.y += wing_spread  # Wings spread wide
+                v.co.x += wing_spread * 0.6  # Flame spread creates phoenix effect
                 
-                # Add subtle flame detail
-                flame_wave = math.sin(v.co.x * 3.0) * math.cos(v.co.y * 2.5) * math.sin(v.co.z * 2.0) * 0.1
-                v.co += mathutils.Vector((flame_wave * 0.5, flame_wave * 0.5, flame_wave * 0.15))
+                # Add flame detail for realistic effect
+                flame_wave = math.sin(v.co.x * 3.0) * math.cos(v.co.y * 2.5) * math.sin(v.co.z * 2.0) * 0.6
+                v.co += mathutils.Vector((flame_wave * 1.0, flame_wave * 1.0, flame_wave * 1.0))
         
         elif "DragonForm" in sname:
             # Store original positions for size normalization
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle dragon shape deformation
+                # Dramatic dragon shape deformation
                 # Head extends forward
-                head_forward = math.exp(-abs(v.co.x - 0.5) * 3.0) * 0.15
+                head_forward = math.exp(-abs(v.co.x - 0.5) * 3.0) * 1.0
                 
-                # Body curves
-                body_curve = math.sin(v.co.x * 2.0) * math.exp(-(v.co.y**2 + v.co.z**2) * 0.8) * 0.15
+                # Body curves in serpentine motion
+                body_curve = math.sin(v.co.x * 2.0) * math.exp(-(v.co.y**2 + v.co.z**2) * 0.8) * 1.2
                 
                 # Wings spread wide
-                wing_wide = math.exp(-abs(v.co.y) * 0.5) * v.co.y * 0.4
+                wing_wide = math.exp(-abs(v.co.y) * 0.5) * v.co.y * 3.0
                 
                 # Tail extends back
-                tail_extend = math.exp(-abs(v.co.x + 0.8) * 2.5) * 0.15
+                tail_extend = math.exp(-abs(v.co.x + 0.8) * 2.5) * 1.0
                 
-                # Apply subtle dragon deformation
-                v.co.x += head_forward * 1.0  # Head forward
-                v.co.x += body_curve  # Body curves
-                v.co.y += wing_wide  # Wings spread
-                v.co.z += tail_extend * 0.5  # Tail extends
+                # Apply dragon deformation - creates serpentine dragon
+                v.co.x += head_forward * 2.0  # Head forward
+                v.co.x += body_curve  # Body curves in waves
+                v.co.y += wing_wide  # Wings spread wide
+                v.co.z += tail_extend * 1.0  # Tail extends dramatically
                 
-                # Add subtle serpent detail
-                serpent_wave = math.sin(v.co.x * 2.5) * math.cos(v.co.y * 2.0) * math.sin(v.co.z * 1.5) * 0.1
-                v.co += mathutils.Vector((serpent_wave * 0.5, serpent_wave * 0.5, serpent_wave * 0.4))
+                # Add serpent detail for realism
+                serpent_wave = math.sin(v.co.x * 2.5) * math.cos(v.co.y * 2.0) * math.sin(v.co.z * 1.5) * 0.8
+                v.co += mathutils.Vector((serpent_wave * 1.2, serpent_wave * 1.2, serpent_wave * 1.0))
         
         elif "ButterflyWings" in sname:
             # Store original positions for size normalization
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle butterfly shape deformation
+                # Beautiful butterfly shape deformation
                 # Central body stays compact
                 body_factor = math.exp(-(v.co.y**2 + v.co.z**2) * 0.8)
                 
-                # Wings extend outward (shift, not scale)
-                wing_extend_y = math.exp(-abs(v.co.y) * 0.4) * v.co.y * 0.4
-                wing_extend_x = math.exp(-abs(v.co.x) * 0.3) * v.co.x * 0.3
+                # Wings extend outward gracefully
+                wing_extend_y = math.exp(-abs(v.co.y) * 0.4) * v.co.y * 2.5
+                wing_extend_x = math.exp(-abs(v.co.x) * 0.3) * v.co.x * 2.0
                 
-                # Apply subtle butterfly deformation (shape change, not size)
-                v.co.x += wing_extend_x  # Wings extend
+                # Apply butterfly deformation - creates beautiful wings
+                v.co.x += wing_extend_x  # Wings extend gracefully
                 v.co.y += wing_extend_y  # Wings spread wide
-                v.co.z += body_factor * 0.1  # Body slightly flattens
+                v.co.z += body_factor * 0.6  # Body stays compact
                 
-                # Add subtle wing detail
-                wing_wave = 0.15 * math.sin(v.co.y * 3.5) * math.cos(v.co.x * 2.5)
+                # Add wing detail for realistic butterfly effect
+                wing_wave = 1.0 * math.sin(v.co.y * 3.5) * math.cos(v.co.x * 2.5)
                 v.co.z += wing_wave
         
         elif "EagleSoaring" in sname:
@@ -1979,21 +1979,21 @@ try:
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle eagle shape deformation
+                # Powerful eagle shape deformation
                 # Strong body stays compact
                 body_factor = math.exp(-(v.co.x**2 + v.co.y**2) * 0.7)
                 
-                # Powerful wings extend wide
-                wing_spread_y = math.exp(-abs(v.co.y) * 0.3) * v.co.y * 0.5
-                wing_spread_x = math.exp(-abs(v.co.x) * 0.5) * v.co.x * 0.4
+                # Powerful wings extend dramatically wide
+                wing_spread_y = math.exp(-abs(v.co.y) * 0.3) * v.co.y * 3.5
+                wing_spread_x = math.exp(-abs(v.co.x) * 0.5) * v.co.x * 2.5
                 
-                # Apply subtle eagle deformation
-                v.co.x += wing_spread_x  # Wings extend forward
-                v.co.y += wing_spread_y  # Wings spread wide
-                v.co.z += body_factor * 0.15  # Body stays compact
+                # Apply eagle deformation - creates soaring eagle
+                v.co.x += wing_spread_x  # Wings extend forward powerfully
+                v.co.y += wing_spread_y  # Wings spread very wide
+                v.co.z += body_factor * 0.8  # Body stays compact but elevated
                 
-                # Add subtle wing detail
-                wing_detail = 0.15 * math.sin(v.co.y * 3.0) * math.cos(v.co.x * 2.0)
+                # Add wing detail for realistic soaring
+                wing_detail = 0.8 * math.sin(v.co.y * 3.0) * math.cos(v.co.x * 2.0)
                 v.co.z += wing_detail
         
         elif "SwanElegance" in sname:
@@ -2001,24 +2001,24 @@ try:
             original_positions = [mathutils.Vector(v.co) for v in data]
             
             for j, v in enumerate(data):
-                # Subtle swan shape deformation
+                # Graceful swan shape deformation
                 # Graceful body stays compact
                 body_factor = math.exp(-(v.co.x**2 + v.co.y**2) * 0.6)
                 
                 # Elegant wings extend gracefully
-                wing_extend_y = math.exp(-abs(v.co.y) * 0.4) * v.co.y * 0.45
-                wing_extend_x = math.exp(-abs(v.co.x) * 0.6) * v.co.x * 0.35
+                wing_extend_y = math.exp(-abs(v.co.y) * 0.4) * v.co.y * 2.2
+                wing_extend_x = math.exp(-abs(v.co.x) * 0.6) * v.co.x * 1.8
                 
-                # Neck extends up gracefully
-                neck_extend = math.exp(-(v.co.x**2 + v.co.y**2) * 0.9) * v.co.z * 0.15
+                # Neck extends up gracefully (distinctive swan feature)
+                neck_extend = math.exp(-(v.co.x**2 + v.co.y**2) * 0.9) * v.co.z * 1.2
                 
-                # Apply subtle swan deformation
-                v.co.x += wing_extend_x  # Wings extend forward
-                v.co.y += wing_extend_y  # Wings spread wide
-                v.co.z += neck_extend  # Neck extends up
+                # Apply swan deformation - creates elegant swan
+                v.co.x += wing_extend_x  # Wings extend forward gracefully
+                v.co.y += wing_extend_y  # Wings spread wide with elegance
+                v.co.z += neck_extend * 1.5  # Distinctive long neck
                 
-                # Add subtle smooth curves
-                swan_curve = 0.15 * math.sin(v.co.y * 2.5) * math.cos(v.co.x * 2.0)
+                # Add smooth curves for elegant look
+                swan_curve = 0.8 * math.sin(v.co.y * 2.5) * math.cos(v.co.x * 2.0)
                 v.co.z += swan_curve
     
     print(f"✅ ABSTRACT RECOGNIZABLE shape keys created with cinematic storytelling")
