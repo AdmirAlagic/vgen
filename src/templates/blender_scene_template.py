@@ -2329,31 +2329,57 @@ def create_cinematic_camera_movement(story_structure):
     distance_constraint.use_transform_limit = True
     print("✅ Added distance constraint to maintain camera distance")
     
-    # Simplified camera positioning for guaranteed visibility - more vertical angle for Earth visibility
+    # Parse camera location from config
+    try:
+        # Parse the camera location string from config (format: "{'x': 0.0, 'y': -15.0, 'z': 80.0}")
+        import ast
+        camera_location_dict = ast.literal_eval("{camera_location}")
+        base_x = camera_location_dict.get('x', 0.0)
+        base_y = camera_location_dict.get('y', -15.0)
+        base_z = camera_location_dict.get('z', 80.0)
+        print(f"📍 Using camera location from config: ({base_x}, {base_y}, {base_z})")
+    except Exception as e:
+        print(f"⚠️ Error parsing camera location from config: {e}")
+        print("Using default camera location...")
+        base_x, base_y, base_z = 0.0, -15.0, 25.0
+    
+    # Parse camera rotation from config
+    try:
+        camera_rotation_dict = ast.literal_eval("{camera_rotation}")
+        base_rot_x = math.radians(camera_rotation_dict.get('x', 15.0))
+        base_rot_y = math.radians(camera_rotation_dict.get('y', 0.0))
+        base_rot_z = math.radians(camera_rotation_dict.get('z', 0.0))
+        print(f"🔄 Using camera rotation from config: ({math.degrees(base_rot_x):.1f}°, {math.degrees(base_rot_y):.1f}°, {math.degrees(base_rot_z):.1f}°)")
+    except Exception as e:
+        print(f"⚠️ Error parsing camera rotation from config: {e}")
+        print("Using default camera rotation...")
+        base_rot_x, base_rot_y, base_rot_z = math.radians(15), 0, 0
+    
+    # Camera positioning based on config with cinematic movement offsets
     camera_positions = {
         'act1': {
-            'start': (0, -15, 25),    # More vertical angle, higher position
-            'end': (3, -12, 25),      # Subtle movement with Earth in view
-            'rotation_start': (math.radians(15), 0, 0),  # Less steep angle for better Earth visibility
-            'rotation_end': (math.radians(15), 0, 0)
+            'start': (base_x, base_y, base_z),           # Start at config position
+            'end': (base_x + 3, base_y + 3, base_z),    # Subtle movement with Earth in view
+            'rotation_start': (base_rot_x, base_rot_y, base_rot_z),
+            'rotation_end': (base_rot_x, base_rot_y, base_rot_z)
         },
         'act2': {
-            'start': (3, -12, 25),    # Continue from Act 1
-            'end': (-3, -12, 25),     # Side-to-side movement with Earth visible
-            'rotation_start': (math.radians(15), 0, 0),
-            'rotation_end': (math.radians(15), 0, 0)
+            'start': (base_x + 3, base_y + 3, base_z),   # Continue from Act 1
+            'end': (base_x - 3, base_y + 3, base_z),     # Side-to-side movement with Earth visible
+            'rotation_start': (base_rot_x, base_rot_y, base_rot_z),
+            'rotation_end': (base_rot_x, base_rot_y, base_rot_z)
         },
         'act3': {
-            'start': (-3, -12, 25),   # Continue from Act 2
-            'end': (0, -15, 25),      # Return to center with Earth in view
-            'rotation_start': (math.radians(15), 0, 0),
-            'rotation_end': (math.radians(15), 0, 0)
+            'start': (base_x - 3, base_y + 3, base_z),  # Continue from Act 2
+            'end': (base_x, base_y, base_z),             # Return to config center position
+            'rotation_start': (base_rot_x, base_rot_y, base_rot_z),
+            'rotation_end': (base_rot_x, base_rot_y, base_rot_z)
         },
         'act4': {
-            'start': (0, -15, 25),    # Continue from Act 3
-            'end': (0, -15, 25),      # Stable final position with Earth visible
-            'rotation_start': (math.radians(15), 0, 0),
-            'rotation_end': (math.radians(15), 0, 0)
+            'start': (base_x, base_y, base_z),           # Continue from Act 3
+            'end': (base_x, base_y, base_z),              # Stable final position at config location
+            'rotation_start': (base_rot_x, base_rot_y, base_rot_z),
+            'rotation_end': (base_rot_x, base_rot_y, base_rot_z)
         }
     }
     
