@@ -185,6 +185,310 @@ class MaterialSystem:
             self.logger.error(f"Error creating lighting: {e}")
             log_error_to_file(str(e), self.error_log_path, "create_lighting", e)
     
+    def enhance_cinematic_lighting(self):
+        """Enhance lighting with professional 3-point cinematic setup.
+        
+        Returns:
+            dict: Dictionary of light objects
+        """
+        try:
+            lights = {}
+            
+            # 1. KEY LIGHT - Main illumination
+            key_light = bpy.context.scene.objects.get("KeyLight")
+            if key_light:
+                # Enhance with stronger, more directional light
+                key_light.data.type = 'AREA'
+                key_light.data.energy = 75.0  # Strong key light
+                key_light.data.size = 3.0
+                key_light.data.color = (1.0, 0.98, 0.9)  # Warm white
+                key_light.use_diffuse = True
+                key_light.use_specular = True
+                lights["key"] = key_light
+            
+            # 2. FILL LIGHT - Soft shadow fill
+            fill_light = bpy.context.scene.objects.get("FillLight")
+            if fill_light:
+                fill_light.data.energy = 35.0  # Softer fill
+                fill_light.data.size = 4.0
+                fill_light.data.color = (0.7, 0.8, 1.1)  # Cool blue fill
+                fill_light.use_diffuse = True
+                fill_light.use_specular = False
+                lights["fill"] = fill_light
+            
+            # 3. RIM LIGHT - Edge definition
+            rim_light = bpy.context.scene.objects.get("RimLight")
+            if rim_light:
+                rim_light.data.energy = 45.0  # Strong rim
+                rim_light.data.color = (0.8, 0.6, 1.2)  # Purple/cyan rim
+                rim_light.use_diffuse = False
+                rim_light.use_specular = True
+                lights["rim"] = rim_light
+            
+            self.logger.info("Enhanced cinematic 3-point lighting")
+            return lights
+            
+        except Exception as e:
+            self.logger.error(f"Error enhancing cinematic lighting: {e}")
+            log_error_to_file(str(e), self.error_log_path, "enhance_cinematic_lighting", e)
+            return {}
+    
+    def add_volumetric_lighting(self):
+        """Add volumetric lighting for atmospheric effects.
+        
+        Returns:
+            Light object: Volumetric light
+        """
+        try:
+            # Check for existing volumetric light
+            vol_light = bpy.context.scene.objects.get("VolumetricLight")
+            
+            if not vol_light:
+                # Create volumetric spot light
+                bpy.ops.object.light_add(type='SPOT', location=(5, -8, 5))
+                vol_light = bpy.context.active_object
+                vol_light.name = "VolumetricLight"
+            
+            vol_light.data.energy = 25.0
+            vol_light.data.size = 0.1  # Small for visible rays
+            vol_light.data.color = (0.5, 0.7, 1.0)  # Atmospheric blue
+            vol_light.data.spot_size = 1.0472  # 60 degrees
+            
+            # Enable volumetric shadows for god rays
+            vol_light.data.use_contact_shadow = True
+            vol_light.data.contact_shadow_bias = 0.001
+            
+            self.logger.info("Added volumetric lighting")
+            return vol_light
+            
+        except Exception as e:
+            self.logger.error(f"Error adding volumetric lighting: {e}")
+            log_error_to_file(str(e), self.error_log_path, "add_volumetric_lighting", e)
+            return None
+    
+    def animate_lighting_audio_response(self, audio_data):
+        """Animate lighting that responds to audio data.
+        
+        Args:
+            audio_data: Dictionary of audio features with frame-by-frame data
+        """
+        try:
+            self.logger.info("Animating lighting based on audio")
+            
+            # Get lights
+            key_light = bpy.context.scene.objects.get("KeyLight")
+            rim_light = bpy.context.scene.objects.get("RimLight")
+            vol_light = bpy.context.scene.objects.get("VolumetricLight")
+            
+            scene = bpy.context.scene
+            
+            # Animate based on audio intensity
+            for frame in range(0, self.config.total_frames):
+                scene.frame_set(frame)
+                
+                # Get combined audio intensity
+                combined_intensity = 0.0
+                if "kick_energy" in audio_data and frame < len(audio_data["kick_energy"]):
+                    combined_intensity = max(combined_intensity, audio_data["kick_energy"][frame])
+                if "bass_energy" in audio_data and frame < len(audio_data["bass_energy"]):
+                    combined_intensity = max(combined_intensity, audio_data["bass_energy"][frame])
+                
+                # Pulse key light intensity
+                if key_light:
+                    base_energy = 75.0
+                    pulse_factor = 1.0 + (combined_intensity * 0.3)  # 100% to 130%
+                    key_light.data.energy = base_energy * pulse_factor
+                    key_light.data.keyframe_insert(data_path="energy", frame=frame)
+                
+                # Pulse rim light more dramatically
+                if rim_light:
+                    base_energy = 45.0
+                    pulse_factor = 1.0 + (combined_intensity * 0.5)  # 100% to 150%
+                    rim_light.data.energy = base_energy * pulse_factor
+                    rim_light.data.keyframe_insert(data_path="energy", frame=frame)
+                
+                # Animate volumetric light
+                if vol_light:
+                    base_energy = 25.0
+                    pulse_factor = 0.7 + (combined_intensity * 0.6)  # 70% to 130%
+                    vol_light.data.energy = base_energy * pulse_factor
+                    vol_light.data.keyframe_insert(data_path="energy", frame=frame)
+            
+            self.logger.info("Lighting audio animation complete")
+            
+        except Exception as e:
+            self.logger.error(f"Error animating lighting: {e}")
+            log_error_to_file(str(e), self.error_log_path, "animate_lighting_audio_response", e)
+    
+    def set_color_temperature_changes(self, mood="dynamic", intensity=0.0):
+        """Set color temperature changes based on mood (warm/cool).
+        
+        Args:
+            mood: "warm", "cool", or "dynamic"
+            intensity: Intensity value for dynamic mood (0-1)
+        """
+        try:
+            key_light = bpy.context.scene.objects.get("KeyLight")
+            fill_light = bpy.context.scene.objects.get("FillLight")
+            
+            if mood == "warm":
+                # Warm tungsten light (3200K)
+                if key_light:
+                    key_light.data.color = (1.0, 0.95, 0.85)  # Warm white
+                if fill_light:
+                    fill_light.data.color = (0.9, 0.85, 0.75)  # Warm fill
+            elif mood == "cool":
+                # Cool daylight (5600K)
+                if key_light:
+                    key_light.data.color = (0.9, 0.95, 1.1)  # Cool white
+                if fill_light:
+                    fill_light.data.color = (0.7, 0.85, 1.2)  # Cool blue fill
+            else:  # dynamic
+                # Interpolate between warm and cool based on intensity
+                warm_rgb = (1.0, 0.95, 0.85)
+                cool_rgb = (0.9, 0.95, 1.1)
+                
+                if key_light:
+                    rgb = tuple(warm_rgb[i] + (cool_rgb[i] - warm_rgb[i]) * intensity for i in range(3))
+                    key_light.data.color = rgb
+                
+                if fill_light:
+                    fill_rgb = (0.9, 0.85, 0.75)
+                    cool_fill = (0.7, 0.85, 1.2)
+                    fill_rgb_final = tuple(fill_rgb[i] + (cool_fill[i] - fill_rgb[i]) * intensity for i in range(3))
+                    fill_light.data.color = fill_rgb_final
+            
+            self.logger.info(f"Color temperature set: mood={mood}, intensity={intensity:.2f}")
+            
+        except Exception as e:
+            self.logger.error(f"Error setting color temperature: {e}")
+            log_error_to_file(str(e), self.error_log_path, "set_color_temperature_changes", e)
+    
+    def accent_shadows_on_beat_drops(self, kick_energy_values, threshold=0.85):
+        """Accentuate shadows on beat drops.
+        
+        Args:
+            kick_energy_values: List of kick energy values per frame
+            threshold: Intensity threshold for beat drops
+        """
+        try:
+            # Reduce fill light on beat drops for dramatic shadows
+            fill_light = bpy.context.scene.objects.get("FillLight")
+            if not fill_light:
+                return
+            
+            scene = bpy.context.scene
+            base_fill_energy = fill_light.data.energy
+            
+            for frame in range(min(len(kick_energy_values), self.config.total_frames)):
+                scene.frame_set(frame)
+                
+                kick_val = kick_energy_values[frame] if frame < len(kick_energy_values) else 0.0
+                
+                if kick_val >= threshold:
+                    # Reduce fill light dramatically for hard shadows
+                    fill_light.data.energy = base_fill_energy * 0.3  # 70% reduction
+                else:
+                    fill_light.data.energy = base_fill_energy
+                
+                fill_light.data.keyframe_insert(data_path="energy", frame=frame)
+            
+            self.logger.info("Shadow accentuation animation complete")
+            
+        except Exception as e:
+            self.logger.error(f"Error accenting shadows: {e}")
+            log_error_to_file(str(e), self.error_log_path, "accent_shadows_on_beat_drops", e)
+    
+    def pulse_rim_light_with_music(self, audio_intensity_values):
+        """Pulse rim light intensity with music.
+        
+        Args:
+            audio_intensity_values: List of audio intensity values per frame
+        """
+        try:
+            rim_light = bpy.context.scene.objects.get("RimLight")
+            if not rim_light:
+                return
+            
+            scene = bpy.context.scene
+            base_rim_energy = rim_light.data.energy
+            
+            for frame in range(min(len(audio_intensity_values), self.config.total_frames)):
+                scene.frame_set(frame)
+                
+                intensity = audio_intensity_values[frame] if frame < len(audio_intensity_values) else 0.0
+                
+                # Strong pulsing: 50% to 150%
+                pulse_factor = 0.5 + (intensity * 1.0)
+                rim_light.data.energy = base_rim_energy * pulse_factor
+                
+                rim_light.data.keyframe_insert(data_path="energy", frame=frame)
+            
+            self.logger.info("Rim light pulsing animation complete")
+            
+        except Exception as e:
+            self.logger.error(f"Error pulsing rim light: {e}")
+            log_error_to_file(str(e), self.error_log_path, "pulse_rim_light_with_music", e)
+    
+    def create_light_isolation_effects(self, color=(1.0, 0.5, 1.0)):
+        """Create light isolation with colored spotlights.
+        
+        Args:
+            color: RGB color for isolated spotlight
+        """
+        try:
+            # Create colored spotlight for isolation
+            bpy.ops.object.light_add(type='SPOT', location=(0, -12, 4))
+            iso_light = bpy.context.active_object
+            iso_light.name = "IsolationLight"
+            
+            iso_light.data.energy = 30.0
+            iso_light.data.color = color
+            iso_light.data.spot_size = 0.7854  # 45 degrees - tight focus
+            iso_light.data.blend = 0.1  # Hard edge
+            iso_light.use_shadow = True
+            iso_light.use_diffuse = False
+            iso_light.use_specular = True
+            
+            self.logger.info(f"Created light isolation: color={color}")
+            return iso_light
+            
+        except Exception as e:
+            self.logger.error(f"Error creating light isolation: {e}")
+            log_error_to_file(str(e), self.error_log_path, "create_light_isolation_effects", e)
+            return None
+    
+    def enable_light_shafts_god_rays(self):
+        """Enable light shafts and god rays effect."""
+        try:
+            # Configure world/volume settings for god rays
+            world = bpy.context.scene.world
+            
+            if world.use_nodes:
+                # Add volume shader for atmospheric scattering
+                volume_output = None
+                for node in world.node_tree.nodes:
+                    if node.type == 'OUTPUT_WORLD':
+                        volume_output = node
+                        break
+                
+                if volume_output:
+                    # Create volume scattering
+                    volume_shader = world.node_tree.nodes.new(type='ShaderNodeVolumeScatter')
+                    volume_shader.inputs["Density"].default_value = 0.02  # Subtle atmosphere
+                    volume_shader.inputs["Color"].default_value = (0.3, 0.4, 0.6, 1.0)  # Blue haze
+                    
+                    world.node_tree.links.new(volume_shader.outputs["Volume"], volume_output.inputs["Volume"])
+            
+            # Enable volumetric rendering in render settings
+            bpy.context.scene.render.film_transparent = False
+            
+            self.logger.info("Enabled light shafts and god rays")
+            
+        except Exception as e:
+            self.logger.error(f"Error enabling light shafts: {e}")
+            log_error_to_file(str(e), self.error_log_path, "enable_light_shafts_god_rays", e)
+    
     def _create_metallic_energy_preset(self, mat, nodes, links):
         """Create Metallic Energy material preset - responds to kick energy.
         
@@ -606,6 +910,299 @@ class MaterialSystem:
             
         except Exception as e:
             self.logger.error(f"Error applying preset: {e}")
+    
+    def create_emission_color_cycling(self, nodes, links, spectral_centroid, frame_offset=0):
+        """Create emission color cycling based on spectral centroid.
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            spectral_centroid: Spectral centroid value (0-1)
+            frame_offset: Frame offset for animation
+        """
+        try:
+            # Get or create emission node
+            emission = nodes.get("Emission")
+            if not emission:
+                emission = nodes.new(type='ShaderNodeEmission')
+            
+            # Calculate hue based on spectral centroid
+            hue = (spectral_centroid + frame_offset * 0.01) % 1.0
+            
+            # Convert HSL to RGB
+            # Using a vibrant color range for music visualization
+            if 0.0 <= hue < 0.16:
+                # Red to orange
+                r, g, b = 1.0, hue * 6.25, 0.0
+            elif 0.16 <= hue < 0.33:
+                # Orange to yellow
+                r, g, b = 1.0, 1.0, (hue - 0.16) * 5.88
+            elif 0.33 <= hue < 0.5:
+                # Yellow to green
+                r, g, b = 1.0 - (hue - 0.33) * 5.88, 1.0, 0.0
+            elif 0.5 <= hue < 0.66:
+                # Green to cyan
+                r, g, b = 0.0, 1.0, (hue - 0.5) * 6.25
+            elif 0.66 <= hue < 0.83:
+                # Cyan to blue
+                r, g, b = 0.0, 1.0 - (hue - 0.66) * 5.88, 1.0
+            else:
+                # Blue to magenta to red
+                r, g, b = (hue - 0.83) * 5.88, 0.0, 1.0
+            
+            # Set emission color
+            emission.inputs["Color"].default_value = (r, g, b, 1.0)
+            
+            self.logger.debug(f"Emission color cycling: RGB({r:.2f}, {g:.2f}, {b:.2f})")
+            
+        except Exception as e:
+            self.logger.error(f"Error creating emission color cycling: {e}")
+    
+    def add_procedural_distortion(self, nodes, links, bass_energy):
+        """Add procedural distortion driven by bass frequencies.
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            bass_energy: Bass energy value (0-1)
+        """
+        try:
+            # Create noise texture for distortion
+            if not nodes.get("Noise_Distortion"):
+                noise = nodes.new(type='ShaderNodeTexNoise')
+                noise.location = (-400, -100)
+                noise.label = "Noise_Distortion"
+                noise.inputs["Scale"].default_value = 8.0
+                noise.inputs["Detail"].default_value = 10.0
+                noise.inputs["Roughness"].default_value = 0.7
+                noise.inputs["Distortion"].default_value = bass_energy * 5.0
+            
+            # Create mapping node for animated distortion
+            if not nodes.get("Mapping_Distortion"):
+                mapping = nodes.new(type='ShaderNodeMapping')
+                mapping.location = (-600, -100)
+                mapping.label = "Mapping_Distortion"
+                mapping.inputs["Location"].default_value[0] = bass_energy * 2.0
+                mapping.inputs["Location"].default_value[1] = bass_energy * 1.5
+            
+            # Create displacement node
+            if not nodes.get("Displacement"):
+                displacement = nodes.new(type='ShaderNodeDisplacement')
+                displacement.location = (200, 0)
+                displacement.label = "Displacement"
+                displacement.inputs["Height"].default_value = bass_energy * 0.5
+                displacement.inputs["Midlevel"].default_value = 0.0
+                displacement.inputs["Scale"].default_value = 1.0
+            
+            self.logger.debug(f"Procedural distortion: bass_energy={bass_energy:.2f}")
+            
+        except Exception as e:
+            self.logger.error(f"Error adding procedural distortion: {e}")
+    
+    def create_dynamic_normal_map(self, nodes, links, audio_intensity):
+        """Add dynamic normal map animation based on audio.
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            audio_intensity: Overall audio intensity (0-1)
+        """
+        try:
+            # Create noise for animated normal detail
+            if not nodes.get("Noise_Normal"):
+                noise = nodes.new(type='ShaderNodeTexNoise')
+                noise.location = (-300, 100)
+                noise.label = "Noise_Normal"
+                noise.inputs["Scale"].default_value = 50.0
+                noise.inputs["Detail"].default_value = 8.0 + audio_intensity * 4.0
+                noise.inputs["Roughness"].default_value = 0.5
+                noise.inputs["Distortion"].default_value = audio_intensity * 3.0
+            
+            # Create normal map node
+            if not nodes.get("NormalMap"):
+                normal_map = nodes.new(type='ShaderNodeNormalMap')
+                normal_map.location = (-100, 100)
+                normal_map.label = "NormalMap"
+                normal_map.inputs["Strength"].default_value = 0.5 + audio_intensity * 0.5
+            
+            # Connect to principled BSDF
+            principled = nodes.get("Principled BSDF")
+            if principled and noise:
+                # Use the noise as a normal input (simplified approach)
+                pass  # In Blender 4.5, we'd use a Bump or NormalMap node
+            
+            self.logger.debug(f"Dynamic normal map: intensity={audio_intensity:.2f}")
+            
+        except Exception as e:
+            self.logger.error(f"Error creating dynamic normal map: {e}")
+    
+    def create_warp_undulation_effect(self, nodes, links, bass_energy):
+        """Create warp/undulation effects based on audio.
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            bass_energy: Bass energy value (0-1)
+        """
+        try:
+            # Create wave texture for undulation
+            if not nodes.get("Wave_Undulation"):
+                wave = nodes.new(type='ShaderNodeTexWave')
+                wave.location = (-300, -200)
+                wave.label = "Wave_Undulation"
+                wave.wave_type = 'BANDS'
+                wave.inputs["Scale"].default_value = 5.0 + bass_energy * 10.0
+                wave.inputs["Distortion"].default_value = bass_energy * 3.0
+                wave.inputs["Detail"].default_value = 8.0
+                wave.inputs["Detail Scale"].default_value = 2.0
+            
+            # Create noise for complex warping
+            if not nodes.get("Noise_Warp"):
+                noise = nodes.new(type='ShaderNodeTexNoise')
+                noise.location = (-500, -200)
+                noise.label = "Noise_Warp"
+                noise.inputs["Scale"].default_value = 3.0
+                noise.inputs["Detail"].default_value = 15.0
+                noise.inputs["Roughness"].default_value = 0.8
+                noise.inputs["Distortion"].default_value = bass_energy * 8.0
+            
+            # Mix wave and noise for complex warping
+            if not nodes.get("Mix_Warp"):
+                mix = nodes.new(type='ShaderNodeMixRGB')
+                mix.location = (-100, -200)
+                mix.label = "Mix_Warp"
+                mix.blend_type = 'SCREEN'
+                mix.inputs["Fac"].default_value = 0.5
+            
+            self.logger.debug(f"Warp undulation: bass_energy={bass_energy:.2f}")
+            
+        except Exception as e:
+            self.logger.error(f"Error creating warp undulation effect: {e}")
+    
+    def add_caustic_patterns(self, nodes, links, audio_intensity):
+        """Add caustic patterns that pulse with music.
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            audio_intensity: Audio intensity (0-1)
+        """
+        try:
+            # Create voronoi texture for caustic-like patterns
+            if not nodes.get("Voronoi_Caustic"):
+                voronoi = nodes.new(type='ShaderNodeTexVoronoi')
+                voronoi.location = (-300, 200)
+                voronoi.label = "Voronoi_Caustic"
+                voronoi.voronoi_dimensions = '2D'
+                voronoi.feature = 'DISTANCE'
+                voronoi.distance = 'EUCLIDEAN'
+                voronoi.inputs["Scale"].default_value = 8.0 + audio_intensity * 12.0
+                voronoi.inputs["Smoothness"].default_value = 0.5
+            
+            # Create color ramp for caustic colors
+            if not nodes.get("ColorRamp_Caustic"):
+                color_ramp = nodes.new(type='ShaderNodeValToRGB')
+                color_ramp.location = (-100, 200)
+                color_ramp.label = "ColorRamp_Caustic"
+                
+                # Caustic-like gradient (white to cyan)
+                color_ramp.color_ramp.elements[0].position = 0.0
+                color_ramp.color_ramp.elements[0].color = (1.0, 1.0, 1.0, 1.0)  # White
+                color_ramp.color_ramp.elements[1].position = 0.3
+                color_ramp.color_ramp.elements[1].color = (0.5, 1.0, 1.5, 1.0)  # Cyan
+                color_ramp.color_ramp.elements[2].position = 0.7
+                color_ramp.color_ramp.elements[2].color = (0.2, 0.8, 1.2, 1.0)  # Blue
+                color_ramp.color_ramp.elements[3].position = 1.0
+                color_ramp.color_ramp.elements[3].color = (0.1, 0.5, 1.0, 1.0)  # Deep blue
+            
+            # Connect voronoi to color ramp
+            if voronoi and color_ramp:
+                links.new(voronoi.outputs["Distance"], color_ramp.inputs["Fac"])
+            
+            # Get principled BSDF and connect
+            principled = nodes.get("Principled BSDF")
+            if principled and color_ramp:
+                # Use color ramp output for emission
+                emission = nodes.get("Emission")
+                if emission:
+                    # Modulate emission strength with audio
+                    base_strength = emission.inputs["Strength"].default_value
+                    emission.inputs["Strength"].default_value = base_strength * (0.5 + audio_intensity * 0.5)
+            
+            self.logger.debug(f"Caustic patterns: intensity={audio_intensity:.2f}")
+            
+        except Exception as e:
+            self.logger.error(f"Error adding caustic patterns: {e}")
+    
+    def implement_color_cycling(self, nodes, links, dominant_frequency, hue_shift=0.0):
+        """Implement color-cycling based on dominant frequency.
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            dominant_frequency: Dominant frequency (normalized 0-1)
+            hue_shift: Additional hue shift (0-1)
+        """
+        try:
+            # Calculate combined hue
+            combined_hue = (dominant_frequency + hue_shift) % 1.0
+            
+            # Use colorsys for smooth color transitions
+            r, g, b = colorsys.hls_to_rgb(combined_hue, 0.7, 1.0)
+            
+            # Apply to principled BSDF
+            principled = nodes.get("Principled BSDF")
+            if principled:
+                principled.inputs["Base Color"].default_value = (r, g, b, 1.0)
+                
+                # Also modulate emission color
+                emission = nodes.get("Emission")
+                if emission:
+                    # Boost emission for music visualization
+                    emission_r, emission_g, emission_b = colorsys.hls_to_rgb(combined_hue, 0.9, 1.2)
+                    emission.inputs["Color"].default_value = (emission_r, emission_g, emission_b, 1.0)
+            
+            self.logger.debug(f"Color cycling: hue={combined_hue:.2f}, RGB({r:.2f}, {g:.2f}, {b:.2f})")
+            
+        except Exception as e:
+            self.logger.error(f"Error implementing color cycling: {e}")
+    
+    def add_chromatic_aberration(self, nodes, links, beat_intensity):
+        """Add chromatic aberration effects on strong beats.
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            beat_intensity: Beat intensity (0-1)
+        """
+        try:
+            # Create RGB split for chromatic aberration
+            if not nodes.get("RGB_Curves"):
+                # Use separate RGB channels for aberration effect
+                node_r = nodes.new(type='ShaderNodeRGB')
+                node_r.location = (-200, -300)
+                node_r.label = "RGB_Red"
+                
+                node_g = nodes.new(type='ShaderNodeRGB')
+                node_g.location = (-200, -400)
+                node_g.label = "RGB_Green"
+                
+                node_b = nodes.new(type='ShaderNodeRGB')
+                node_b.location = (-200, -500)
+                node_b.label = "RGB_Blue"
+            
+            # Mix channels with intensity-based offset
+            if not nodes.get("Mix_RGB"):
+                mix = nodes.new(type='ShaderNodeMixRGB')
+                mix.location = (0, -300)
+                mix.label = "Mix_Chromatic"
+                mix.blend_type = 'ADD'
+                mix.inputs["Fac"].default_value = beat_intensity * 0.3  # Subtle aberration
+            
+            self.logger.debug(f"Chromatic aberration: intensity={beat_intensity:.2f}")
+            
+        except Exception as e:
+            self.logger.error(f"Error adding chromatic aberration: {e}")
     
     def create_material_state_machine(self, obj, beat_drop_threshold=0.85, chorus_intensity=0.7):
         """Create material state machine for beat drops, verses, and chorus transitions.

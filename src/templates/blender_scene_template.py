@@ -2758,9 +2758,12 @@ try:
     bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=0.02)
     particle_instance = bpy.context.active_object
     particle_instance.name = "ParticleInstanceGlow"
+    
+    # IMPORTANT: Keep particle instance visible in viewport for particles to display
+    # The instance object itself won't be visible but particles will use it for rendering
     particle_instance.hide_render = True  # Hide the instanced object in final render
-    particle_instance.hide_set(True)  # Hide in viewport
-    particle_instance.hide_viewport = True
+    particle_instance.hide_viewport = False  # Keep visible for particle system to work
+    particle_instance.hide_set(False)  # Ensure visible in viewport
     
     # Add particle system for cinematic trailing effect
     particle_system = obj.modifiers.new(name="CinematicTrail", type='PARTICLE_SYSTEM')
