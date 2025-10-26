@@ -2482,6 +2482,9 @@ print("✅ ABSTRACT RECOGNIZABLE shape morphing animation created")
 # ============================================================================
 print("✨ Creating cinematic particle trail system...")
 
+# Initialize particle_instance to None for safety
+particle_instance = None
+
 try:
     # Add particle system for cinematic trailing effect with ERROR LOGGING
     import logging
@@ -2490,6 +2493,15 @@ try:
     
     # Setup error logging
     error_log_path = "{error_log_path}" if "error_log_path" in locals() else "/Users/admir/ai/Cube/logs/errors.log"
+    
+    # Create instance object for particle rendering (Blender 4.5 requires object instance for 'OBJECT' render type)
+    # Create a small icosphere to use as particle instance
+    bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=0.02)
+    particle_instance = bpy.context.active_object
+    particle_instance.name = "ParticleInstanceGlow"
+    particle_instance.hide_render = True  # Hide the instanced object in final render
+    particle_instance.hide_set(True)  # Hide in viewport
+    particle_instance.hide_viewport = True
     
     # Add particle system for cinematic trailing effect
     particle_system = obj.modifiers.new(name="CinematicTrail", type='PARTICLE_SYSTEM')
@@ -2505,7 +2517,8 @@ try:
     psys.settings.use_emit_random = True
     
     # Professional cinematic particle rendering
-    psys.settings.render_type = 'HALO'  # Glowing halo particles
+    # Blender 4.5: HALO render type removed, use OBJECT with emission material
+    psys.settings.render_type = 'OBJECT'  # Using object-based particles for glow
     psys.settings.use_emit_random = True
     psys.settings.physics_type = 'NO'  # No physics for trailing effect
     psys.settings.normal_factor = 0.5  # Spread particles
@@ -2521,16 +2534,19 @@ try:
             psys.settings.simplify_render = 1.0
     except (AttributeError, ValueError) as e:
         # Log error but continue - attribute doesn't exist in Blender 4.5
-        error_msg = f"{datetime.now()}: Particle system simplify error: {{e}}"
+        error_msg = f"{datetime.now()}: Particle system simplify error: {e}"
         try:
             with open(error_log_path, 'a') as f:
                 f.write(error_msg + "\\n")
         except:
             pass
     
-    # Halo-specific settings for glow
-    psys.settings.halo_size = 0.12
-    psys.settings.halo_energy = 1.5  # Bright glow
+    # Blender 4.5: halo_size and halo_energy removed
+    # Glow effect achieved through emission material instead
+    
+    # Set the instance object for 'OBJECT' render type
+    if particle_instance:
+        psys.settings.instance_object = particle_instance
     
     print("✅ Particle trail system created")
     
@@ -2560,6 +2576,13 @@ try:
         obj.data.materials.append(particle_mat)
     else:
         obj.data.materials[1] = particle_mat
+    
+    # Apply material to particle instance object (required for Blender 4.5 'OBJECT' render type)
+    if particle_instance:
+        if len(particle_instance.data.materials) == 0:
+            particle_instance.data.materials.append(particle_mat)
+        else:
+            particle_instance.data.materials[0] = particle_mat
     
     print("✅ Cinematic colorful particle material created")
     
@@ -2621,14 +2644,14 @@ except Exception as e:
     error_log_path = error_log_path if 'error_log_path' in locals() else "/Users/admir/ai/Cube/logs/errors.log"
     try:
         with open(error_log_path, 'a') as f:
-            f.write(f"{datetime.now()}: Particle system creation failed: {{e}}\\n")
+            f.write(f"{datetime.now()}: Particle system creation failed: {e}\\n")
             f.write(f"Traceback:\\n")
             import traceback
             f.write(traceback.format_exc())
             f.write("\\n")
     except:
         pass
-    print(f"⚠️ Could not create particle trail system: {{e}}")
+    print(f"⚠️ Could not create particle trail system: {e}")
     import traceback
     traceback.print_exc()
 
