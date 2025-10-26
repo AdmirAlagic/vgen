@@ -1686,6 +1686,89 @@ create_audio_responsive_color_animation()
 create_enhanced_audio_color_system()
 
 # ============================================================================
+# ADVANCED SPECTRAL COLOR SYSTEM - DIRECT FREQUENCY-TO-COLOR MAPPING
+# ============================================================================
+
+def create_spectral_color_animation():
+    """Create spectral color animation using direct frequency-to-color mapping."""
+    
+    print("🎨 Creating advanced spectral color animation system...")
+    
+    # Get material
+    if not obj.data.materials:
+        print("⚠️ No materials found on object")
+        return
+        
+    material = obj.data.materials[0]
+    
+    # Get color data from features
+    color_data = features_data.get('color_data', {})
+    
+    if not color_data or not color_data.get('red'):
+        print("⚠️ No color data available in audio analysis")
+        return
+    
+    # Get emission node
+    emission_node = material.node_tree.nodes.get("Emission")
+    principled_node = material.node_tree.nodes.get("Principled BSDF")
+    
+    if not emission_node and not principled_node:
+        print("⚠️ No emission or principled nodes found")
+        return
+    
+    print(f"✅ Color data found: {len(color_data['red'])} frames of spectral data")
+    
+    # Create color animation for each frame
+    for frame in range({total_frames} + 1):
+        scene.frame_set(frame)
+        
+        try:
+            # Get color values for this frame
+            frame_idx = min(frame, len(color_data['red']) - 1)
+            
+            red_val = color_data['red'][frame_idx]
+            green_val = color_data['green'][frame_idx]
+            blue_val = color_data['blue'][frame_idx]
+            emission_strength = color_data.get('emission_strength', [0.5] * {total_frames})[frame_idx]
+            
+            # Normalize color values to 0-1 range
+            red_norm = max(0.0, min(1.0, red_val))
+            green_norm = max(0.0, min(1.0, green_val))
+            blue_norm = max(0.0, min(1.0, blue_val))
+            
+            # Apply color to emission
+            if emission_node:
+                # Set emission color based on frequency
+                emission_node.inputs[0].default_value = (red_norm, green_norm, blue_norm, 1.0)
+                emission_node.inputs[0].keyframe_insert(data_path="default_value", frame=frame)
+                
+                # Set emission strength based on overall audio energy
+                # Scale emission strength from 10.0 (base) to 40.0 (peak)
+                emission_node.inputs[1].default_value = 10.0 + (emission_strength * 30.0)
+                emission_node.inputs[1].keyframe_insert(data_path="default_value", frame=frame)
+            
+            # Also apply color to Principled BSDF base color for subtle effect
+            if principled_node:
+                # Blend with emission color (less prominent)
+                principled_color = (
+                    min(1.0, red_norm * 0.3 + 0.5),
+                    min(1.0, green_norm * 0.3 + 0.5),
+                    min(1.0, blue_norm * 0.3 + 0.5)
+                )
+                principled_node.inputs["Base Color"].default_value = (*principled_color, 1.0)
+                principled_node.inputs["Base Color"].keyframe_insert(data_path="default_value", frame=frame)
+                
+        except Exception as e:
+            print(f"⚠️ Error setting spectral color at frame {frame}: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    print("✅ Advanced spectral color animation created")
+
+# Create spectral color animation
+create_spectral_color_animation()
+
+# ============================================================================
 # CINEMATIC STORYTELLING SYSTEM - 4-ACT STRUCTURE
 # ============================================================================
 

@@ -122,8 +122,12 @@ class EnhancedAudioAnalyzer:
         # Generate shape key specific data
         self._generate_shape_key_mappings()
         
+        # Generate spectral color mapping
+        self._generate_color_mapping_data()
+        
         print(f"✅ ULTRA-SMOOTH analysis complete: {self.duration:.2f}s, {self.total_frames} frames")
         print("🚀 Features: CONTINUOUS motion, FLOW smoothing, ORGANIC variation, DRIVER-ready data")
+        print("🎨 Features: SPECTRAL color mapping, EMISSION modulation, DYNAMIC color shifts")
         return self.features
     
     def _analyze_with_librosa(self):
@@ -611,6 +615,94 @@ class EnhancedAudioAnalyzer:
             'beat_video_frames': list(range(0, self.total_frames, 24)),
             'onset_frames': list(range(0, self.total_frames, 12))
         })
+        
+        # Generate color mapping for fallback
+        color_data = {
+            'red': [float(0.5 + 0.3 * math.sin(i * 0.1)) for i in range(self.total_frames)],
+            'green': [float(0.4 + 0.2 * math.sin(i * 0.15)) for i in range(self.total_frames)],
+            'blue': [float(0.3 + 0.4 * math.sin(i * 0.2)) for i in range(self.total_frames)],
+            'hue': [float(0.5 + 0.3 * math.sin(i * 0.12)) for i in range(self.total_frames)],
+            'saturation': [float(0.7 + 0.2 * math.sin(i * 0.08)) for i in range(self.total_frames)],
+            'value': [float(0.6 + 0.3 * math.sin(i * 0.1)) for i in range(self.total_frames)],
+            'emission_strength': [float(0.5 + 0.4 * math.sin(i * 0.1)) for i in range(self.total_frames)]
+        }
+        self.features['color_data'] = color_data
+    
+    def _generate_color_mapping_data(self):
+        """Generate spectral color mapping based on frequency analysis."""
+        print("🎨 Generating spectral color mapping data...")
+        
+        # Map frequency bands to color channels
+        color_data = {
+            'red': [],    # Driven by bass frequencies (kick, sub_bass)
+            'green': [],  # Driven by mid frequencies (snare, mid)
+            'blue': [],   # Driven by high frequencies (hihat, presence, brilliance)
+            'hue': [],    # Overall spectral hue
+            'saturation': [], # Audio energy saturation
+            'value': [],  # Audio amplitude value
+            'emission_strength': [] # Emission based on overall energy
+        }
+        
+        # Calculate color values for each frame
+        for frame in range(self.total_frames):
+            # Red channel - driven by bass
+            red_val = (
+                self.features['kick_energy'][frame] * 0.4 +
+                self.features['sub_bass_energy'][frame] * 0.3 +
+                self.features['bass_energy'][frame] * 0.2 +
+                self.features['mid_bass_energy'][frame] * 0.1
+            )
+            color_data['red'].append(red_val)
+            
+            # Green channel - driven by mids
+            green_val = (
+                self.features['snare_energy'][frame] * 0.3 +
+                self.features['mid_energy'][frame] * 0.25 +
+                self.features['low_mid_energy'][frame] * 0.2 +
+                self.features['spectral_centroid'][frame] * 0.15 +
+                self.features['spectral_contrast'][frame] * 0.1
+            )
+            color_data['green'].append(green_val)
+            
+            # Blue channel - driven by highs
+            blue_val = (
+                self.features['hihat_energy'][frame] * 0.3 +
+                self.features['presence_energy'][frame] * 0.25 +
+                self.features['brilliance_energy'][frame] * 0.2 +
+                self.features['ultra_high_energy'][frame] * 0.15 +
+                self.features['spectral_rolloff'][frame] * 0.1
+            )
+            color_data['blue'].append(blue_val)
+            
+            # Overall hue - spectral centroid normalized to HSV
+            hue_val = self.features['spectral_centroid'][frame] * 0.7 + self.features['spectral_flux'][frame] * 0.3
+            color_data['hue'].append(hue_val)
+            
+            # Saturation - based on spectral contrast and dynamics
+            sat_val = (
+                self.features['spectral_contrast'][frame] * 0.5 +
+                self.features['beat_strength'][frame] * 0.3 +
+                self.features['onset_strength'][frame] * 0.2
+            )
+            color_data['saturation'].append(sat_val)
+            
+            # Value - overall audio energy
+            val_value = (
+                self.features['rms_energy'][frame] * 0.6 +
+                self.features['spectral_flux'][frame] * 0.4
+            )
+            color_data['value'].append(val_value)
+            
+            # Emission strength - total energy for glow
+            emission_val = (
+                red_val * 0.35 +
+                green_val * 0.35 +
+                blue_val * 0.3
+            )
+            color_data['emission_strength'].append(emission_val)
+        
+        self.features['color_data'] = color_data
+        print("✅ Spectral color mapping generated")
     
     def _generate_shape_key_mappings(self):
         """Generate specific mappings for each shape key with enhanced audio responsiveness."""
@@ -797,6 +889,16 @@ class EnhancedAudioAnalyzer:
             # Add shape key values
             for shape_key_name in self.shape_key_data.keys():
                 frame_info[f'shape_key_{shape_key_name}'] = self.shape_key_data[shape_key_name][frame]
+            
+            # Add color data
+            if 'color_data' in self.features:
+                frame_info['color_red'] = self.features['color_data']['red'][frame]
+                frame_info['color_green'] = self.features['color_data']['green'][frame]
+                frame_info['color_blue'] = self.features['color_data']['blue'][frame]
+                frame_info['color_hue'] = self.features['color_data']['hue'][frame]
+                frame_info['color_saturation'] = self.features['color_data']['saturation'][frame]
+                frame_info['color_value'] = self.features['color_data']['value'][frame]
+                frame_info['color_emission_strength'] = self.features['color_data']['emission_strength'][frame]
             
             frame_data.append(frame_info)
         
