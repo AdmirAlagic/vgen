@@ -188,6 +188,20 @@
       "use_fast_gi": false,
       "caustics_reflective": true,
       "caustics_refractive": true
+    },
+    "ultra": {
+      "samples": 128,
+      "max_bounces": 12,
+      "use_denoising": true,
+      "use_adaptive_sampling": true,
+      "adaptive_threshold": 0.01,
+      "adaptive_min_samples": 32,
+      "tile_size": 256,
+      "use_persistent_data": true,
+      "denoiser": "OPTIX",
+      "use_fast_gi": false,
+      "caustics_reflective": true,
+      "caustics_refractive": true
     }
   },
   "morph_styles": {

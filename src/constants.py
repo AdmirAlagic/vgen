@@ -139,6 +139,21 @@ class QualityConfigs:
         caustics_refractive=True
     )
     
+    ULTRA = QualityConfig(
+        samples=128,  # Maximum samples for pristine quality
+        max_bounces=12,  # Deep bounces for realistic lighting
+        use_denoising=True,
+        use_adaptive_sampling=True,
+        tile_size=256,  # Smaller tiles for maximum quality
+        use_persistent_data=True,
+        adaptive_threshold=0.01,  # Ultra-low threshold for maximum detail
+        adaptive_min_samples=32,  # High minimum samples
+        denoiser="OPTIX",
+        use_fast_gi=False,  # Full GI for maximum realism
+        caustics_reflective=True,
+        caustics_refractive=True
+    )
+    
     @classmethod
     def get_config(cls, quality_level: str) -> QualityConfig:
         """Get quality configuration by level name."""
@@ -148,7 +163,8 @@ class QualityConfigs:
             'preview': cls.PREVIEW,
             'high': cls.HIGH,
             'cinematic': cls.CINEMATIC,
-            'broadcast': cls.BROADCAST
+            'broadcast': cls.BROADCAST,
+            'ultra': cls.ULTRA
         }
         return configs.get(quality_level.lower(), cls.CINEMATIC)
 

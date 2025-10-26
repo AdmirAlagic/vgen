@@ -573,9 +573,24 @@ try:
     scene.cycles.feature_set = 'SUPPORTED'
     scene.cycles.use_denoising = {use_denoising}
     scene.cycles.denoiser = 'OPTIX' if cprefs.compute_device_type == 'CUDA' else 'OPENIMAGEDENOISE'
-    scene.cycles.use_adaptive_sampling = True
-    scene.cycles.adaptive_threshold = 0.01
-    scene.cycles.adaptive_min_samples = 0
+    scene.cycles.use_adaptive_sampling = {use_adaptive_sampling}
+    scene.cycles.adaptive_threshold = {adaptive_threshold}
+    scene.cycles.adaptive_min_samples = {adaptive_min_samples}
+    
+    # Set samples and max bounces from quality level
+    scene.cycles.samples = {samples}
+    scene.cycles.max_bounces = {max_bounces}
+    
+    # Enable advanced features for ultra quality
+    if '{quality_level}' == 'ultra':
+        scene.cycles.use_fast_gi = False
+        scene.cycles.caustics_reflective = True
+        scene.cycles.caustics_refractive = True
+        print("✅ ULTRA quality: Full GI and caustics enabled for maximum realism")
+    else:
+        scene.cycles.use_fast_gi = {use_fast_gi}
+        scene.cycles.caustics_reflective = {caustics_reflective}
+        scene.cycles.caustics_refractive = {caustics_refractive}
     
     print("✅ GPU-optimized Cycles settings configured")
 except Exception as _gpu_e:

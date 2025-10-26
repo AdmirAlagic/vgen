@@ -392,13 +392,14 @@ def _try_direct_mp4_render(blender_cmd: str, blend_path: str, output_path: str, 
     """Render directly to MP4 using ULTRA-FAST optimized pipeline - NO PNG frames."""
     print("🚀 Rendering with ULTRA-FAST optimized pipeline (no temporary PNG frames)...")
     
-    # ULTRA FAST quality settings - optimized to absolute minimum for maximum speed
+    # ULTRA quality settings - best possible video settings for maximum quality
     quality_settings = {
-        'ultra_fast': {'samples': 1, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 1, 'tile_size': 16384, 'adaptive_threshold': 0.5},
-        'fast': {'samples': 4, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 2, 'tile_size': 8192, 'adaptive_threshold': 0.3}, 
-        'balanced': {'samples': 8, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 3, 'tile_size': 4096, 'adaptive_threshold': 0.2},
-        'high': {'samples': 16, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 4, 'tile_size': 2048, 'adaptive_threshold': 0.15},
-        'ultra': {'samples': 32, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 6, 'tile_size': 1024, 'adaptive_threshold': 0.1}
+        'ultra_fast': {'samples': 1, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 1, 'tile_size': 16384, 'adaptive_threshold': 0.5, 'adaptive_min_samples': 1},
+        'fast': {'samples': 4, 'resolution': (1920, 1080), 'crf': 'VERYLOW', 'preset': 'REALTIME', 'max_bounces': 2, 'tile_size': 8192, 'adaptive_threshold': 0.3, 'adaptive_min_samples': 2}, 
+        'balanced': {'samples': 8, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 3, 'tile_size': 4096, 'adaptive_threshold': 0.2, 'adaptive_min_samples': 4},
+        'high': {'samples': 16, 'resolution': (1920, 1080), 'crf': 'LOW', 'preset': 'FAST', 'max_bounces': 4, 'tile_size': 2048, 'adaptive_threshold': 0.15, 'adaptive_min_samples': 8},
+        'broadcast': {'samples': 64, 'resolution': (1920, 1080), 'crf': 'MEDIUM', 'preset': 'GOOD', 'max_bounces': 8, 'tile_size': 512, 'adaptive_threshold': 0.05, 'adaptive_min_samples': 16},
+        'ultra': {'samples': 128, 'resolution': (1920, 1080), 'crf': 'SLOW', 'preset': 'VERYGOOD', 'max_bounces': 12, 'tile_size': 256, 'adaptive_threshold': 0.01, 'adaptive_min_samples': 32}
     }
     
     settings = quality_settings.get(quality_mode, quality_settings['balanced'])
@@ -508,35 +509,41 @@ render.resolution_x = {settings['resolution'][0]}
 render.resolution_y = {settings['resolution'][1]}
 render.resolution_percentage = 100
 
-# ULTRA-FAST Cycles settings
+# ULTRA quality Cycles settings
 if scene.render.engine == 'CYCLES':
     cycles = scene.cycles
     
-    # Improved samples with better denoising
-    cycles.samples = {settings['samples']}  # Balanced samples for quality
-    cycles.max_bounces = {settings['max_bounces']}  # Better bounces for quality
+    # Maximum quality samples and bounces for ULTRA mode
+    cycles.samples = {settings['samples']}  # Maximum samples for pristine quality
+    cycles.max_bounces = {settings['max_bounces']}  # Deep bounces for realistic lighting
     
-    # Critical: Enable denoising for low samples
+    # Advanced denoising for ultra quality
     cycles.use_denoising = True
-    cycles.denoiser = 'OPENIMAGEDENOISE'  # Fast denoiser
+    cycles.denoiser = 'OPTIX'  # Best GPU denoiser
     
-    # Adaptive sampling for faster convergence
+    # Ultra-fine adaptive sampling for maximum detail
     cycles.use_adaptive_sampling = True
-    cycles.adaptive_threshold = {settings.get('adaptive_threshold', 0.1)}  # Balanced threshold
+    cycles.adaptive_threshold = {settings.get('adaptive_threshold', 0.01)}  # Ultra-low threshold
+    cycles.adaptive_min_samples = {settings.get('adaptive_min_samples', 32)}  # High minimum samples
     
-    # GPU memory optimizations
+    # GPU memory optimizations for quality
     cycles.debug_use_spatial_splits = True
     cycles.debug_use_hair_bvh = True
     cycles.use_auto_tile = True
-    cycles.tile_size = {settings['tile_size']}  # Large tiles for GPU
+    cycles.tile_size = {settings['tile_size']}  # Smaller tiles for maximum quality
     
     # Persist data across frames (critical for speed)
     cycles.use_persistent_data = True
     
-    # Disable expensive features
-    cycles.use_fast_gi = True  # Fast global illumination
-    cycles.caustics_reflective = False  # Disable caustics
-    cycles.caustics_refractive = False
+    # Enable all advanced features for maximum quality
+    if '{quality_mode}' == 'ultra':
+        cycles.use_fast_gi = False  # Full GI for maximum realism
+        cycles.caustics_reflective = True  # Enable caustics
+        cycles.caustics_refractive = True
+    else:
+        cycles.use_fast_gi = True  # Fast global illumination
+        cycles.caustics_reflective = False  # Disable caustics
+        cycles.caustics_refractive = False
     
     print(f"✅ Ultra-fast Cycles settings:")
     print(f"   Samples: {{cycles.samples}} (ultra-low)")
