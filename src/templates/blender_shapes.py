@@ -119,77 +119,123 @@ class ShapeKeySystem:
             sname: Shape key name
             data: Vertex data to deform
         """
-        # Vertical Spike - DRAMATIC upward spike with enhanced magnitude
+        # Vertical Spike - KICK ENERGY (Fast, spike-like deformation 4-8Hz)
+        # Task 3: Kick - Fast, sharp vertical spike response
         if "VerticalSpike" in sname:
             for v in data:
-                golden_scale = self.phi * 2.0  # Increased from 1.2
+                golden_scale = self.phi * 2.0
                 radial_falloff = math.sqrt(v.co.x**2 + v.co.y**2)
-                spike_intensity = math.exp(-radial_falloff * 0.3)  # Sharper center focus
+                spike_intensity = math.exp(-radial_falloff * 0.3)
+                
+                # KICK CHARACTER: Sharp, fast spike (4-8Hz response)
                 z_boost = spike_intensity * (2.0 + abs(v.co.z) * self.phi * 2.0)
-                v.co.z += z_boost * 12.0  # 2x increase from 6.0
-                # Pinch center dramatically
+                v.co.z += z_boost * 12.0  # Fast, explosive spike
+                
+                # Pinch center dramatically for sharp impact
                 pinch_factor = 0.7 - spike_intensity * 0.4
                 v.co.x *= pinch_factor
                 v.co.y *= pinch_factor
+                
+                # Add fast ripple detail (kick = sharp transient)
+                detail_freq = 20.0  # High frequency detail
+                detail = math.sin(v.co.x * detail_freq) * math.cos(v.co.y * detail_freq) * 0.1
+                v.co.z += detail
         
-        # Horizontal Wave - DRAMATIC horizontal waves with enhanced frequency
+        # Horizontal Wave - BASS ENERGY (Slow, large-scale deformation 0.5-2Hz)
+        # Task 3: Bass = Slow, flowing waves
         elif "HorizontalWave" in sname:
             for v in data:
-                wave_freq_x = self.phi * 2.5  # Increased from 1.5
-                wave_freq_z = self.phi * 3.0  # Increased for more complexity
-                # Multi-layered wave pattern
+                # BASS CHARACTER: Slow, large-scale waves (0.5-2Hz response)
+                wave_freq_x = self.phi * 0.8  # Low frequency for bass
+                wave_freq_z = self.phi * 1.0   # Large-scale waves
+                
+                # Multi-layered wave pattern for organic bass response
                 wave_1 = math.sin(v.co.x * wave_freq_x) * math.cos(v.co.z * wave_freq_z)
-                wave_2 = math.cos(v.co.x * wave_freq_x * 2.0) * math.sin(v.co.z * wave_freq_z * 1.5)
-                wave_strength = self.phi * 1.2 * (wave_1 * 0.7 + wave_2 * 0.3)  # Increased from 0.6
-                v.co.y += wave_strength * 12.0  # 2.4x increase from 5.0
-                v.co.x *= 1.0 + (self.phi - 1.0) * 4.0  # Increased from 2.5
-                # Add vertical variation
+                wave_2 = math.cos(v.co.x * wave_freq_x * 0.5) * math.sin(v.co.z * wave_freq_z * 0.5)
+                wave_strength = self.phi * 1.2 * (wave_1 * 0.7 + wave_2 * 0.3)
+                
+                v.co.y += wave_strength * 12.0  # Large, slow displacement
+                v.co.x *= 1.0 + (self.phi - 1.0) * 4.0
                 v.co.z += wave_strength * 2.0
+                
+                # Add slow secondary layer
+                secondary = math.sin(v.co.y * 0.5) * 2.0
+                v.co.x += secondary * 0.5
         
-        # Radial Explosion - DRAMATIC radial expansion with enhanced power
+        # Radial Explosion - SNARE ENERGY (Twisting, explosive deformation)
+        # Task 3: Snare = Twisting, explosive response
         elif "RadialExplosion" in sname:
             for v in data:
                 radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
-                # Enhanced explosion with sharper falloff
-                radial_strength = self.phi * 1.2 * math.exp(-radial_dist * 0.3)  # Increased from 0.6
+                angle = math.atan2(v.co.y, v.co.x)
+                
+                # SNARE CHARACTER: Twisting, explosive (sharp transient)
+                radial_strength = self.phi * 1.2 * math.exp(-radial_dist * 0.3)
                 
                 if radial_dist > 0.001:
                     direction_x = v.co.x / radial_dist
                     direction_y = v.co.y / radial_dist
-                    # Explode outward with rotation
-                    explosion_magnitude = radial_strength * 10.0  # 2x from 5.0
+                    
+                    # Explode outward
+                    explosion_magnitude = radial_strength * 10.0
                     v.co.x += direction_x * explosion_magnitude
                     v.co.y += direction_y * explosion_magnitude
-                    v.co.z += radial_strength * 5.0 * self.phi  # Increased from 3.0
+                    v.co.z += radial_strength * 5.0 * self.phi
+                    
+                    # Add twisting motion (snare characteristic)
+                    twist_amount = angle * 3.0 * radial_strength
+                    perp_x = -direction_y * twist_amount
+                    perp_y = direction_x * twist_amount
+                    v.co.x += perp_x
+                    v.co.y += perp_y
         
-        # Spiral Rise - DRAMATIC spiraling with enhanced complexity
+        # Spiral Rise - VOCAL ENERGY (Organic, flowing deformation)
+        # Task 3: Vocal = Organic, flowing, graceful motion
         elif "SpiralRise" in sname:
             for v in data:
                 angle = math.atan2(v.co.y, v.co.x)
-                # Multi-spiral pattern for complexity
-                spiral_1 = math.sin(angle * self.phi * 3.0 + v.co.z * self.phi * 4.0) * 0.7
-                spiral_2 = math.cos(angle * self.phi * 5.0 - v.co.z * self.phi * 2.0) * 0.3
-                spiral_strength = self.phi * 1.0 * (spiral_1 + spiral_2)  # Increased from 0.5
-                v.co.z += spiral_strength * 3.0  # Increased magnitude
-                # Add radial expansion with spiral
+                
+                # VOCAL CHARACTER: Organic, flowing spirals
+                # Slower, more graceful spiral (organic flow)
+                spiral_1 = math.sin(angle * self.phi * 2.0 + v.co.z * self.phi * 2.0) * 0.7
+                spiral_2 = math.cos(angle * self.phi * 1.5 - v.co.z * self.phi * 1.5) * 0.3
+                spiral_strength = self.phi * 1.2 * (spiral_1 + spiral_2)
+                
+                v.co.z += spiral_strength * 3.0
+                
+                # Add flowing expansion
                 radial_offset = spiral_strength * 2.0
                 v.co.x += math.cos(angle) * radial_offset
                 v.co.y += math.sin(angle) * radial_offset
+                
+                # Add secondary smooth layer for organic feel
+                smooth = math.sin(v.co.x * 1.0 + v.co.y * 1.0) * 0.8
+                v.co.z += smooth
         
-        # Organic Flow - DRAMATIC organic motion with enhanced smoothness
+        # Organic Flow - HIHAT ENERGY (Fine surface detail deformation 16-32Hz)
+        # Task 3: Hihat = Fine surface details, high-frequency response
         elif "OrganicFlow" in sname:
             for v in data:
-                # Multi-layered flow for organic feel
-                flow_x = self.phi * 0.7 * math.sin(v.co.x * self.phi * 3.0) * math.cos(v.co.y * self.phi * 3.0)  # 2x
-                flow_y = self.phi * 0.7 * math.cos(v.co.y * self.phi * 3.0) * math.sin(v.co.x * self.phi * 3.0)  # 2x
-                flow_z = self.phi * 0.7 * math.sin(v.co.z * self.phi * 3.0)  # 2x
-                # Add secondary detail layer
-                detail_scale = 3.0
-                detail_x = math.sin(v.co.x * detail_scale) * 0.2
-                detail_y = math.cos(v.co.y * detail_scale) * 0.2
-                v.co.x += (flow_x * self.phi + detail_x) * 2.0  # 2x overall
+                # HIHAT CHARACTER: Fine surface details (16-32Hz response)
+                # Primary flow pattern
+                flow_x = self.phi * 0.7 * math.sin(v.co.x * self.phi * 3.0) * math.cos(v.co.y * self.phi * 3.0)
+                flow_y = self.phi * 0.7 * math.cos(v.co.y * self.phi * 3.0) * math.sin(v.co.x * self.phi * 3.0)
+                flow_z = self.phi * 0.7 * math.sin(v.co.z * self.phi * 3.0)
+                
+                # Fine detail layer (hihat = high frequency details)
+                detail_scale = 12.0  # Increased frequency for fine detail
+                detail_x = math.sin(v.co.x * detail_scale) * 0.4  # Stronger detail
+                detail_y = math.cos(v.co.y * detail_scale) * 0.4
+                detail_z = math.sin(v.co.z * detail_scale * 2.0) * 0.3
+                
+                v.co.x += (flow_x * self.phi + detail_x) * 2.0
                 v.co.y += (flow_y * self.phi + detail_y) * 2.0
-                v.co.z += flow_z * self.phi * 2.0
+                v.co.z += (flow_z * self.phi + detail_z) * 2.0
+                
+                # Add extra high-frequency texture
+                texture_freq = 20.0
+                texture = math.sin(v.co.x * texture_freq) * math.cos(v.co.y * texture_freq) * 0.15
+                v.co.z += texture
         
         # Abstract Bird - DRAMATIC bird-like shape transformation
         elif "AbstractBird" in sname:
@@ -321,20 +367,28 @@ class ShapeKeySystem:
                     v.co.y += wing_sweep
                     v.co.z += abs(wing_sweep) * 0.5
         
-        # NebulaSwirl - DRAMATIC cosmic swirl (spectral-driven)
+        # NebulaSwirl - SPECTRAL ENERGY (Complexity/intensity-based deformation)
+        # Task 3: Spectral = Complex, intensity-based shapes
         elif "NebulaSwirl" in sname:
             for v in data:
                 radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
                 angle = math.atan2(v.co.y, v.co.x)
                 
-                # Cosmic swirl with multiple layers
+                # SPECTRAL CHARACTER: Complex, intensity-based (brightness drives complexity)
+                # Multiple layers for complexity
                 swirl_1 = math.sin(angle * self.phi * 2.0 + radial_dist * self.phi * 3.0) * 2.5
                 swirl_2 = math.cos(angle * self.phi * 3.0 - radial_dist * self.phi * 2.0) * 1.5
-                swirl_total = (swirl_1 * 0.6 + swirl_2 * 0.4)
+                swirl_3 = math.sin(angle * self.phi * 4.0) * math.cos(radial_dist * 5.0) * 1.0
+                swirl_total = (swirl_1 * 0.4 + swirl_2 * 0.3 + swirl_3 * 0.3)
                 
                 v.co.x += math.cos(angle) * swirl_total
                 v.co.y += math.sin(angle) * swirl_total
                 v.co.z += abs(swirl_total) * 0.8
+                
+                # Add intensity-based details
+                intensity = (swirl_total + 2.0) * 0.5
+                detail = math.sin(v.co.x * intensity * 3.0) * 0.3
+                v.co.y += detail
         
         # CosmicPulse - DRAMATIC pulsing cosmic transformation (RMS-driven)
         elif "CosmicPulse" in sname:

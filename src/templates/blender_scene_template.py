@@ -1568,6 +1568,169 @@ def create_audio_responsive_color_animation():
     
     print("✅ Audio-responsive color animation created")
 
+# Task 5: Audio-Reactive Material Deformation
+def create_audio_reactive_material_deformation():
+    """Create audio-driven material deformation with displacement maps and other properties"""
+    
+    print("🎨 Task 5: Creating audio-reactive material deformation...")
+    
+    # Get material
+    if not obj.data.materials:
+        print("⚠️ No materials found on object")
+        return
+        
+    material = obj.data.materials[0]
+    
+    if not material.node_tree:
+        print("⚠️ Material has no node tree")
+        return
+    
+    nodes = material.node_tree.nodes
+    links = material.node_tree.links
+    
+    # Task 5: Add displacement mapping driven by audio
+    print("🔧 Adding displacement map nodes...")
+    
+    # Create displacement nodes if they don't exist
+    displacement_node = nodes.get("Displacement")
+    if not displacement_node:
+        displacement_node = nodes.new(type='ShaderNodeDisplacement')
+        displacement_node.location = (600, -400)
+    
+    # Create audio-driven texture for displacement
+    texture_node = nodes.get("AudioDisplacement")
+    if not texture_node:
+        texture_node = nodes.new(type='ShaderNodeTexNoise')
+        texture_node.name = "AudioDisplacement"
+        texture_node.location = (200, -400)
+        texture_node.inputs["Scale"].default_value = 10.0
+        texture_node.inputs["Detail"].default_value = 15.0
+        texture_node.inputs["Roughness"].default_value = 0.5
+    
+    # Create mapping node
+    mapping_node = nodes.get("AudioMapping")
+    if not mapping_node:
+        mapping_node = nodes.new(type='ShaderNodeMapping')
+        mapping_node.name = "AudioMapping"
+        mapping_node.location = (0, -400)
+    
+    # Create coordinate node
+    coord_node = nodes.get("AudioCoord")
+    if not coord_node:
+        coord_node = nodes.new(type='ShaderNodeTexCoord')
+        coord_node.name = "AudioCoord"
+        coord_node.location = (-200, -400)
+    
+    # Task 5: Connect displacement nodes
+    try:
+        if "Generated" in coord_node.outputs and "Vector" in mapping_node.inputs:
+            links.new(coord_node.outputs["Generated"], mapping_node.inputs["Vector"])
+        if "Vector" in mapping_node.outputs and "Vector" in texture_node.inputs:
+            links.new(mapping_node.outputs["Vector"], texture_node.inputs["Vector"])
+        if "Height" in texture_node.outputs and "Height" in displacement_node.inputs:
+            links.new(texture_node.outputs["Fac"], displacement_node.inputs["Height"])
+        
+        # Get output node
+        output_node = nodes.get("Material Output")
+        if output_node and "Displacement" in output_node.inputs:
+            links.new(displacement_node.outputs["Displacement"], output_node.inputs["Displacement"])
+    except Exception as e:
+        print(f"⚠️ Could not connect displacement nodes: {e}")
+    
+    print("✅ Displacement nodes connected")
+    
+    # Task 5: Animate displacement based on audio
+    print("🎵 Animating displacement with audio data...")
+    
+    audio_data = features_data
+    kick_values = audio_data.get('kick_energy', [])
+    
+    for frame in range(0, {total_frames} + 1, 1):
+        scene.frame_set(frame)
+        
+        if frame < len(kick_values):
+            audio_value = kick_values[frame]
+        else:
+            audio_value = kick_values[-1] if kick_values else 0.5
+        
+        # Animate displacement strength based on kick
+        displacement_strength = 0.0 + (audio_value * 0.3)  # 0.0 to 0.3 displacement
+        
+        # Animate texture mapping based on audio
+        if mapping_node:
+            mapping_node.inputs["Location"].default_value[0] = audio_value * 0.5
+            mapping_node.inputs["Location"].default_value[1] = audio_value * 0.3
+            mapping_node.inputs["Location"].keyframe_insert(data_path="default_value", frame=frame, index=0)
+            mapping_node.inputs["Location"].keyframe_insert(data_path="default_value", frame=frame, index=1)
+        
+        # Animate texture scale based on audio
+        if texture_node:
+            base_scale = 10.0
+            audio_scale = audio_value * 5.0
+            texture_node.inputs["Scale"].default_value = base_scale + audio_scale
+            texture_node.inputs["Scale"].keyframe_insert(data_path="default_value", frame=frame)
+    
+    print("✅ Audio-reactive displacement animated")
+    
+    # Task 5: Add emission glow pulsing with audio
+    print("✨ Adding emission glow pulsing...")
+    
+    emission_node = nodes.get("Emission")
+    if emission_node:
+        for frame in range(0, {total_frames} + 1, 5):  # Every 5 frames for efficiency
+            scene.frame_set(frame)
+            
+            if frame < len(kick_values):
+                audio_value = kick_values[frame]
+            else:
+                audio_value = kick_values[-1] if kick_values else 0.5
+            
+            # Pulsing emission strength based on audio
+            base_emission = 40.0
+            pulse_emission = audio_value * 30.0
+            emission_strength = base_emission + pulse_emission
+            
+            emission_node.inputs["Strength"].default_value = emission_strength
+            emission_node.inputs["Strength"].keyframe_insert(data_path="default_value", frame=frame)
+    
+    print("✅ Emission glow pulsing created")
+    
+    # Task 5: Add procedural noise based on frequency bands
+    print("🎨 Adding frequency-based procedural noise...")
+    
+    noise_node = nodes.get("FrequencyNoise")
+    if not noise_node:
+        noise_node = nodes.new(type='ShaderNodeTexNoise')
+        noise_node.name = "FrequencyNoise"
+        noise_node.location = (0, -600)
+    
+    bass_values = audio_data.get('bass_energy', [])
+    
+    for frame in range(0, {total_frames} + 1, 3):  # Every 3 frames
+        scene.frame_set(frame)
+        
+        if frame < len(bass_values):
+            audio_value = bass_values[frame]
+        else:
+            audio_value = bass_values[-1] if bass_values else 0.5
+        
+        # Noise scale responds to bass
+        noise_scale = 5.0 + (audio_value * 10.0)
+        noise_node.inputs["Scale"].default_value = noise_scale
+        noise_node.inputs["Scale"].keyframe_insert(data_path="default_value", frame=frame)
+        
+        # Noise roughness responds to audio intensity
+        noise_rough = 0.3 + (audio_value * 0.4)
+        noise_node.inputs["Roughness"].default_value = noise_rough
+        noise_node.inputs["Roughness"].keyframe_insert(data_path="default_value", frame=frame)
+    
+    print("✅ Frequency-based procedural noise created")
+    
+    print("✅ Task 5: Audio-reactive material deformation complete!")
+
+# Call the new material deformation system
+create_audio_reactive_material_deformation()
+
 def create_enhanced_audio_color_system():
     """Create enhanced audio-responsive color system with advanced blending"""
     
