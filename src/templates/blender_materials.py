@@ -1204,6 +1204,162 @@ class MaterialSystem:
         except Exception as e:
             self.logger.error(f"Error adding chromatic aberration: {e}")
     
+    def add_fresnel_rim_lighting(self, nodes, links, rim_intensity=1.0):
+        """Add Fresnel-based rim lighting for edge glow.
+        
+        Task 9.1: Professional rim lighting effect
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            rim_intensity: Rim light intensity (0-1)
+        """
+        try:
+            self.logger.info("Adding Fresnel rim lighting")
+            
+            # Create or get Fresnel node
+            fresnel = nodes.get("Fresnel_Rim")
+            if not fresnel:
+                fresnel = nodes.new(type='ShaderNodeFresnel')
+                fresnel.label = "Fresnel_Rim"
+                fresnel.location = (-200, -400)
+            
+            # Create emission for rim glow
+            emission_rim = nodes.get("Emission_Rim")
+            if not emission_rim:
+                emission_rim = nodes.new(type='ShaderNodeEmission')
+                emission_rim.label = "Emission_Rim"
+                emission_rim.location = (0, -400)
+            
+            # Set rim properties
+            emission_rim.inputs["Strength"].default_value = rim_intensity * 10.0
+            emission_rim.inputs["Color"].default_value = (0.5, 0.8, 1.0, 1.0)  # Cool rim glow
+            
+            # Connect Fresnel to emission
+            links.new(fresnel.outputs["Fac"], emission_rim.inputs["Strength"])
+            
+            self.logger.info("Fresnel rim lighting added")
+            
+        except Exception as e:
+            self.logger.error(f"Error adding Fresnel rim: {e}")
+            log_error_to_file(str(e), self.error_log_path, "add_fresnel_rim_lighting", e)
+    
+    def add_uv_texture_warping(self, nodes, links, audio_data):
+        """UV-based texture warping for dynamic distortion.
+        
+        Task 9.2: Animated UV warping based on audio
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            audio_data: Audio data dictionary
+        """
+        try:
+            self.logger.info("Adding UV texture warping")
+            
+            # Create texture coordinate node
+            coord = nodes.get("Texture Coordinate_UV")
+            if not coord:
+                coord = nodes.new(type='ShaderNodeTexCoord')
+                coord.label = "Texture Coordinate_UV"
+                coord.location = (-800, 0)
+            
+            # Create mapping for UV manipulation
+            mapping = nodes.get("Mapping_UV")
+            if not mapping:
+                mapping = nodes.new(type='ShaderNodeMapping')
+                mapping.label = "Mapping_UV"
+                mapping.location = (-600, 0)
+                links.new(coord.outputs["UV"], mapping.inputs["Vector"])
+            
+            # Animate UV warping based on audio
+            if 'kick_energy' in audio_data:
+                kick_values = audio_data['kick_energy']
+                scene = bpy.context.scene
+                
+                for frame in range(self.config.total_frames):
+                    if frame < len(kick_values):
+                        scene.frame_set(frame)
+                        
+                        kick_val = kick_values[frame]
+                        
+                        # Warp UV coordinates based on kick
+                        offset_x = kick_val * 0.1
+                        offset_y = kick_val * 0.15
+                        
+                        mapping.inputs["Location"].default_value[0] = offset_x
+                        mapping.inputs["Location"].default_value[1] = offset_y
+                        mapping.inputs["Location"].keyframe_insert(data_path="default_value", frame=frame, index=0)
+                        mapping.inputs["Location"].keyframe_insert(data_path="default_value", frame=frame, index=1)
+            
+            self.logger.info("UV texture warping added")
+            
+        except Exception as e:
+            self.logger.error(f"Error adding UV warping: {e}")
+            log_error_to_file(str(e), self.error_log_path, "add_uv_texture_warping", e)
+    
+    def add_refraction_reflection_compositing(self, nodes, links, ior=1.5, roughness=0.05):
+        """Refraction/reflection compositing for realistic glass/mirror effects.
+        
+        Task 9.3: Advanced refraction/reflection blending
+        
+        Args:
+            nodes: Material node tree
+            links: Node tree links
+            ior: Index of refraction (1.0 = air, 1.5 = glass)
+            roughness: Surface roughness (0-1)
+        """
+        try:
+            self.logger.info("Adding refraction/reflection compositing")
+            
+            # Get principled BSDF
+            principled = nodes.get("Principled BSDF")
+            if not principled:
+                principled = nodes.new(type='ShaderNodeBsdfPrincipled')
+            
+            # Configure for glass/material effect
+            principled.inputs["IOR"].default_value = ior
+            principled.inputs["Roughness"].default_value = roughness
+            principled.inputs["Transmission Weight"].default_value = 1.0
+            
+            # Add glass BSDF for refraction
+            glass_shader = nodes.get("Glass BSDF")
+            if not glass_shader:
+                glass_shader = nodes.new(type='ShaderNodeBsdfGlass')
+                glass_shader.location = (100, 100)
+                glass_shader.inputs["IOR"].default_value = ior
+                glass_shader.inputs["Roughness"].default_value = roughness
+            
+            # Add glossy for reflection
+            glossy_shader = nodes.get("Glossy BSDF")
+            if not glossy_shader:
+                glossy_shader = nodes.new(type='ShaderNodeBsdfGlossy')
+                glossy_shader.location = (100, -100)
+                glossy_shader.inputs["Roughness"].default_value = roughness
+            
+            # Create mix shader for compositing
+            mix_refract = nodes.get("Mix_Refraction")
+            if not mix_refract:
+                mix_refract = nodes.new(type='ShaderNodeMixShader')
+                mix_refract.location = (300, 0)
+            
+            # Connect shaders for refraction/reflection compositing
+            links.new(glass_shader.outputs["BSDF"], mix_refract.inputs[1])
+            links.new(glossy_shader.outputs["BSDF"], mix_refract.inputs[2])
+            
+            # Blend based on viewing angle (using Fresnel)
+            fresnel_blend = nodes.get("Fresnel_Blend")
+            if not fresnel_blend:
+                fresnel_blend = nodes.new(type='ShaderNodeFresnel')
+                fresnel_blend.location = (100, 0)
+                links.new(fresnel_blend.outputs["Fac"], mix_refract.inputs["Fac"])
+            
+            self.logger.info("Refraction/reflection compositing added")
+            
+        except Exception as e:
+            self.logger.error(f"Error adding refraction/reflection: {e}")
+            log_error_to_file(str(e), self.error_log_path, "add_refraction_reflection_compositing", e)
+    
     def create_material_state_machine(self, obj, beat_drop_threshold=0.85, chorus_intensity=0.7):
         """Create material state machine for beat drops, verses, and chorus transitions.
         

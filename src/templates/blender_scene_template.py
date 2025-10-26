@@ -3575,6 +3575,95 @@ print("📖 Compelling cinematic storytelling")
 print("=" * 60)
 
 # ============================================================================
+# ADVANCED SYSTEMS INTEGRATION (Tasks 7-11)
+# ============================================================================
+
+print("🎬 Integrating advanced systems...")
+
+try:
+    # Import advanced systems (conditional to avoid errors if files don't exist)
+    try:
+        from blender_camera import CameraSystem
+        from blender_environment import EnvironmentSystem
+        from blender_materials import MaterialSystem
+        from blender_render_quality import RenderQualitySystem
+        from blender_postprocessing import PostProcessingSystem
+        from blender_multi_object import MultiObjectSystem
+        from blender_scene_config import SceneConfig
+        
+        # Create config instance
+        config = SceneConfig()
+        error_log_path = config.ERROR_LOG_PATH
+        
+        # Initialize advanced systems
+        camera_system = CameraSystem(config, logger, error_log_path)
+        environment_system = EnvironmentSystem(config, logger, error_log_path)
+        material_system = MaterialSystem(config, logger, error_log_path)
+        render_quality_system = RenderQualitySystem(config, logger, error_log_path)
+        postprocessing_system = PostProcessingSystem(config, logger, error_log_path)
+        multi_object_system = MultiObjectSystem(config, logger, error_log_path)
+        
+        # Get main objects
+        camera = scene.objects.get("Camera")
+        main_obj = scene.objects.get("OptimizedAudioShape")
+        
+        if camera and main_obj:
+            print("🎥 Applying advanced camera dynamics (Task 7)...")
+            try:
+                camera_system.setup_professional_camera_work(camera, main_obj, features_data)
+                print("✅ Camera dynamics applied")
+            except Exception as e:
+                print(f"⚠️ Camera system error: {e}")
+            
+            print("🌍 Applying environmental enhancement (Task 8)...")
+            try:
+                environment_system.setup_complete_environment(main_obj, features_data)
+                print("✅ Environmental enhancement applied")
+            except Exception as e:
+                print(f"⚠️ Environment system error: {e}")
+            
+            print("🎨 Applying advanced materials (Task 1-3)...")
+            try:
+                # Create dynamic material transitions
+                material_system.create_dynamic_material_transition(main_obj, "kick_energy", 0.8)
+                print("✅ Advanced materials applied")
+            except Exception as e:
+                print(f"⚠️ Material system error: {e}")
+            
+            print("📸 Applying render quality enhancements (Task 10)...")
+            try:
+                render_quality_system.setup_broadcast_quality(camera)
+                print("✅ Render quality enhancements applied")
+            except Exception as e:
+                print(f"⚠️ Render quality system error: {e}")
+            
+            print("🎬 Applying post-processing pipeline (Task 5)...")
+            try:
+                postprocessing_system.setup_complete_post_processing(features_data, main_obj)
+                print("✅ Post-processing pipeline applied")
+            except Exception as e:
+                print(f"⚠️ Post-processing system error: {e}")
+            
+            print("🎭 Applying multi-object system (Task 12)...")
+            try:
+                multi_object_system.setup_multi_object_system(main_obj, features_data)
+                print("✅ Multi-object system applied")
+            except Exception as e:
+                print(f"⚠️ Multi-object system error: {e}")
+                
+            print("✅ Advanced systems integrated")
+        else:
+            print("⚠️ Camera or main object not found, skipping advanced systems")
+            
+    except ImportError as e:
+        print(f"⚠️ Advanced systems not available: {e}")
+        print("   Continuing with basic scene generation...")
+        
+except Exception as e:
+    print(f"⚠️ Error during advanced system integration: {e}")
+    print("   Scene will be saved with basic features...")
+
+# ============================================================================
 # SAVE BLEND FILE
 # ============================================================================
 
