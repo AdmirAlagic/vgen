@@ -2761,22 +2761,28 @@ try:
     
     # IMPORTANT: Keep particle instance visible in viewport for particles to display
     # The instance object itself won't be visible but particles will use it for rendering
-    particle_instance.hide_render = True  # Hide the instanced object in final render
+    particle_instance.hide_render = False  # MUST be visible for particles to render in automatic renders!
     particle_instance.hide_viewport = False  # Keep visible for particle system to work
     particle_instance.hide_set(False)  # Ensure visible in viewport
+    particle_instance.scale = (0.5, 0.5, 0.5)  # Larger scale for automatic renders (was 0.3, still too small)
     
     # Add particle system for cinematic trailing effect
     particle_system = obj.modifiers.new(name="CinematicTrail", type='PARTICLE_SYSTEM')
     psys = obj.particle_systems[-1]
     psys.settings.frame_start = 1
-    psys.settings.frame_end = {total_frames}
-    psys.settings.lifetime = 15.0  # Particle lifetime - short for trailing effect
-    psys.settings.lifetime_random = 0.2
-    psys.settings.count = 250  # Initial particle count - will be animated by audio (150-400 range)
+    psys.settings.frame_end = {total_frames} + 100  # Extra frames to ensure particles emit throughout
+    psys.settings.lifetime = 50.0  # Longer lifetime for visible particles
+    psys.settings.lifetime_random = 0.3
+    psys.settings.count = 150  # Reduced count for better render performance without losing visibility
     
-    # Configure particles to emit from volume
-    psys.settings.emit_from = 'VOLUME'
+    # Configure particles to emit from surface
+    psys.settings.emit_from = 'FACE'  # Emit from faces (surface)
     psys.settings.use_emit_random = True
+    psys.settings.normal_factor = 0.3  # Emit slightly outward
+    
+    # IMPORTANT: Ensure particles start immediately
+    psys.settings.frame_start = 1
+    psys.settings.frame_end = {total_frames} + 10  # Extend beyond animation for safety
     
     # Professional cinematic particle rendering
     # Blender 4.5: HALO render type removed, use OBJECT with emission material
@@ -2786,8 +2792,9 @@ try:
     psys.settings.normal_factor = 0.5  # Spread particles
     
     # Cinematic particle appearance (will be animated by audio)
-    psys.settings.particle_size = 0.14  # Initial particle size (animates 0.08-0.20)
-    psys.settings.size_random = 0.3  # Variation for organic look
+    # IMPORTANT: Particle size MUST be large enough to render (0.5+ for visibility in Blender 4.5)
+    psys.settings.particle_size = 0.5  # LARGE size for automatic renders - critical for visibility!
+    psys.settings.size_random = 0.4  # Variation for natural look
     
     # Blender 4.5 compatibility - use_simplify no longer exists
     try:
@@ -2811,6 +2818,8 @@ try:
         psys.settings.instance_object = particle_instance
     
     print("✅ Particle trail system created")
+    print("⚠️  NOTE: OBJECT-type particles only display in Material Preview or Rendered viewport mode (not Wireframe/Solid)")
+    print("⚠️  Press Shift+Z to toggle Material Preview mode to see particles")
     
     # Create colorful particle material
     particle_mat = bpy.data.materials.new(name="CinematicParticleTrail")
