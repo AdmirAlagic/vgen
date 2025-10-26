@@ -1112,8 +1112,41 @@ try:
         ripple_mod.texture = tex2
     except Exception:
         pass
-
-    print("✅ Smooth continuous modifiers created")
+    
+    # Task 4: Add Wave modifier for rhythmic deformation
+    wave_mod = obj.modifiers.new(name="SmoothWave", type='WAVE')
+    wave_mod.time_offset = 0.0
+    wave_mod.speed = 0.0
+    wave_mod.height = 0.0
+    wave_mod.width = 2.0
+    wave_mod.speed_min = 0.0
+    wave_mod.lifetime = {total_frames}
+    
+    # Task 4: Add SimpleDeform for bend, taper, stretch
+    bend_mod = obj.modifiers.new(name="SmoothBend", type='SIMPLE_DEFORM')
+    bend_mod.deform_method = 'BEND'
+    bend_mod.angle = 0.0
+    bend_mod.factor = 0.0
+    try:
+        bend_mod.deform_axis = 'Z'
+        bend_mod.lock_x = False
+        bend_mod.lock_y = False
+    except Exception:
+        pass
+    
+    taper_mod = obj.modifiers.new(name="SmoothTaper", type='SIMPLE_DEFORM')
+    taper_mod.deform_method = 'TAPER'
+    taper_mod.factor = 0.0
+    try:
+        taper_mod.deform_axis = 'Z'
+    except Exception:
+        pass
+    
+    stretch_mod = obj.modifiers.new(name="SmoothStretch", type='SIMPLE_DEFORM')
+    stretch_mod.deform_method = 'STRETCH'
+    stretch_mod.factor = 0.0
+    
+    print("✅ Smooth continuous modifiers created (with new Wave, Bend, Taper, Stretch)")
     
 except Exception as e:
     print(f"❌ CRITICAL ERROR: Failed to create modifiers: {e}")
@@ -1123,6 +1156,10 @@ except Exception as e:
     twist_mod = None
     cast_mod = None
     ripple_mod = None
+    wave_mod = None
+    bend_mod = None
+    taper_mod = None
+    stretch_mod = None
 
 # Create optimized high-quality shape keys for realistic morphing
 print("🎭 Creating shape keys for audio morphing...")
@@ -2413,8 +2450,19 @@ for phase_idx, phase in enumerate(morph_phases):
         else:
             audio_value = audio_values[-1] if audio_values else 0.5
         
-        # Create very subtle base motion (audio-driven is primary)
-        base_motion = math.sin(2 * math.pi * t * phase["speed"] * phi * 0.1) * 0.05  # Very subtle base motion
+        # Task 2: Frequency-aware morph speed (slow for bass, fast for hihat)
+        # Determine morph speed based on audio frequency band
+        if "bass" in audio_band.lower() or "kick" in audio_band.lower():
+            morph_speed = phase["speed"] * 0.5  # Slow for bass/kick (0.5-1Hz)
+        elif "hihat" in audio_band.lower() or "high" in audio_band.lower():
+            morph_speed = phase["speed"] * 2.0  # Fast for hihat (16-32Hz)
+        elif "snare" in audio_band.lower():
+            morph_speed = phase["speed"] * 1.2  # Medium-fast for snare (4-8Hz)
+        else:
+            morph_speed = phase["speed"]  # Default speed for other bands
+        
+        # Create very subtle base motion with frequency-aware speed
+        base_motion = math.sin(2 * math.pi * t * morph_speed * phi * 0.1) * 0.05  # Very subtle base motion
         
         # CRITICAL: Ensure shape values go from 0.0 to 1.0 for MAXIMUM shape variation
         # Map audio_value (0.0-1.0) directly to shape key values (0.0-1.0)
@@ -2759,12 +2807,13 @@ def create_smooth_modifier_animation():
             else:
                 audio_value = kick_values[-1] if kick_values else 0.5
             
-            # Smooth base motion + audio response
-            base_displace = math.sin(2 * math.pi * t * 0.1) * 0.1  # Very gentle base motion
-            audio_displace = audio_value * 0.2  # Audio responsiveness
+            # Enhanced base motion + strong audio response
+            # Task 4: Increase Displace strength 0.2 → 1.0-3.0
+            base_displace = math.sin(2 * math.pi * t * 0.1) * 0.3  # Increased base motion
+            audio_displace = audio_value * 2.5  # DRAMATIC 12.5x increase from 0.2
             
             displace_strength = base_displace + audio_displace
-            disp_mod.strength = max(0.0, displace_strength)
+            disp_mod.strength = max(0.0, min(3.0, displace_strength))  # Clamp to 3.0
             disp_mod.keyframe_insert(data_path="strength")
         
         # AUDIO-RESPONSIVE Twist animation
@@ -2775,9 +2824,10 @@ def create_smooth_modifier_animation():
             else:
                 audio_value = bass_values[-1] if bass_values else 0.5
             
-            # Smooth base rotation + audio response
-            base_twist = math.sin(2 * math.pi * t * 0.1) * math.pi * 0.1  # Gentle base rotation
-            audio_twist = audio_value * math.pi * 0.3  # Audio-responsive rotation
+            # Enhanced base rotation + STRONG audio response
+            # Task 4: Increase Twist angle 0.3π → 1.0π-2.0π
+            base_twist = math.sin(2 * math.pi * t * 0.1) * math.pi * 0.3  # Increased base rotation
+            audio_twist = audio_value * math.pi * 1.8  # DRAMATIC 6x increase from 0.3π
             
             twist_mod.angle = base_twist + audio_twist
             twist_mod.keyframe_insert(data_path="angle")
@@ -2790,9 +2840,10 @@ def create_smooth_modifier_animation():
             else:
                 audio_value = kick_values[-1] if kick_values else 0.5
             
-            # Smooth base casting + audio response
-            base_cast = 0.3 + math.sin(2 * math.pi * t * 0.05) * 0.1  # Very gentle base casting
-            audio_cast = audio_value * 0.2  # Audio-responsive casting
+            # Enhanced base casting + STRONG audio response
+            # Task 4: Dramatically increase casting for better shape morphing
+            base_cast = 0.4 + math.sin(2 * math.pi * t * 0.05) * 0.2  # Increased base casting
+            audio_cast = audio_value * 0.6  # 3x increase from 0.2
             
             cast_mod.factor = max(0.0, min(1.0, base_cast + audio_cast))
             cast_mod.keyframe_insert(data_path="factor")
@@ -2806,12 +2857,75 @@ def create_smooth_modifier_animation():
             else:
                 audio_value = hihat_values[-1] if hihat_values else 0.5
             
-            # Smooth base rippling + audio response
-            base_ripple = math.sin(2 * math.pi * t * 0.1) * 0.1  # Gentle base rippling
-            audio_ripple = audio_value * 0.2  # Audio-responsive rippling
+            # Enhanced base rippling + STRONG audio response
+            # Task 4: Increase ripple strength for better surface detail
+            base_ripple = math.sin(2 * math.pi * t * 0.1) * 0.3  # Increased base rippling
+            audio_ripple = audio_value * 1.5  # 7.5x increase from 0.2
             
             ripple_mod.strength = max(0.0, base_ripple + audio_ripple)
             ripple_mod.keyframe_insert(data_path="strength")
+        
+        # Task 4: AUDIO-RESPONSIVE Wave animation
+        if wave_mod:
+            # Get audio value for this frame (use bass for wave motion)
+            if frame < len(bass_values):
+                audio_value = bass_values[frame]
+            else:
+                audio_value = bass_values[-1] if bass_values else 0.5
+            
+            # Wave motion driven by bass
+            base_wave_time = t * 0.5  # Slow wave
+            audio_wave_time = audio_value * t * 2.0  # Audio-responsive speed
+            wave_mod.time_offset = base_wave_time + audio_wave_time
+            
+            # Wave height responds to bass
+            base_wave_height = math.sin(2 * math.pi * t * 0.2) * 0.5
+            audio_wave_height = audio_value * 3.0
+            wave_mod.height = base_wave_height + audio_wave_height
+            wave_mod.keyframe_insert(data_path="height")
+            wave_mod.keyframe_insert(data_path="time_offset")
+        
+        # Task 4: AUDIO-RESPONSIVE Bend animation
+        if bend_mod:
+            # Get audio value for this frame
+            if frame < len(bass_values):
+                audio_value = bass_values[frame]
+            else:
+                audio_value = bass_values[-1] if bass_values else 0.5
+            
+            # Bending responds to bass
+            base_bend = math.sin(2 * math.pi * t * 0.15) * math.pi * 0.5
+            audio_bend = audio_value * math.pi * 1.5
+            bend_mod.angle = base_bend + audio_bend
+            bend_mod.keyframe_insert(data_path="angle")
+        
+        # Task 4: AUDIO-RESPONSIVE Taper animation
+        if taper_mod:
+            # Get audio value for this frame (use kick for taper)
+            if frame < len(kick_values):
+                audio_value = kick_values[frame]
+            else:
+                audio_value = kick_values[-1] if kick_values else 0.5
+            
+            # Tapering for dynamic shape
+            base_taper = math.sin(2 * math.pi * t * 0.1) * 0.3
+            audio_taper = audio_value * 0.8
+            taper_mod.factor = base_taper + audio_taper
+            taper_mod.keyframe_insert(data_path="factor")
+        
+        # Task 4: AUDIO-RESPONSIVE Stretch animation
+        if stretch_mod:
+            # Get audio value for this frame
+            if frame < len(kick_values):
+                audio_value = kick_values[frame]
+            else:
+                audio_value = kick_values[-1] if kick_values else 0.5
+            
+            # Stretching for explosive effects
+            base_stretch = math.sin(2 * math.pi * t * 0.2) * 0.5
+            audio_stretch = audio_value * 1.2
+            stretch_mod.factor = base_stretch + audio_stretch
+            stretch_mod.keyframe_insert(data_path="factor")
 
 create_smooth_modifier_animation()
 print("✅ Smooth modifier animation created")
