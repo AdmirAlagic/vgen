@@ -10,22 +10,12 @@ Audio-Driven Bird Shape Morphing:
 - EagleSoaring → responds to vocal_energy (strength and vision)
 - SwanElegance → responds to spectral_centroid (grace and beauty)
 
-Audio-Driven Modifiers:
-- Displace → responds to kick_energy (dynamic displacement)
-- Twist → responds to bass_energy (rotational dynamics)
-- Cast → responds to kick_energy (form projection)
-- Ripple → responds to hihat_energy (surface detail)
-
-Hybrid Motion System:
-- Base Motion: Gentle sine waves for continuous flow
-- Audio Response: Direct audio data driving shape intensity
-- Smooth Combination: Audio + base motion with smooth interpolation
-
 Enhanced features:
 - Smooth continuous bird morphing (no flickering)
 - No size changes (shape-only morphing)
 - Professional cinematic quality
 - GPU-optimized smooth interpolation
+- Robust error handling and logging
 """
 
 import bpy
@@ -36,30 +26,139 @@ import json
 import mathutils
 import colorsys
 import os
+import logging
+import traceback
+from datetime import datetime
 
-print("🎬 Creating SOPHISTICATED BIRD-BASED audio visualizer scene...")
+# ============================================================================
+# LOGGING SETUP
+# ============================================================================
+
+def setup_logging():
+    """Setup structured logging for debugging and error tracking."""
+    log_format = '%(asctime)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s'
+    
+    # Create logger
+    logger = logging.getLogger('blender_scene')
+    logger.setLevel(logging.DEBUG)
+    
+    # File handler
+    try:
+        fh = logging.FileHandler('/Users/admir/ai/Cube/logs/blender_scene.log', 'a')
+        fh.setLevel(logging.DEBUG)
+        fh.setFormatter(logging.Formatter(log_format))
+        logger.addHandler(fh)
+    except Exception as e:
+        pass  # File logging optional
+    
+    # Console handler
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    ch.setFormatter(logging.Formatter('%(message)s'))
+    logger.addHandler(ch)
+    
+    return logger
+
+logger = setup_logging()
+
+# ============================================================================
+# CONSTANTS
+# ============================================================================
+
+class SceneConstants:
+    """Centralized constants for scene generation."""
+    MAIN_OBJECT_NAME = "OptimizedAudioShape"
+    EARTH_OBJECT_NAME = "ImportedEarth"
+    PARTICLE_INSTANCE_NAME = "ParticleInstanceGlow"
+    
+    # Default positions
+    EARTH_POSITION = (0, 0, -15)
+    EARTH_SCALE = (8, 8, 8)
+    ATMO_SCALE = (0.1089, 0.1089, 0.1089)
+    CLOUDS_SCALE = (0.1045, 0.1045, 0.1045)
+    
+    # Shape key weights
+    SHAPE_KEY_BASE_INTENSITY = 0.5
+    SHAPE_KEY_MULTIPLIER = 2.0
+    
+    # Golden ratio
+    PHI = 1.61803398875
+    PHI_INV = 0.61803398875
+
+# ============================================================================
+# ERROR HANDLING
+# ============================================================================
+
+def log_error_to_file(error_msg: str, context: str = "", exception: Exception = None):
+    """Log error to file for debugging."""
+    try:
+        timestamp = datetime.now().isoformat()
+        error_log_path = "/Users/admir/ai/Cube/logs/errors.log"
+        
+        with open(error_log_path, 'a') as f:
+            f.write(f"{timestamp}: [{context}] {error_msg}\n")
+            if exception:
+                f.write(f"Exception: {type(exception).__name__}: {str(exception)}\n")
+                f.write(traceback.format_exc())
+                f.write("\n")
+    except Exception:
+        pass  # Error logging should not fail
+
+def safe_operation(operation_name: str, func, *args, **kwargs):
+    """Safely execute an operation with error handling."""
+    try:
+        logger.debug(f"Executing: {operation_name}")
+        result = func(*args, **kwargs)
+        logger.debug(f"Completed: {operation_name}")
+        return result
+    except Exception as e:
+        logger.error(f"Failed: {operation_name} - {str(e)}")
+        log_error_to_file(str(e), operation_name, e)
+        raise
+
+# ============================================================================
+# SCENE INITIALIZATION
+# ============================================================================
+
+logger.info("🎬 Creating SOPHISTICATED BIRD-BASED audio visualizer scene...")
 
 # Audio features passed from host
-features_data = json.loads("""{features_json}""")
+try:
+    features_data = json.loads("""{features_json}""")
+    logger.debug(f"Audio features loaded: {len(features_data)} keys")
+except Exception as e:
+    logger.error(f"Failed to parse audio features: {e}")
+    features_data = {}
+    log_error_to_file(str(e), "parse_audio_features", e)
 
-# Clear existing scene
-bpy.ops.object.select_all(action='DESELECT')
-bpy.ops.object.select_by_type(type='MESH')
-bpy.ops.object.delete(use_global=False)
+def clear_scene():
+    """Clear existing scene elements."""
+    try:
+        logger.debug("Clearing existing scene")
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.ops.object.select_by_type(type='MESH')
+        bpy.ops.object.delete(use_global=False)
+        
+        # Clear materials and meshes
+        for material in list(bpy.data.materials):
+            bpy.data.materials.remove(material)
+        for mesh in list(bpy.data.meshes):
+            bpy.data.meshes.remove(mesh)
+        for action in list(bpy.data.actions):
+            bpy.data.actions.remove(action)
+        
+        # Clear existing images and textures
+        for image in list(bpy.data.images):
+            bpy.data.images.remove(image)
+        for texture in list(bpy.data.textures):
+            bpy.data.textures.remove(texture)
+        
+        logger.debug("Scene cleared successfully")
+    except Exception as e:
+        logger.error(f"Error clearing scene: {e}")
+        log_error_to_file(str(e), "clear_scene", e)
 
-# Clear materials and meshes
-for material in bpy.data.materials:
-    bpy.data.materials.remove(material)
-for mesh in bpy.data.meshes:
-    bpy.data.meshes.remove(mesh)
-for action in bpy.data.actions:
-    bpy.data.actions.remove(action)
-
-# Clear existing images and textures
-for image in bpy.data.images:
-    bpy.data.images.remove(image)
-for texture in bpy.data.textures:
-    bpy.data.textures.remove(texture)
+clear_scene()
 
 # Set scene properties
 scene = bpy.context.scene
@@ -2535,8 +2634,8 @@ try:
     
     print("✅ Cinematic colorful particle material created")
     
-    # Create audio-responsive particle emission rate animation
-    print("🎵 Creating audio-responsive particle emission...")
+    # Create audio-responsive particle animation (Blender 4.5 compatible)
+    logger.info("🎵 Creating audio-responsive particle animation...")
     
     # Get audio data
     audio_data = features_data
@@ -2544,47 +2643,51 @@ try:
     bass_energy = audio_data.get('bass_energy', [])
     snare_energy = audio_data.get('snare_energy', [])
     
-    # Animate emission rate based on audio (subtle cinematic effect)
+    # Animate particle size based on audio (only animatable property in Blender 4.5)
     for frame in range(1, {total_frames} + 1):
         scene.frame_set(frame)
         
-        # Get current frame audio values
-        frame_idx = min(frame - 1, len(kick_energy) - 1) if kick_energy else 0
-        kick_val = kick_energy[frame_idx] if kick_energy and frame_idx < len(kick_energy) else 0.5
-        bass_val = bass_energy[min(frame_idx, len(bass_energy) - 1)] if bass_energy and frame_idx < len(bass_energy) else 0.5
-        snare_val = snare_energy[min(frame_idx, len(snare_energy) - 1)] if snare_energy and frame_idx < len(snare_energy) else 0.5
-        
-        # Calculate combined audio response
-        audio_response = (kick_val + bass_val + snare_val) / 3.0
-        
-        # Note: particle count is not animatable in Blender 4.5, so we animate
-        # particle size instead for audio responsiveness
-        particle_size = 0.08 + audio_response * 0.12  # Range: 0.08 to 0.20
-        psys.settings.particle_size = particle_size
-        psys.settings.keyframe_insert(data_path="particle_size", frame=frame)
-        
-        # Change particle color based on audio (blue to red transition)
-        # Kick = red, Bass = blue, Snare = purple
-        color_mix = (
-            0.2 + kick_val * 0.8,  # Red component
-            0.2 + bass_val * 0.6,    # Green component (stays low)
-            0.6 + snare_val * 0.4,  # Blue component (vibrant blue)
-            1.0
-        )
-        
-        # Update emission color for this frame
-        if len(obj.data.materials) > 1:
-            particle_mat = obj.data.materials[1]
-            if particle_mat.node_tree:
-                emission_node = None
-                for node in particle_mat.node_tree.nodes:
-                    if node.type == 'EMISSION':
-                        emission_node = node
-                        break
-                
-                if emission_node:
-                    emission_node.inputs["Color"].default_value = color_mix
-                    emission_node.inputs["Color"].keyframe_insert(data_path="default_value", frame=frame)
+        try:
+            # Get current frame audio values
+            frame_idx = min(frame - 1, len(kick_energy) - 1) if kick_energy else 0
+            kick_val = kick_energy[frame_idx] if kick_energy and frame_idx < len(kick_energy) else 0.5
+            bass_val = bass_energy[min(frame_idx, len(bass_energy) - 1)] if bass_energy and frame_idx < len(bass_energy) else 0.5
+            snare_val = snare_energy[min(frame_idx, len(snare_energy) - 1)] if snare_energy and frame_idx < len(snare_energy) else 0.5
+            
+            # Calculate combined audio response
+            audio_response = (kick_val + bass_val + snare_val) / 3.0
+            
+            # CRITICAL: Only animate 'particle_size' - other properties not animatable in Blender 4.5
+            # Note: 'count' and 'rate' cannot be animated in Blender 4.5
+            particle_size = 0.08 + audio_response * 0.12  # Range: 0.08 to 0.20
+            psys.settings.particle_size = particle_size
+            psys.settings.keyframe_insert(data_path="particle_size", frame=frame)
+            
+            # Change particle color based on audio (blue to red transition)
+            # Kick = red, Bass = blue, Snare = purple
+            color_mix = (
+                0.2 + kick_val * 0.8,  # Red component
+                0.2 + bass_val * 0.6,  # Green component (stays low)
+                0.6 + snare_val * 0.4,  # Blue component (vibrant blue)
+                1.0
+            )
+            
+            # Update emission color for this frame
+            if len(obj.data.materials) > 1:
+                particle_mat = obj.data.materials[1]
+                if particle_mat and particle_mat.node_tree:
+                    emission_node = None
+                    for node in particle_mat.node_tree.nodes:
+                        if node.type == 'EMISSION':
+                            emission_node = node
+                            break
+                    
+                    if emission_node:
+                        emission_node.inputs["Color"].default_value = color_mix
+                        emission_node.inputs["Color"].keyframe_insert(data_path="default_value", frame=frame)
+        except Exception as e:
+            logger.error(f"Error animating particles at frame {frame}: {e}")
+            log_error_to_file(f"Error animating particles at frame {frame}: {str(e)}", "particle_animation", e)
     
     print("✅ Audio-responsive particle trail animation created")
     
