@@ -809,13 +809,13 @@ try:
         color_ramp.color_ramp.elements.new(0.5)
     
     color_ramp.color_ramp.elements[0].position = 0.0
-    color_ramp.color_ramp.elements[0].color = (0.05, 0.02, 0.15, 1.0)  # Deep space purple
+    color_ramp.color_ramp.elements[0].color = (0.15, 0.0, 0.4, 1.0)  # Deep vibrant purple
     color_ramp.color_ramp.elements[1].position = 0.3
-    color_ramp.color_ramp.elements[1].color = (0.2, 0.1, 0.4, 1.0)    # Mid space purple
+    color_ramp.color_ramp.elements[1].color = (0.4, 0.2, 0.8, 1.0)   # Rich purple
     color_ramp.color_ramp.elements[2].position = 0.7
-    color_ramp.color_ramp.elements[2].color = (0.6, 0.3, 0.8, 1.0)    # Bright cosmic purple
+    color_ramp.color_ramp.elements[2].color = (0.9, 0.4, 1.2, 1.0)   # Bright electric purple
     color_ramp.color_ramp.elements[3].position = 1.0
-    color_ramp.color_ramp.elements[3].color = (1.0, 0.8, 1.4, 1.0)   # Brilliant cosmic magenta
+    color_ramp.color_ramp.elements[3].color = (1.2, 1.0, 1.6, 1.0)    # Ultra-bright magenta/cyan
 except Exception as e:
     print(f"⚠️ Error configuring color ramp: {e}")
     # Fallback to basic color ramp
@@ -842,8 +842,8 @@ principled_node.inputs["Anisotropic"].default_value = 0.4
 principled_node.inputs["Anisotropic Rotation"].default_value = 0.2
 
 # Enhanced emission settings for vibrant glowing effect
-emission_node.inputs["Strength"].default_value = 25.0  # Strong glowing effect
-emission_node.inputs["Color"].default_value = (0.2, 0.8, 1.2, 1.0)  # Vibrant electric blue
+emission_node.inputs["Strength"].default_value = 40.0  # ULTRA-STRONG glowing effect
+emission_node.inputs["Color"].default_value = (0.5, 1.0, 1.5, 1.0)  # ULTRA vibrant cyan/blue
 
 # Set up bump mapping for surface detail
 if 'bump_node' in locals():
@@ -2451,6 +2451,7 @@ if obj.data.shape_keys and obj.data.shape_keys.animation_data and obj.data.shape
             keyframe.interpolation = 'BEZIER'
             keyframe.handle_left_type = 'AUTO'
             keyframe.handle_right_type = 'AUTO'
+            # Smooth easing for fluid animation
             keyframe.easing = 'EASE_IN_OUT'
         fcurves_processed += 1
         if fcurves_processed <= 5:  # Show first 5 fcurves
@@ -2632,6 +2633,7 @@ if obj.data.shape_keys and obj.data.shape_keys.animation_data and obj.data.shape
             keyframe.interpolation = 'BEZIER'
             keyframe.handle_left_type = 'AUTO'
             keyframe.handle_right_type = 'AUTO'
+            # Smooth easing for fluid animation
             keyframe.easing = 'EASE_IN_OUT'
         fcurves_processed += 1
         if fcurves_processed <= 5:  # Show first 5 fcurves
@@ -2904,7 +2906,8 @@ def create_cinematic_camera_movement(story_structure):
                 keyframe.handle_left_type = 'AUTO'
                 keyframe.handle_right_type = 'AUTO'
                 # Add cinematic easing
-                keyframe.easing = 'EASE_IN_OUT'
+                # Smooth easing for fluid animation
+            keyframe.easing = 'EASE_IN_OUT'
     
     print("✅ Cinematic camera movement created with object tracking and Earth visibility")
 
@@ -2986,7 +2989,8 @@ def create_cinematic_object_movement(story_structure):
                 keyframe.handle_left_type = 'AUTO'
                 keyframe.handle_right_type = 'AUTO'
                 # Add cinematic easing
-                keyframe.easing = 'EASE_IN_OUT'
+                # Smooth easing for fluid animation
+            keyframe.easing = 'EASE_IN_OUT'
     
     print("✅ Cinematic object movement created - always moving towards Earth")
 
