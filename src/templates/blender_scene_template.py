@@ -2210,6 +2210,131 @@ else:
 
 print("✅ ABSTRACT RECOGNIZABLE shape morphing animation created")
 
+# ============================================================================
+# CINEMATIC PARTICLE TRAIL SYSTEM - Audio-Responsive
+# ============================================================================
+print("✨ Creating cinematic particle trail system...")
+
+try:
+    # Add particle system for cinematic trailing effect
+    particle_system = obj.modifiers.new(name="CinematicTrail", type='PARTICLE_SYSTEM')
+    psys = obj.particle_systems[-1]
+    psys.settings.frame_start = 1
+    psys.settings.frame_end = {total_frames}
+    psys.settings.lifetime = 15.0  # Particle lifetime - short for trailing effect
+    psys.settings.lifetime_random = 0.2
+    psys.settings.count = 300  # Total particles - subtle cinematic amount
+    
+    # Configure particles to emit from volume
+    psys.settings.emit_from = 'VOLUME'
+    psys.settings.use_emit_random = True
+    
+    # Professional cinematic particle rendering
+    psys.settings.render_type = 'HALO'  # Glowing halo particles
+    psys.settings.material_slot = 1  # Use material slot
+    psys.settings.use_emit_random = True
+    psys.settings.physics_type = 'NO'  # No physics for trailing effect
+    psys.settings.normal_factor = 0.5  # Spread particles
+    
+    # Cinematic particle appearance
+    psys.settings.particle_size = 0.12  # Glowing particle size
+    psys.settings.size_random = 0.4  # Variation for organic look
+    psys.settings.use_simplify = True
+    psys.settings.simplify_render = 1.0
+    
+    # Halo-specific settings for glow
+    psys.settings.halo_size = 0.12
+    psys.settings.halo_energy = 1.5  # Bright glow
+    
+    print("✅ Particle trail system created")
+    
+    # Create colorful particle material
+    particle_mat = bpy.data.materials.new(name="CinematicParticleTrail")
+    particle_mat.use_nodes = True
+    nodes_p = particle_mat.node_tree.nodes
+    links_p = particle_mat.node_tree.links
+    
+    # Clear default nodes
+    for node in nodes_p:
+        nodes_p.remove(node)
+    
+    # Create emission-based material for particles
+    output_p = nodes_p.new(type='ShaderNodeOutputMaterial')
+    emission_p = nodes_p.new(type='ShaderNodeEmission')
+    
+    # Vibrant particle colors - electric blue to red gradient
+    emission_p.inputs["Color"].default_value = (0.2, 0.8, 1.2, 1.0)  # Vibrant electric blue
+    emission_p.inputs["Strength"].default_value = 15.0  # Strong glow
+    
+    # Link emission to output
+    links_p.new(emission_p.outputs["Emission"], output_p.inputs["Surface"])
+    
+    # Assign material to object slot 1
+    if len(obj.data.materials) < 2:
+        obj.data.materials.append(particle_mat)
+    else:
+        obj.data.materials[1] = particle_mat
+    
+    print("✅ Cinematic colorful particle material created")
+    
+    # Create audio-responsive particle emission rate animation
+    print("🎵 Creating audio-responsive particle emission...")
+    
+    # Get audio data
+    audio_data = features_data
+    kick_energy = audio_data.get('kick_energy', [])
+    bass_energy = audio_data.get('bass_energy', [])
+    snare_energy = audio_data.get('snare_energy', [])
+    
+    # Animate emission rate based on audio (subtle cinematic effect)
+    for frame in range(1, {total_frames} + 1):
+        scene.frame_set(frame)
+        
+        # Get current frame audio values
+        frame_idx = min(frame - 1, len(kick_energy) - 1) if kick_energy else 0
+        kick_val = kick_energy[frame_idx] if kick_energy and frame_idx < len(kick_energy) else 0.5
+        bass_val = bass_energy[min(frame_idx, len(bass_energy) - 1)] if bass_energy and frame_idx < len(bass_energy) else 0.5
+        snare_val = snare_energy[min(frame_idx, len(snare_energy) - 1)] if snare_energy and frame_idx < len(snare_energy) else 0.5
+        
+        # Calculate combined audio response
+        audio_response = (kick_val + bass_val + snare_val) / 3.0
+        
+        # Emission rate responds to audio (subtle - base 0.3, peaks at 0.8)
+        emission_rate = 0.3 + audio_response * 0.5
+        
+        psys.settings.rate = emission_rate
+        psys.settings.keyframe_insert(data_path="rate", frame=frame)
+        
+        # Change particle color based on audio (blue to red transition)
+        # Kick = red, Bass = blue, Snare = purple
+        color_mix = (
+            0.2 + kick_val * 0.8,  # Red component
+            0.2 + bass_val * 0.6,    # Green component (stays low)
+            0.6 + snare_val * 0.4,  # Blue component (vibrant blue)
+            1.0
+        )
+        
+        # Update emission color for this frame
+        if len(obj.data.materials) > 1:
+            particle_mat = obj.data.materials[1]
+            if particle_mat.node_tree:
+                emission_node = None
+                for node in particle_mat.node_tree.nodes:
+                    if node.type == 'EMISSION':
+                        emission_node = node
+                        break
+                
+                if emission_node:
+                    emission_node.inputs["Color"].default_value = color_mix
+                    emission_node.inputs["Color"].keyframe_insert(data_path="default_value", frame=frame)
+    
+    print("✅ Audio-responsive particle trail animation created")
+    
+except Exception as e:
+    print(f"⚠️ Could not create particle trail system: {e}")
+    import traceback
+    traceback.print_exc()
+
 # Apply smooth interpolation to all shape key animations
 print("🎨 Applying smooth interpolation to prevent flickering...")
 print(f"🔍 DEBUG: obj.data.shape_keys exists: {obj.data.shape_keys is not None}")
