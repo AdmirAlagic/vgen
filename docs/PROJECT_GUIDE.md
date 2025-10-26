@@ -72,9 +72,12 @@ Cube/
 │   └── temp/                        # Temporary files
 ├── logs/                             # Log files
 ├── tests/                           # Test scripts
-├── scene_config.json               # Scene configuration
 ├── README.md                        # Quick start guide
 └── USAGE.md                         # Detailed usage guide
+
+src/
+├── scene_config.json               # Scene configuration
+└── ...
 ```
 
 ## Installation
@@ -212,7 +215,7 @@ FFmpeg Encoding → Final Video (.mp4)
 
 ### Scene Configuration File
 
-Location: `scene_config.json`
+Location: `src/scene_config.json`
 
 **Key Sections**:
 - **camera**: Position (x, y, z), rotation, FOV, lens, animation settings
@@ -385,7 +388,7 @@ output/
 - Use `high` or `ultra` presets
 - Ensure audio file has good quality
 - Check Blender GPU settings
-- Increase sample count in scene_config.json
+- Increase sample count in src/scene_config.json
 
 **Memory Issues**:
 - Use `ultra_fast` or `fast` presets
@@ -400,7 +403,7 @@ output/
 - Falls back to CPU automatically if GPU unavailable
 
 **Configuration Not Loading**:
-- Verify `scene_config.json` exists in project root
+- Verify `src/scene_config.json` exists
 - Check JSON syntax for errors
 - Ensure read/write permissions
 - System uses default values if configuration missing
@@ -457,8 +460,8 @@ Check log files for detailed information:
 
 ### Adding New Features
 
-1. **New Morph Style**: Add style configuration to `scene_config.json`
-2. **New Quality Preset**: Add quality_level settings to scene_config.json
+1. **New Morph Style**: Add style configuration to `src/scene_config.json`
+2. **New Quality Preset**: Add quality_level settings to src/scene_config.json
 3. **New Shape**: Implement shape function in `blender_shapes.py`
 4. **New Material**: Add material shader in `blender_materials.py`
 
@@ -487,12 +490,12 @@ python test_ultimate_blender_45.py
 ### Workflow
 1. Test with short audio clip using `ultra_fast`
 2. Review preview output
-3. Adjust morph style in scene_config.json if needed
+3. Adjust morph style in src/scene_config.json if needed
 4. Generate final with production quality preset
 5. Review and iterate if necessary
 
 ### Scene Customization
-- Modify camera distance in `scene_config.json` for different framing
+- Modify camera distance in `src/scene_config.json` for different framing
 - Adjust lighting colors for mood
 - Change material settings for different looks
 - Experiment with morph styles for variety

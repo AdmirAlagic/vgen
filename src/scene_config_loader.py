@@ -214,7 +214,7 @@ def load_scene_config(config_path: Optional[str] = None, preset: Optional[str] =
     """
     # Default config path
     if config_path is None:
-        config_path = os.path.join(os.path.dirname(__file__), '..', 'scene_config.json')
+        config_path = os.path.join(os.path.dirname(__file__), 'scene_config.json')
     
     # Load JSON configuration
     try:
@@ -255,7 +255,7 @@ def save_scene_config(scene_config: SceneConfig, output_path: str = None):
         output_path: Path to save the configuration (optional)
     """
     if output_path is None:
-        output_path = os.path.join(os.path.dirname(__file__), '..', 'scene_config.json')
+        output_path = os.path.join(os.path.dirname(__file__), 'scene_config.json')
     
     # Convert dataclass to dictionary
     config_data = {

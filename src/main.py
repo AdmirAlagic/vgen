@@ -41,7 +41,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler('audioblender.log', mode='a')
+        logging.FileHandler('logs/audioblender.log', mode='a')
     ]
 )
 logger = logging.getLogger(__name__)
@@ -314,7 +314,7 @@ def main() -> int:
     except Exception as e:
         logger.error(f"Unexpected error: {e}", exc_info=True)
         print(f"❌ Unexpected error: {e}")
-        print("💡 Check the log file 'audioblender.log' for more details")
+        print("💡 Check the log file 'logs/audioblender.log' for more details")
         return 1
 
 
