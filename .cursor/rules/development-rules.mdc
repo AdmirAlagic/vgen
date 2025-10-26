@@ -12,7 +12,8 @@ alwaysApply: true
 - When i ask for fix or improvement do not generate new "optimized", "enchanded" version of file but update existign files in src/structure
 - Blender 4.5 is used for rendering, make sure to optimize script generating / scene generating for version 4.5
 - when some  feature is failing or error repeating, don't downgrade end quality, but search for better solution
-- prevent this error when writing pythong scripts: "I can see the issue! There are multiple f-string formatting errors in the exception handlers. The error ❌ Error: {e} indicates that the f-string is using {{e}} instead of {e}. " - optimize for blender 4.5
+- prevent this error when writing pythong scripts: "I can see the issue! There are multiple f-string formatting errors in the exception handlers. The error ❌ Error: {e} indicates that the f-string is using {{e}} instead of {e}. " - optimize for blender 4.5.3 LTS
 - CRITICAL: Always use single braces {variable} in f-strings, NEVER double braces {{variable}} - this causes SyntaxError in Blender scripts
 - When writing f-strings: f"Error: {e}" is CORRECT, f"Error: {{e}}" is WRONG and causes syntax errors
 - critical variables are configured (example camera location and distance) in scene_config.json and should be used by app
+- keep any output errors while executing in file errors.log and check in  that file for last error messages when I type "fix errors"
