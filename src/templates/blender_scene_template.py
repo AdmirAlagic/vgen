@@ -410,129 +410,126 @@ try:
         
         print("✅ Professional Earth material created")
     
+    # Create smooth rotation animation for Earth (ALWAYS runs, regardless of material setup)
+    print("🔄 Creating smooth Earth rotation animation...")
+    print("🌍 Earth, atmosphere, and clouds will rotate together - they do NOT respond to audio")
+    print("🎵 Only the main object (OptimizedAudioShape) responds to audio")
     
-        # Create smooth rotation animation for Earth
-        print("🔄 Creating smooth Earth rotation animation...")
-        print("🌍 Earth, atmosphere, and clouds will rotate together - they do NOT respond to audio")
-        print("🎵 Only the main object (OptimizedAudioShape) responds to audio")
+    # Get all Earth-related mesh objects to rotate together
+    earth_meshes = []
+    for obj in bpy.context.scene.objects:
+        if obj.name in ['ImportedEarth', 'atmo', 'clouds'] and obj.type == 'MESH':
+            earth_meshes.append(obj)
+            print(f"🌍 Added {obj.name} to rotation")
+    
+    print(f"🔄 Found {len(earth_meshes)} Earth objects to rotate together")
+    
+    # Create realistic Earth rotation for ALL Earth objects (earth, atmo, clouds)
+    for frame in range(0, {total_frames} + 1, 5):  # Keyframe every 5 frames
+        scene.frame_set(frame)
+        t = frame / {fps}
         
-        # Get all Earth-related mesh objects to rotate together
-        earth_meshes = []
-        for obj in bpy.context.scene.objects:
-            if obj.name in ['ImportedEarth', 'atmo', 'clouds'] and obj.type == 'MESH':
-                earth_meshes.append(obj)
-                print(f"🌍 Added {obj.name} to rotation")
+        # Realistic Earth rotation (one full rotation every 60 seconds for visibility)
+        rotation_speed = 0.1  # radians per second
+        rotation_angle = t * rotation_speed
         
-        print(f"🔄 Found {len(earth_meshes)} Earth objects to rotate together")
-        
-        # Create realistic Earth rotation for ALL Earth objects (earth, atmo, clouds)
-        for frame in range(0, {total_frames} + 1, 5):  # Keyframe every 5 frames
-            scene.frame_set(frame)
-            t = frame / {fps}
-            
-            # Realistic Earth rotation (one full rotation every 60 seconds for visibility)
-            rotation_speed = 0.1  # radians per second
-            rotation_angle = t * rotation_speed
-            
-            # Rotate ALL Earth objects together - same rotation for earth, atmo, and clouds
-            for earth_obj in earth_meshes:
-                earth_obj.rotation_euler = (rotation_angle, 0, 0)
-                earth_obj.keyframe_insert(data_path="rotation_euler")
-            
-        
-        # Apply smooth Bezier interpolation to ALL Earth objects
+        # Rotate ALL Earth objects together - same rotation for earth, atmo, and clouds
         for earth_obj in earth_meshes:
-            if earth_obj.animation_data and earth_obj.animation_data.action:
-                for fcurve in earth_obj.animation_data.action.fcurves:
-                    for kf in fcurve.keyframe_points:
-                        kf.interpolation = 'BEZIER'
-                        kf.handle_left_type = 'AUTO_CLAMPED'
-                        kf.handle_right_type = 'AUTO_CLAMPED'
+            earth_obj.rotation_euler = (rotation_angle, 0, 0)
+            earth_obj.keyframe_insert(data_path="rotation_euler")
         
-        
-        print("✅ Smooth Earth rotation animation created - Earth, atmo, and clouds rotate together")
     
-        # Add professional lighting for Earth
-        print("💡 Setting up professional Earth lighting...")
-        
-        # Add main key light for Earth (brighter and larger)
-        bpy.ops.object.light_add(type='AREA', location=(40, -30, -30))
-        earth_key_light = bpy.context.active_object
-        earth_key_light.name = "EarthKeyLight"
-        earth_key_light.data.energy = 150.0  # Increased energy
-        earth_key_light.data.size = 15.0  # Larger light source
-        earth_key_light.data.color = (1.0, 1.0, 0.95)  # Warm white
-        
-        # Point key light at Earth
-        earth_key_light.rotation_euler = (math.radians(20), math.radians(30), 0)
-        
-        # Add rim light for Earth (enhanced)
-        bpy.ops.object.light_add(type='AREA', location=(30, -20, -40))
-        earth_rim_light = bpy.context.active_object
-        earth_rim_light.name = "EarthRimLight"
-        earth_rim_light.data.energy = 150.0  # Increased energy
-        earth_rim_light.data.size = 8.0  # Larger light source
-        earth_rim_light.data.color = (0.9, 0.95, 1.0)  # Cool white
-        
-        # Point rim light at Earth
-        earth_rim_light.rotation_euler = (math.radians(30), math.radians(45), 0)
-        
-        # Add fill light for Earth (enhanced)
-        bpy.ops.object.light_add(type='AREA', location=(-25, 15, -35))
-        earth_fill_light = bpy.context.active_object
-        earth_fill_light.name = "EarthFillLight"
-        earth_fill_light.data.energy = 75.0  # Increased energy
-        earth_fill_light.data.size = 12.0  # Larger light source
-        earth_fill_light.data.color = (0.8, 0.9, 1.0)  # Cool blue
-        
-        # Add back light for Earth (new)
-        bpy.ops.object.light_add(type='AREA', location=(-40, -30, -30))
-        earth_back_light = bpy.context.active_object
-        earth_back_light.name = "EarthBackLight"
-        earth_back_light.data.energy = 80.0
-        earth_back_light.data.size = 10.0
-        earth_back_light.data.color = (0.7, 0.8, 1.0)  # Cool blue
-        
-        # Point back light at Earth
-        earth_back_light.rotation_euler = (math.radians(-20), math.radians(-30), 0)
-        
-        print("✅ Professional Earth lighting setup complete")
+    # Apply smooth Bezier interpolation to ALL Earth objects
+    for earth_obj in earth_meshes:
+        if earth_obj.animation_data and earth_obj.animation_data.action:
+            for fcurve in earth_obj.animation_data.action.fcurves:
+                for kf in fcurve.keyframe_points:
+                    kf.interpolation = 'BEZIER'
+                    kf.handle_left_type = 'AUTO_CLAMPED'
+                    kf.handle_right_type = 'AUTO_CLAMPED'
     
-    # Create pure black background using world shader
-    print("🌌 Creating pure black background...")
-    world = bpy.context.scene.world
-    world.use_nodes = True
-    world_nodes = world.node_tree.nodes
-    world_links = world.node_tree.links
     
-    # Clear default nodes
-    for node in world_nodes:
-        world_nodes.remove(node)
-    
-    # Create simple black background nodes
-    bg_node = world_nodes.new(type='ShaderNodeBackground')
-    output_node = world_nodes.new(type='ShaderNodeOutputWorld')
-    
-    # Position nodes
-    bg_node.location = (0, 0)
-    output_node.location = (200, 0)
-    
-    # Set pure black color
-    bg_node.inputs["Color"].default_value = (0.0, 0.0, 0.0, 1.0)  # Pure black
-    bg_node.inputs["Strength"].default_value = 1.0
-    
-    # Connect nodes
-    world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
-    
-    print("✅ Pure black background created")
-    print("✅ Professional 3D rotating Earth background complete!")
-    
+    print("✅ Smooth Earth rotation animation created - Earth, atmo, and clouds rotate together")
+
 except Exception as e:
-    print(f"⚠️ Error setting up 3D Earth background: {e}")
-    import traceback
-    print(f"🔍 DEBUG: Full error traceback:")
-    traceback.print_exc()
-    print("🌌 Using default world background")
+    print(f"⚠️ Error during Earth setup: {e}")
+    earth_sphere = None
+
+# Add professional lighting for Earth (only if Earth exists)
+if earth_sphere:
+    print("💡 Setting up professional Earth lighting...")
+    
+    # Add main key light for Earth (brighter and larger)
+    bpy.ops.object.light_add(type='AREA', location=(40, -30, -30))
+    earth_key_light = bpy.context.active_object
+    earth_key_light.name = "EarthKeyLight"
+    earth_key_light.data.energy = 150.0  # Increased energy
+    earth_key_light.data.size = 15.0  # Larger light source
+    earth_key_light.data.color = (1.0, 1.0, 0.95)  # Warm white
+    
+    # Point key light at Earth
+    earth_key_light.rotation_euler = (math.radians(20), math.radians(30), 0)
+    
+    # Add rim light for Earth (enhanced)
+    bpy.ops.object.light_add(type='AREA', location=(30, -20, -40))
+    earth_rim_light = bpy.context.active_object
+    earth_rim_light.name = "EarthRimLight"
+    earth_rim_light.data.energy = 150.0  # Increased energy
+    earth_rim_light.data.size = 8.0  # Larger light source
+    earth_rim_light.data.color = (0.9, 0.95, 1.0)  # Cool white
+    
+    # Point rim light at Earth
+    earth_rim_light.rotation_euler = (math.radians(30), math.radians(45), 0)
+    
+    # Add fill light for Earth (enhanced)
+    bpy.ops.object.light_add(type='AREA', location=(-25, 15, -35))
+    earth_fill_light = bpy.context.active_object
+    earth_fill_light.name = "EarthFillLight"
+    earth_fill_light.data.energy = 75.0  # Increased energy
+    earth_fill_light.data.size = 12.0  # Larger light source
+    earth_fill_light.data.color = (0.8, 0.9, 1.0)  # Cool blue
+    
+    # Add back light for Earth (new)
+    bpy.ops.object.light_add(type='AREA', location=(-40, -30, -30))
+    earth_back_light = bpy.context.active_object
+    earth_back_light.name = "EarthBackLight"
+    earth_back_light.data.energy = 80.0
+    earth_back_light.data.size = 10.0
+    earth_back_light.data.color = (0.7, 0.8, 1.0)  # Cool blue
+    
+    # Point back light at Earth
+    earth_back_light.rotation_euler = (math.radians(-20), math.radians(-30), 0)
+    
+    print("✅ Professional Earth lighting setup complete")
+
+# Create pure black background using world shader
+print("🌌 Creating pure black background...")
+world = bpy.context.scene.world
+world.use_nodes = True
+world_nodes = world.node_tree.nodes
+world_links = world.node_tree.links
+
+# Clear default nodes
+for node in world_nodes:
+    world_nodes.remove(node)
+
+# Create simple black background nodes
+bg_node = world_nodes.new(type='ShaderNodeBackground')
+output_node = world_nodes.new(type='ShaderNodeOutputWorld')
+
+# Position nodes
+bg_node.location = (0, 0)
+output_node.location = (200, 0)
+
+# Set pure black color
+bg_node.inputs["Color"].default_value = (0.0, 0.0, 0.0, 1.0)  # Pure black
+bg_node.inputs["Strength"].default_value = 1.0
+
+# Connect nodes
+world_links.new(bg_node.outputs["Background"], output_node.inputs["Surface"])
+
+print("✅ Pure black background created")
+print("✅ Professional 3D rotating Earth background complete!")
 
 # OPTIMIZED GPU SETUP for maximum performance
 try:
@@ -647,54 +644,6 @@ subdiv.levels = 2
 subdiv.render_levels = 3
 
 print("✅ Subdivision surface applied")
-
-# Helper function to normalize shape size to prevent size changes
-def normalize_shape_size(data, original_positions):
-    """Normalize shape size to maintain consistent object scale"""
-    if not original_positions:
-        return
-    
-    # Calculate original bounding box
-    original_min = mathutils.Vector((float('inf'), float('inf'), float('inf')))
-    original_max = mathutils.Vector((float('-inf'), float('-inf'), float('-inf')))
-    
-    for pos in original_positions:
-        original_min.x = min(original_min.x, pos.x)
-        original_min.y = min(original_min.y, pos.y)
-        original_min.z = min(original_min.z, pos.z)
-        original_max.x = max(original_max.x, pos.x)
-        original_max.y = max(original_max.y, pos.y)
-        original_max.z = max(original_max.z, pos.z)
-    
-    original_size = original_max - original_min
-    original_center = (original_max + original_min) * 0.5
-    
-    # Calculate current bounding box
-    current_min = mathutils.Vector((float('inf'), float('inf'), float('inf')))
-    current_max = mathutils.Vector((float('-inf'), float('-inf'), float('-inf')))
-    
-    for v in data:
-        current_min.x = min(current_min.x, v.co.x)
-        current_min.y = min(current_min.y, v.co.y)
-        current_min.z = min(current_min.z, v.co.z)
-        current_max.x = max(current_max.x, v.co.x)
-        current_max.y = max(current_max.y, v.co.y)
-        current_max.z = max(current_max.z, v.co.z)
-    
-    current_size = current_max - current_min
-    current_center = (current_max + current_min) * 0.5
-    
-    # Calculate scale factors to maintain original size
-    scale_factors = mathutils.Vector((
-        original_size.x / current_size.x if current_size.x > 0 else 1.0,
-        original_size.y / current_size.y if current_size.y > 0 else 1.0,
-        original_size.z / current_size.z if current_size.z > 0 else 1.0
-    ))
-    
-    # Apply normalization to maintain size
-    for v in data:
-        # Move to origin, scale, then move back to original center
-        v.co = original_center + (v.co - current_center) * scale_factors
 
 # Create ULTRA-FAST HIGH-QUALITY material system (Blender 4.5 compatible)
 print("🎨 Creating ULTRA-FAST high-quality material system for Blender 4.5...")
@@ -1686,89 +1635,6 @@ create_audio_responsive_color_animation()
 create_enhanced_audio_color_system()
 
 # ============================================================================
-# ADVANCED SPECTRAL COLOR SYSTEM - DIRECT FREQUENCY-TO-COLOR MAPPING
-# ============================================================================
-
-def create_spectral_color_animation():
-    """Create spectral color animation using direct frequency-to-color mapping."""
-    
-    print("🎨 Creating advanced spectral color animation system...")
-    
-    # Get material
-    if not obj.data.materials:
-        print("⚠️ No materials found on object")
-        return
-        
-    material = obj.data.materials[0]
-    
-    # Get color data from features
-    color_data = features_data.get('color_data', {})
-    
-    if not color_data or not color_data.get('red'):
-        print("⚠️ No color data available in audio analysis")
-        return
-    
-    # Get emission node
-    emission_node = material.node_tree.nodes.get("Emission")
-    principled_node = material.node_tree.nodes.get("Principled BSDF")
-    
-    if not emission_node and not principled_node:
-        print("⚠️ No emission or principled nodes found")
-        return
-    
-    print(f"✅ Color data found: {len(color_data['red'])} frames of spectral data")
-    
-    # Create color animation for each frame
-    for frame in range({total_frames} + 1):
-        scene.frame_set(frame)
-        
-        try:
-            # Get color values for this frame
-            frame_idx = min(frame, len(color_data['red']) - 1)
-            
-            red_val = color_data['red'][frame_idx]
-            green_val = color_data['green'][frame_idx]
-            blue_val = color_data['blue'][frame_idx]
-            emission_strength = color_data.get('emission_strength', [0.5] * {total_frames})[frame_idx]
-            
-            # Normalize color values to 0-1 range
-            red_norm = max(0.0, min(1.0, red_val))
-            green_norm = max(0.0, min(1.0, green_val))
-            blue_norm = max(0.0, min(1.0, blue_val))
-            
-            # Apply color to emission
-            if emission_node:
-                # Set emission color based on frequency
-                emission_node.inputs[0].default_value = (red_norm, green_norm, blue_norm, 1.0)
-                emission_node.inputs[0].keyframe_insert(data_path="default_value", frame=frame)
-                
-                # Set emission strength based on overall audio energy
-                # Scale emission strength from 10.0 (base) to 40.0 (peak)
-                emission_node.inputs[1].default_value = 10.0 + (emission_strength * 30.0)
-                emission_node.inputs[1].keyframe_insert(data_path="default_value", frame=frame)
-            
-            # Also apply color to Principled BSDF base color for subtle effect
-            if principled_node:
-                # Blend with emission color (less prominent)
-                principled_color = (
-                    min(1.0, red_norm * 0.3 + 0.5),
-                    min(1.0, green_norm * 0.3 + 0.5),
-                    min(1.0, blue_norm * 0.3 + 0.5)
-                )
-                principled_node.inputs["Base Color"].default_value = (*principled_color, 1.0)
-                principled_node.inputs["Base Color"].keyframe_insert(data_path="default_value", frame=frame)
-                
-        except Exception as e:
-            print(f"⚠️ Error setting spectral color at frame {frame}: {e}")
-            import traceback
-            traceback.print_exc()
-    
-    print("✅ Advanced spectral color animation created")
-
-# Create spectral color animation
-create_spectral_color_animation()
-
-# ============================================================================
 # CINEMATIC STORYTELLING SYSTEM - 4-ACT STRUCTURE
 # ============================================================================
 
@@ -2593,7 +2459,7 @@ try:
     psys.settings.frame_end = {total_frames}
     psys.settings.lifetime = 15.0  # Particle lifetime - short for trailing effect
     psys.settings.lifetime_random = 0.2
-    psys.settings.count = 300  # Total particles - subtle cinematic amount
+    psys.settings.count = 250  # Initial particle count - will be animated by audio (150-400 range)
     
     # Configure particles to emit from volume
     psys.settings.emit_from = 'VOLUME'
@@ -2606,9 +2472,9 @@ try:
     psys.settings.physics_type = 'NO'  # No physics for trailing effect
     psys.settings.normal_factor = 0.5  # Spread particles
     
-    # Cinematic particle appearance
-    psys.settings.particle_size = 0.12  # Glowing particle size
-    psys.settings.size_random = 0.4  # Variation for organic look
+    # Cinematic particle appearance (will be animated by audio)
+    psys.settings.particle_size = 0.14  # Initial particle size (animates 0.08-0.20)
+    psys.settings.size_random = 0.3  # Variation for organic look
     
     # Blender 4.5 compatibility - use_simplify no longer exists
     try:
@@ -2691,11 +2557,11 @@ try:
         # Calculate combined audio response
         audio_response = (kick_val + bass_val + snare_val) / 3.0
         
-        # Emission rate responds to audio (subtle - base 0.3, peaks at 0.8)
-        emission_rate = 0.3 + audio_response * 0.5
-        
-        psys.settings.rate = emission_rate
-        psys.settings.keyframe_insert(data_path="rate", frame=frame)
+        # Note: particle count is not animatable in Blender 4.5, so we animate
+        # particle size instead for audio responsiveness
+        particle_size = 0.08 + audio_response * 0.12  # Range: 0.08 to 0.20
+        psys.settings.particle_size = particle_size
+        psys.settings.keyframe_insert(data_path="particle_size", frame=frame)
         
         # Change particle color based on audio (blue to red transition)
         # Kick = red, Bass = blue, Snare = purple
@@ -2875,36 +2741,11 @@ def ensure_earth_visibility():
         clouds_obj.scale = (0.8, 0.8, 0.8)  # Properly scaled clouds
         print(f"📍 Updated clouds position and scale: {clouds_obj.location}, {clouds_obj.scale}")
     
-    # Add subtle rotation animation to Earth for cinematic effect
-    earth_obj.rotation_euler = (0, 0, 0)
-    earth_obj.keyframe_insert(data_path="rotation_euler", frame=0)
-    
-    # Slow rotation throughout the animation
-    earth_obj.rotation_euler = (0, 0, math.radians(360))
-    earth_obj.keyframe_insert(data_path="rotation_euler", frame=bpy.context.scene.frame_end)
-    
-    # Apply smooth interpolation
-    if earth_obj.animation_data and earth_obj.animation_data.action:
-        for fcurve in earth_obj.animation_data.action.fcurves:
-            for keyframe in fcurve.keyframe_points:
-                keyframe.interpolation = 'LINEAR'
-    
-    # Also rotate atmo and clouds slowly for realistic effect
-    if atmo_obj:
-        atmo_obj.rotation_euler = (0, 0, 0)
-        atmo_obj.keyframe_insert(data_path="rotation_euler", frame=0)
-        atmo_obj.rotation_euler = (0, 0, math.radians(360))
-        atmo_obj.keyframe_insert(data_path="rotation_euler", frame=bpy.context.scene.frame_end)
-        print("✅ Atmo rotation animation added")
-    
-    if clouds_obj:
-        clouds_obj.rotation_euler = (0, 0, 0)
-        clouds_obj.keyframe_insert(data_path="rotation_euler", frame=0)
-        clouds_obj.rotation_euler = (0, 0, math.radians(360))
-        clouds_obj.keyframe_insert(data_path="rotation_euler", frame=bpy.context.scene.frame_end)
-        print("✅ Clouds rotation animation added")
-    
-    print("✅ Earth visibility and rotation ensured")
+    # Rotation is handled in the main Earth rotation section (lines 414-453)
+    # This ensures Earth, atmo, and clouds are properly synchronized
+    # No need to add rotation here as it would overwrite the synchronized rotation
+    print("✅ Earth visibility and positioning ensured")
+    print("🔄 Rotation is handled by the main Earth rotation setup - all objects stay in sync")
 
 def create_cinematic_camera_movement(story_structure):
     """Create dynamic camera movement for cinematic storytelling"""
