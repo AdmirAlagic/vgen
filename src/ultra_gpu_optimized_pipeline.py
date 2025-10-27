@@ -68,12 +68,12 @@ class UltraGPUConfig:
     
     # Enhanced features for realism
     use_fast_gi: bool = True
+    use_transparent: bool = True  # Enable transparency for better materials
     caustics_reflective: bool = True  # Enable reflective caustics for realism
     caustics_refractive: bool = False  # Keep refractive caustics disabled for speed
     
     # GPU-specific optimizations
     feature_set: str = 'SUPPORTED'
-    use_transparent: bool = True  # Enable transparency for better materials
     
     # Enhanced material settings for realism
     material_quality: str = 'enhanced'  # Enhanced material processing
@@ -107,21 +107,23 @@ class UltraGPUOptimizedPipeline:
             config.adaptive_min_samples = 1  # Absolute minimum
             config.caustics_reflective = False
             config.caustics_refractive = False
+            config.use_fast_gi = True
             config.use_transparent = False
             config.texture_quality = 512  # Lower texture quality
             config.light_bounces = 1
         elif quality_mode == 'ultra':
-            # Highest settings for ultra quality
-            config.samples = 64
-            config.max_bounces = 8
-            config.tile_size = 1024  # Smaller tiles for better quality
-            config.adaptive_threshold = 0.05  # Lower threshold for better quality
-            config.adaptive_min_samples = 4
+            # Highest settings for ultra quality - TRUE PROFESSIONAL GRADE
+            config.samples = 256  # True ultra quality (up from 64)
+            config.max_bounces = 16  # True ultra quality (up from 8)
+            config.tile_size = 128  # Smaller tiles for better quality and detail
+            config.adaptive_threshold = 0.005  # Much lower threshold for better quality
+            config.adaptive_min_samples = 64  # Much higher min samples for quality
             config.caustics_reflective = True
             config.caustics_refractive = True
             config.use_transparent = True
-            config.texture_quality = 4096
-            config.light_bounces = 4
+            config.use_fast_gi = False  # Full GI for maximum realism
+            config.texture_quality = 8192  # Ultra high texture quality
+            config.light_bounces = 8  # More light interaction
         elif quality_mode == 'high':
             # High quality settings
             config.samples = 32
@@ -131,6 +133,7 @@ class UltraGPUOptimizedPipeline:
             config.adaptive_min_samples = 3
             config.caustics_reflective = True
             config.caustics_refractive = False
+            config.use_fast_gi = False
             config.use_transparent = True
             config.texture_quality = 2048
             config.light_bounces = 3
@@ -143,6 +146,7 @@ class UltraGPUOptimizedPipeline:
             config.adaptive_min_samples = 2
             config.caustics_reflective = False
             config.caustics_refractive = False
+            config.use_fast_gi = True
             config.use_transparent = True
             config.texture_quality = 2048
             config.light_bounces = 2
@@ -155,6 +159,7 @@ class UltraGPUOptimizedPipeline:
             config.adaptive_min_samples = 1
             config.caustics_reflective = False
             config.caustics_refractive = False
+            config.use_fast_gi = True
             config.use_transparent = False
             config.texture_quality = 1024
             config.light_bounces = 1
@@ -290,9 +295,9 @@ render.resolution_percentage = 100
 if scene.render.engine == 'CYCLES':
     cycles = scene.cycles
     
-    # ULTRA-LOW samples with advanced denoising
-    cycles.samples = {self.config.samples}  # Ultra-low samples
-    cycles.max_bounces = {self.config.max_bounces}  # Minimal bounces
+    # ULTRA-QUALITY samples with advanced denoising
+    cycles.samples = {self.config.samples}  # High-quality samples
+    cycles.max_bounces = {self.config.max_bounces}  # High-quality bounces
     
     # Advanced denoising for ultra-low samples
     cycles.use_denoising = True
@@ -314,14 +319,14 @@ if scene.render.engine == 'CYCLES':
     # Persist data across frames (critical for speed)
     cycles.use_persistent_data = True
     
-    # Disable expensive features
-    cycles.use_fast_gi = True
-    cycles.caustics_reflective = False
-    cycles.caustics_refractive = False
+    # Configure expensive features based on quality
+    cycles.use_fast_gi = {self.config.use_fast_gi}
+    cycles.caustics_reflective = {self.config.caustics_reflective}
+    cycles.caustics_refractive = {self.config.caustics_refractive}
     
     # GPU-specific optimizations
     cycles.feature_set = 'SUPPORTED'
-    cycles.use_transparent = False
+    cycles.use_transparent = {self.config.use_transparent}
     
     print(f"✅ {self.quality_mode.upper()} GPU Cycles settings:")
     print(f"   Samples: {{cycles.samples}} ({self.quality_mode} quality)")

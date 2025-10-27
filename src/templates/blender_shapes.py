@@ -1,4 +1,27 @@
-"""Shape key system for Blender scene generation."""
+"""
+Realistic Natural Shape Morphing System for Blender Audio Visualizer
+
+Audio-Driven Natural Shape Morphing:
+- CloudPuff → responds to kick_energy (fluffy expansion)
+- SmokePlume → responds to bass_energy (rising smoke)
+- WaveForm → responds to snare_energy (ocean waves)
+- FlameTip → responds to hihat_energy (flickering flame)
+- AuroraStream → responds to vocal_energy (flowing aurora)
+- NebulaCloud → responds to spectral_centroid (cosmic cloud)
+- CrystalCluster → responds to kick_energy (crystal spikes)
+- MountainPeak → responds to bass_energy (rising mountain)
+- VolcanoEruption → responds to snare_energy (eruption)
+- TornadoSpiral → responds to vocal_energy (spinning tornado)
+- LavaFlow → responds to hihat_energy (flowing lava)
+- StormSwirl → responds to spectral_centroid (swirling storm)
+- PulsingCore → responds to rms_energy (pulsing core)
+
+Features:
+- Realistic natural shapes (clouds, smoke, waves, flames, etc.)
+- Smooth morphing without size changes
+- Frequency-specific deformation patterns
+- GPU-optimized smooth interpolation
+"""
 
 import bpy
 import math
@@ -70,21 +93,21 @@ class ShapeKeySystem:
             obj.shape_key_add(name="Basis")
             self.logger.info("Created basis shape key")
             
-            # Define shape names (focus on key bird and cinematic shapes)
+            # Define shape names (focus on realistic natural forms)
             shape_names = [
-                "AbstractBird",       # Main bird - kick_energy
-                "PhoenixRising",      # Phoenix - bass_energy
-                "DragonForm",         # Dragon - snare_energy
-                "ButterflyWings",     # Butterfly - hihat_energy
-                "EagleSoaring",       # Eagle - vocal_energy
-                "SwanElegance",       # Swan - spectral_centroid
-                "VerticalSpike",       # Spike - kick
-                "HorizontalWave",     # Wave - bass
-                "RadialExplosion",    # Explosion - snare
-                "SpiralRise",         # Spiral - vocal
-                "OrganicFlow",        # Flow - hihat
-                "NebulaSwirl",        # Nebula - spectral
-                "CosmicPulse"         # Pulse - RMS
+                "CloudPuff",          # Fluffy cloud - kick_energy
+                "SmokePlume",         # Rising smoke - bass_energy
+                "WaveForm",           # Ocean wave - snare_energy
+                "FlameTip",           # Fire flame - hihat_energy
+                "AuroraStream",       # Aurora - vocal_energy
+                "NebulaCloud",        # Nebula cloud - spectral_centroid
+                "CrystalCluster",     # Crystal spike - kick
+                "MountainPeak",       # Mountain wave - bass
+                "VolcanoEruption",    # Eruption - snare
+                "TornadoSpiral",      # Tornado - vocal
+                "LavaFlow",          # Lava flow - hihat
+                "StormSwirl",        # Storm - spectral
+                "PulsingCore"        # Pulsing - RMS
             ]
             
             # Create each shape key
@@ -119,285 +142,250 @@ class ShapeKeySystem:
             sname: Shape key name
             data: Vertex data to deform
         """
-        # Vertical Spike - KICK ENERGY (Fast, spike-like deformation 4-8Hz)
-        # Task 3: Kick - Fast, sharp vertical spike response
-        if "VerticalSpike" in sname:
+        # CloudPuff - KICK ENERGY (Fast, fluffy cloud puff)
+        if "CloudPuff" in sname:
             for v in data:
-                golden_scale = self.phi * 2.0
-                radial_falloff = math.sqrt(v.co.x**2 + v.co.y**2)
-                spike_intensity = math.exp(-radial_falloff * 0.3)
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2 + v.co.z**2)
                 
-                # KICK CHARACTER: Sharp, fast spike (4-8Hz response)
-                z_boost = spike_intensity * (2.0 + abs(v.co.z) * self.phi * 2.0)
-                v.co.z += z_boost * 12.0  # Fast, explosive spike
+                # CLOUD CHARACTER: Fluffy, soft expansion with organic detail
+                puff_intensity = math.exp(-radial_dist * 0.8)  # Soft falloff
                 
-                # Pinch center dramatically for sharp impact
-                pinch_factor = 0.7 - spike_intensity * 0.4
-                v.co.x *= pinch_factor
-                v.co.y *= pinch_factor
+                # Gentle expansion for fluffy cloud effect
+                expansion = puff_intensity * 3.0
+                v.co.x *= 1.0 + expansion * 0.3
+                v.co.y *= 1.0 + expansion * 0.3
+                v.co.z += expansion * 2.5
                 
-                # Add fast ripple detail (kick = sharp transient)
-                detail_freq = 20.0  # High frequency detail
-                detail = math.sin(v.co.x * detail_freq) * math.cos(v.co.y * detail_freq) * 0.1
+                # Add organic cloud detail with multiple frequencies
+                detail_low = math.sin(v.co.x * 3.0) * math.cos(v.co.y * 3.0) * 0.4
+                detail_mid = math.sin(v.co.x * 8.0) * math.cos(v.co.y * 8.0) * 0.2
+                detail_high = math.sin(v.co.x * 15.0) * math.cos(v.co.y * 15.0) * 0.1
+                v.co.z += detail_low + detail_mid + detail_high
+        
+        # SmokePlume - BASS ENERGY (Slow, rising smoke with turbulence)
+        elif "SmokePlume" in sname:
+            for v in data:
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                
+                # SMOKE CHARACTER: Rising, swirling, turbulent
+                # Upward motion with widening
+                if v.co.z > 0:  # Top half rises more
+                    rise_strength = v.co.z * 4.0
+                    widen = math.exp(-radial_dist * 0.5) * 2.0
+                    v.co.x *= 1.0 + widen * 0.2
+                    v.co.y *= 1.0 + widen * 0.2
+                    v.co.z += rise_strength
+                
+                # Turbulent swirl
+                angle = math.atan2(v.co.y, v.co.x)
+                swirl = math.sin(radial_dist * self.phi * 2.0 + angle * 3.0) * 1.5
+                v.co.x += math.cos(angle) * swirl * 0.3
+                v.co.y += math.sin(angle) * swirl * 0.3
+                
+                # Add organic smoke detail
+                detail = math.sin(v.co.x * 6.0) * math.sin(v.co.y * 6.0) * 0.5
                 v.co.z += detail
         
-        # Horizontal Wave - BASS ENERGY (Slow, large-scale deformation 0.5-2Hz)
-        # Task 3: Bass = Slow, flowing waves
-        elif "HorizontalWave" in sname:
+        # WaveForm - SNARE ENERGY (Ocean wave-like formation)
+        elif "WaveForm" in sname:
             for v in data:
-                # BASS CHARACTER: Slow, large-scale waves (0.5-2Hz response)
-                wave_freq_x = self.phi * 0.8  # Low frequency for bass
-                wave_freq_z = self.phi * 1.0   # Large-scale waves
+                # WAVE CHARACTER: Flowing, cresting wave formation
+                wave_height = math.sin(v.co.x * 2.0 + v.co.z * 1.5) * 3.0
+                v.co.y += wave_height
                 
-                # Multi-layered wave pattern for organic bass response
-                wave_1 = math.sin(v.co.x * wave_freq_x) * math.cos(v.co.z * wave_freq_z)
-                wave_2 = math.cos(v.co.x * wave_freq_x * 0.5) * math.sin(v.co.z * wave_freq_z * 0.5)
-                wave_strength = self.phi * 1.2 * (wave_1 * 0.7 + wave_2 * 0.3)
+                # Add wave crest detail
+                crest = math.cos(v.co.x * 4.0) * math.sin(v.co.z * 3.0) * 1.5
+                v.co.z += crest
                 
-                v.co.y += wave_strength * 12.0  # Large, slow displacement
-                v.co.x *= 1.0 + (self.phi - 1.0) * 4.0
-                v.co.z += wave_strength * 2.0
+                # Wave motion - flowing effect
+                flow_x = math.sin(v.co.x * 1.5) * 1.0
+                v.co.x += flow_x * 0.3
                 
-                # Add slow secondary layer
-                secondary = math.sin(v.co.y * 0.5) * 2.0
-                v.co.x += secondary * 0.5
+                # Add foam detail
+                foam_detail = math.sin(v.co.x * 8.0) * math.cos(v.co.y * 8.0) * 0.2
+                v.co.z += foam_detail
         
-        # Radial Explosion - SNARE ENERGY (Twisting, explosive deformation)
-        # Task 3: Snare = Twisting, explosive response
-        elif "RadialExplosion" in sname:
+        # FlameTip - HIHAT ENERGY (Flickering flame)
+        elif "FlameTip" in sname:
+            for v in data:
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                
+                # FLAME CHARACTER: Flickering, pointed, upward
+                flame_intensity = math.exp(-radial_dist * 0.6) * 2.5
+                
+                # Upward extension
+                v.co.z += flame_intensity * 4.0
+                
+                # Flamelike narrowing at base
+                if radial_dist < 0.3:
+                    v.co.x *= 0.7
+                    v.co.y *= 0.7
+                
+                # Flickering detail
+                flicker = math.sin(v.co.x * 12.0 + v.co.y * 12.0) * 0.3
+                v.co.x += flicker
+                v.co.y += math.cos(v.co.y * 12.0) * 0.3
+                
+                # Add flame turbulence
+                turbulence = math.sin(v.co.z * 8.0 + radial_dist * 10.0) * 0.2
+                v.co.z += turbulence
+        
+        # AuroraStream - VOCAL ENERGY (Flowing aurora-like stream)
+        elif "AuroraStream" in sname:
+            for v in data:
+                # AURORA CHARACTER: Flowing, ribbon-like stream
+                angle = math.atan2(v.co.y, v.co.x)
+                
+                # Flowing wave pattern
+                stream_1 = math.sin(angle * self.phi * 2.0 + v.co.z * self.phi * 1.5) * 2.0
+                stream_2 = math.cos(angle * self.phi * 3.0 - v.co.z * self.phi * 1.0) * 1.5
+                stream_strength = (stream_1 + stream_2) * 0.6
+                
+                v.co.x += math.cos(angle) * stream_strength
+                v.co.y += math.sin(angle) * stream_strength
+                
+                # Add vertical undulation
+                undulation = math.sin(v.co.x * 3.0) * math.cos(v.co.y * 3.0) * 1.2
+                v.co.z += undulation
+                
+                # Add subtle flow detail
+                flow = math.sin(v.co.z * 4.0) * 0.5
+                v.co.x += flow
+        
+        # NebulaCloud - SPECTRAL ENERGY (Cosmic cloud formation)
+        elif "NebulaCloud" in sname:
             for v in data:
                 radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
                 angle = math.atan2(v.co.y, v.co.x)
                 
-                # SNARE CHARACTER: Twisting, explosive (sharp transient)
-                radial_strength = self.phi * 1.2 * math.exp(-radial_dist * 0.3)
+                # NEBULA CHARACTER: Expansive, wispy cloud with depth
+                expansion = math.exp(-radial_dist * 0.4) * 3.0
                 
-                if radial_dist > 0.001:
-                    direction_x = v.co.x / radial_dist
-                    direction_y = v.co.y / radial_dist
-                    
-                    # Explode outward
-                    explosion_magnitude = radial_strength * 10.0
-                    v.co.x += direction_x * explosion_magnitude
-                    v.co.y += direction_y * explosion_magnitude
-                    v.co.z += radial_strength * 5.0 * self.phi
-                    
-                    # Add twisting motion (snare characteristic)
-                    twist_amount = angle * 3.0 * radial_strength
-                    perp_x = -direction_y * twist_amount
-                    perp_y = direction_x * twist_amount
-                    v.co.x += perp_x
-                    v.co.y += perp_y
+                # Expand outward with swirl
+                v.co.x *= 1.0 + expansion * 0.3
+                v.co.y *= 1.0 + expansion * 0.3
+                
+                # Add swirling motion
+                swirl = math.sin(angle * self.phi * 2.0 + radial_dist * self.phi * 3.0) * 2.0
+                v.co.x += math.cos(angle) * swirl
+                v.co.y += math.sin(angle) * swirl
+                
+                # Add depth with Z variation
+                depth = math.sin(radial_dist * 6.0 + angle * 4.0) * 1.5
+                v.co.z += depth
         
-        # Spiral Rise - VOCAL ENERGY (Organic, flowing deformation)
-        # Task 3: Vocal = Organic, flowing, graceful motion
-        elif "SpiralRise" in sname:
+        # CrystalCluster - KICK ENERGY (Sharp crystal formation)
+        elif "CrystalCluster" in sname:
             for v in data:
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
                 angle = math.atan2(v.co.y, v.co.x)
                 
-                # VOCAL CHARACTER: Organic, flowing spirals
-                # Slower, more graceful spiral (organic flow)
-                spiral_1 = math.sin(angle * self.phi * 2.0 + v.co.z * self.phi * 2.0) * 0.7
-                spiral_2 = math.cos(angle * self.phi * 1.5 - v.co.z * self.phi * 1.5) * 0.3
-                spiral_strength = self.phi * 1.2 * (spiral_1 + spiral_2)
+                # CRYSTAL CHARACTER: Sharp spikes radiating outward
+                spike_intensity = math.exp(-radial_dist * 0.5) * 2.5
                 
-                v.co.z += spiral_strength * 3.0
+                # Create spiky crystal points
+                spike = math.sin(angle * 6.0 + v.co.z * 4.0) * spike_intensity
+                v.co.x += math.cos(angle) * spike * 0.4
+                v.co.y += math.sin(angle) * spike * 0.4
+                v.co.z += spike_intensity * 3.0
                 
-                # Add flowing expansion
-                radial_offset = spiral_strength * 2.0
-                v.co.x += math.cos(angle) * radial_offset
-                v.co.y += math.sin(angle) * radial_offset
-                
-                # Add secondary smooth layer for organic feel
-                smooth = math.sin(v.co.x * 1.0 + v.co.y * 1.0) * 0.8
-                v.co.z += smooth
+                # Add crystal facet detail
+                facet = math.sin(v.co.x * 8.0) * math.sin(v.co.y * 8.0) * 0.2
+                v.co.z += facet
         
-        # Organic Flow - HIHAT ENERGY (Fine surface detail deformation 16-32Hz)
-        # Task 3: Hihat = Fine surface details, high-frequency response
-        elif "OrganicFlow" in sname:
-            for v in data:
-                # HIHAT CHARACTER: Fine surface details (16-32Hz response)
-                # Primary flow pattern
-                flow_x = self.phi * 0.7 * math.sin(v.co.x * self.phi * 3.0) * math.cos(v.co.y * self.phi * 3.0)
-                flow_y = self.phi * 0.7 * math.cos(v.co.y * self.phi * 3.0) * math.sin(v.co.x * self.phi * 3.0)
-                flow_z = self.phi * 0.7 * math.sin(v.co.z * self.phi * 3.0)
-                
-                # Fine detail layer (hihat = high frequency details)
-                detail_scale = 12.0  # Increased frequency for fine detail
-                detail_x = math.sin(v.co.x * detail_scale) * 0.4  # Stronger detail
-                detail_y = math.cos(v.co.y * detail_scale) * 0.4
-                detail_z = math.sin(v.co.z * detail_scale * 2.0) * 0.3
-                
-                v.co.x += (flow_x * self.phi + detail_x) * 2.0
-                v.co.y += (flow_y * self.phi + detail_y) * 2.0
-                v.co.z += (flow_z * self.phi + detail_z) * 2.0
-                
-                # Add extra high-frequency texture
-                texture_freq = 20.0
-                texture = math.sin(v.co.x * texture_freq) * math.cos(v.co.y * texture_freq) * 0.15
-                v.co.z += texture
-        
-        # Abstract Bird - DRAMATIC bird-like shape transformation
-        elif "AbstractBird" in sname:
-            for v in data:
-                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
-                dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2 + v.co.z**2)
-                
-                if dist_from_center > 0.001:
-                    dir_x = v.co.x / dist_from_center
-                    dir_y = v.co.y / dist_from_center
-                else:
-                    dir_x, dir_y = 1.0, 0.0
-                
-                # HEAD: Dramatically extend forward
-                if dir_x > 0.5:
-                    head_strength = dir_x * dist_from_center * 2.5  # Increased from 1.2
-                    v.co.x += head_strength
-                    v.co.z += math.sin(v.co.x * 10.0) * 0.15  # Increased amplitude
-                
-                # WINGS: Dramatically spread and curve
-                if abs(dir_y) > 0.5:
-                    wing_strength = dir_y * dist_from_center * 2.8  # Increased from 1.5
-                    v.co.y += wing_strength
-                    # Add wing curvature
-                    wing_wave = math.sin(v.co.y * 15.0) * 0.25  # Increased detail
-                    v.co.z += wing_wave
-                    v.co.x += wing_wave * 0.5
-        
-        # Phoenix Rising - DRAMATIC upward fire motion
-        elif "PhoenixRising" in sname:
-            for v in data:
-                dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2 + v.co.z**2)
-                
-                if dist_from_center > 0.001:
-                    dir_x = v.co.x / dist_from_center
-                    dir_y = v.co.y / dist_from_center
-                    dir_z = v.co.z / dist_from_center
-                else:
-                    dir_x, dir_y, dir_z = 0.0, 0.0, 1.0
-                
-                # FLAMES: Dramatically rise UP with turbulence
-                if dir_z > 0.2:  # Lowered threshold for more effect
-                    base_rise = dir_z * dist_from_center * 3.5  # Nearly 2x from 1.8
-                    turbulence = math.sin(v.co.x * 12.0) * math.sin(v.co.y * 12.0) * 0.4  # Increased
-                    v.co.z += base_rise + turbulence
-                    # Add swirling effect
-                    swirl = math.sin(v.co.x * v.co.y * 8.0) * 0.3
-                    v.co.x += swirl * dir_y
-                    v.co.y += swirl * dir_x
-        
-        # DragonForm - DRAMATIC dragon transformation (snare-driven)
-        elif "DragonForm" in sname:
-            for v in data:
-                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
-                dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2 + v.co.z**2)
-                
-                if dist_from_center > 0.001:
-                    dir_x = v.co.x / dist_from_center
-                    dir_y = v.co.y / dist_from_center
-                else:
-                    dir_x, dir_y = 1.0, 0.0
-                
-                # POWERFUL upward extension
-                if dir_z > 0.3 if 'dir_z' in locals() else True:
-                    extend_strength = dist_from_center * 3.0
-                    v.co.z += extend_strength
-                
-                # TORSO: Compression and extension
-                if abs(dir_x) < 0.6:
-                    torso_compression = math.cos(radial_dist * 6.0) * 1.5
-                    v.co.y *= 1.0 - abs(torso_compression * 0.3)
-                
-                # TAIL: Whip-like extension
-                if dir_x < -0.3:
-                    tail_extension = abs(dir_x) * dist_from_center * 2.5
-                    v.co.x -= tail_extension
-                    tail_curve = math.sin(v.co.x * 8.0) * 0.3
-                    v.co.y += tail_curve
-        
-        # EagleSoaring - DRAMATIC eagle transformation (vocal-driven)
-        elif "EagleSoaring" in sname:
-            for v in data:
-                dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2 + v.co.z**2)
-                
-                # HEAD: Sharp beak forward
-                if v.co.x > 0.3:
-                    beak_extension = v.co.x * dist_from_center * 3.0
-                    v.co.x += beak_extension
-                
-                # WINGS: Extended wingspan
-                wing_span = 2.5
-                if abs(v.co.y) < dist_from_center:
-                    wing_extension = abs(v.co.y) * dist_from_center * wing_span
-                    v.co.y += math.copysign(wing_extension, v.co.y)
-                    # Wing feather detail
-                    feather_wave = math.sin(v.co.y * 20.0) * 0.2
-                    v.co.z += feather_wave
-        
-        # ButterflyWings - DRAMATIC butterfly transformation (hihat-driven)
-        elif "ButterflyWings" in sname:
+        # MountainPeak - BASS ENERGY (Rising mountain formation)
+        elif "MountainPeak" in sname:
             for v in data:
                 radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
                 
-                # DELICATE but dramatic wing flapping
-                wing_flap = math.sin(radial_dist * self.phi * 4.0) * 2.5
-                v.co.y += wing_flap
+                # MOUNTAIN CHARACTER: Steep upward slope with rocky detail
+                # Create peak shape
+                peak_height = math.exp(-radial_dist * 0.7) * 4.0
+                v.co.z += peak_height
                 
-                # Wing symmetry and pattern
-                if v.co.x > 0:
-                    v.co.x *= 1.0 + abs(wing_flap) * 0.5
-                else:
-                    v.co.x *= 1.0 - abs(wing_flap) * 0.3
+                # Add rocky irregular detail
+                rock_detail = math.sin(v.co.x * 5.0) * math.cos(v.co.y * 5.0) * 0.8
+                v.co.z += rock_detail
+                
+                # Add secondary surface features
+                surface = math.sin(v.co.x * 3.0 + v.co.y * 3.0) * 0.4
+                v.co.z += surface
         
-        # SwanElegance - DRAMATIC graceful transformation (spectral-driven)
-        elif "SwanElegance" in sname:
+        # VolcanoEruption - SNARE ENERGY (Erupting volcano)
+        elif "VolcanoEruption" in sname:
             for v in data:
                 radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
-                dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2 + v.co.z**2)
                 
-                # GRACEFUL curved neck
-                if v.co.x > 0.2:
-                    neck_curve = math.sin(v.co.x * 4.0) * 2.0
-                    v.co.z += neck_curve
-                    v.co.x += neck_curve * 0.3
+                # VOLCANO CHARACTER: Central eruption with debris
+                eruption = math.exp(-radial_dist * 1.2) * 4.5
+                v.co.z += eruption
                 
-                # ELEGANT wing sweep
+                # Add exploding debris
                 if radial_dist > 0.4:
-                    wing_sweep = math.cos(radial_dist * self.phi * 3.0) * 2.0
-                    v.co.y += wing_sweep
-                    v.co.z += abs(wing_sweep) * 0.5
+                    explosion = math.sin(radial_dist * 8.0) * 1.5
+                    v.co.x *= 1.0 + explosion * 0.2
+                    v.co.y *= 1.0 + explosion * 0.2
+                
+                # Add turbulent detail
+                turbulence = math.sin(v.co.x * 10.0 + v.co.y * 10.0) * 0.5
+                v.co.z += turbulence
         
-        # NebulaSwirl - SPECTRAL ENERGY (Complexity/intensity-based deformation)
-        # Task 3: Spectral = Complex, intensity-based shapes
-        elif "NebulaSwirl" in sname:
+        # TornadoSpiral - SPIRAL RISE (Tornado-like spiral)
+        elif "TornadoSpiral" in sname:
+            for v in data:
+                angle = math.atan2(v.co.y, v.co.x)
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                
+                # TORNADO CHARACTER: Spinning, funnel-shaped
+                # Narrow at bottom, wider at top
+                narrow_factor = (1.0 - v.co.z * 0.3) if v.co.z < 0 else 0.8
+                
+                # Spiral motion
+                spiral = math.sin(angle * self.phi * 4.0 + v.co.z * self.phi * 2.0) * 2.0
+                v.co.x += math.cos(angle) * spiral * narrow_factor
+                v.co.y += math.sin(angle) * spiral * narrow_factor
+                
+                # Upward motion
+                v.co.z += math.exp(-radial_dist * 0.8) * 3.0
+        
+        # LavaFlow - ORGANIC FLOW (Flowing lava)
+        elif "LavaFlow" in sname:
+            for v in data:
+                # LAVA CHARACTER: Flowing, viscous
+                flow_x = math.sin(v.co.x * self.phi * 2.0) * math.cos(v.co.y * self.phi * 2.0) * 2.0
+                flow_y = math.cos(v.co.y * self.phi * 2.0) * math.sin(v.co.x * self.phi * 2.0) * 2.0
+                
+                v.co.x += flow_x * 0.5
+                v.co.y += flow_y * 0.5
+                
+                # Add surface bubbles
+                bubble = math.sin(v.co.x * 10.0) * math.cos(v.co.y * 10.0) * 0.3
+                v.co.z += bubble
+        
+        # StormSwirl - NEBULA SWIRL (Storm-like swirl)
+        elif "StormSwirl" in sname:
             for v in data:
                 radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
                 angle = math.atan2(v.co.y, v.co.x)
                 
-                # SPECTRAL CHARACTER: Complex, intensity-based (brightness drives complexity)
-                # Multiple layers for complexity
-                swirl_1 = math.sin(angle * self.phi * 2.0 + radial_dist * self.phi * 3.0) * 2.5
-                swirl_2 = math.cos(angle * self.phi * 3.0 - radial_dist * self.phi * 2.0) * 1.5
-                swirl_3 = math.sin(angle * self.phi * 4.0) * math.cos(radial_dist * 5.0) * 1.0
-                swirl_total = (swirl_1 * 0.4 + swirl_2 * 0.3 + swirl_3 * 0.3)
+                # STORM CHARACTER: Swirling with electrical energy
+                swirl = math.sin(angle * self.phi * 3.0 + radial_dist * self.phi * 4.0) * 2.5
+                v.co.x += math.cos(angle) * swirl * 0.5
+                v.co.y += math.sin(angle) * swirl * 0.5
                 
-                v.co.x += math.cos(angle) * swirl_total
-                v.co.y += math.sin(angle) * swirl_total
-                v.co.z += abs(swirl_total) * 0.8
-                
-                # Add intensity-based details
-                intensity = (swirl_total + 2.0) * 0.5
-                detail = math.sin(v.co.x * intensity * 3.0) * 0.3
-                v.co.y += detail
+                # Add energy bursts
+                energy = math.sin(radial_dist * 12.0 + angle * 8.0) * 1.0
+                v.co.z += energy
         
-        # CosmicPulse - DRAMATIC pulsing cosmic transformation (RMS-driven)
-        elif "CosmicPulse" in sname:
+        # PulsingCore - COSMIC PULSE (Pulsing core)
+        elif "PulsingCore" in sname:
             for v in data:
                 dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2 + v.co.z**2)
                 
-                # Pulsing expansion with rhythm
-                pulse_strength = math.sin(dist_from_center * self.phi * 2.0) * 2.5
-                expansion = dist_from_center * 0.3 + pulse_strength
+                # PULSE CHARACTER: Pulsing expansion
+                pulse = math.sin(dist_from_center * self.phi * 2.0) * 1.5 + 1.0
+                expansion = dist_from_center * 0.2 * pulse
                 
                 if dist_from_center > 0.001:
                     dir_x = v.co.x / dist_from_center
@@ -406,6 +394,10 @@ class ShapeKeySystem:
                     v.co.x += dir_x * expansion
                     v.co.y += dir_y * expansion
                     v.co.z += dir_z * expansion
+                
+                # Add subtle surface detail
+                detail = math.sin(v.co.x * 6.0) * math.sin(v.co.y * 6.0) * 0.2
+                v.co.z += detail
         
         # For other shapes, apply enhanced deformation
         else:
@@ -431,15 +423,19 @@ class ShapeKeySystem:
             
             # Audio band mappings
             audio_mappings = {
-                "AbstractBird": "kick_energy",
-                "PhoenixRising": "bass_energy",
-                "DragonForm": "snare_energy",
-                "ButterflyWings": "hihat_energy",
-                "EagleSoaring": "vocal_energy",
-                "SwanElegance": "spectral_centroid",
-                "VerticalSpike": "kick_energy",
-                "HorizontalWave": "bass_energy",
-                "RadialExplosion": "snare_energy"
+                "CloudPuff": "kick_energy",
+                "SmokePlume": "bass_energy",
+                "WaveForm": "snare_energy",
+                "FlameTip": "hihat_energy",
+                "AuroraStream": "vocal_energy",
+                "NebulaCloud": "spectral_centroid",
+                "CrystalCluster": "kick_energy",
+                "MountainPeak": "bass_energy",
+                "VolcanoEruption": "snare_energy",
+                "TornadoSpiral": "vocal_energy",
+                "LavaFlow": "hihat_energy",
+                "StormSwirl": "spectral_centroid",
+                "PulsingCore": "rms_energy"
             }
             
             scene = bpy.context.scene

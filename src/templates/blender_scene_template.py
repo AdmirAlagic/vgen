@@ -1,17 +1,25 @@
 """
-SOPHISTICATED BIRD-BASED AUDIO VISUALIZER
-==========================================
+SOPHISTICATED REALISTIC AUDIO VISUALIZER
+=========================================
 
-Audio-Driven Bird Shape Morphing:
-- AbstractBird → responds to kick_energy (main flight pattern)
-- PhoenixRising → responds to bass_energy (rebirth flames)
-- DragonForm → responds to snare_energy (power and majesty)
-- ButterflyWings → responds to hihat_energy (metamorphosis)
-- EagleSoaring → responds to vocal_energy (strength and vision)
-- SwanElegance → responds to spectral_centroid (grace and beauty)
+Audio-Driven Natural Shape Morphing:
+- CloudPuff → responds to kick_energy (fluffy expansion)
+- SmokePlume → responds to bass_energy (rising smoke)
+- WaveForm → responds to snare_energy (ocean waves)
+- FlameTip → responds to hihat_energy (flickering flame)
+- AuroraStream → responds to vocal_energy (flowing aurora)
+- NebulaCloud → responds to spectral_centroid (cosmic cloud)
+- CrystalCluster → responds to kick_energy (crystal spikes)
+- MountainPeak → responds to bass_energy (rising mountain)
+- VolcanoEruption → responds to snare_energy (eruption)
+- TornadoSpiral → responds to vocal_energy (spinning tornado)
+- LavaFlow → responds to hihat_energy (flowing lava)
+- StormSwirl → responds to spectral_centroid (swirling storm)
+- PulsingCore → responds to rms_energy (pulsing core)
 
 Enhanced features:
-- Smooth continuous bird morphing (no flickering)
+- Realistic natural shapes morphing (clouds, smoke, waves, flames, etc.)
+- Smooth continuous morphing without flickering
 - No size changes (shape-only morphing)
 - Professional cinematic quality
 - GPU-optimized smooth interpolation
@@ -171,8 +179,8 @@ print("🎬 Creating SOPHISTICATED BIRD-BASED audio visualizer scene...")
 print(f"📊 Frames: {total_frames}, FPS: {fps}, Duration: {duration}s")
 print(f"🎯 Quality Level: {quality_level}")
 print(f"🎨 Morph Style: {morph_style}")
-print("🚀 Features: ELEGANT bird transformations, SMOOTH morphing, NO flickering, AUDIO-RESPONSIVE")
-print("🦅 Focus: AbstractBird→kick, PhoenixRising→bass, DragonForm→snare, ButterflyWings→hihat, EagleSoaring→vocal, SwanElegance→brightness")
+print("🚀 Features: REALISTIC natural formations, SMOOTH morphing, NO flickering, AUDIO-RESPONSIVE")
+print("☁️ Focus: CloudPuff→kick, SmokePlume→bass, WaveForm→snare, FlameTip→hihat, AuroraStream→vocal, NebulaCloud→brightness")
 
 # ============================================================================
 # PROFESSIONAL CINEMATIC AUDIO VISUALIZER - COMMERCIAL GRADE
@@ -677,18 +685,68 @@ try:
     scene.cycles.samples = {samples}
     scene.cycles.max_bounces = {max_bounces}
     
-    # Enable advanced features for ultra quality
-    if '{quality_level}' == 'ultra':
+    # Enable advanced features for ultra/broadcast quality
+    quality_level = '{quality_level}'
+    if quality_level in ['ultra', 'broadcast']:
         scene.cycles.use_fast_gi = False
         scene.cycles.caustics_reflective = True
         scene.cycles.caustics_refractive = True
-        print("✅ ULTRA quality: Full GI and caustics enabled for maximum realism")
+        print(f"✅ ULTRA quality ({quality_level}): Full GI and caustics enabled for maximum realism")
     else:
         scene.cycles.use_fast_gi = {use_fast_gi}
         scene.cycles.caustics_reflective = {caustics_reflective}
         scene.cycles.caustics_refractive = {caustics_refractive}
     
     print("✅ GPU-optimized Cycles settings configured")
+    
+    # Additional quality settings for ultra/broadcast quality
+    quality_level = '{quality_level}'
+    if quality_level in ['ultra', 'broadcast']:
+        print("🌟 Enabling additional ultra-quality features...")
+        
+        # Texture quality settings
+        scene.render.use_file_extension = True
+        scene.render.use_render_cache = False
+        
+        # Anti-aliasing settings
+        if hasattr(scene.render, 'film_transparent'):
+            scene.render.film_transparent = False  # Better alpha handling
+        
+        # Higher quality texture sampling
+        if hasattr(scene.cycles, 'use_light_tree'):
+            scene.cycles.use_light_tree = True  # Better light sampling
+        
+        # Volumetric quality
+        if hasattr(scene.cycles, 'volume_step_rate'):
+            scene.cycles.volume_step_rate = 0.1  # High quality volumetrics
+        if hasattr(scene.cycles, 'volume_max_steps'):
+            scene.cycles.volume_max_steps = 1024  # More volume steps
+        
+        # Better sampling
+        scene.cycles.transparent_max_bounces = 8  # Better transparency
+        scene.cycles.transparent_min_bounces = 4
+        
+        # Device-specific optimizations
+        if cprefs.compute_device_type == 'METAL':
+            scene.cycles.pixel_size = 1  # Native resolution for macOS
+        elif cprefs.compute_device_type == 'CUDA':
+            scene.cycles.pixel_size = 1  # Native resolution for NVIDIA
+        
+        print("✅ Ultra-quality features enabled")
+    
+    # Global texture quality settings for all images
+    print("🖼️ Configuring high-quality texture settings...")
+    for image in bpy.data.images:
+        # Use high quality interpolation
+        image.use_interpolation = True  # Enable interpolation
+        # Use high quality upsampling  
+        if hasattr(image, 'interpolation'):
+            image.interpolation = 'CUBIC'  # Cubic interpolation for smooth textures
+        # Generate mipmaps for better quality
+        image.use_float = False  # Use standard bit depth for speed
+        image.file_format = 'PNG'  # High quality format
+    print(f"✅ Configured {len(bpy.data.images)} images with high-quality settings")
+    
 except Exception as _gpu_e:
     print(f"⚠️ GPU optimization failed: {_gpu_e}")
     scene.cycles.device = 'CPU'
@@ -1982,38 +2040,45 @@ print("🎭 Cinematic Shape Keys: Story-driven morphing with audio sync")
 print("🎨 Dynamic Materials: Evolving colors and properties")
 print("🎯 Commercial Grade: Professional quality and performance")
 
-# SOPHISTICATED BIRD-BASED SHAPE KEY SELECTION - Focus on Elegant Bird Transformations
+# REALISTIC NATURAL SHAPE KEY SELECTION - Focus on Natural Formations
 shape_names = [
-    # PRIMARY SOPHISTICATED BIRD SHAPES - Main morphing focus
-    "AbstractBird",       # Soaring bird silhouette - freedom and flight (kick_energy)
-    "PhoenixRising",      # Mythical phoenix - rebirth and transformation (bass_energy)
-    "DragonForm",         # Dragon silhouette - power and majesty (snare_energy)
-    "ButterflyWings",     # Butterfly form - metamorphosis and beauty (hihat_energy)
-    "EagleSoaring",       # Eagle in flight - strength and vision (vocal_energy)
-    "SwanElegance",       # Swan form - grace and elegance (spectral_centroid)
+    # PRIMARY REALISTIC NATURAL SHAPES - Main morphing focus
+    "CloudPuff",          # Fluffy cloud expansion (kick_energy)
+    "SmokePlume",         # Rising smoke with turbulence (bass_energy)
+    "WaveForm",           # Ocean wave cresting (snare_energy)
+    "FlameTip",           # Flickering flame (hihat_energy)
+    "AuroraStream",       # Flowing aurora ribbons (vocal_energy)
+    "NebulaCloud",        # Cosmic cloud with swirl (spectral_centroid)
+    "CrystalCluster",     # Sharp crystal spikes (kick_energy)
+    "MountainPeak",       # Rising mountain formation (bass_energy)
+    "VolcanoEruption",    # Erupting volcano (snare_energy)
+    "TornadoSpiral",     # Spinning tornado funnel (vocal_energy)
+    "LavaFlow",          # Flowing lava (hihat_energy)
+    "StormSwirl",        # Swirling storm cloud (spectral_centroid)
+    "PulsingCore",       # Pulsing expansion (rms_energy)
     
-    # SUPPORTING SOPHISTICATED SHAPES - Secondary morphing
-    "FalconDive",         # Falcon diving - speed and precision
-    "HummingbirdHover",   # Hummingbird - agility and energy
-    "PeacockDisplay",     # Peacock - beauty and display
-    "OwlWisdom",          # Owl - wisdom and mystery
+    # SUPPORTING NATURAL SHAPES - Secondary morphing
+    "FogBank",           # Rolling fog bank
+    "MistRoll",          # Drifting mist
+    "Thunderhead",       # Storm cloud formation
+    "IceForm",          # Crystalline ice formation
     
     # MINIMAL GEOMETRIC SHAPES - Subtle accent only
-    "OrganicFlow",        # Continuous organic motion
-    "CosmicPulse",        # Overall rhythmic energy
-    "NebulaSwirl",        # Cosmic theme - space aesthetic
+    "OrganicFlow",       # Continuous organic motion
+    "CosmicPulse",       # Overall rhythmic energy
+    "NebulaSwirl",       # Cosmic theme - space aesthetic
     
     # ADVANCED CINEMATIC SHAPES - Special effects
     "CrystallineFracture", # Shattering crystal effect - dramatic
-    "FluidMorphing",      # Liquid-like dramatic transformation
+    "FluidMorphing",     # Liquid-like dramatic transformation
     "GeometricExplosion", # Explosive geometric patterns
-    "SpiralRise",         # High-frequency response - dynamic
-    "QuantumDistortion",  # Reality-bending quantum effects
-    "StellarCollapse",    # Star collapse simulation
-    "BlackHoleWarp",      # Black hole gravitational distortion
-    "VerticalSpike",      # Simple kick accent - minimal
-    "HorizontalWave",     # Simple bass accent - minimal
-    "RadialExplosion"     # Simple snare accent - minimal
+    "SpiralRise",        # High-frequency response - dynamic
+    "QuantumDistortion", # Reality-bending quantum effects
+    "StellarCollapse",   # Star collapse simulation
+    "BlackHoleWarp",   # Black hole gravitational distortion
+    "VerticalSpike",     # Simple kick accent - minimal
+    "HorizontalWave",    # Simple bass accent - minimal
+    "RadialExplosion"    # Simple snare accent - minimal
 ]
 
 phi = 1.61803398875
@@ -2492,8 +2557,175 @@ try:
                     v.co.z *= 0.7
                     # Tail curve
                     v.co.z += math.sin(v.co.x * 3.5) * 0.04
+        
+        # REALISTIC NATURAL FORMATIONS - CloudPuff (Kick energy)
+        elif "CloudPuff" in sname:
+            for j, v in enumerate(data):
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                # CLOUD: Fluffy expansion with organic detail
+                puff_intensity = math.exp(-radial_dist * 0.8) * 3.0
+                expansion = puff_intensity
+                v.co.x *= 1.0 + expansion * 0.3
+                v.co.y *= 1.0 + expansion * 0.3
+                v.co.z += expansion * 2.5
+                # Add organic cloud detail
+                detail_low = math.sin(v.co.x * 3.0) * math.cos(v.co.y * 3.0) * 0.4
+                detail_mid = math.sin(v.co.x * 8.0) * math.cos(v.co.y * 8.0) * 0.2
+                v.co.z += detail_low + detail_mid
+        
+        # SmokePlume (Bass energy)
+        elif "SmokePlume" in sname:
+            for j, v in enumerate(data):
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                # SMOKE: Rising with widening
+                if v.co.z > 0:
+                    rise_strength = v.co.z * 4.0
+                    widen = math.exp(-radial_dist * 0.5) * 2.0
+                    v.co.x *= 1.0 + widen * 0.2
+                    v.co.y *= 1.0 + widen * 0.2
+                    v.co.z += rise_strength
+                # Turbulent swirl
+                angle = math.atan2(v.co.y, v.co.x)
+                swirl = math.sin(radial_dist * phi * 2.0 + angle * 3.0) * 1.5
+                v.co.x += math.cos(angle) * swirl * 0.3
+                v.co.y += math.sin(angle) * swirl * 0.3
+                detail = math.sin(v.co.x * 6.0) * math.sin(v.co.y * 6.0) * 0.5
+                v.co.z += detail
+        
+        # WaveForm (Snare energy)
+        elif "WaveForm" in sname:
+            for j, v in enumerate(data):
+                # WAVE: Flowing, cresting wave
+                wave_height = math.sin(v.co.x * 2.0 + v.co.z * 1.5) * 3.0
+                v.co.y += wave_height
+                crest = math.cos(v.co.x * 4.0) * math.sin(v.co.z * 3.0) * 1.5
+                v.co.z += crest
+                flow_x = math.sin(v.co.x * 1.5) * 1.0
+                v.co.x += flow_x * 0.3
+        
+        # FlameTip (Hihat energy)
+        elif "FlameTip" in sname:
+            for j, v in enumerate(data):
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                # FLAME: Flickering, pointed, upward
+                flame_intensity = math.exp(-radial_dist * 0.6) * 2.5
+                v.co.z += flame_intensity * 4.0
+                if radial_dist < 0.3:
+                    v.co.x *= 0.7
+                    v.co.y *= 0.7
+                flicker = math.sin(v.co.x * 12.0 + v.co.y * 12.0) * 0.3
+                v.co.x += flicker
+                v.co.y += math.cos(v.co.y * 12.0) * 0.3
+        
+        # AuroraStream (Vocal energy)
+        elif "AuroraStream" in sname:
+            for j, v in enumerate(data):
+                angle = math.atan2(v.co.y, v.co.x)
+                # AURORA: Flowing, ribbon-like stream
+                stream_1 = math.sin(angle * phi * 2.0 + v.co.z * phi * 1.5) * 2.0
+                stream_2 = math.cos(angle * phi * 3.0 - v.co.z * phi * 1.0) * 1.5
+                stream_strength = (stream_1 + stream_2) * 0.6
+                v.co.x += math.cos(angle) * stream_strength
+                v.co.y += math.sin(angle) * stream_strength
+                undulation = math.sin(v.co.x * 3.0) * math.cos(v.co.y * 3.0) * 1.2
+                v.co.z += undulation
+        
+        # NebulaCloud (Spectral centroid)
+        elif "NebulaCloud" in sname:
+            for j, v in enumerate(data):
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                angle = math.atan2(v.co.y, v.co.x)
+                # NEBULA: Expansive, wispy cloud with swirl
+                expansion = math.exp(-radial_dist * 0.4) * 3.0
+                v.co.x *= 1.0 + expansion * 0.3
+                v.co.y *= 1.0 + expansion * 0.3
+                swirl = math.sin(angle * phi * 2.0 + radial_dist * phi * 3.0) * 2.0
+                v.co.x += math.cos(angle) * swirl
+                v.co.y += math.sin(angle) * swirl
+                depth = math.sin(radial_dist * 6.0 + angle * 4.0) * 1.5
+                v.co.z += depth
+        
+        # CrystalCluster (Kick energy)
+        elif "CrystalCluster" in sname:
+            for j, v in enumerate(data):
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                angle = math.atan2(v.co.y, v.co.x)
+                # CRYSTAL: Sharp spikes
+                spike_intensity = math.exp(-radial_dist * 0.5) * 2.5
+                spike = math.sin(angle * 6.0 + v.co.z * 4.0) * spike_intensity
+                v.co.x += math.cos(angle) * spike * 0.4
+                v.co.y += math.sin(angle) * spike * 0.4
+                v.co.z += spike_intensity * 3.0
+        
+        # MountainPeak (Bass energy)
+        elif "MountainPeak" in sname:
+            for j, v in enumerate(data):
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                # MOUNTAIN: Steep peak with rocky detail
+                peak_height = math.exp(-radial_dist * 0.7) * 4.0
+                v.co.z += peak_height
+                rock_detail = math.sin(v.co.x * 5.0) * math.cos(v.co.y * 5.0) * 0.8
+                v.co.z += rock_detail
+        
+        # VolcanoEruption (Snare energy)
+        elif "VolcanoEruption" in sname:
+            for j, v in enumerate(data):
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                # VOLCANO: Central eruption
+                eruption = math.exp(-radial_dist * 1.2) * 4.5
+                v.co.z += eruption
+                if radial_dist > 0.4:
+                    explosion = math.sin(radial_dist * 8.0) * 1.5
+                    v.co.x *= 1.0 + explosion * 0.2
+                    v.co.y *= 1.0 + explosion * 0.2
+        
+        # TornadoSpiral (Vocal energy)
+        elif "TornadoSpiral" in sname:
+            for j, v in enumerate(data):
+                angle = math.atan2(v.co.y, v.co.x)
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                # TORNADO: Spinning, funnel-shaped
+                narrow_factor = (1.0 - v.co.z * 0.3) if v.co.z < 0 else 0.8
+                spiral = math.sin(angle * phi * 4.0 + v.co.z * phi * 2.0) * 2.0
+                v.co.x += math.cos(angle) * spiral * narrow_factor
+                v.co.y += math.sin(angle) * spiral * narrow_factor
+                v.co.z += math.exp(-radial_dist * 0.8) * 3.0
+        
+        # LavaFlow (Hihat energy)
+        elif "LavaFlow" in sname:
+            for j, v in enumerate(data):
+                # LAVA: Flowing, viscous
+                flow_x = math.sin(v.co.x * phi * 2.0) * math.cos(v.co.y * phi * 2.0) * 2.0
+                flow_y = math.cos(v.co.y * phi * 2.0) * math.sin(v.co.x * phi * 2.0) * 2.0
+                v.co.x += flow_x * 0.5
+                v.co.y += flow_y * 0.5
+        
+        # StormSwirl (Spectral centroid)
+        elif "StormSwirl" in sname:
+            for j, v in enumerate(data):
+                radial_dist = math.sqrt(v.co.x**2 + v.co.y**2)
+                angle = math.atan2(v.co.y, v.co.x)
+                # STORM: Swirling with energy
+                swirl = math.sin(angle * phi * 3.0 + radial_dist * phi * 4.0) * 2.5
+                v.co.x += math.cos(angle) * swirl * 0.5
+                v.co.y += math.sin(angle) * swirl * 0.5
+        
+        # PulsingCore (RMS energy)
+        elif "PulsingCore" in sname:
+            for j, v in enumerate(data):
+                dist_from_center = math.sqrt(v.co.x**2 + v.co.y**2 + v.co.z**2)
+                # PULSE: Pulsing expansion
+                pulse = math.sin(dist_from_center * phi * 2.0) * 1.5 + 1.0
+                expansion = dist_from_center * 0.2 * pulse
+                if dist_from_center > 0.001:
+                    dir_x = v.co.x / dist_from_center
+                    dir_y = v.co.y / dist_from_center
+                    dir_z = v.co.z / dist_from_center
+                    v.co.x += dir_x * expansion
+                    v.co.y += dir_y * expansion
+                    v.co.z += dir_z * expansion
     
-    print(f"✅ ABSTRACT RECOGNIZABLE shape keys created with cinematic storytelling")
+    print(f"✅ REALISTIC NATURAL shape keys created with cinematic storytelling")
     print(f"🔍 DEBUG: Number of shape keys created: {len(obj.data.shape_keys.key_blocks) if obj.data.shape_keys else 0}")
     if obj.data.shape_keys:
         print(f"🔍 DEBUG: Shape key names: {[sk.name for sk in obj.data.shape_keys.key_blocks]}")
@@ -2523,21 +2755,28 @@ frames_per_beat = beat_duration * {fps}
 
 print(f"🎵 Synthetic tempo: {synthetic_tempo} BPM for continuous motion")
 
-# Define DRAMATIC shape morphing phases - Focus on ONE shape at a time for dramatic effect
+# Define DRAMATIC shape morphing phases - Focus on realistic natural formations
 morph_phases = [
-    # PRIMARY SHAPES - DRAMATIC and DOMINANT one at a time
-    {"name": "AbstractBird", "weight": 0.85, "speed": 0.35},       # Main bird - responds to kick (DOMINANT)
-    {"name": "PhoenixRising", "weight": 0.80, "speed": 0.3},      # Phoenix rebirth - responds to bass (DOMINANT)
-    {"name": "DragonForm", "weight": 0.75, "speed": 0.4},        # Dragon majesty - responds to snare (DOMINANT)
+    # PRIMARY REALISTIC SHAPES - DOMINANT natural formations
+    {"name": "CloudPuff", "weight": 0.85, "speed": 0.35},       # Cloud expansion - responds to kick (DOMINANT)
+    {"name": "SmokePlume", "weight": 0.80, "speed": 0.3},      # Rising smoke - responds to bass (DOMINANT)
+    {"name": "WaveForm", "weight": 0.75, "speed": 0.4},        # Ocean wave - responds to snare (DOMINANT)
+    {"name": "FlameTip", "weight": 0.80, "speed": 0.35},       # Fire flame - responds to hihat (DOMINANT)
+    {"name": "AuroraStream", "weight": 0.75, "speed": 0.4},       # Aurora flow - responds to vocal (DOMINANT)
+    {"name": "NebulaCloud", "weight": 0.70, "speed": 0.3},       # Nebula - responds to brightness (DOMINANT)
     
-    # SECONDARY SHAPES - Strong presence when active
-    {"name": "ButterflyWings", "weight": 0.70, "speed": 0.5},     # Butterfly grace - responds to hihat (STRONG)
-    {"name": "EagleSoaring", "weight": 0.65, "speed": 0.4},       # Eagle vision - responds to vocals (STRONG)
-    {"name": "SwanElegance", "weight": 0.60, "speed": 0.3},       # Swan beauty - responds to brightness (STRONG)
+    # SECONDARY REALISTIC SHAPES - Strong natural formations
+    {"name": "CrystalCluster", "weight": 0.70, "speed": 0.5},     # Crystal spikes - responds to kick (STRONG)
+    {"name": "MountainPeak", "weight": 0.65, "speed": 0.4},       # Mountain rise - responds to bass (STRONG)
+    {"name": "VolcanoEruption", "weight": 0.60, "speed": 0.5},       # Volcano - responds to snare (STRONG)
+    {"name": "TornadoSpiral", "weight": 0.65, "speed": 0.45},       # Tornado - responds to vocal (STRONG)
+    {"name": "LavaFlow", "weight": 0.60, "speed": 0.4},       # Lava - responds to hihat (STRONG)
+    {"name": "StormSwirl", "weight": 0.55, "speed": 0.35},       # Storm - responds to brightness (STRONG)
     
-    # SUPPORT SHAPES - Visible accent (higher than before)
+    # SUPPORT SHAPES - Visible accent
     {"name": "OrganicFlow", "weight": 0.50, "speed": 0.45},      # Organic motion - visible base
     {"name": "CosmicPulse", "weight": 0.45, "speed": 0.35},       # Cosmic rhythm - visible response
+    {"name": "PulsingCore", "weight": 0.40, "speed": 0.3},       # Pulsing core - subtle accent
 ]
 
 # Create smooth, continuous morphing for each shape key with enhanced interpolation
@@ -2555,14 +2794,21 @@ print("🎵 Creating audio-responsive shape morphing with smooth transitions..."
 audio_data = features_data
 print(f"📊 Audio data keys: {list(audio_data.keys())}")
 
-# Define audio band mappings for bird shapes
+# Define audio band mappings for realistic natural shapes
 audio_mappings = {
-    "AbstractBird": "kick_energy",      # Main bird responds to kick
-    "PhoenixRising": "bass_energy",    # Phoenix responds to bass
-    "DragonForm": "snare_energy",       # Dragon responds to snare
-    "ButterflyWings": "hihat_energy",   # Butterfly responds to hihat
-    "EagleSoaring": "vocal_energy",     # Eagle responds to vocals
-    "SwanElegance": "spectral_centroid", # Swan responds to brightness
+    "CloudPuff": "kick_energy",         # Cloud responds to kick
+    "SmokePlume": "bass_energy",        # Smoke responds to bass
+    "WaveForm": "snare_energy",         # Wave responds to snare
+    "FlameTip": "hihat_energy",         # Flame responds to hihat
+    "AuroraStream": "vocal_energy",     # Aurora responds to vocals
+    "NebulaCloud": "spectral_centroid", # Nebula responds to brightness
+    "CrystalCluster": "kick_energy",    # Crystal responds to kick
+    "MountainPeak": "bass_energy",       # Mountain responds to bass
+    "VolcanoEruption": "snare_energy",  # Volcano responds to snare
+    "TornadoSpiral": "vocal_energy",        # Tornado responds to vocals
+    "LavaFlow": "hihat_energy",         # Lava responds to hihat
+    "StormSwirl": "spectral_centroid",  # Storm responds to brightness
+    "PulsingCore": "rms_energy",        # Pulsing responds to RMS
     "VerticalSpike": "kick_energy",     # Spike responds to kick
     "HorizontalWave": "bass_energy",    # Wave responds to bass
     "RadialExplosion": "snare_energy"   # Explosion responds to snare
