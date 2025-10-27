@@ -2755,28 +2755,19 @@ frames_per_beat = beat_duration * {fps}
 
 print(f"🎵 Synthetic tempo: {synthetic_tempo} BPM for continuous motion")
 
-# Define DRAMATIC shape morphing phases - Focus on realistic natural formations
+# TIME-BASED SHAPE PROGRESSION - Each shape dominates for a period, then transitions to next
+# Shapes progress through time with gradual transitions and audio-responsive modulation
 morph_phases = [
-    # PRIMARY REALISTIC SHAPES - DOMINANT natural formations with HIGH responsiveness
-    {"name": "CloudPuff", "weight": 1.0, "speed": 0.35},       # Cloud expansion - responds to kick (DOMINANT)
-    {"name": "SmokePlume", "weight": 1.0, "speed": 0.3},      # Rising smoke - responds to bass (DOMINANT)
-    {"name": "WaveForm", "weight": 1.0, "speed": 0.4},        # Ocean wave - responds to snare (DOMINANT)
-    {"name": "FlameTip", "weight": 1.0, "speed": 0.35},       # Fire flame - responds to hihat (DOMINANT)
-    {"name": "AuroraStream", "weight": 1.0, "speed": 0.4},       # Aurora flow - responds to vocal (DOMINANT)
-    {"name": "NebulaCloud", "weight": 0.95, "speed": 0.3},       # Nebula - responds to brightness (DOMINANT)
-    
-    # SECONDARY REALISTIC SHAPES - Strong natural formations
-    {"name": "CrystalCluster", "weight": 0.85, "speed": 0.5},     # Crystal spikes - responds to kick (STRONG)
-    {"name": "MountainPeak", "weight": 0.85, "speed": 0.4},       # Mountain rise - responds to bass (STRONG)
-    {"name": "VolcanoEruption", "weight": 0.80, "speed": 0.5},       # Volcano - responds to snare (STRONG)
-    {"name": "TornadoSpiral", "weight": 0.85, "speed": 0.45},       # Tornado - responds to vocal (STRONG)
-    {"name": "LavaFlow", "weight": 0.80, "speed": 0.4},       # Lava - responds to hihat (STRONG)
-    {"name": "StormSwirl", "weight": 0.75, "speed": 0.35},       # Storm - responds to brightness (STRONG)
-    
-    # SUPPORT SHAPES - Visible accent
-    {"name": "OrganicFlow", "weight": 0.65, "speed": 0.45},      # Organic motion - visible base
-    {"name": "CosmicPulse", "weight": 0.60, "speed": 0.35},       # Cosmic rhythm - visible response
-    {"name": "PulsingCore", "weight": 0.55, "speed": 0.3},       # Pulsing core - subtle accent
+    # Each shape gets a time period where it's dominant, with gradual transitions between
+    {"name": "CloudPuff", "start_frame": 0, "end_frame": {total_frames} * 0.15, "audio_band": "kick_energy", "speed": 0.35},      # First 15% - Kick responsive
+    {"name": "SmokePlume", "start_frame": {total_frames} * 0.10, "end_frame": {total_frames} * 0.25, "audio_band": "bass_energy", "speed": 0.3},    # Gradual transition from Cloud
+    {"name": "WaveForm", "start_frame": {total_frames} * 0.20, "end_frame": {total_frames} * 0.35, "audio_band": "snare_energy", "speed": 0.4},      # Ocean wave period
+    {"name": "FlameTip", "start_frame": {total_frames} * 0.30, "end_frame": {total_frames} * 0.45, "audio_band": "hihat_energy", "speed": 0.35},    # Fire flame period
+    {"name": "AuroraStream", "start_frame": {total_frames} * 0.40, "end_frame": {total_frames} * 0.55, "audio_band": "vocal_energy", "speed": 0.4},  # Aurora period
+    {"name": "NebulaCloud", "start_frame": {total_frames} * 0.50, "end_frame": {total_frames} * 0.65, "audio_band": "spectral_centroid", "speed": 0.3},  # Nebula period
+    {"name": "CrystalCluster", "start_frame": {total_frames} * 0.60, "end_frame": {total_frames} * 0.75, "audio_band": "kick_energy", "speed": 0.5},    # Crystal period
+    {"name": "VolcanoEruption", "start_frame": {total_frames} * 0.70, "end_frame": {total_frames} * 0.85, "audio_band": "snare_energy", "speed": 0.5},  # Volcano period
+    {"name": "TornadoSpiral", "start_frame": {total_frames} * 0.80, "end_frame": {total_frames} * 0.95, "audio_band": "vocal_energy", "speed": 0.45},  # Tornado period
 ]
 
 # Create smooth, continuous morphing for each shape key with enhanced interpolation
@@ -2836,15 +2827,17 @@ for phase_idx, phase in enumerate(morph_phases):
     # Clear existing keyframes
     shape_key.value = 0.0
     
-    # Get audio band for this shape
-    audio_band = audio_mappings.get(phase["name"], "kick_energy")
+    # Get time window and audio band for this shape
+    start_frame = int(phase.get("start_frame", 0))
+    end_frame = int(phase.get("end_frame", {total_frames}))
+    audio_band = phase.get("audio_band", audio_mappings.get(phase["name"], "kick_energy"))
     audio_values = audio_data.get(audio_band, [])
     
     if not audio_values:
         print(f"⚠️ No audio data for {audio_band}, using synthetic motion")
         audio_values = [0.5] * {total_frames}  # Fallback to constant value
     
-    print(f"🎵 {phase['name']} -> {audio_band}: {len(audio_values)} audio samples")
+    print(f"🎵 {phase['name']} -> {audio_band}: frames {start_frame}-{end_frame} ({len(audio_values)} audio samples)")
     
     # Add temporal smoothing to audio values for smooth morphing
     # Apply moving average filter to reduce flicker and enable gradual transitions
@@ -2861,12 +2854,33 @@ for phase_idx, phase in enumerate(morph_phases):
         smoothed = sum(window) / len(window) if window else audio_values[i]
         smoothed_audio_values.append(smoothed)
     
-    # Create smooth, audio-responsive morphing
+    # Create smooth, audio-responsive morphing with TIME-BASED FADE
     keyframes_created = 0
     sample_every = max(1, {total_frames} // 10)  # Sample 10 frames to show progress
+    
     for frame in range(0, {total_frames} + 1, 1):
         scene.frame_set(frame)
         t = frame / {fps}
+        
+        # TIME-BASED FADE: Calculate how prominent this shape should be at this frame
+        if frame < start_frame:
+            time_factor = 0.0  # Before this shape's time
+        elif frame > end_frame:
+            time_factor = 0.0  # After this shape's time
+        else:
+            # Fade in/out at edges for smooth transitions
+            shape_duration = end_frame - start_frame
+            if shape_duration > 0:
+                progress = (frame - start_frame) / shape_duration
+                # Smooth fade in/out with 10% padding at each edge
+                if progress < 0.1:
+                    time_factor = progress / 0.1  # Fade in
+                elif progress > 0.9:
+                    time_factor = (1.0 - progress) / 0.1  # Fade out
+                else:
+                    time_factor = 1.0  # Full strength
+            else:
+                time_factor = 1.0
         
         # Get SMOOTHED audio value for this frame
         if frame < len(smoothed_audio_values):
@@ -2874,43 +2888,15 @@ for phase_idx, phase in enumerate(morph_phases):
         else:
             audio_value = smoothed_audio_values[-1] if smoothed_audio_values else 0.5
         
-        # Task 2: Frequency-aware morph speed (slow for bass, fast for hihat)
-        # Determine morph speed based on audio frequency band
-        if "bass" in audio_band.lower() or "kick" in audio_band.lower():
-            morph_speed = phase["speed"] * 0.5  # Slow for bass/kick (0.5-1Hz)
-        elif "hihat" in audio_band.lower() or "high" in audio_band.lower():
-            morph_speed = phase["speed"] * 2.0  # Fast for hihat (16-32Hz)
-        elif "snare" in audio_band.lower():
-            morph_speed = phase["speed"] * 1.2  # Medium-fast for snare (4-8Hz)
-        else:
-            morph_speed = phase["speed"]  # Default speed for other bands
+        # AMPLIFIED audio responsiveness with TIME FACTOR
+        audio_boost = 2.0  # Amplify audio strongly
+        audio_response = (audio_value * audio_boost)
         
-        # AMPLIFIED audio responsiveness - shapes should react STRONGLY to music
-        # Make audio the dominant factor, base motion is just subtle background movement
-        base_motion = math.sin(2 * math.pi * t * morph_speed * phi * 0.1) * 0.1  # Slight base motion
+        # Combine time-based prominence with audio response
+        final_value = time_factor * audio_response
         
-        # DIRECT audio mapping with AMPLIFIED response
-        # Boost audio values to make shapes much more responsive
-        audio_boost = 1.5  # Amplify audio by 1.5x for stronger response
-        direct_audio = (audio_value * audio_boost) * phase["weight"]
-        
-        # Combine values
-        combined_value = base_motion + direct_audio
-        
-        # AUDIO RESPONSIVENESS - Use EXPANDING power curve to amplify high values
-        # Power of 0.5 (square root) = more responsive to high audio
-        final_value = abs(combined_value) ** 0.5  # More responsive, amplifies high values
-        
-        # Ensure final_value is a real number (not complex)
-        if isinstance(final_value, complex):
-            final_value = final_value.real
-        
-        # Clamp to ensure full range usage
+        # Clamp to valid range
         final_value = max(0.0, min(1.0, final_value))
-        
-        # STRONG boost for maximum visibility and responsiveness
-        final_value = final_value * 1.5  # Much stronger boost
-        final_value = max(0.0, min(1.0, final_value))  # Re-clamp after boost
         
         # Apply keyframe
         shape_key.value = final_value
@@ -2919,7 +2905,7 @@ for phase_idx, phase in enumerate(morph_phases):
         
         # Debug output for sample frames
         if frame % sample_every == 0:
-            print(f"🔍 DEBUG: Frame {frame}/{total_frames}: {phase['name']} = {final_value:.4f} (audio={audio_value:.4f}, weight={phase['weight']}, combined={combined_value:.4f})")
+            print(f"🔍 DEBUG: Frame {frame}/{total_frames}: {phase['name']} = {final_value:.4f} (time_factor={time_factor:.2f}, audio={audio_value:.4f})")
     
     print(f"✅ DEBUG: Created {keyframes_created} keyframes for '{phase['name']}'")
 

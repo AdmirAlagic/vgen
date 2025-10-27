@@ -18,10 +18,13 @@ AudioBlender is a professional-grade application that transforms music into stun
 ## Features
 
 ### Core Capabilities
-- **Audio-Reactive Animation**: Real-time shape morphing responsive to music frequencies
+- **Audio-Reactive Animation**: Real-time shape morphing responsive to music frequencies with smooth blending
+- **Realistic Natural Shapes**: CloudPuff, SmokePlume, WaveForm, FlameTip, AuroraStream, NebulaCloud, CrystalCluster, VolcanoEruption, TornadoSpiral
+- **Time-Based Morphing**: Shapes gradually transition through time, with each shape dominant for a specific period
+- **Smooth Shape Transitions**: Gradual fade in/out with 10% padding for seamless morphing between shapes
 - **Multi-Object System**: Secondary objects with frequency-specific responses, orbital choreography, and beat-based spawning
 - **Professional Rendering**: GPU-accelerated Cycles rendering with Metal/CUDA support
-- **Smooth Morphing**: Continuous Bezier-interpolated shape transitions without flickering
+- **Continuous Movement**: Smooth object animation with smoothstep easing and keyframes every frame
 - **Professional Materials**: Advanced material system with 6 presets (MetallicEnergy, NeonGlass, FluidOrganic, CosmicPlasma, ElectricEnergy, EtherealFantasy)
 - **Post-Processing Pipeline**: Professional color grading, vignette, chromatic aberration, motion blur, film grain, glow effects
 - **Advanced Lighting**: Cinematic 3-point lighting, volumetric effects, audio-responsive light animation
@@ -176,10 +179,13 @@ python src/generate_video.py <audio_file> [output_name] [quality_mode]
 - **Output**: Comprehensive audio feature dictionary with per-frame data
 
 #### 2. Scene Generation (`blender_scene_template.py`)
-- **Main Template**: 3600+ lines of Blender script generation
+- **Main Template**: 3900+ lines of Blender script generation
 - **Features**: Professional camera setup, advanced lighting system, material transitions, space background
-- **Shapes**: Multiple bird-like abstract shapes (AbstractBird, PhoenixRising, DragonForm, ButterflyWings, EagleSoaring, SwanElegance) with smooth morphing
-- **Animation**: Bezier-interpolated continuous morphing without flickering
+- **Realistic Shapes**: Natural formations (CloudPuff, SmokePlume, WaveForm, FlameTip, AuroraStream, NebulaCloud, CrystalCluster, VolcanoEruption, TornadoSpiral)
+- **Time-Based Progression**: Each shape dominates for specific time periods with gradual fade in/out
+- **Audio Responsiveness**: 2x amplification with per-shape audio band mapping during its active period
+- **Smooth Blending**: Temporal smoothing with 5-frame moving average filter, no aggressive suppression
+- **Continuous Animation**: Keyframes every frame with smoothstep easing for fluid motion
 - **Integration**: Modular system with advanced camera, environment, materials, post-processing, render quality, and multi-object systems
 
 #### 3. Optimized Visualizer (`optimized_audio_visualizer.py`)
@@ -376,6 +382,51 @@ save_scene_config(config)
 - Full quality
 - Slowest rendering
 - Use for: Masterpiece quality
+
+## Realistic Shape Morphing System
+
+### Natural Formations
+
+The visualizer uses **realistic natural shapes** that morph gracefully through time:
+
+1. **CloudPuff** - Fluffy cloud expansion (kick-responsive)
+2. **SmokePlume** - Rising smoke with turbulence (bass-responsive)
+3. **WaveForm** - Ocean wave cresting (snare-responsive)
+4. **FlameTip** - Flickering flame (hihat-responsive)
+5. **AuroraStream** - Flowing aurora ribbons (vocal-responsive)
+6. **NebulaCloud** - Cosmic cloud with swirl (spectral-responsive)
+7. **CrystalCluster** - Sharp crystal spikes (kick-responsive)
+8. **VolcanoEruption** - Erupting volcano (snare-responsive)
+9. **TornadoSpiral** - Spinning funnel (vocal-responsive)
+
+### Time-Based Progression
+
+Shapes progress through the video with specific timing:
+- **0-15%**: CloudPuff (kick energy)
+- **10-25%**: SmokePlume (bass energy)
+- **20-35%**: WaveForm (snare energy)
+- **30-45%**: FlameTip (hihat energy)
+- **40-55%**: AuroraStream (vocal energy)
+- **50-65%**: NebulaCloud (spectral energy)
+- **60-75%**: CrystalCluster (kick energy)
+- **70-85%**: VolcanoEruption (snare energy)
+- **80-95%**: TornadoSpiral (vocal energy)
+
+### Smooth Transitions
+
+Each shape:
+- **Fades In**: First 10% of its period
+- **Full Strength**: Middle 80%
+- **Fades Out**: Last 10% of its period
+- Overlaps with next shape for seamless morphing
+- Responds to its assigned audio band during active period
+
+### Audio Responsiveness
+
+- **2x Amplification**: Strong response to music
+- **Per-Shape Audio Bands**: Each shape responds to specific frequency
+- **Temporal Smoothing**: 5-frame moving average filter for flicker-free animation
+- **Continuous Keyframes**: Keyframe on every frame for smooth motion
 
 ## Morph Styles
 
@@ -593,6 +644,14 @@ Version 2.0.0 | Blender 4.5+ Optimized | GPU-Accelerated | Professional Quality 
 - ✅ Scene Enhancement (Tasks 7-9)
 - ✅ Quality & Polish (Tasks 10-11)
 - ✅ Multi-Object System (Task 12)
+- ✅ Realistic Shape Morphing (NEW - Natural formations with time-based progression)
 - ⏸️ Artistic Style Presets (Task 13)
 - ⏸️ Export & Delivery (Task 14)
+
+**Recent Improvements** (Latest Update):
+- 🎨 Realistic Natural Shapes: Replaced abstract bird shapes with natural formations (clouds, smoke, waves, flames, etc.)
+- ⏱️ Time-Based Morphing: Each shape dominates for a specific period with gradual transitions
+- 🎵 Enhanced Audio Responsiveness: 2x amplification with per-shape audio mapping during active periods
+- 🌊 Smooth Blending: Temporal smoothing with moving average filter for flicker-free animation
+- 🎬 Continuous Movement: Smooth object animation with smoothstep easing
 
