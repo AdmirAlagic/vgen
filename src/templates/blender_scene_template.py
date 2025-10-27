@@ -2757,26 +2757,26 @@ print(f"🎵 Synthetic tempo: {synthetic_tempo} BPM for continuous motion")
 
 # Define DRAMATIC shape morphing phases - Focus on realistic natural formations
 morph_phases = [
-    # PRIMARY REALISTIC SHAPES - DOMINANT natural formations
-    {"name": "CloudPuff", "weight": 0.85, "speed": 0.35},       # Cloud expansion - responds to kick (DOMINANT)
-    {"name": "SmokePlume", "weight": 0.80, "speed": 0.3},      # Rising smoke - responds to bass (DOMINANT)
-    {"name": "WaveForm", "weight": 0.75, "speed": 0.4},        # Ocean wave - responds to snare (DOMINANT)
-    {"name": "FlameTip", "weight": 0.80, "speed": 0.35},       # Fire flame - responds to hihat (DOMINANT)
-    {"name": "AuroraStream", "weight": 0.75, "speed": 0.4},       # Aurora flow - responds to vocal (DOMINANT)
-    {"name": "NebulaCloud", "weight": 0.70, "speed": 0.3},       # Nebula - responds to brightness (DOMINANT)
+    # PRIMARY REALISTIC SHAPES - DOMINANT natural formations with HIGH responsiveness
+    {"name": "CloudPuff", "weight": 1.0, "speed": 0.35},       # Cloud expansion - responds to kick (DOMINANT)
+    {"name": "SmokePlume", "weight": 1.0, "speed": 0.3},      # Rising smoke - responds to bass (DOMINANT)
+    {"name": "WaveForm", "weight": 1.0, "speed": 0.4},        # Ocean wave - responds to snare (DOMINANT)
+    {"name": "FlameTip", "weight": 1.0, "speed": 0.35},       # Fire flame - responds to hihat (DOMINANT)
+    {"name": "AuroraStream", "weight": 1.0, "speed": 0.4},       # Aurora flow - responds to vocal (DOMINANT)
+    {"name": "NebulaCloud", "weight": 0.95, "speed": 0.3},       # Nebula - responds to brightness (DOMINANT)
     
     # SECONDARY REALISTIC SHAPES - Strong natural formations
-    {"name": "CrystalCluster", "weight": 0.70, "speed": 0.5},     # Crystal spikes - responds to kick (STRONG)
-    {"name": "MountainPeak", "weight": 0.65, "speed": 0.4},       # Mountain rise - responds to bass (STRONG)
-    {"name": "VolcanoEruption", "weight": 0.60, "speed": 0.5},       # Volcano - responds to snare (STRONG)
-    {"name": "TornadoSpiral", "weight": 0.65, "speed": 0.45},       # Tornado - responds to vocal (STRONG)
-    {"name": "LavaFlow", "weight": 0.60, "speed": 0.4},       # Lava - responds to hihat (STRONG)
-    {"name": "StormSwirl", "weight": 0.55, "speed": 0.35},       # Storm - responds to brightness (STRONG)
+    {"name": "CrystalCluster", "weight": 0.85, "speed": 0.5},     # Crystal spikes - responds to kick (STRONG)
+    {"name": "MountainPeak", "weight": 0.85, "speed": 0.4},       # Mountain rise - responds to bass (STRONG)
+    {"name": "VolcanoEruption", "weight": 0.80, "speed": 0.5},       # Volcano - responds to snare (STRONG)
+    {"name": "TornadoSpiral", "weight": 0.85, "speed": 0.45},       # Tornado - responds to vocal (STRONG)
+    {"name": "LavaFlow", "weight": 0.80, "speed": 0.4},       # Lava - responds to hihat (STRONG)
+    {"name": "StormSwirl", "weight": 0.75, "speed": 0.35},       # Storm - responds to brightness (STRONG)
     
     # SUPPORT SHAPES - Visible accent
-    {"name": "OrganicFlow", "weight": 0.50, "speed": 0.45},      # Organic motion - visible base
-    {"name": "CosmicPulse", "weight": 0.45, "speed": 0.35},       # Cosmic rhythm - visible response
-    {"name": "PulsingCore", "weight": 0.40, "speed": 0.3},       # Pulsing core - subtle accent
+    {"name": "OrganicFlow", "weight": 0.65, "speed": 0.45},      # Organic motion - visible base
+    {"name": "CosmicPulse", "weight": 0.60, "speed": 0.35},       # Cosmic rhythm - visible response
+    {"name": "PulsingCore", "weight": 0.55, "speed": 0.3},       # Pulsing core - subtle accent
 ]
 
 # Create smooth, continuous morphing for each shape key with enhanced interpolation
@@ -2870,22 +2870,21 @@ for phase_idx, phase in enumerate(morph_phases):
         else:
             morph_speed = phase["speed"]  # Default speed for other bands
         
-        # Create very subtle base motion with frequency-aware speed
-        base_motion = math.sin(2 * math.pi * t * morph_speed * phi * 0.1) * 0.05  # Very subtle base motion
+        # AMPLIFIED audio responsiveness - shapes should react STRONGLY to music
+        # Make audio the dominant factor, base motion is just subtle background movement
+        base_motion = math.sin(2 * math.pi * t * morph_speed * phi * 0.1) * 0.1  # Slight base motion
         
-        # CRITICAL: Ensure shape values go from 0.0 to 1.0 for MAXIMUM shape variation
-        # Map audio_value (0.0-1.0) directly to shape key values (0.0-1.0)
-        # Use aggressive scaling so shapes go FULL ON when audio is high
+        # DIRECT audio mapping with AMPLIFIED response
+        # Boost audio values to make shapes much more responsive
+        audio_boost = 1.5  # Amplify audio by 1.5x for stronger response
+        direct_audio = (audio_value * audio_boost) * phase["weight"]
         
-        # Direct audio mapping with phase weight
-        direct_audio = audio_value * phase["weight"]
-        
-        # Combine with minimal base motion (just for continuous flow)
+        # Combine values
         combined_value = base_motion + direct_audio
         
-        # AUDIO RESPONSIVENESS - Transform audio into visual changes
-        # Use balanced power curve for natural response
-        final_value = abs(combined_value) ** 0.65  # Balanced sensitivity
+        # AUDIO RESPONSIVENESS - Use EXPANDING power curve to amplify high values
+        # Power of 0.5 (square root) = more responsive to high audio
+        final_value = abs(combined_value) ** 0.5  # More responsive, amplifies high values
         
         # Ensure final_value is a real number (not complex)
         if isinstance(final_value, complex):
@@ -2894,8 +2893,8 @@ for phase_idx, phase in enumerate(morph_phases):
         # Clamp to ensure full range usage
         final_value = max(0.0, min(1.0, final_value))
         
-        # LIGHT boost for visibility (shapes will compete naturally)
-        final_value = final_value * 1.1  # Light boost
+        # STRONG boost for maximum visibility and responsiveness
+        final_value = final_value * 1.5  # Much stronger boost
         final_value = max(0.0, min(1.0, final_value))  # Re-clamp after boost
         
         # Apply keyframe

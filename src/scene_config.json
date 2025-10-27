@@ -35,11 +35,11 @@
       "z": 0.8
     },
     "rotation": {
-      "enabled": true,
-      "speed_x": 0.32,
-      "speed_y": 0.03,
-      "speed_z": 0.025,
-      "continuous": true
+      "enabled": false,
+      "speed_x": 0.0,
+      "speed_y": 0.0,
+      "speed_z": 0.0,
+      "continuous": false
     }
   },
   "lighting": {
