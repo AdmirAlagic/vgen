@@ -2846,6 +2846,21 @@ for phase_idx, phase in enumerate(morph_phases):
     
     print(f"🎵 {phase['name']} -> {audio_band}: {len(audio_values)} audio samples")
     
+    # Add temporal smoothing to audio values for smooth morphing
+    # Apply moving average filter to reduce flicker and enable gradual transitions
+    smoothed_audio_values = []
+    smoothing_window = 5  # Use 5-frame window for gentle smoothing
+    
+    for i in range(len(audio_values)):
+        # Get surrounding frames
+        start_idx = max(0, i - smoothing_window // 2)
+        end_idx = min(len(audio_values), i + smoothing_window // 2 + 1)
+        window = audio_values[start_idx:end_idx]
+        
+        # Average the window for smooth blending
+        smoothed = sum(window) / len(window) if window else audio_values[i]
+        smoothed_audio_values.append(smoothed)
+    
     # Create smooth, audio-responsive morphing
     keyframes_created = 0
     sample_every = max(1, {total_frames} // 10)  # Sample 10 frames to show progress
@@ -2853,11 +2868,11 @@ for phase_idx, phase in enumerate(morph_phases):
         scene.frame_set(frame)
         t = frame / {fps}
         
-        # Get audio value for this frame
-        if frame < len(audio_values):
-            audio_value = audio_values[frame]
+        # Get SMOOTHED audio value for this frame
+        if frame < len(smoothed_audio_values):
+            audio_value = smoothed_audio_values[frame]
         else:
-            audio_value = audio_values[-1] if audio_values else 0.5
+            audio_value = smoothed_audio_values[-1] if smoothed_audio_values else 0.5
         
         # Task 2: Frequency-aware morph speed (slow for bass, fast for hihat)
         # Determine morph speed based on audio frequency band
@@ -2908,12 +2923,13 @@ for phase_idx, phase in enumerate(morph_phases):
     
     print(f"✅ DEBUG: Created {keyframes_created} keyframes for '{phase['name']}'")
 
-# CRITICAL: Make shape keys EXCLUSIVE - only ONE shape dominates at a time
-# This creates TRUE morphing instead of "all shapes active = expansion"
-print("🎯 Making shape keys EXCLUSIVE - only one active at a time...")
+# SMOOTH BLENDING: Allow multiple shapes to blend together for smooth morphing
+# Multiple shapes can be active simultaneously for gradual transitions
+print("🎨 Enabling smooth blending between shapes for gradual morphing...")
 
 if obj.data.shape_keys and obj.data.shape_keys.animation_data and obj.data.shape_keys.animation_data.action:
-    # Find the dominant shape at each frame and reduce others
+    # Smooth blending system - no aggressive suppression
+    # Only slightly reduce very low values to allow blending
     total_frames_check = {total_frames} + 1
     
     for frame in range(0, total_frames_check):
@@ -2929,20 +2945,21 @@ if obj.data.shape_keys and obj.data.shape_keys.animation_data and obj.data.shape
                     shape_values[shape_name] = keyframe.co[1]
                     break
             else:
-                # Interpolate value
                 shape_values[shape_name] = 0.0
         
-        # Find the MAX value (dominant shape)
-        if shape_values:
-            max_value = max(shape_values.values())
-            max_shape = max(shape_values, key=shape_values.get)
+        # SMOOTH BLENDING: Only slightly reduce very weak values for smooth transitions
+        # Don't suppress everything aggressively - allow gradual morphing
+        total_active = sum(1 for v in shape_values.values() if v > 0.1)
+        
+        # Only if too many shapes are active (>3), slightly reduce weakest ones
+        if total_active > 3 and shape_values:
+            # Find values to adjust (keep strongest 3)
+            sorted_shapes = sorted(shape_values.items(), key=lambda x: x[1], reverse=True)
             
-            # Only allow the MAX shape to be high, reduce all others
-            for shape_name, value in shape_values.items():
-                if shape_name != max_shape and value > 0.3:
-                    # Reduce non-dominant shapes more
-                    reduction_factor = 0.3 if value > 0.5 else 0.5
-                    # Find and update the keyframe
+            for i, (shape_name, value) in enumerate(sorted_shapes):
+                if i >= 3 and value > 0.1:  # Beyond top 3, reduce slightly
+                    # Gentle reduction for blending (not aggressive suppression)
+                    reduction_factor = 0.7  # Only reduce by 30%, keep 70%
                     for fcurve in obj.data.shape_keys.animation_data.action.fcurves:
                         if f"key_blocks[\"{shape_name}\"]" in fcurve.data_path:
                             for keyframe in fcurve.keyframe_points:
@@ -2950,7 +2967,7 @@ if obj.data.shape_keys and obj.data.shape_keys.animation_data and obj.data.shape
                                     keyframe.co[1] = keyframe.co[1] * reduction_factor
                                     break
     
-    print(f"✅ Made shape keys EXCLUSIVE - only dominant shapes active at each frame")
+    print(f"✅ Smooth blending enabled - shapes morph gradually into each other")
 
 print("✅ ABSTRACT RECOGNIZABLE shape morphing animation created")
 
@@ -3552,7 +3569,7 @@ def create_cinematic_object_movement(story_structure):
         }
     }
     
-    # Create smooth object animation for each act
+    # Create smooth object animation for each act with CONTINUOUS movement
     for act_name, phase in movement_phases.items():
         act_start_time = 0 if act_name == 'act1' else story_structure[f'{act_name}_end'] - (story_structure['act2_end'] - story_structure['act1_end'])
         act_end_time = story_structure[f'{act_name}_end']
@@ -3560,36 +3577,62 @@ def create_cinematic_object_movement(story_structure):
         start_frame = int(act_start_time * story_structure['fps'])
         end_frame = int(act_end_time * story_structure['fps'])
         
-        # Position animation
-        obj.location = phase['start']
-        obj.keyframe_insert(data_path="location", frame=start_frame)
+        # Calculate movement interpolation for smooth, continuous motion
+        start_pos = mathutils.Vector(phase['start'])
+        end_pos = mathutils.Vector(phase['end'])
         
-        obj.location = phase['end']
-        obj.keyframe_insert(data_path="location", frame=end_frame)
+        # Create keyframes EVERY FRAME for smooth, continuous movement (no jumps)
+        for frame in range(start_frame, end_frame + 1):
+            # Linear interpolation for smooth movement
+            t = (frame - start_frame) / max(1, (end_frame - start_frame))
+            # Add easing for natural movement (slow in, slow out)
+            eased_t = t * t * (3.0 - 2.0 * t)  # Smoothstep easing
+            
+            # Calculate position at this frame
+            current_pos = start_pos.lerp(end_pos, eased_t)
+            
+            obj.location = current_pos
+            obj.keyframe_insert(data_path="location", frame=frame)
         
-        # Rotation animation (continuous)
-        rotation_speed = phase['rotation_speed']
-        for frame in range(start_frame, end_frame + 1, 5):
-            t = frame / story_structure['fps']
-            obj.rotation_euler = (
-                t * rotation_speed * 0.32,
-                t * rotation_speed * 0.03, 
-                t * rotation_speed * 0.025
-            )
-            obj.keyframe_insert(data_path="rotation_euler", frame=frame)
+        # Rotation animation (very slow and smooth - disabled per config)
+        # rotation_speed = phase['rotation_speed']
+        # for frame in range(start_frame, end_frame + 1, 5):
+        #     t = frame / story_structure['fps']
+        #     obj.rotation_euler = (
+        #         t * rotation_speed * 0.32,
+        #         t * rotation_speed * 0.03, 
+        #         t * rotation_speed * 0.025
+        #     )
+        #     obj.keyframe_insert(data_path="rotation_euler", frame=frame)
         
-        print(f"   {act_name.upper()}: Movement from {phase['start']} to {phase['end']}")
+        print(f"   {act_name.upper()}: Smooth continuous movement from {phase['start']} to {phase['end']}")
     
     # Apply smooth interpolation with cinematic easing
     if obj.animation_data and obj.animation_data.action:
         for fcurve in obj.animation_data.action.fcurves:
             for keyframe in fcurve.keyframe_points:
                 keyframe.interpolation = 'BEZIER'
-                keyframe.handle_left_type = 'AUTO'
-                keyframe.handle_right_type = 'AUTO'
-                # Add cinematic easing
-                # Smooth easing for fluid animation
-            keyframe.easing = 'EASE_IN_OUT'
+                keyframe.handle_left_type = 'AUTO_CLAMPED'  # More stable
+                keyframe.handle_right_type = 'AUTO_CLAMPED'
+                keyframe.easing = 'EASE_IN_OUT'
+                
+                # Make sure handles create gentle curves (no overshoot)
+                # Extend handles slightly for smoother motion
+                try:
+                    handle_length = 2.0
+                    if keyframe.handle_left[0] > 0:
+                        keyframe.handle_left = (
+                            keyframe.co[0] - handle_length,
+                            keyframe.handle_left[1]
+                        )
+                    if hasattr(keyframe, 'handle_right'):
+                        if keyframe.handle_right[0] < fcurve.range()[1] + 10:
+                            keyframe.handle_right = (
+                                keyframe.co[0] + handle_length,
+                                keyframe.handle_right[1]
+                            )
+                except:
+                    pass  # Handle adjustment optional
     
     print("✅ Cinematic object movement created - always moving towards Earth")
 
